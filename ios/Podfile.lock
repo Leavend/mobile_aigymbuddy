@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - simple_animation_progress_bar (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - simple_animation_progress_bar (from `.symlinks/plugins/simple_animation_progress_bar/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  simple_animation_progress_bar:
+    :path: ".symlinks/plugins/simple_animation_progress_bar/ios"
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  simple_animation_progress_bar: 3f818acdbd78de0a8c48ddd7fdc88e1998a7b33f
+
+PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
+
+COCOAPODS: 1.16.2
