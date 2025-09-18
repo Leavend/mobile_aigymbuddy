@@ -44,7 +44,11 @@ class _HomeViewState extends State<HomeView> {
     },
   ];
 
-  List<int> showingTooltipOnSpots = [21];
+  // Tooltip selections for the mini heart-rate chart.
+  List<int> heartRateTooltipSpots = [21];
+
+  // Tooltip selections for the weekly workout progress chart.
+  List<int> workoutTooltipSpots = [];
 
   List<FlSpot> get allSpots => const [
         FlSpot(0, 20),
@@ -95,7 +99,7 @@ class _HomeViewState extends State<HomeView> {
     // ---- Line bars for "Heart Rate" mini chart (top card)
     final lineBarsData = [
       LineChartBarData(
-        showingIndicators: showingTooltipOnSpots,
+        showingIndicators: heartRateTooltipSpots,
         spots: allSpots,
         isCurved: false,
         barWidth: 3,
@@ -338,7 +342,7 @@ class _HomeViewState extends State<HomeView> {
                         // Mini line chart
                         LineChart(
                           LineChartData(
-                            showingTooltipIndicators: showingTooltipOnSpots.map((index) {
+                            showingTooltipIndicators: heartRateTooltipSpots.map((index) {
                               return ShowingTooltipIndicators([
                                 LineBarSpot(
                                   tooltipsOnBar,
@@ -354,9 +358,9 @@ class _HomeViewState extends State<HomeView> {
                                 if (response == null || response.lineBarSpots == null) return;
                                 if (event is FlTapUpEvent) {
                                   final spotIndex = response.lineBarSpots!.first.spotIndex;
-                                  showingTooltipOnSpots.clear();
+                                  heartRateTooltipSpots.clear();
                                   setState(() {
-                                    showingTooltipOnSpots.add(spotIndex);
+                                    heartRateTooltipSpots.add(spotIndex);
                                   });
                                 }
                               },
@@ -754,7 +758,7 @@ class _HomeViewState extends State<HomeView> {
                   width: double.maxFinite,
                   child: LineChart(
                     LineChartData(
-                      showingTooltipIndicators: showingTooltipOnSpots.map((index) {
+                      showingTooltipIndicators: workoutTooltipSpots.map((index) {
                         return ShowingTooltipIndicators([
                           LineBarSpot(
                             lineBarsData1[0],
@@ -770,8 +774,8 @@ class _HomeViewState extends State<HomeView> {
                           if (response == null || response.lineBarSpots == null) return;
                           if (event is FlTapUpEvent) {
                             final spotIndex = response.lineBarSpots!.first.spotIndex;
-                            showingTooltipOnSpots.clear();
-                            setState(() => showingTooltipOnSpots.add(spotIndex));
+                            workoutTooltipSpots.clear();
+                            setState(() => workoutTooltipSpots.add(spotIndex));
                           }
                         },
                         mouseCursorResolver:
