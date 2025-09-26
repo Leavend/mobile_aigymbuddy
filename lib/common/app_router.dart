@@ -1,32 +1,31 @@
+import 'package:aigymbuddy/view/home/activity_tracker_view.dart';
+import 'package:aigymbuddy/view/home/finished_workout_view.dart';
+import 'package:aigymbuddy/view/home/notification_view.dart';
+import 'package:aigymbuddy/view/login/complete_profile_view.dart';
+import 'package:aigymbuddy/view/login/login_view.dart';
+import 'package:aigymbuddy/view/login/signup_view.dart';
+import 'package:aigymbuddy/view/login/welcome_view.dart';
+import 'package:aigymbuddy/view/login/what_your_goal_view.dart';
+import 'package:aigymbuddy/view/main_tab/main_tab_view.dart';
+import 'package:aigymbuddy/view/main_tab/select_view.dart';
+import 'package:aigymbuddy/view/meal_planner/food_info_details_view.dart';
+import 'package:aigymbuddy/view/meal_planner/meal_food_details_view.dart';
+import 'package:aigymbuddy/view/meal_planner/meal_planner_view.dart';
+import 'package:aigymbuddy/view/meal_planner/meal_schedule_view.dart';
+import 'package:aigymbuddy/view/on_boarding/on_boarding_view.dart';
+import 'package:aigymbuddy/view/photo_progress/comparison_view.dart';
+import 'package:aigymbuddy/view/photo_progress/photo_progress_view.dart';
+import 'package:aigymbuddy/view/photo_progress/result_view.dart';
+import 'package:aigymbuddy/view/profile/profile_view.dart';
+import 'package:aigymbuddy/view/sleep_tracker/sleep_add_alarm_view.dart';
+import 'package:aigymbuddy/view/sleep_tracker/sleep_schedule_view.dart';
+import 'package:aigymbuddy/view/sleep_tracker/sleep_tracker_view.dart';
+import 'package:aigymbuddy/view/workout_tracker/add_schedule_view.dart';
+import 'package:aigymbuddy/view/workout_tracker/exercises_stpe_details.dart';
+import 'package:aigymbuddy/view/workout_tracker/workout_schedule_view.dart';
+import 'package:aigymbuddy/view/workout_tracker/workout_tracker_view.dart';
+import 'package:aigymbuddy/view/workout_tracker/workour_detail_view.dart';
 import 'package:go_router/go_router.dart';
-
-import '../view/home/activity_tracker_view.dart';
-import '../view/home/finished_workout_view.dart';
-import '../view/home/notification_view.dart';
-import '../view/login/complete_profile_view.dart';
-import '../view/login/login_view.dart';
-import '../view/login/signup_view.dart';
-import '../view/login/welcome_view.dart';
-import '../view/login/what_your_goal_view.dart';
-import '../view/main_tab/main_tab_view.dart';
-import '../view/main_tab/select_view.dart';
-import '../view/meal_planner/food_info_details_view.dart';
-import '../view/meal_planner/meal_food_details_view.dart';
-import '../view/meal_planner/meal_planner_view.dart';
-import '../view/meal_planner/meal_schedule_view.dart';
-import '../view/on_boarding/on_boarding_view.dart';
-import '../view/photo_progress/comparison_view.dart';
-import '../view/photo_progress/photo_progress_view.dart';
-import '../view/photo_progress/result_view.dart';
-import '../view/profile/profile_view.dart';
-import '../view/sleep_tracker/sleep_add_alarm_view.dart';
-import '../view/sleep_tracker/sleep_schedule_view.dart';
-import '../view/sleep_tracker/sleep_tracker_view.dart';
-import '../view/workout_tracker/add_schedule_view.dart';
-import '../view/workout_tracker/exercises_stpe_details.dart';
-import '../view/workout_tracker/workout_schedule_view.dart';
-import '../view/workout_tracker/workout_tracker_view.dart';
-import '../view/workout_tracker/workour_detail_view.dart';
 
 class AppRoute {
   static const String main = '/';
@@ -54,6 +53,8 @@ class AppRoute {
   static const String sleepTracker = '/sleep-tracker';
   static const String sleepSchedule = '/sleep-tracker/schedule';
   static const String sleepAddAlarm = '/sleep-tracker/add-alarm';
+  static const String profile = '/profile';
+  static const String select = '/select';
 }
 
 class AppRouter {
@@ -111,31 +112,35 @@ class AppRouter {
       GoRoute(
         path: AppRoute.addWorkoutSchedule,
         builder: (context, state) {
-          final extra = state.extra;
-          if (extra is! DateTime) {
-            throw ArgumentError('AddScheduleView requires a DateTime extra.');
-          }
-          return AddScheduleView(date: extra);
+          final date = _requireExtra<DateTime>(
+            state,
+            'AddScheduleView requires a DateTime extra.',
+          );
+          return AddScheduleView(date: date);
         },
       ),
       GoRoute(
         path: AppRoute.workoutDetail,
         builder: (context, state) {
-          final extra = state.extra;
-          if (extra is! Map) {
-            throw ArgumentError('WorkoutDetailView requires a Map extra.');
-          }
-          return WorkoutDetailView(dObj: Map<String, dynamic>.from(extra));
+          final data = Map<String, dynamic>.from(
+            _requireExtra<Map>(
+              state,
+              'WorkoutDetailView requires a Map extra.',
+            ),
+          );
+          return WorkoutDetailView(dObj: data);
         },
       ),
       GoRoute(
         path: AppRoute.exerciseSteps,
         builder: (context, state) {
-          final extra = state.extra;
-          if (extra is! Map) {
-            throw ArgumentError('ExercisesStepDetails requires a Map extra.');
-          }
-          return ExercisesStepDetails(eObj: Map<String, dynamic>.from(extra));
+          final data = Map<String, dynamic>.from(
+            _requireExtra<Map>(
+              state,
+              'ExercisesStepDetails requires a Map extra.',
+            ),
+          );
+          return ExercisesStepDetails(eObj: data);
         },
       ),
       GoRoute(
@@ -149,21 +154,24 @@ class AppRouter {
       GoRoute(
         path: AppRoute.mealFoodDetails,
         builder: (context, state) {
-          final extra = state.extra;
-          if (extra is! Map) {
-            throw ArgumentError('MealFoodDetailsView requires a Map extra.');
-          }
-          return MealFoodDetailsView(eObj: Map<String, dynamic>.from(extra));
+          final data = Map<String, dynamic>.from(
+            _requireExtra<Map>(
+              state,
+              'MealFoodDetailsView requires a Map extra.',
+            ),
+          );
+          return MealFoodDetailsView(eObj: data);
         },
       ),
       GoRoute(
         path: AppRoute.foodInfo,
         builder: (context, state) {
-          final extra = state.extra;
-          if (extra is! Map) {
-            throw ArgumentError('FoodInfoDetailsView requires a Map extra.');
-          }
-          final map = Map<String, dynamic>.from(extra);
+          final map = Map<String, dynamic>.from(
+            _requireExtra<Map>(
+              state,
+              'FoodInfoDetailsView requires a Map extra.',
+            ),
+          );
           final meal = map['meal'];
           final food = map['food'];
           if (meal is! Map || food is! Map) {
@@ -186,11 +194,12 @@ class AppRouter {
       GoRoute(
         path: AppRoute.photoResult,
         builder: (context, state) {
-          final extra = state.extra;
-          if (extra is! Map) {
-            throw ArgumentError('ResultView requires a Map extra.');
-          }
-          final map = Map<String, dynamic>.from(extra);
+          final map = Map<String, dynamic>.from(
+            _requireExtra<Map>(
+              state,
+              'ResultView requires a Map extra.',
+            ),
+          );
           final date1 = map['date1'];
           final date2 = map['date2'];
           if (date1 is! DateTime || date2 is! DateTime) {
@@ -210,21 +219,29 @@ class AppRouter {
       GoRoute(
         path: AppRoute.sleepAddAlarm,
         builder: (context, state) {
-          final extra = state.extra;
-          if (extra is! DateTime) {
-            throw ArgumentError('SleepAddAlarmView requires a DateTime extra.');
-          }
-          return SleepAddAlarmView(date: extra);
+          final date = _requireExtra<DateTime>(
+            state,
+            'SleepAddAlarmView requires a DateTime extra.',
+          );
+          return SleepAddAlarmView(date: date);
         },
       ),
       GoRoute(
-        path: '/profile',
+        path: AppRoute.profile,
         builder: (context, state) => const ProfileView(),
       ),
       GoRoute(
-        path: '/select',
+        path: AppRoute.select,
         builder: (context, state) => const SelectView(),
       ),
     ],
   );
+}
+
+T _requireExtra<T extends Object>(GoRouterState state, String message) {
+  final extra = state.extra;
+  if (extra is! T) {
+    throw ArgumentError(message);
+  }
+  return extra;
 }
