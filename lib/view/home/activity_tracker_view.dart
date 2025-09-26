@@ -1,5 +1,8 @@
+// lib/view/home/activity_tracker_view.dart
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/latest_activity_row.dart';
@@ -38,7 +41,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
         centerTitle: true,
         elevation: 0,
         leading: InkWell(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             margin: const EdgeInsets.all(8),
             height: 40,

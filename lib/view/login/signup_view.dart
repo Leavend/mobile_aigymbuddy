@@ -1,11 +1,11 @@
 // lib/view/login/signup_view.dart
 
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
-import 'package:aigymbuddy/view/login/complete_profile_view.dart';
-import 'package:aigymbuddy/view/login/login_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
@@ -104,16 +104,10 @@ class _SignUpViewState extends State<SignUpView> {
 
                       // Button full-width
                       RoundButton(
-                        title: "Register",
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CompleteProfileView(),
-                            ),
-                          );
-                        },
-                      ),
+                          title: "Register",
+                          onPressed: () {
+                            context.push(AppRoute.completeProfile);
+                      }),
 
                       const SizedBox(height: 16),
 
@@ -145,10 +139,7 @@ class _SignUpViewState extends State<SignUpView> {
                       // Footer link
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const LoginView()),
-                          );
+                          context.push(AppRoute.login);
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

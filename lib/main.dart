@@ -1,6 +1,5 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
-// import 'package:aigymbuddy/view/main_tab/main_tab_view.dart';
-import 'package:aigymbuddy/view/on_boarding/on_boarding_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,7 +12,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'AI Gym Buddy',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -35,8 +34,7 @@ class MyApp extends StatelessWidget {
         primaryColor: TColor.primaryColor1,
         fontFamily: "Poppins"
       ),
-      // home: const MainTabView(),
-      home: const OnBoardingView(),
+      routerConfig: AppRouter.router,
     );
   }
 }

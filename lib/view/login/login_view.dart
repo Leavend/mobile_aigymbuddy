@@ -1,8 +1,11 @@
+// lib/view/login/loign_view.dart
+
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
-import 'package:aigymbuddy/view/login/complete_profile_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -85,11 +88,7 @@ class _LoginViewState extends State<LoginView> {
                 RoundButton(
                     title: "Login",
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const CompleteProfileView()));
+                      context.push(AppRoute.completeProfile);
                     }),
                 SizedBox(
                   height: media.width * 0.04,
@@ -171,7 +170,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    context.pop();
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

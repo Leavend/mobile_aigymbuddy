@@ -1,4 +1,7 @@
+// lib/view/home/finished_workout_view.dart
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
@@ -74,7 +77,7 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
                RoundButton(
                   title: "Back To Home",
                   onPressed: () {
-                    Navigator.pop(context);
+                    context.pop();
                   }),
 
                  const SizedBox(

@@ -9,9 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
-import 'activity_tracker_view.dart';
-import 'finished_workout_view.dart';
-import 'notification_view.dart';
+import 'package:aigymbuddy/common/app_router.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -119,7 +118,9 @@ class _HomeViewState extends State<HomeView> {
                         ],
                       ),
                       IconButton(
-                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationView())),
+                        onPressed: () {
+                          context.push(AppRoute.notification);
+                        },
                         icon: Image.asset("assets/img/notification_active.png", width: 24, height: 24),
                       ),
                     ],
@@ -153,7 +154,9 @@ class _HomeViewState extends State<HomeView> {
                             type: RoundButtonType.bgGradient,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ActivityTrackerView())),
+                            onPressed: () {
+                              context.push(AppRoute.activityTracker);
+                            },
                           ),
                         ),
                       ],
@@ -458,7 +461,9 @@ class _HomeViewState extends State<HomeView> {
                     itemCount: lastWorkoutArr.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, i) => InkWell(
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FinishedWorkoutView())),
+                      onTap: () {
+                        context.push(AppRoute.finishedWorkout);
+                      },
                       child: WorkoutRow(wObj: lastWorkoutArr[i]),
                     ),
                   ),
