@@ -38,7 +38,7 @@ class LatestActivityRow extends StatelessWidget {
                 Text(
                  wObj["time"].toString(),
                   style: TextStyle(
-                      color: TColor.yellow,
+                      color: TColor.gray,
                       fontSize: 10,),
                 ),
 

@@ -35,7 +35,7 @@ class ExercisesRow extends StatelessWidget {
               Text(
                 eObj["value"].toString(),
                 style: TextStyle(
-                  color: TColor.yellow,
+                  color: TColor.gray,
                   fontSize: 12,
                 ),
               ),

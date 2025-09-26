@@ -41,7 +41,7 @@ class OnBoardingPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
               pObj["subtitle"].toString(),
-              style: TextStyle(color: TColor.yellow, fontSize: 14),
+              style: TextStyle(color: TColor.gray, fontSize: 14),
             ),
           ),
         ],

@@ -86,7 +86,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
               ),
               Text(
                 dateToString(widget.date, formatStr: "E, dd MMMM yyyy"),
-                style: TextStyle(color: TColor.yellow, fontSize: 14),
+                style: TextStyle(color: TColor.gray, fontSize: 14),
               ),
             ],
           ),

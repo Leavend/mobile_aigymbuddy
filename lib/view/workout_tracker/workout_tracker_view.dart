@@ -224,7 +224,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                     width: 50,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: TColor.yellow.withValues(alpha: 0.3),
+                      color: TColor.gray.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -280,7 +280,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                         child: Text(
                           "See More",
                           style: TextStyle(
-                            color: TColor.yellow, fontSize: 14, fontWeight: FontWeight.w700,
+                            color: TColor.gray, fontSize: 14, fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),

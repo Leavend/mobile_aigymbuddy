@@ -177,7 +177,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                         width: 50,
                         height: 4,
                         decoration: BoxDecoration(
-                            color: TColor.yellow.withValues(alpha: 0.3),
+                            color: TColor.gray.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(3)),
                       ),
                       SizedBox(
@@ -200,7 +200,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                 Text(
                                   "${widget.dObj["exercises"].toString()} | ${widget.dObj["time"].toString()} | 320 Calories Burn",
                                   style: TextStyle(
-                                      color: TColor.yellow, fontSize: 12),
+                                      color: TColor.gray, fontSize: 12),
                                 ),
                               ],
                             ),
@@ -255,7 +255,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             child: Text(
                               "${youArr.length} Items",
                               style:
-                                  TextStyle(color: TColor.yellow, fontSize: 12),
+                                  TextStyle(color: TColor.gray, fontSize: 12),
                             ),
                           )
                         ],
@@ -321,7 +321,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             child: Text(
                               "${youArr.length} Sets",
                               style:
-                                  TextStyle(color: TColor.yellow, fontSize: 12),
+                                  TextStyle(color: TColor.gray, fontSize: 12),
                             ),
                           )
                         ],

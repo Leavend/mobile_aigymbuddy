@@ -1,5 +1,6 @@
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/view/main_tab/main_tab_view.dart';
+// import 'package:aigymbuddy/view/main_tab/main_tab_view.dart';
+import 'package:aigymbuddy/view/on_boarding/on_boarding_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
         primaryColor: TColor.primaryColor1,
         fontFamily: "Poppins"
       ),
-      home: const MainTabView(),
+      // home: const MainTabView(),
+      home: const OnBoardingView(),
     );
   }
 }

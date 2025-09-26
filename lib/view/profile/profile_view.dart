@@ -178,7 +178,7 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
                 Text(
                   "Lose a Fat Program",
-                  style: TextStyle(color: TColor.yellow, fontSize: 12),
+                  style: TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ],
             ),

@@ -68,7 +68,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                   Text(
                     widget.sObj["duration"].toString(),
                     style: TextStyle(
-                        color: TColor.yellow,
+                        color: TColor.gray,
                         fontSize: 14,
                         fontWeight: FontWeight.w500),
                   ),

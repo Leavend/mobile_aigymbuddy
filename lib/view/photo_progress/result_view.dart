@@ -138,7 +138,7 @@ class _ResultViewState extends State<ResultView> {
                               "Photo",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: selectButton == 0 ? TColor.white : TColor.yellow,
+                                color: selectButton == 0 ? TColor.white : TColor.gray,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -152,7 +152,7 @@ class _ResultViewState extends State<ResultView> {
                               "Statistic",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: selectButton == 1 ? TColor.white : TColor.yellow,
+                                color: selectButton == 1 ? TColor.white : TColor.gray,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -227,9 +227,9 @@ class _ResultViewState extends State<ResultView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(dateToString(widget.date1, formatStr: "MMMM"),
-                style: TextStyle(color: TColor.yellow, fontSize: 16, fontWeight: FontWeight.w700)),
+                style: TextStyle(color: TColor.gray, fontSize: 16, fontWeight: FontWeight.w700)),
             Text(dateToString(widget.date2, formatStr: "MMMM"),
-                style: TextStyle(color: TColor.yellow, fontSize: 16, fontWeight: FontWeight.w700)),
+                style: TextStyle(color: TColor.gray, fontSize: 16, fontWeight: FontWeight.w700)),
           ],
         ),
 
@@ -244,7 +244,7 @@ class _ResultViewState extends State<ResultView> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 8),
-                Text(iObj["title"]!, style: TextStyle(color: TColor.yellow, fontSize: 14, fontWeight: FontWeight.w500)),
+                Text(iObj["title"]!, style: TextStyle(color: TColor.gray, fontSize: 14, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -371,9 +371,9 @@ class _ResultViewState extends State<ResultView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(dateToString(widget.date1, formatStr: "MMMM"),
-                style: TextStyle(color: TColor.yellow, fontSize: 16, fontWeight: FontWeight.w700)),
+                style: TextStyle(color: TColor.gray, fontSize: 16, fontWeight: FontWeight.w700)),
             Text(dateToString(widget.date2, formatStr: "MMMM"),
-                style: TextStyle(color: TColor.yellow, fontSize: 16, fontWeight: FontWeight.w700)),
+                style: TextStyle(color: TColor.gray, fontSize: 16, fontWeight: FontWeight.w700)),
           ],
         ),
 
@@ -391,7 +391,7 @@ class _ResultViewState extends State<ResultView> {
               children: [
                 const SizedBox(height: 15),
                 Text(iObj["title"]!,
-                    style: TextStyle(color: TColor.yellow, fontSize: 14, fontWeight: FontWeight.w500)),
+                    style: TextStyle(color: TColor.gray, fontSize: 14, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -400,7 +400,7 @@ class _ResultViewState extends State<ResultView> {
                       width: 25,
                       child: Text(iObj["month_1_per"]!,
                           textAlign: TextAlign.right,
-                          style: TextStyle(color: TColor.yellow, fontSize: 12)),
+                          style: TextStyle(color: TColor.gray, fontSize: 12)),
                     ),
                     SimpleAnimationProgressBar(
                       height: 10,
@@ -417,7 +417,7 @@ class _ResultViewState extends State<ResultView> {
                       width: 25,
                       child: Text(iObj["month_2_per"]!,
                           textAlign: TextAlign.left,
-                          style: TextStyle(color: TColor.yellow, fontSize: 12)),
+                          style: TextStyle(color: TColor.gray, fontSize: 12)),
                     ),
                   ],
                 ),
@@ -488,17 +488,17 @@ class _ResultViewState extends State<ResultView> {
   Widget rightTitleWidgets(double value, TitleMeta meta) {
     switch (value.toInt()) {
       case 0:
-        return Text('0%', style: TextStyle(color: TColor.yellow, fontSize: 12), textAlign: TextAlign.center);
+        return Text('0%', style: TextStyle(color: TColor.gray, fontSize: 12), textAlign: TextAlign.center);
       case 20:
-        return Text('20%', style: TextStyle(color: TColor.yellow, fontSize: 12), textAlign: TextAlign.center);
+        return Text('20%', style: TextStyle(color: TColor.gray, fontSize: 12), textAlign: TextAlign.center);
       case 40:
-        return Text('40%', style: TextStyle(color: TColor.yellow, fontSize: 12), textAlign: TextAlign.center);
+        return Text('40%', style: TextStyle(color: TColor.gray, fontSize: 12), textAlign: TextAlign.center);
       case 60:
-        return Text('60%', style: TextStyle(color: TColor.yellow, fontSize: 12), textAlign: TextAlign.center);
+        return Text('60%', style: TextStyle(color: TColor.gray, fontSize: 12), textAlign: TextAlign.center);
       case 80:
-        return Text('80%', style: TextStyle(color: TColor.yellow, fontSize: 12), textAlign: TextAlign.center);
+        return Text('80%', style: TextStyle(color: TColor.gray, fontSize: 12), textAlign: TextAlign.center);
       case 100:
-        return Text('100%', style: TextStyle(color: TColor.yellow, fontSize: 12), textAlign: TextAlign.center);
+        return Text('100%', style: TextStyle(color: TColor.gray, fontSize: 12), textAlign: TextAlign.center);
       default:
         return const SizedBox.shrink();
     }
@@ -513,7 +513,7 @@ class _ResultViewState extends State<ResultView> {
       );
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(color: TColor.yellow, fontSize: 12);
+    final style = TextStyle(color: TColor.gray, fontSize: 12);
     switch (value.toInt()) {
       case 1:
         return SideTitleWidget(meta: meta, space: 10, child: Text('Jan', style: style));

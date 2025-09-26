@@ -195,7 +195,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                                 value: name,
                                 child: Text(name,
                                     style: TextStyle(
-                                        color: TColor.yellow, fontSize: 14)),
+                                        color: TColor.gray, fontSize: 14)),
                               ),
                             )
                             .toList(),
@@ -322,7 +322,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                     child: Text(
                       "See More",
                       style: TextStyle(
-                        color: TColor.yellow,
+                        color: TColor.gray,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -354,7 +354,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
 
   Widget getTitles(double value, TitleMeta meta) {
     final style = TextStyle(
-      color: TColor.yellow,
+      color: TColor.gray,
       fontWeight: FontWeight.w500,
       fontSize: 12,
     );

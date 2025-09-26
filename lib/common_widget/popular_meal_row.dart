@@ -39,7 +39,7 @@ class PopularMealRow extends StatelessWidget {
                   ),
                   Text(
                     "${mObj["size"]} | ${mObj["time"]} | ${mObj["kcal"]}",
-                    style: TextStyle(color: TColor.yellow, fontSize: 12),
+                    style: TextStyle(color: TColor.gray, fontSize: 12),
                   )
                 ],
               ),

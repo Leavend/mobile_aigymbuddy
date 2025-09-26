@@ -38,7 +38,7 @@ class NotificationRow extends StatelessWidget {
               Text(
                 nObj["time"].toString(),
                 style: TextStyle(
-                  color: TColor.yellow,
+                  color: TColor.gray,
                   fontSize: 10,
                 ),
               ),

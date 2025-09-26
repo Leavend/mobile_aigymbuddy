@@ -165,7 +165,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                     margin: const EdgeInsets.symmetric(horizontal: 8),
                     width: 1,
                     height: 25,
-                    color: TColor.yellow.withValues(alpha: 0.3),
+                    color: TColor.gray.withValues(alpha: 0.3),
                   ),
                   InkWell(
                     onTap: () {},

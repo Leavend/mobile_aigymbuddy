@@ -59,7 +59,7 @@ class MealFoodScheduleRow extends StatelessWidget {
                 Text(
                   (mObj['time'] ?? '').toString(),
                   style: TextStyle(
-                    color: TColor.yellow,
+                    color: TColor.gray,
                     fontSize: 10,
                   ),
                   maxLines: 1,

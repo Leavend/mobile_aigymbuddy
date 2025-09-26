@@ -52,7 +52,7 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
                 "Exercises is king and nutrition is queen. Combine the two and you will have a kingdom",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: TColor.yellow,
+                  color: TColor.gray,
                   fontSize: 12,
                 ),
               ),
@@ -65,7 +65,7 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
                 "-Jack Lalanne",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: TColor.yellow,
+                  color: TColor.gray,
                   fontSize: 12,
                 ),
               ),

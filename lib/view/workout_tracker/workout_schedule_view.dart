@@ -163,7 +163,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                   shrinkWrap: true,
                   itemCount: 24,
                   separatorBuilder: (context, index) => Divider(
-                    color: TColor.yellow.withValues(alpha: 0.2),
+                    color: TColor.gray.withValues(alpha: 0.2),
                     height: 1,
                   ),
                   itemBuilder: (context, index) {
@@ -323,7 +323,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                                         Text(
                                                           "${getDayTitle(sObj["start_time"].toString())} | ${getStringDateToOtherFormate(sObj["start_time"].toString(), outFormatStr: "h:mm aa")}",
                                                           style: TextStyle(
-                                                            color: TColor.yellow,
+                                                            color: TColor.gray,
                                                             fontSize: 12,
                                                           ),
                                                         ),

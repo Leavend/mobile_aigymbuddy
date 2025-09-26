@@ -43,7 +43,7 @@ class WorkoutRow extends StatelessWidget {
                 Text(
                   "${ wObj["kcal"].toString() } Calories Burn | ${wObj["time"].toString()}minutes",
                   style: TextStyle(
-                      color: TColor.yellow,
+                      color: TColor.gray,
                       fontSize: 10,),
                 ),
 

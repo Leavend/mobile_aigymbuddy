@@ -147,7 +147,7 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
               Text(
                 "Easy | 390 Calories Burn",
                 style: TextStyle(
-                  color: TColor.yellow,
+                  color: TColor.gray,
                   fontSize: 12,
                 ),
               ),
@@ -172,7 +172,7 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                 trimCollapsedText: ' Read More ...',
                 trimExpandedText: ' Read Less',
                 style: TextStyle(
-                  color: TColor.yellow,
+                  color: TColor.gray,
                   fontSize: 12,
                 ),
                 moreStyle:
@@ -195,7 +195,7 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                     onPressed: () {},
                     child: Text(
                       "${stepArr.length} Sets",
-                      style: TextStyle(color: TColor.yellow, fontSize: 12),
+                      style: TextStyle(color: TColor.gray, fontSize: 12),
                     ),
                   )
                 ],
@@ -229,9 +229,9 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                     height: 40,
                     decoration: BoxDecoration(
                       border: Border(
-                        top: BorderSide(color: TColor.yellow.withValues(alpha: 0.2), width: 1),
+                        top: BorderSide(color: TColor.gray.withValues(alpha: 0.2), width: 1),
                         bottom: BorderSide(
-                            color: TColor.yellow.withValues(alpha: 0.2), width: 1),
+                            color: TColor.gray.withValues(alpha: 0.2), width: 1),
                       ),
                     ),
                   ),
@@ -249,18 +249,18 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                         ),
                         Text(
                           " ${(index + 1) * 15} Calories Burn",
-                          style: TextStyle(color: TColor.yellow, fontSize: 10),
+                          style: TextStyle(color: TColor.gray, fontSize: 10),
                         ),
                         Text(
                           " ${index + 1} ",
                           style: TextStyle(
-                              color: TColor.yellow,
+                              color: TColor.gray,
                               fontSize: 24,
                               fontWeight: FontWeight.w500),
                         ),
                         Text(
                           " times",
-                          style: TextStyle(color: TColor.yellow, fontSize: 16),
+                          style: TextStyle(color: TColor.gray, fontSize: 16),
                         )
                       ],
                     );

@@ -38,7 +38,7 @@ SizedBox(
                 height: media.width * 0.1,
               ),
               Text(
-                "Welcome, Stefani",
+                "Welcome, GYM Buddy",
                 style: TextStyle(
                     color: TColor.black,
                     fontSize: 20,
@@ -47,7 +47,7 @@ SizedBox(
               Text(
                 "You are all set now, let’s reach your\ngoals together with us",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: TColor.yellow, fontSize: 12),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
              const Spacer(),
 

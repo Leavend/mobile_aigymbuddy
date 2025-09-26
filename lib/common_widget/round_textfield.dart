@@ -39,9 +39,9 @@ class RoundTextField extends StatelessWidget {
                   width: 20,
                   height: 20,
                   fit: BoxFit.contain,
-                  color: TColor.yellow,
+                  color: TColor.gray,
                 )),
-            hintStyle: TextStyle(color: TColor.yellow, fontSize: 12)),
+            hintStyle: TextStyle(color: TColor.gray, fontSize: 12)),
       ),
     );
   }

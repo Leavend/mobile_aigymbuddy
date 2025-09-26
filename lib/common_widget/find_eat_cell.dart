@@ -79,7 +79,7 @@ class FindEatCell extends StatelessWidget {
             child: Text(
               (fObj['number'] ?? '').toString(),
               style: TextStyle(
-                color: TColor.yellow,
+                color: TColor.gray,
                 fontSize: 12,
               ),
               maxLines: 1,

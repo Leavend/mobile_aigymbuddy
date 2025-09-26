@@ -133,7 +133,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                                     child: Text(
                                       name,
                                       style: TextStyle(
-                                        color: TColor.yellow,
+                                        color: TColor.gray,
                                         fontSize: 14,
                                       ),
                                     ),
@@ -226,7 +226,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                           horizontalInterval: 25,
                           drawVerticalLine: false,
                           getDrawingHorizontalLine: (value) => FlLine(
-                            color: TColor.yellow.withValues(alpha: 0.15),
+                            color: TColor.gray.withValues(alpha: 0.15),
                             strokeWidth: 2,
                           ),
                         ),
@@ -310,7 +310,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                                     child: Text(
                                       name,
                                       style: TextStyle(
-                                        color: TColor.yellow,
+                                        color: TColor.gray,
                                         fontSize: 14,
                                       ),
                                     ),
@@ -430,7 +430,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           if (idx < 0 || idx >= labels.length) return const SizedBox.shrink();
           return Text(
             labels[idx],
-            style: TextStyle(color: TColor.yellow, fontSize: 12),
+            style: TextStyle(color: TColor.gray, fontSize: 12),
             textAlign: TextAlign.center,
           );
         },
@@ -447,7 +447,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           return SideTitleWidget(
             meta: meta, // API baru: wajib meta
             space: 10,
-            child: Text(text, style: TextStyle(color: TColor.yellow, fontSize: 12)),
+            child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
           );
         },
       );

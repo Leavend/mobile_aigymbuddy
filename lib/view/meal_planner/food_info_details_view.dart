@@ -172,7 +172,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                             width: 50,
                             height: 4,
                             decoration: BoxDecoration(
-                                color: TColor.yellow.withValues(alpha: 0.3),
+                                color: TColor.gray.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(3)),
                           ),
                         ],
@@ -199,7 +199,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                   Text(
                                     "by James Ruth",
                                     style: TextStyle(
-                                        color: TColor.yellow, fontSize: 12),
+                                        color: TColor.gray, fontSize: 12),
                                   ),
                                 ],
                               ),
@@ -301,7 +301,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           trimCollapsedText: ' Read More ...',
                           trimExpandedText: ' Read Less',
                           style: TextStyle(
-                            color: TColor.yellow,
+                            color: TColor.gray,
                             fontSize: 12,
                           ),
                           moreStyle: const TextStyle(
@@ -328,7 +328,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                               child: Text(
                                 "${stepArr.length} Items",
                                 style:
-                                    TextStyle(color: TColor.yellow, fontSize: 12),
+                                    TextStyle(color: TColor.gray, fontSize: 12),
                               ),
                             )
                           ],
@@ -378,7 +378,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                       Text(
                                         nObj["value"].toString(),
                                         style: TextStyle(
-                                            color: TColor.yellow, fontSize: 10),
+                                            color: TColor.gray, fontSize: 10),
                                       ),
                                     ],
                                   ));
@@ -401,7 +401,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                               child: Text(
                                 "${stepArr.length} Steps",
                                 style:
-                                    TextStyle(color: TColor.yellow, fontSize: 12),
+                                    TextStyle(color: TColor.gray, fontSize: 12),
                               ),
                             )
                           ],

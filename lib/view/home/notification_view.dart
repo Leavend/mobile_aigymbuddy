@@ -80,7 +80,7 @@ class _NotificationViewState extends State<NotificationView> {
           var nObj = notificationArr[index] as Map? ?? {};
           return NotificationRow(nObj: nObj);
       }), separatorBuilder: (context, index){
-        return Divider(color: TColor.yellow.withValues(alpha: 0.5), height: 1, );
+        return Divider(color: TColor.gray.withValues(alpha: 0.5), height: 1, );
       }, itemCount: notificationArr.length),
     );
   }

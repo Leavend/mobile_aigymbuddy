@@ -65,7 +65,7 @@ class MealRecommendCell extends StatelessWidget {
               '${(fObj['size'] ?? '').toString()} | ${(fObj['time'] ?? '').toString()} | ${(fObj['kcal'] ?? '').toString()}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: TColor.yellow, fontSize: 12),
+              style: TextStyle(color: TColor.gray, fontSize: 12),
             ),
           ),
           const SizedBox(height: 15),

@@ -131,7 +131,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                                 onPressed: () {},
                                 icon: Icon(
                                   Icons.close,
-                                  color: TColor.yellow,
+                                  color: TColor.gray,
                                   size: 15,
                                 )))
                       ],
@@ -245,7 +245,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                           onPressed: () {},
                           child: Text(
                             "See more",
-                            style: TextStyle(color: TColor.yellow, fontSize: 12),
+                            style: TextStyle(color: TColor.gray, fontSize: 12),
                           ))
                     ],
                   ),
@@ -267,7 +267,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                             child: Text(
                               pObj["time"].toString(),
                               style:
-                                  TextStyle(color: TColor.yellow, fontSize: 12),
+                                  TextStyle(color: TColor.gray, fontSize: 12),
                             ),
                           ),
                           SizedBox(

@@ -237,7 +237,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
           Text(title, style: TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700)),
           TextButton(
             onPressed: () {},
-            child: Text(trailing, style: TextStyle(color: TColor.yellow, fontSize: 12)),
+            child: Text(trailing, style: TextStyle(color: TColor.gray, fontSize: 12)),
           ),
         ],
       ),

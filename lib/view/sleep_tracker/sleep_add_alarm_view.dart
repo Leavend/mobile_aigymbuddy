@@ -143,7 +143,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
           Expanded(
             child: Text(
               "Vibrate When Alarm Sound",
-              style: TextStyle(color: TColor.yellow, fontSize: 12),
+              style: TextStyle(color: TColor.gray, fontSize: 12),
             ),
           ),
           SizedBox(

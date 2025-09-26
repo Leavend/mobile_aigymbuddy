@@ -1,3 +1,5 @@
+// lib/view/login_what_your_goal_view.dart
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:aigymbuddy/view/login/welcome_view.dart';
 import 'package:flutter/material.dart';
@@ -13,137 +15,138 @@ class WhatYourGoalView extends StatefulWidget {
 }
 
 class _WhatYourGoalViewState extends State<WhatYourGoalView> {
-  CarouselSliderController buttonCarouselController = CarouselSliderController();
+  final CarouselSliderController _controller = CarouselSliderController();
 
-  List goalArr = [
+  final List<Map<String, String>> goalArr = [
     {
       "image": "assets/img/goal_1.png",
       "title": "Improve Shape",
       "subtitle":
-          "I have a low amount of body fat\nand need / want to build more\nmuscle"
+          "I have a low amount of body fat and\nneed / want to build more muscle",
     },
     {
       "image": "assets/img/goal_2.png",
       "title": "Lean & Tone",
       "subtitle":
-          "I’m “skinny fat”. look thin but have\nno shape. I want to add learn\nmuscle in the right way"
+          "I’m “skinny fat”, look thin but have\nno shape. I want to add lean muscle\nin the right way",
     },
     {
       "image": "assets/img/goal_3.png",
       "title": "Lose a Fat",
       "subtitle":
-          "I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle\nmass"
+          "I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle mass",
     },
   ];
 
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.of(context).size;
+    final media = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: TColor.white,
       body: SafeArea(
-          child: Stack(
-        children: [
-          Center(
-            child: CarouselSlider(
-              items: goalArr
-                  .map(
-                    (gObj) => Container(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 12),
+              Text(
+                "What is your goal ?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: TColor.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "It will help us to choose a best program for you",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: TColor.gray, fontSize: 12),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Carousel di tengah
+              Expanded(
+                child: CarouselSlider.builder(
+                  carouselController: _controller,
+                  itemCount: goalArr.length,
+                  itemBuilder: (context, index, realIdx) {
+                    final gObj = goalArr[index];
+                    return Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                            colors: TColor.primaryG,
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight),
+                          colors: TColor.primaryG,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(25),
                       ),
-                      padding: EdgeInsets.symmetric(
-                          vertical: media.width * 0.1, horizontal: 25),
-                      alignment: Alignment.center,
-                      child: FittedBox(
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              gObj["image"].toString(),
-                              width: media.width * 0.5,
-                              fit: BoxFit.fitWidth,
-                            ),
-                            SizedBox(
-                              height: media.width * 0.1,
-                            ),
-                            Text(
-                              gObj["title"].toString(),
-                              style: TextStyle(
-                                  color: TColor.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            Container(
-                              width: media.width * 0.1,
-                              height: 1,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 32, horizontal: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            gObj["image"]!,
+                            width: media.width * 0.5,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            gObj["title"]!,
+                            style: TextStyle(
                               color: TColor.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
                             ),
-                            SizedBox(
-                              height: media.width * 0.02,
-                            ),
-                            Text(
-                              gObj["subtitle"].toString(),
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(color: TColor.white, fontSize: 12),
-                            ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            width: 40,
+                            height: 1,
+                            color: TColor.white,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            gObj["subtitle"]!,
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(color: TColor.white, fontSize: 12),
+                          ),
+                        ],
                       ),
-                    ),
-                  )
-                  .toList(),
-              carouselController: buttonCarouselController,
-              options: CarouselOptions(
-                autoPlay: false,
-                enlargeCenterPage: true,
-                viewportFraction: 0.7,
-                aspectRatio: 0.74,
-                initialPage: 0,
+                    );
+                  },
+                  options: CarouselOptions(
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.75,
+                    aspectRatio: 3 / 4,
+                  ),
+                ),
               ),
-            ),
+
+              const SizedBox(height: 24),
+
+              RoundButton(
+                title: "Confirm",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const WelcomeView(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            width: media.width,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: media.width * 0.05,
-                ),
-                Text(
-                  "What is your goal ?",
-                  style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  "It will help us to choose a best\nprogram for you",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: TColor.yellow, fontSize: 12),
-                ),
-                const Spacer(),
-                SizedBox(
-                  height: media.width * 0.05,
-                ),
-                RoundButton(
-                    title: "Confirm",
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const WelcomeView()));
-                    }),
-              ],
-            ),
-          )
-        ],
-      )),
+        ),
+      ),
     );
   }
 }
