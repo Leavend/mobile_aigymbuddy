@@ -1,8 +1,9 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
-import '../main_tab/main_tab_view.dart';
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -51,13 +52,10 @@ SizedBox(
               ),
              const Spacer(),
 
-               RoundButton(
+                  RoundButton(
                   title: "Go To Home",
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MainTabView()));
+                    context.go(AppRoute.main);
                   }),
                
             ],

@@ -1,6 +1,7 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/view/login/what_your_goal_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common_widget/round_button.dart';
 import '../../common_widget/round_textfield.dart';
@@ -181,11 +182,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       RoundButton(
                           title: "Next >",
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const WhatYourGoalView()));
+                            context.push(AppRoute.goal);
                           }),
                     ],
                   ),

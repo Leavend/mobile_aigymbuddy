@@ -1,8 +1,9 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
-import 'comparison_view.dart';
 
 class PhotoProgressView extends StatefulWidget {
   const PhotoProgressView({super.key});
@@ -215,13 +216,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const ComparisonView(),
-                              ),
-                            );
+                            context.push(AppRoute.photoComparison);
                           },
                         ),
                       )

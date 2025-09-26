@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import '../../common/color_extension.dart';
-import 'activity_tracker_view.dart';
-import 'finished_workout_view.dart';
-import 'notification_view.dart';
+import 'package:aigymbuddy/common/app_router.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -150,12 +149,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     IconButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NotificationView(),
-                          ),
-                        );
+                        context.push(AppRoute.notification);
                       },
                       icon: Image.asset(
                         "assets/img/notification_active.png",
@@ -268,12 +262,7 @@ class _HomeViewState extends State<HomeView> {
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ActivityTrackerView(),
-                              ),
-                            );
+                            context.push(AppRoute.activityTracker);
                           },
                         ),
                       ),
@@ -884,10 +873,7 @@ class _HomeViewState extends State<HomeView> {
                     final wObj = lastWorkoutArr[index];
                     return InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const FinishedWorkoutView()),
-                        );
+                        context.push(AppRoute.finishedWorkout);
                       },
                       child: WorkoutRow(wObj: wObj),
                     );

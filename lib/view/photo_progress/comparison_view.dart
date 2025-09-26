@@ -1,7 +1,8 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/view/photo_progress/result_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 
@@ -22,7 +23,7 @@ class _ComparisonViewState extends State<ComparisonView> {
         elevation: 0,
         leading: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            context.pop();
           },
           child: Container(
             margin: const EdgeInsets.all(8),
@@ -90,14 +91,12 @@ class _ComparisonViewState extends State<ComparisonView> {
             RoundButton(
                 title: "Compare",
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ResultView(
-                        date1: DateTime(2023, 5, 1),
-                        date2: DateTime(2023, 6, 1),
-                      ),
-                    ),
+                  context.push(
+                    AppRoute.photoResult,
+                    extra: {
+                      'date1': DateTime(2023, 5, 1),
+                      'date2': DateTime(2023, 6, 1),
+                    },
                   );
                 }),
             const SizedBox(

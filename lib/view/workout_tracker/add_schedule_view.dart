@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common/common.dart';
@@ -26,7 +27,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
         elevation: 0,
         leading: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            context.pop();
           },
           child: Container(
             margin: const EdgeInsets.all(8),

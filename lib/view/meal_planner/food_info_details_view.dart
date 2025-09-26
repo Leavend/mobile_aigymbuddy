@@ -1,6 +1,7 @@
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../common_widget/food_step_detail_row.dart';
@@ -69,7 +70,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
               elevation: 0,
               leading: InkWell(
                 onTap: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
                 child: Container(
                   margin: const EdgeInsets.all(8),

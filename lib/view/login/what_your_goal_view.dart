@@ -1,6 +1,7 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:aigymbuddy/view/login/welcome_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
@@ -134,10 +135,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
                 RoundButton(
                     title: "Confirm",
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const WelcomeView()));
+                      context.push(AppRoute.welcome);
                     }),
               ],
             ),
