@@ -125,7 +125,7 @@ class AppRouter {
           if (extra is! Map) {
             throw ArgumentError('WorkoutDetailView requires a Map extra.');
           }
-          return WorkoutDetailView(dObj: Map<String, dynamic>.from(extra as Map));
+          return WorkoutDetailView(dObj: Map<String, dynamic>.from(extra));
         },
       ),
       GoRoute(
@@ -135,7 +135,7 @@ class AppRouter {
           if (extra is! Map) {
             throw ArgumentError('ExercisesStepDetails requires a Map extra.');
           }
-          return ExercisesStepDetails(eObj: Map<String, dynamic>.from(extra as Map));
+          return ExercisesStepDetails(eObj: Map<String, dynamic>.from(extra));
         },
       ),
       GoRoute(
@@ -153,7 +153,7 @@ class AppRouter {
           if (extra is! Map) {
             throw ArgumentError('MealFoodDetailsView requires a Map extra.');
           }
-          return MealFoodDetailsView(eObj: Map<String, dynamic>.from(extra as Map));
+          return MealFoodDetailsView(eObj: Map<String, dynamic>.from(extra));
         },
       ),
       GoRoute(
@@ -163,7 +163,7 @@ class AppRouter {
           if (extra is! Map) {
             throw ArgumentError('FoodInfoDetailsView requires a Map extra.');
           }
-          final map = Map<String, dynamic>.from(extra as Map);
+          final map = Map<String, dynamic>.from(extra);
           final meal = map['meal'];
           final food = map['food'];
           if (meal is! Map || food is! Map) {
@@ -190,7 +190,7 @@ class AppRouter {
           if (extra is! Map) {
             throw ArgumentError('ResultView requires a Map extra.');
           }
-          final map = Map<String, dynamic>.from(extra as Map);
+          final map = Map<String, dynamic>.from(extra);
           final date1 = map['date1'];
           final date2 = map['date2'];
           if (date1 is! DateTime || date2 is! DateTime) {

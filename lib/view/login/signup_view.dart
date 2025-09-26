@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 // lib/view/login/signup_view.dart
 
-=======
->>>>>>> refs/remotes/origin/main
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
@@ -77,88 +74,7 @@ class _SignUpViewState extends State<SignUpView> {
                             "assets/img/show_password.png",
                             width: 20,
                             height: 20,
-<<<<<<< HEAD
                             color: TColor.gray,
-=======
-                            fit: BoxFit.contain,
-                            color: TColor.yellow,
-                          ))),
-                ),
-                Row(
-                  // crossAxisAlignment: CrossAxisAlignment.,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isCheck = !isCheck;
-                        });
-                      },
-                      icon: Icon(
-                        isCheck
-                            ? Icons.check_box_outlined
-                            : Icons.check_box_outline_blank_outlined,
-                        color: TColor.yellow,
-                        size: 20,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child:  Text(
-                          "By continuing you accept our Privacy Policy and\nTerm of Use",
-                          style: TextStyle(color: TColor.yellow, fontSize: 10),
-                        ),
-                     
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: media.width * 0.4,
-                ),
-                RoundButton(
-                    title: "Register",
-                    onPressed: () {
-                      context.push(AppRoute.completeProfile);
-                    }),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
-                Row(
-                  // crossAxisAlignment: CrossAxisAlignment.,
-                  children: [
-                    Expanded(
-                        child: Container(
-                      height: 1,
-                      color: TColor.yellow.withValues(alpha: 0.5),
-                    )),
-                    Text(
-                      "  Or  ",
-                      style: TextStyle(color: TColor.black, fontSize: 12),
-                    ),
-                    Expanded(
-                        child: Container(
-                      height: 1,
-                      color: TColor.yellow.withValues(alpha: 0.5),
-                    )),
-                  ],
-                ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: TColor.white,
-                          border: Border.all(
-                            width: 1,
-                            color: TColor.yellow.withValues(alpha: 0.4),
->>>>>>> refs/remotes/origin/main
                           ),
                         ),
                       ),
@@ -239,36 +155,6 @@ class _SignUpViewState extends State<SignUpView> {
                           ],
                         ),
                       ),
-<<<<<<< HEAD
-=======
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
-                TextButton(
-                  onPressed: () {
-                    context.push(AppRoute.login);
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Already have an account? ",
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        "Login",
-                        style: TextStyle(
-                            color: TColor.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700),
-                      )
->>>>>>> refs/remotes/origin/main
                     ],
                   ),
                 ),

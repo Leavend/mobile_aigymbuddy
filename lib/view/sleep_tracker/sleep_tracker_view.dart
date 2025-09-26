@@ -45,20 +45,10 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
       appBar: AppBar(
         backgroundColor: TColor.white,
         elevation: 0,
-<<<<<<< HEAD
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Container(
-=======
         leading: InkWell(
           onTap: () => context.pop(),
           child: Container(
-            margin: const EdgeInsets.all(8),
-            height: 40,
-            width: 40,
-            alignment: Alignment.center,
->>>>>>> refs/remotes/origin/main
             decoration: BoxDecoration(
               color: TColor.lightGray,
               borderRadius: BorderRadius.circular(10),
@@ -204,7 +194,6 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                           child: Text("Last Night Sleep",
                               style: TextStyle(color: TColor.white, fontSize: 14)),
                         ),
-<<<<<<< HEAD
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
@@ -229,66 +218,6 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                           ),
                         ),
                       ],
-=======
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Text(
-                        "8h 20m",
-                        style: TextStyle(
-                          color: TColor.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Image.asset(
-                      "assets/img/SleepGraph.png",
-                      width: double.maxFinite,
-                      fit: BoxFit.cover,
-                    )
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: media.width * 0.05),
-
-            // Daily Sleep Schedule CTA
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                decoration: BoxDecoration(
-                  color: TColor.primaryColor2.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Daily Sleep Schedule",
-                      style: TextStyle(
-                        color: TColor.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 70,
-                      height: 25,
-                      child: RoundButton(
-                        title: "Check",
-                        type: RoundButtonType.bgGradient,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        onPressed: () {
-                          context.push(AppRoute.sleepSchedule);
-                        },
-                      ),
->>>>>>> refs/remotes/origin/main
                     ),
                   ),
 
@@ -321,10 +250,9 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                             type: RoundButtonType.bgGradient,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const SleepScheduleView()),
-                            ),
+                            onPressed: () {
+                              context.push(AppRoute.sleepSchedule);
+                            }
                           ),
                         ),
                       ],

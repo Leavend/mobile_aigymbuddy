@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 // lib/view/login/complete_profile_view.dart
 
-=======
->>>>>>> refs/remotes/origin/main
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
@@ -179,82 +176,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                               const TextInputType.numberWithOptions(decimal: true),
                         ),
                       ),
-<<<<<<< HEAD
                       const SizedBox(width: 8),
                       _UnitTag(text: "KG"),
-=======
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RoundTextField(
-                              controller: txtDate,
-                              hitText: "Your Weight",
-                              icon: "assets/img/weight.png",
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Container(
-                            width: 50,
-                            height: 50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: TColor.secondaryG,
-                              ),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              "KG",
-                              style:
-                                  TextStyle(color: TColor.white, fontSize: 12),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: media.width * 0.04,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RoundTextField(
-                              controller: txtDate,
-                              hitText: "Your Height",
-                              icon: "assets/img/hight.png",
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Container(
-                            width: 50,
-                            height: 50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: TColor.secondaryG,
-                              ),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              "CM",
-                              style:
-                                  TextStyle(color: TColor.white, fontSize: 12),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: media.width * 0.07,
-                      ),
-                      RoundButton(
-                          title: "Next >",
-                          onPressed: () {
-                            context.push(AppRoute.goal);
-                          }),
->>>>>>> refs/remotes/origin/main
                     ],
                   ),
 

@@ -337,7 +337,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                               onPressed: (obj) {
                                 context.push(
                                   AppRoute.exerciseSteps,
-                                  extra: Map<String, dynamic>.from(obj as Map),
+                                  extra: Map<String, dynamic>.from(obj),
                                 );
                               },
                             );

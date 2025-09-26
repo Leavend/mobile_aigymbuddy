@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 // lib/view/login/loign_view.dart
 
-=======
->>>>>>> refs/remotes/origin/main
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';

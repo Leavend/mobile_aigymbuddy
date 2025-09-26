@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 // lib/view/login_what_your_goal_view.dart
 
-=======
 import 'package:aigymbuddy/common/app_router.dart';
->>>>>>> refs/remotes/origin/main
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -138,56 +135,14 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
               RoundButton(
                 title: "Confirm",
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const WelcomeView(),
-                    ),
-                  );
+                  context.push(AppRoute.welcome);
                 },
               ),
               const SizedBox(height: 12),
             ],
           ),
-<<<<<<< HEAD
         ),
       ),
-=======
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            width: media.width,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: media.width * 0.05,
-                ),
-                Text(
-                  "What is your goal ?",
-                  style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  "It will help us to choose a best\nprogram for you",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: TColor.yellow, fontSize: 12),
-                ),
-                const Spacer(),
-                SizedBox(
-                  height: media.width * 0.05,
-                ),
-                RoundButton(
-                    title: "Confirm",
-                    onPressed: () {
-                      context.push(AppRoute.welcome);
-                    }),
-              ],
-            ),
-          )
-        ],
-      )),
->>>>>>> refs/remotes/origin/main
     );
   }
 }

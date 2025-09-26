@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 // lib/view/login/welcome_view.dart
 
-=======
->>>>>>> refs/remotes/origin/main
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -57,21 +54,12 @@ SizedBox(
               ),
              const Spacer(),
 
-<<<<<<< HEAD
                 RoundButton(
                   title: "Go To Home",
                   onPressed: () {
                     context.go(AppRoute.main);
                 }),
               
-=======
-                  RoundButton(
-                  title: "Go To Home",
-                  onPressed: () {
-                    context.go(AppRoute.main);
-                  }),
-               
->>>>>>> refs/remotes/origin/main
             ],
           ),
         ),
