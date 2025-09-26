@@ -1,6 +1,7 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common_widget/on_boarding_page.dart';
-import 'package:aigymbuddy/view/login/signup_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 
@@ -110,7 +111,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                       }else{
                         // Open Welcome Screen
                         print("Open Welcome Screen");
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpView() ));
+                        context.push(AppRoute.signUp);
                       }
                       
                   },),

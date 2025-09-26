@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 // lib/view/login_what_your_goal_view.dart
 
+=======
+import 'package:aigymbuddy/common/app_router.dart';
+>>>>>>> refs/remotes/origin/main
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:aigymbuddy/view/login/welcome_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
@@ -145,8 +149,45 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
               const SizedBox(height: 12),
             ],
           ),
+<<<<<<< HEAD
         ),
       ),
+=======
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            width: media.width,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: media.width * 0.05,
+                ),
+                Text(
+                  "What is your goal ?",
+                  style: TextStyle(
+                      color: TColor.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  "It will help us to choose a best\nprogram for you",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: TColor.yellow, fontSize: 12),
+                ),
+                const Spacer(),
+                SizedBox(
+                  height: media.width * 0.05,
+                ),
+                RoundButton(
+                    title: "Confirm",
+                    onPressed: () {
+                      context.push(AppRoute.welcome);
+                    }),
+              ],
+            ),
+          )
+        ],
+      )),
+>>>>>>> refs/remotes/origin/main
     );
   }
 }

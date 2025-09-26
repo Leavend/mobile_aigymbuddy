@@ -1,12 +1,13 @@
 // lib/view/meal_planner/meal_food_details_view.dart
 
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common_widget/meal_recommend_cell.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/meal_category_cell.dart';
 import '../../common_widget/popular_meal_row.dart';
-import 'food_info_details_view.dart';
 
 class MealFoodDetailsView extends StatefulWidget {
   final Map<String, dynamic> eObj;
@@ -76,7 +77,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
         centerTitle: true,
         elevation: 0,
         leading: InkWell(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             margin: const EdgeInsets.all(8),
             height: 40,
@@ -267,14 +268,12 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                 final Map<String, dynamic> fObj = popularArr[index];
                 return InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FoodInfoDetailsView(
-                          dObj: fObj,
-                          mObj: widget.eObj,
-                        ),
-                      ),
+                    context.push(
+                      AppRoute.foodInfo,
+                      extra: {
+                        'food': Map<String, dynamic>.from(fObj),
+                        'meal': Map<String, dynamic>.from(widget.eObj),
+                      },
                     );
                   },
                   child: PopularMealRow(mObj: fObj),

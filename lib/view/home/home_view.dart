@@ -8,7 +8,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
+<<<<<<< HEAD
 
+=======
+import '../../common/color_extension.dart';
+>>>>>>> refs/remotes/origin/main
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:go_router/go_router.dart';
 
@@ -97,6 +101,7 @@ class _HomeViewState extends State<HomeView> {
 
     return Scaffold(
       backgroundColor: TColor.white,
+<<<<<<< HEAD
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -122,6 +127,152 @@ class _HomeViewState extends State<HomeView> {
                           context.push(AppRoute.notification);
                         },
                         icon: Image.asset("assets/img/notification_active.png", width: 24, height: 24),
+=======
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Welcome Back,",
+                            style: TextStyle(color: TColor.yellow, fontSize: 12)),
+                        Text(
+                          "Stefani Wong",
+                          style: TextStyle(
+                            color: TColor.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        context.push(AppRoute.notification);
+                      },
+                      icon: Image.asset(
+                        "assets/img/notification_active.png",
+                        width: 25,
+                        height: 25,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: media.width * 0.05),
+
+                // BMI card
+                Container(
+                  height: media.width * 0.4,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: TColor.primaryG),
+                    borderRadius: BorderRadius.circular(media.width * 0.075),
+                  ),
+                  child: Stack(alignment: Alignment.center, children: [
+                    Image.asset(
+                      "assets/img/bg_dots.png",
+                      height: media.width * 0.4,
+                      width: double.maxFinite,
+                      fit: BoxFit.fitHeight,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Left content
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("BMI (Body Mass Index)",
+                                  style: TextStyle(
+                                      color: TColor.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700)),
+                              Text(
+                                "You have a normal weight",
+                                style: TextStyle(
+                                  color: TColor.white.withValues(alpha: 0.7),
+                                  fontSize: 12,
+                                ),
+                              ),
+                              SizedBox(height: media.width * 0.05),
+                              SizedBox(
+                                width: 120,
+                                height: 35,
+                                child: RoundButton(
+                                  title: "View More",
+                                  type: RoundButtonType.bgSGradient,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  onPressed: () {},
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // Right pie
+                          AspectRatio(
+                            aspectRatio: 1,
+                            child: PieChart(
+                              PieChartData(
+                                pieTouchData: PieTouchData(
+                                  touchCallback: (FlTouchEvent event, pieTouchResponse) {},
+                                ),
+                                startDegreeOffset: 250,
+                                borderData: FlBorderData(show: false),
+                                sectionsSpace: 1,
+                                centerSpaceRadius: 0,
+                                sections: showingSections(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ),
+
+                SizedBox(height: media.width * 0.05),
+
+                // Today Target
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: TColor.primaryColor2.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Today Target",
+                          style: TextStyle(
+                              color: TColor.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700)),
+                      SizedBox(
+                        width: 70,
+                        height: 25,
+                        child: RoundButton(
+                          title: "Check",
+                          type: RoundButtonType.bgGradient,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          onPressed: () {
+                            context.push(AppRoute.activityTracker);
+                          },
+                        ),
+>>>>>>> refs/remotes/origin/main
                       ),
                     ],
                   ),
