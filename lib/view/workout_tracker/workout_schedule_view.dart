@@ -1,12 +1,13 @@
 // lib/view/workout_tracker/workout_schedule_view.dart
 
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common/common.dart';
 import '../../common_widget/round_button.dart';
-import 'add_schedule_view.dart';
 
 class WorkoutScheduleView extends StatefulWidget {
   const WorkoutScheduleView({super.key});
@@ -70,7 +71,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         centerTitle: true,
         elevation: 0,
         leading: InkWell(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             margin: const EdgeInsets.all(8),
             height: 40,
@@ -233,8 +234,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                                       children: [
                                                         InkWell(
                                                           onTap: () =>
-                                                              Navigator.pop(
-                                                                  context),
+                                                              context.pop(),
                                                           child: Container(
                                                             margin:
                                                                 const EdgeInsets
@@ -380,12 +380,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
       ),
       floatingActionButton: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddScheduleView(date: _selectedDateAppBBar),
-            ),
-          );
+          context.push(AppRoute.addWorkoutSchedule, extra: _selectedDateAppBBar);
         },
         child: Container(
           width: 55,

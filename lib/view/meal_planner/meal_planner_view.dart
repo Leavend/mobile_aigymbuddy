@@ -1,14 +1,14 @@
 // lib/view/meal_planner/meal_planner_view.dart
 
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/find_eat_cell.dart';
 import '../../common_widget/round_button.dart';
 import '../../common_widget/today_meal_row.dart';
-import 'meal_food_details_view.dart';
-import 'meal_schedule_view.dart';
 
 class MealPlannerView extends StatefulWidget {
   const MealPlannerView({super.key});
@@ -46,7 +46,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
         centerTitle: true,
         elevation: 0,
         leading: InkWell(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             margin: const EdgeInsets.all(8),
             height: 40,
@@ -267,12 +267,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const MealScheduleView(),
-                                ),
-                              );
+                              context.push(AppRoute.mealSchedule);
                             },
                           ),
                         ),
@@ -369,11 +364,9 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                   final fObj = findEatArr[index];
                   return InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MealFoodDetailsView(eObj: fObj),
-                        ),
+                      context.push(
+                        AppRoute.mealFoodDetails,
+                        extra: Map<String, dynamic>.from(fObj),
                       );
                     },
                     child: FindEatCell(fObj: fObj, index: index),

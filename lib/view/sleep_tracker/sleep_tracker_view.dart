@@ -1,8 +1,9 @@
 // lib/view/sleep_tracker/sleep_tracker_view.dart
 
-import 'package:aigymbuddy/view/sleep_tracker/sleep_schedule_view.dart';
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
@@ -44,7 +45,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
         centerTitle: true,
         elevation: 0,
         leading: InkWell(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             margin: const EdgeInsets.all(8),
             height: 40,
@@ -278,12 +279,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SleepScheduleView(),
-                            ),
-                          );
+                          context.push(AppRoute.sleepSchedule);
                         },
                       ),
                     ),

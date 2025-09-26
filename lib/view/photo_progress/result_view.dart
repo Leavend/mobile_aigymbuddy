@@ -2,6 +2,7 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 
 import '../../common/color_extension.dart';
@@ -60,7 +61,7 @@ class _ResultViewState extends State<ResultView> {
         centerTitle: true,
         elevation: 0,
         leading: InkWell(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             margin: const EdgeInsets.all(8),
             alignment: Alignment.center,
@@ -282,7 +283,7 @@ class _ResultViewState extends State<ResultView> {
 
         // CTA
         const SizedBox(height: 16),
-        RoundButton(title: "Back to Home", onPressed: () => Navigator.pop(context)),
+        RoundButton(title: "Back to Home", onPressed: () => context.pop()),
         const SizedBox(height: 15),
       ],
     );
@@ -428,7 +429,7 @@ class _ResultViewState extends State<ResultView> {
 
         // CTA
         const SizedBox(height: 16),
-        RoundButton(title: "Back to Home", onPressed: () => Navigator.pop(context)),
+        RoundButton(title: "Back to Home", onPressed: () => context.pop()),
         const SizedBox(height: 15),
       ],
     );

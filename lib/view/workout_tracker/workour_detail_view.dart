@@ -1,9 +1,9 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/view/workout_tracker/exercises_stpe_details.dart';
-import 'package:aigymbuddy/view/workout_tracker/workout_schedule_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common_widget/exercises_set_section.dart';
 
@@ -99,7 +99,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               elevation: 0,
               leading: InkWell(
                 onTap: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
                 child: Container(
                   margin: const EdgeInsets.all(8),
@@ -225,8 +225,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                           time: "5/27, 09:00 AM",
                           color: TColor.primaryColor2.withValues(alpha: 0.3),
                           onPressed: () {
-
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkoutScheduleView() )  );
+                            context.push(AppRoute.workoutSchedule);
                           }),
                       SizedBox(
                         height: media.width * 0.02,
@@ -336,13 +335,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             return ExercisesSetSection(
                               sObj: sObj,
                               onPressed: (obj) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ExercisesStepDetails(
-                                      eObj: obj,
-                                    ),
-                                  ),
+                                context.push(
+                                  AppRoute.exerciseSteps,
+                                  extra: Map<String, dynamic>.from(obj as Map),
                                 );
                               },
                             );

@@ -1,9 +1,10 @@
 // lib/view/workout_tracker/workout_tracker_view.dart
 
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/view/workout_tracker/workour_detail_view.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common_widget/round_button.dart';
 import '../../common_widget/upcoming_workout_row.dart';
@@ -67,7 +68,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
               centerTitle: true,
               elevation: 0,
               leading: InkWell(
-                onTap: () => Navigator.pop(context),
+                onTap: () => context.pop(),
                 child: Container(
                   margin: const EdgeInsets.all(8),
                   height: 40,
@@ -322,11 +323,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                       return InkWell(
                         onTap: () {
                           // Pastikan parameter bertipe Map<String, dynamic>
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WorkoutDetailView(dObj: Map<String, dynamic>.from(wObj)),
-                            ),
+                          context.push(
+                            AppRoute.workoutDetail,
+                            extra: Map<String, dynamic>.from(wObj),
                           );
                         },
                         child: WhatTrainRow(wObj: Map<String, dynamic>.from(wObj)),

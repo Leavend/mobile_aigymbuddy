@@ -2,6 +2,7 @@
 
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/color_extension.dart';
@@ -79,7 +80,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
         centerTitle: true,
         elevation: 0,
         leading: InkWell(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             margin: const EdgeInsets.all(8),
             alignment: Alignment.center,
