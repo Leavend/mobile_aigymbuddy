@@ -1,9 +1,9 @@
 // lib/view/login/welcome_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
 
@@ -56,7 +56,9 @@ SizedBox(
 
                 RoundButton(
                   title: "Go To Home",
-                  onPressed: () {
+                  onPressed: () async {
+                    await AuthService.instance.setHasCredentials(true);
+                    if (!mounted) return;
                     context.go(AppRoute.main);
                 }),
               
