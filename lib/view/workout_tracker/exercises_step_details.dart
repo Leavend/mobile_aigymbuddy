@@ -9,10 +9,7 @@ import '../../common_widget/round_button.dart';
 import '../../common_widget/step_detail_row.dart';
 
 class ExercisesStepDetails extends StatelessWidget {
-  const ExercisesStepDetails({
-    super.key,
-    required this.exercise,
-  });
+  const ExercisesStepDetails({super.key, required this.exercise});
 
   final Map<String, dynamic> exercise;
 
@@ -65,8 +62,9 @@ class ExercisesStepDetails extends StatelessWidget {
     if (calories.isNotEmpty) {
       metadataParts.add('$calories Calories Burn');
     }
-    final metadataText =
-        metadataParts.isEmpty ? 'Easy | 390 Calories Burn' : metadataParts.join(' | ');
+    final metadataText = metadataParts.isEmpty
+        ? 'Easy | 390 Calories Burn'
+        : metadataParts.join(' | ');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: TColor.white,

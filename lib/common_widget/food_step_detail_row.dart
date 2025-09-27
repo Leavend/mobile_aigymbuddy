@@ -5,11 +5,7 @@ import '../common/color_extension.dart';
 import '../common/models/instruction_step.dart';
 
 class FoodStepDetailRow extends StatelessWidget {
-  const FoodStepDetailRow({
-    super.key,
-    required this.step,
-    this.isLast = false,
-  });
+  const FoodStepDetailRow({super.key, required this.step, this.isLast = false});
 
   final InstructionStep step;
   final bool isLast;

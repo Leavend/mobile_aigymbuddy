@@ -320,8 +320,10 @@ class _HomeViewState extends State<HomeView> {
                                 enabled: true,
                                 handleBuiltInTouches: false,
                                 touchCallback: (e, resp) {
-                                  if (resp == null || resp.lineBarSpots == null)
+                                  if (resp == null ||
+                                      resp.lineBarSpots == null) {
                                     return;
+                                  }
                                   if (e is FlTapUpEvent) {
                                     heartRateTooltipSpots
                                       ..clear()
@@ -661,8 +663,9 @@ class _HomeViewState extends State<HomeView> {
                           enabled: true,
                           handleBuiltInTouches: false,
                           touchCallback: (e, resp) {
-                            if (resp == null || resp.lineBarSpots == null)
+                            if (resp == null || resp.lineBarSpots == null) {
                               return;
+                            }
                             if (e is FlTapUpEvent) {
                               workoutTooltipSpots
                                 ..clear()

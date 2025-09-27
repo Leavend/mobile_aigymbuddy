@@ -111,8 +111,9 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                           handleBuiltInTouches: false,
                           touchCallback: (event, response) {
                             if (response == null ||
-                                response.lineBarSpots == null)
+                                response.lineBarSpots == null) {
                               return;
+                            }
                             if (event is FlTapUpEvent) {
                               final idx =
                                   response.lineBarSpots!.first.spotIndex;

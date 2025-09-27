@@ -31,21 +31,13 @@ class FoodInfoDetailsView extends StatelessWidget {
       title: 'Calories',
       value: '180 kCal',
     ),
-    NutritionInfo(
-      image: 'assets/img/egg.png',
-      title: 'Fats',
-      value: '30 g',
-    ),
+    NutritionInfo(image: 'assets/img/egg.png', title: 'Fats', value: '30 g'),
     NutritionInfo(
       image: 'assets/img/proteins.png',
       title: 'Proteins',
       value: '20 g',
     ),
-    NutritionInfo(
-      image: 'assets/img/carbo.png',
-      title: 'Carbo',
-      value: '50 g',
-    ),
+    NutritionInfo(image: 'assets/img/carbo.png', title: 'Carbo', value: '50 g'),
   ];
 
   static const List<Ingredient> _ingredients = [
@@ -54,21 +46,13 @@ class FoodInfoDetailsView extends StatelessWidget {
       name: 'Wheat Flour',
       amount: '100 gr',
     ),
-    Ingredient(
-      image: 'assets/img/sugar.png',
-      name: 'Sugar',
-      amount: '3 tbsp',
-    ),
+    Ingredient(image: 'assets/img/sugar.png', name: 'Sugar', amount: '3 tbsp'),
     Ingredient(
       image: 'assets/img/baking_soda.png',
       name: 'Baking Soda',
       amount: '2 tsp',
     ),
-    Ingredient(
-      image: 'assets/img/eggs.png',
-      name: 'Eggs',
-      amount: '2 items',
-    ),
+    Ingredient(image: 'assets/img/eggs.png', name: 'Eggs', amount: '2 items'),
   ];
 
   static const List<InstructionStep> _steps = [
@@ -321,7 +305,8 @@ class FoodInfoDetailsView extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
