@@ -12,6 +12,7 @@ import 'package:aigymbuddy/view/meal_planner/food_info_details_view.dart';
 import 'package:aigymbuddy/view/meal_planner/meal_food_details_view.dart';
 import 'package:aigymbuddy/view/meal_planner/meal_planner_view.dart';
 import 'package:aigymbuddy/view/meal_planner/meal_schedule_view.dart';
+import 'package:aigymbuddy/view/splash/launch_view.dart';
 import 'package:aigymbuddy/view/on_boarding/on_boarding_view.dart';
 import 'package:aigymbuddy/view/photo_progress/comparison_view.dart';
 import 'package:aigymbuddy/view/photo_progress/photo_progress_view.dart';
@@ -28,7 +29,8 @@ import 'package:aigymbuddy/view/workout_tracker/workour_detail_view.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRoute {
-  static const String main = '/';
+  static const String launch = '/';
+  static const String main = '/home';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String signUp = '/sign-up';
@@ -59,8 +61,12 @@ class AppRoute {
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoute.main,
+    initialLocation: AppRoute.launch,
     routes: [
+      GoRoute(
+        path: AppRoute.launch,
+        builder: (context, state) => const LaunchView(),
+      ),
       GoRoute(
         path: AppRoute.main,
         builder: (context, state) => const MainTabView(),
