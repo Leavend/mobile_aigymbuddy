@@ -24,6 +24,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
       titleColor: TColor.primaryColor1,
       subtitleColor: TColor.gray,
       textAlign: TextAlign.center,
+      buttonText: 'Get Started',
       isWelcome: true,
     ),
     OnBoardingContent(
@@ -85,6 +86,8 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     final totalPages = pageArr.length;
     final progress = (selectPage + 1) / totalPages;
 
+    final isWelcome = pageArr[selectPage].isWelcome;
+
     return Scaffold(
       backgroundColor: TColor.white,
       body: Stack(
@@ -99,56 +102,60 @@ class _OnBoardingViewState extends State<OnBoardingView> {
               });
             },
             itemBuilder: (context, index) {
-              return OnBoardingPage(content: pageArr[index]);
+              return OnBoardingPage(
+                content: pageArr[index],
+                onNext: _handleNext,
+              );
             },
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 24, bottom: 40),
-            child: SizedBox(
-              width: 120,
-              height: 120,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: CircularProgressIndicator(
-                      color: TColor.primaryColor1,
-                      value: progress,
-                      strokeWidth: 3,
-                      backgroundColor: TColor.lightGray,
-                    ),
-                  ),
-                  Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      color: TColor.primaryColor1,
-                      borderRadius: BorderRadius.circular(40),
-                      boxShadow: [
-                        BoxShadow(
-                          color: TColor.primaryColor1.withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      onPressed: _handleNext,
-                      icon: Icon(
-                        selectPage == totalPages - 1
-                            ? Icons.check_rounded
-                            : Icons.arrow_forward_rounded,
-                        color: TColor.white,
-                        size: 28,
+          if (!isWelcome)
+            Padding(
+              padding: const EdgeInsets.only(right: 24, bottom: 40),
+              child: SizedBox(
+                width: 120,
+                height: 120,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 80,
+                      height: 80,
+                      child: CircularProgressIndicator(
+                        color: TColor.primaryColor1,
+                        value: progress,
+                        strokeWidth: 3,
+                        backgroundColor: TColor.lightGray,
                       ),
                     ),
-                  ),
-                ],
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: TColor.primaryColor1,
+                        borderRadius: BorderRadius.circular(40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: TColor.primaryColor1.withValues(alpha: 0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        onPressed: _handleNext,
+                        icon: Icon(
+                          selectPage == totalPages - 1
+                              ? Icons.check_rounded
+                              : Icons.arrow_forward_rounded,
+                          color: TColor.white,
+                          size: 28,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

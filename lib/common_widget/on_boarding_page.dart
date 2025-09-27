@@ -12,6 +12,7 @@ class OnBoardingContent {
     this.titleColor,
     this.subtitleColor,
     this.textAlign,
+    this.buttonText,
     this.isWelcome = false,
   });
 
@@ -23,13 +24,15 @@ class OnBoardingContent {
   final Color? titleColor;
   final Color? subtitleColor;
   final TextAlign? textAlign;
+  final String? buttonText;
   final bool isWelcome;
 }
 
 class OnBoardingPage extends StatelessWidget {
-  const OnBoardingPage({super.key, required this.content});
+  const OnBoardingPage({super.key, required this.content, this.onNext});
 
   final OnBoardingContent content;
+  final VoidCallback? onNext;
 
   @override
   Widget build(BuildContext context) {
@@ -41,41 +44,69 @@ class OnBoardingPage extends StatelessWidget {
         height: media.height,
         color: content.backgroundColor ?? TColor.white,
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(),
-              Text(
-                content.title,
-                textAlign: content.textAlign ?? TextAlign.center,
-                style: TextStyle(
-                  color: content.titleColor ?? TColor.primaryColor1,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(32, 48, 32, 40),
+            child: Column(
+              children: [
+                const Spacer(),
+                Text(
+                  content.title,
+                  textAlign: content.textAlign ?? TextAlign.center,
+                  style: TextStyle(
+                    color: content.titleColor ?? TColor.black,
+                    fontSize: 34,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                content.subtitle,
-                textAlign: content.textAlign ?? TextAlign.center,
-                style: TextStyle(
-                  color: content.subtitleColor ?? TColor.gray,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                const SizedBox(height: 12),
+                Text(
+                  content.subtitle,
+                  textAlign: content.textAlign ?? TextAlign.center,
+                  style: TextStyle(
+                    color: content.subtitleColor ?? TColor.gray,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Image.asset(
-                  content.image,
-                  width: media.width,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(height: 48),
-            ],
+                const Spacer(),
+                if (content.buttonText != null)
+                  SizedBox(
+                    width: double.infinity,
+                    child: GestureDetector(
+                      onTap: onNext,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: content.gradientColors ?? TColor.primaryG,
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: TColor.primaryColor1.withValues(alpha: 0.2),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          content.buttonText!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: TColor.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       );
