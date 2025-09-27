@@ -31,8 +31,9 @@ class _ComparisonViewState extends State<ComparisonView> {
             width: 40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10)),
+              color: TColor.lightGray,
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Image.asset(
               "assets/img/black_btn.png",
               width: 15,
@@ -44,7 +45,10 @@ class _ComparisonViewState extends State<ComparisonView> {
         title: Text(
           "Comparison",
           style: TextStyle(
-              color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700),
+            color: TColor.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         actions: [
           InkWell(
@@ -55,8 +59,9 @@ class _ComparisonViewState extends State<ComparisonView> {
               width: 40,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: TColor.lightGray,
-                  borderRadius: BorderRadius.circular(10)),
+                color: TColor.lightGray,
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: Image.asset(
                 "assets/img/more_btn.png",
                 width: 15,
@@ -64,7 +69,7 @@ class _ComparisonViewState extends State<ComparisonView> {
                 fit: BoxFit.contain,
               ),
             ),
-          )
+          ),
         ],
       ),
       backgroundColor: TColor.white,
@@ -73,35 +78,34 @@ class _ComparisonViewState extends State<ComparisonView> {
         child: Column(
           children: [
             IconTitleNextRow(
-                icon: "assets/img/date.png",
-                title: "Select Month 1",
-                time: "May",
-                onPressed: () {},
-                color: TColor.lightGray),
-            const SizedBox(
-              height: 15,
+              icon: "assets/img/date.png",
+              title: "Select Month 1",
+              time: "May",
+              onPressed: () {},
+              color: TColor.lightGray,
             ),
+            const SizedBox(height: 15),
             IconTitleNextRow(
-                icon: "assets/img/date.png",
-                title: "Select Month 2",
-                time: "select Month",
-                onPressed: () {},
-                color: TColor.lightGray),
+              icon: "assets/img/date.png",
+              title: "Select Month 2",
+              time: "select Month",
+              onPressed: () {},
+              color: TColor.lightGray,
+            ),
             const Spacer(),
             RoundButton(
-                title: "Compare",
-                onPressed: () {
-                  context.push(
-                    AppRoute.photoResult,
-                    extra: {
-                      'date1': DateTime(2023, 5, 1),
-                      'date2': DateTime(2023, 6, 1),
-                    },
-                  );
-                }),
-            const SizedBox(
-              height: 15,
+              title: "Compare",
+              onPressed: () {
+                context.push(
+                  AppRoute.photoResult,
+                  extra: {
+                    'date1': DateTime(2023, 5, 1),
+                    'date2': DateTime(2023, 6, 1),
+                  },
+                );
+              },
             ),
+            const SizedBox(height: 15),
           ],
         ),
       ),

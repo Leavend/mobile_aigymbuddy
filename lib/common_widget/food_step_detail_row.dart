@@ -13,7 +13,6 @@ class FoodStepDetailRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -37,26 +36,25 @@ class FoodStepDetailRow extends StatelessWidget {
             ),
             if (!isLast)
               DottedDashedLine(
-                  height: 50,
-                  width: 0,
-                  dashColor: TColor.secondaryColor1,
-                  axis: Axis.vertical)
+                height: 50,
+                width: 0,
+                dashColor: TColor.secondaryColor1,
+                axis: Axis.vertical,
+              ),
           ],
         ),
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Step ${ sObj["no"].toString()}",
+                "Step ${sObj["no"].toString()}",
                 style: TextStyle(
                   color: TColor.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.w500
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
@@ -65,7 +63,7 @@ class FoodStepDetailRow extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

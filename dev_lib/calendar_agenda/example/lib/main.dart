@@ -89,8 +89,8 @@ class _ExamplePageState extends State<ExamplePage> {
         lastDate: DateTime.now().add(const Duration(days: 60)),
         events: List.generate(
           100,
-          (index) =>
-              DateTime.now().subtract(Duration(days: index * random.nextInt(5))),
+          (index) => DateTime.now()
+              .subtract(Duration(days: index * random.nextInt(5))),
         ),
         onDateSelected: (date) {
           setState(() => _selectedDateAppBBar = date);

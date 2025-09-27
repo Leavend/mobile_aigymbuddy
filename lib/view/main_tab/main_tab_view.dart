@@ -52,13 +52,16 @@ class _MainTabViewState extends State<MainTabView> {
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             boxShadow: [
-              BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 10)),
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 18,
+                offset: Offset(0, 10),
+              ),
             ],
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(fabDiameter / 2),
-            onTap: () {
-            },
+            onTap: () {},
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(colors: TColor.primaryG),
@@ -66,7 +69,11 @@ class _MainTabViewState extends State<MainTabView> {
               ),
               alignment: Alignment.center,
               // ikon cupertino berkesan AI/assistant
-              child: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.white, size: 26),
+              child: const Icon(
+                CupertinoIcons.chat_bubble_text_fill,
+                color: Colors.white,
+                size: 26,
+              ),
             ),
           ),
         ),
@@ -76,7 +83,12 @@ class _MainTabViewState extends State<MainTabView> {
       bottomNavigationBar: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, bottomInset > 0 ? bottomInset : 12),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            0,
+            16,
+            bottomInset > 0 ? bottomInset : 12,
+          ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
             child: BackdropFilter(
@@ -87,7 +99,11 @@ class _MainTabViewState extends State<MainTabView> {
                   color: Colors.white.withValues(alpha: 0.92),
                   borderRadius: BorderRadius.circular(28),
                   boxShadow: const [
-                    BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, -2)),
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 12,
+                      offset: Offset(0, -2),
+                    ),
                   ],
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),

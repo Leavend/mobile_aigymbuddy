@@ -11,8 +11,6 @@ class BlankView extends StatefulWidget {
 class _BlankViewState extends State<BlankView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: TColor.white,
-    );
+    return Scaffold(backgroundColor: TColor.white);
   }
 }

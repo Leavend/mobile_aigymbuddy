@@ -7,11 +7,7 @@ class MealCategoryCell extends StatelessWidget {
   final Map<String, dynamic> cObj;
   final int index;
 
-  const MealCategoryCell({
-    super.key,
-    required this.index,
-    required this.cObj,
-  });
+  const MealCategoryCell({super.key, required this.index, required this.cObj});
 
   @override
   Widget build(BuildContext context) {

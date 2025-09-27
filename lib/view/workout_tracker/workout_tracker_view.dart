@@ -23,12 +23,12 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
     {
       "image": "assets/img/Workout1.png",
       "title": "Fullbody Workout",
-      "time": "Today, 03:00pm"
+      "time": "Today, 03:00pm",
     },
     {
       "image": "assets/img/Workout2.png",
       "title": "Upperbody Workout",
-      "time": "June 05, 02:00pm"
+      "time": "June 05, 02:00pm",
     },
   ];
 
@@ -37,20 +37,20 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
       "image": "assets/img/what_1.png",
       "title": "Fullbody Workout",
       "exercises": "11 Exercises",
-      "time": "32mins"
+      "time": "32mins",
     },
     {
       "image": "assets/img/what_2.png",
       "title": "Lowebody Workout",
       "exercises": "12 Exercises",
-      "time": "40mins"
+      "time": "40mins",
     },
     {
       "image": "assets/img/what_3.png",
       "title": "AB Workout",
       "exercises": "14 Exercises",
-      "time": "20mins"
-    }
+      "time": "20mins",
+    },
   ];
 
   @override
@@ -58,7 +58,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
     final media = MediaQuery.of(context).size;
 
     return Container(
-      decoration: BoxDecoration(gradient: LinearGradient(colors: TColor.primaryG)),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: TColor.primaryG),
+      ),
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
@@ -113,7 +115,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                )
+                ),
               ],
             ),
 
@@ -134,31 +136,36 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                     lineTouchData: LineTouchData(
                       enabled: true,
                       handleBuiltInTouches: false,
-                      touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
-                        // no-op; biar aman lintas versi
-                      },
-                      mouseCursorResolver: (FlTouchEvent event, LineTouchResponse? response) {
-                        if (response == null || response.lineBarSpots == null) {
-                          return SystemMouseCursors.basic;
-                        }
-                        return SystemMouseCursors.click;
-                      },
-                      getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
-                        return spotIndexes.map((index) {
-                          return TouchedSpotIndicatorData(
-                            FlLine(color: Colors.transparent),
-                            FlDotData(
-                              show: true,
-                              getDotPainter: (spot, percent, bar, i) => FlDotCirclePainter(
-                                radius: 3,
-                                color: Colors.white,
-                                strokeWidth: 3,
-                                strokeColor: TColor.secondaryColor1,
-                              ),
-                            ),
-                          );
-                        }).toList();
-                      },
+                      touchCallback:
+                          (FlTouchEvent event, LineTouchResponse? response) {
+                            // no-op; biar aman lintas versi
+                          },
+                      mouseCursorResolver:
+                          (FlTouchEvent event, LineTouchResponse? response) {
+                            if (response == null ||
+                                response.lineBarSpots == null) {
+                              return SystemMouseCursors.basic;
+                            }
+                            return SystemMouseCursors.click;
+                          },
+                      getTouchedSpotIndicator:
+                          (LineChartBarData barData, List<int> spotIndexes) {
+                            return spotIndexes.map((index) {
+                              return TouchedSpotIndicatorData(
+                                FlLine(color: Colors.transparent),
+                                FlDotData(
+                                  show: true,
+                                  getDotPainter: (spot, percent, bar, i) =>
+                                      FlDotCirclePainter(
+                                        radius: 3,
+                                        color: Colors.white,
+                                        strokeWidth: 3,
+                                        strokeColor: TColor.secondaryColor1,
+                                      ),
+                                ),
+                              );
+                            }).toList();
+                          },
                       // Gunakan hanya getTooltipItems agar kompatibel lintas versi
                       touchTooltipData: LineTouchTooltipData(
                         getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
@@ -212,7 +219,8 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
           decoration: BoxDecoration(
             color: TColor.white,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(25), topRight: Radius.circular(25),
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
             ),
           ),
           child: Scaffold(
@@ -233,7 +241,10 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
 
                   // Daily schedule CTA
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 15,
+                      horizontal: 15,
+                    ),
                     decoration: BoxDecoration(
                       color: TColor.primaryColor2.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(15),
@@ -244,7 +255,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                         Text(
                           "Daily Workout Schedule",
                           style: TextStyle(
-                            color: TColor.black, fontSize: 14, fontWeight: FontWeight.w700,
+                            color: TColor.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         SizedBox(
@@ -273,7 +286,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                       Text(
                         "Upcoming Workout",
                         style: TextStyle(
-                          color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700,
+                          color: TColor.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       TextButton(
@@ -281,7 +296,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                         child: Text(
                           "See More",
                           style: TextStyle(
-                            color: TColor.gray, fontSize: 14, fontWeight: FontWeight.w700,
+                            color: TColor.gray,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
@@ -295,7 +312,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                     itemBuilder: (context, index) {
                       final wObj = latestArr[index];
                       // UpcomingWorkoutRow biasanya ambil Map<String, dynamic>
-                      return UpcomingWorkoutRow(wObj: Map<String, dynamic>.from(wObj));
+                      return UpcomingWorkoutRow(
+                        wObj: Map<String, dynamic>.from(wObj),
+                      );
                     },
                   ),
 
@@ -308,7 +327,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                       Text(
                         "What Do You Want to Train",
                         style: TextStyle(
-                          color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700,
+                          color: TColor.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
@@ -328,7 +349,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                             extra: Map<String, dynamic>.from(wObj),
                           );
                         },
-                        child: WhatTrainRow(wObj: Map<String, dynamic>.from(wObj)),
+                        child: WhatTrainRow(
+                          wObj: Map<String, dynamic>.from(wObj),
+                        ),
                       );
                     },
                   ),
@@ -346,84 +369,88 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
   // ------------------------ Chart config ------------------------
 
   List<LineChartBarData> get lineBarsData1 => [
-        lineChartBarData1_1,
-        lineChartBarData1_2,
-      ];
+    lineChartBarData1_1,
+    lineChartBarData1_2,
+  ];
 
   LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-        isCurved: true,
-        color: TColor.white,
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 35),
-          FlSpot(2, 70),
-          FlSpot(3, 40),
-          FlSpot(4, 80),
-          FlSpot(5, 25),
-          FlSpot(6, 70),
-          FlSpot(7, 35),
-        ],
-      );
+    isCurved: true,
+    color: TColor.white,
+    barWidth: 4,
+    isStrokeCapRound: true,
+    dotData: const FlDotData(show: false),
+    belowBarData: BarAreaData(show: false),
+    spots: const [
+      FlSpot(1, 35),
+      FlSpot(2, 70),
+      FlSpot(3, 40),
+      FlSpot(4, 80),
+      FlSpot(5, 25),
+      FlSpot(6, 70),
+      FlSpot(7, 35),
+    ],
+  );
 
   LineChartBarData get lineChartBarData1_2 => LineChartBarData(
-        isCurved: true,
-        color: TColor.white.withValues(alpha: 0.5),
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 80),
-          FlSpot(2, 50),
-          FlSpot(3, 90),
-          FlSpot(4, 40),
-          FlSpot(5, 80),
-          FlSpot(6, 35),
-          FlSpot(7, 60),
-        ],
-      );
+    isCurved: true,
+    color: TColor.white.withValues(alpha: 0.5),
+    barWidth: 2,
+    isStrokeCapRound: true,
+    dotData: const FlDotData(show: false),
+    belowBarData: BarAreaData(show: false),
+    spots: const [
+      FlSpot(1, 80),
+      FlSpot(2, 50),
+      FlSpot(3, 90),
+      FlSpot(4, 40),
+      FlSpot(5, 80),
+      FlSpot(6, 35),
+      FlSpot(7, 60),
+    ],
+  );
 
   // Right axis titles — refactor pakai map untuk hilangkan 'break' yang tak perlu
   SideTitles get rightTitles => SideTitles(
-        showTitles: true,
-        interval: 20,
-        reservedSize: 40,
-        getTitlesWidget: (double value, TitleMeta meta) {
-          final labels = <int, String>{
-            0: '0%',
-            20: '20%',
-            40: '40%',
-            60: '60%',
-            80: '80%',
-            100: '100%',
-          };
-          final text = labels[value.toInt()];
-          if (text == null) return const SizedBox.shrink();
-          return Text(text, style: TextStyle(color: TColor.white, fontSize: 12), textAlign: TextAlign.center);
-        },
+    showTitles: true,
+    interval: 20,
+    reservedSize: 40,
+    getTitlesWidget: (double value, TitleMeta meta) {
+      final labels = <int, String>{
+        0: '0%',
+        20: '20%',
+        40: '40%',
+        60: '60%',
+        80: '80%',
+        100: '100%',
+      };
+      final text = labels[value.toInt()];
+      if (text == null) return const SizedBox.shrink();
+      return Text(
+        text,
+        style: TextStyle(color: TColor.white, fontSize: 12),
+        textAlign: TextAlign.center,
       );
+    },
+  );
 
   SideTitles get bottomTitles => SideTitles(
-        showTitles: true,
-        reservedSize: 32,
-        interval: 1,
-        getTitlesWidget: (double value, TitleMeta meta) {
-          final style = TextStyle(color: TColor.white, fontSize: 12);
-          final labels = <int, String>{
-            1: 'Sun',
-            2: 'Mon',
-            3: 'Tue',
-            4: 'Wed',
-            5: 'Thu',
-            6: 'Fri',
-            7: 'Sat',
-          };
-          final text = labels[value.toInt()];
-          if (text == null) return const SizedBox.shrink();
-          return Text(text, style: style);
-        },
-      );
+    showTitles: true,
+    reservedSize: 32,
+    interval: 1,
+    getTitlesWidget: (double value, TitleMeta meta) {
+      final style = TextStyle(color: TColor.white, fontSize: 12);
+      final labels = <int, String>{
+        1: 'Sun',
+        2: 'Mon',
+        3: 'Tue',
+        4: 'Wed',
+        5: 'Thu',
+        6: 'Fri',
+        7: 'Sat',
+      };
+      final text = labels[value.toInt()];
+      if (text == null) return const SizedBox.shrink();
+      return Text(text, style: style);
+    },
+  );
 }

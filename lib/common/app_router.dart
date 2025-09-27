@@ -181,7 +181,9 @@ class AppRouter {
           final meal = map['meal'];
           final food = map['food'];
           if (meal is! Map || food is! Map) {
-            throw ArgumentError('FoodInfoDetailsView requires meal and food Map extras.');
+            throw ArgumentError(
+              'FoodInfoDetailsView requires meal and food Map extras.',
+            );
           }
           return FoodInfoDetailsView(
             mObj: Map<String, dynamic>.from(meal),
@@ -201,10 +203,7 @@ class AppRouter {
         path: AppRoute.photoResult,
         builder: (context, state) {
           final map = Map<String, dynamic>.from(
-            _requireExtra<Map>(
-              state,
-              'ResultView requires a Map extra.',
-            ),
+            _requireExtra<Map>(state, 'ResultView requires a Map extra.'),
           );
           final date1 = map['date1'];
           final date2 = map['date2'];

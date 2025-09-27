@@ -22,17 +22,21 @@ class _MealPlannerViewState extends State<MealPlannerView> {
     {
       "name": "Salmon Nigiri",
       "image": "assets/img/m_1.png",
-      "time": "28/05/2023 07:00 AM"
+      "time": "28/05/2023 07:00 AM",
     },
     {
       "name": "Lowfat Milk",
       "image": "assets/img/m_2.png",
-      "time": "28/05/2023 08:00 AM"
+      "time": "28/05/2023 08:00 AM",
     },
   ];
 
   final List<Map<String, String>> findEatArr = const [
-    {"name": "Breakfast", "image": "assets/img/m_3.png", "number": "120+ Foods"},
+    {
+      "name": "Breakfast",
+      "image": "assets/img/m_3.png",
+      "number": "120+ Foods",
+    },
     {"name": "Lunch", "image": "assets/img/m_4.png", "number": "130+ Foods"},
   ];
 
@@ -145,7 +149,10 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                             hint: Text(
                               "Weekly",
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: TColor.white, fontSize: 12),
+                              style: TextStyle(
+                                color: TColor.white,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ),
@@ -165,34 +172,47 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                         lineTouchData: LineTouchData(
                           enabled: true,
                           handleBuiltInTouches: false,
-                          touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
-                            // no-op; aktifkan bila ingin interaksi khusus
-                          },
+                          touchCallback:
+                              (
+                                FlTouchEvent event,
+                                LineTouchResponse? response,
+                              ) {
+                                // no-op; aktifkan bila ingin interaksi khusus
+                              },
                           mouseCursorResolver:
-                              (FlTouchEvent event, LineTouchResponse? response) {
-                            if (response == null || response.lineBarSpots == null) {
-                              return SystemMouseCursors.basic;
-                            }
-                            return SystemMouseCursors.click;
-                          },
+                              (
+                                FlTouchEvent event,
+                                LineTouchResponse? response,
+                              ) {
+                                if (response == null ||
+                                    response.lineBarSpots == null) {
+                                  return SystemMouseCursors.basic;
+                                }
+                                return SystemMouseCursors.click;
+                              },
                           getTouchedSpotIndicator:
-                              (LineChartBarData barData, List<int> spotIndexes) {
-                            return spotIndexes.map((index) {
-                              return TouchedSpotIndicatorData(
-                                const FlLine(color: Colors.transparent),
-                                FlDotData(
-                                  show: true,
-                                  getDotPainter:
-                                      (spot, percent, barData, index) => FlDotCirclePainter(
-                                    radius: 3,
-                                    color: Colors.white,
-                                    strokeWidth: 3,
-                                    strokeColor: TColor.secondaryColor1,
-                                  ),
-                                ),
-                              );
-                            }).toList();
-                          },
+                              (
+                                LineChartBarData barData,
+                                List<int> spotIndexes,
+                              ) {
+                                return spotIndexes.map((index) {
+                                  return TouchedSpotIndicatorData(
+                                    const FlLine(color: Colors.transparent),
+                                    FlDotData(
+                                      show: true,
+                                      getDotPainter:
+                                          (spot, percent, barData, index) =>
+                                              FlDotCirclePainter(
+                                                radius: 3,
+                                                color: Colors.white,
+                                                strokeWidth: 3,
+                                                strokeColor:
+                                                    TColor.secondaryColor1,
+                                              ),
+                                    ),
+                                  );
+                                }).toList();
+                              },
                           // API baru: pakai getTooltipColor, hapus tooltipRoundedRadius
                           touchTooltipData: LineTouchTooltipData(
                             getTooltipColor: (_) => TColor.secondaryColor1,
@@ -242,7 +262,10 @@ class _MealPlannerViewState extends State<MealPlannerView> {
 
                   // Daily Meal Schedule
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 15,
+                      horizontal: 15,
+                    ),
                     decoration: BoxDecoration(
                       color: TColor.primaryColor2.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(15),
@@ -298,26 +321,36 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            items: const ["Breakfast", "Lunch", "Dinner", "Snack", "Dessert"]
-                                .map(
-                                  (name) => DropdownMenuItem<String>(
-                                    value: name,
-                                    child: Text(
-                                      name,
-                                      style: TextStyle(
-                                        color: TColor.gray,
-                                        fontSize: 14,
+                            items:
+                                const [
+                                      "Breakfast",
+                                      "Lunch",
+                                      "Dinner",
+                                      "Snack",
+                                      "Dessert",
+                                    ]
+                                    .map(
+                                      (name) => DropdownMenuItem<String>(
+                                        value: name,
+                                        child: Text(
+                                          name,
+                                          style: TextStyle(
+                                            color: TColor.gray,
+                                            fontSize: 14,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                                    )
+                                    .toList(),
                             onChanged: (value) {},
                             icon: Icon(Icons.expand_more, color: TColor.white),
                             hint: Text(
                               "Breakfast",
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: TColor.white, fontSize: 12),
+                              style: TextStyle(
+                                color: TColor.white,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ),
@@ -386,62 +419,64 @@ class _MealPlannerViewState extends State<MealPlannerView> {
   List<LineChartBarData> get lineBarsData1 => [lineChartBarData1_1];
 
   LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-        isCurved: true,
-        gradient: LinearGradient(colors: [TColor.primaryColor2, TColor.primaryColor1]),
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: FlDotData(
-          show: true,
-          getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-            radius: 3,
-            color: Colors.white,
-            strokeWidth: 1,
-            strokeColor: TColor.primaryColor2,
-          ),
-        ),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 35),
-          FlSpot(2, 70),
-          FlSpot(3, 40),
-          FlSpot(4, 80),
-          FlSpot(5, 25),
-          FlSpot(6, 70),
-          FlSpot(7, 35),
-        ],
-      );
+    isCurved: true,
+    gradient: LinearGradient(
+      colors: [TColor.primaryColor2, TColor.primaryColor1],
+    ),
+    barWidth: 2,
+    isStrokeCapRound: true,
+    dotData: FlDotData(
+      show: true,
+      getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+        radius: 3,
+        color: Colors.white,
+        strokeWidth: 1,
+        strokeColor: TColor.primaryColor2,
+      ),
+    ),
+    belowBarData: BarAreaData(show: false),
+    spots: const [
+      FlSpot(1, 35),
+      FlSpot(2, 70),
+      FlSpot(3, 40),
+      FlSpot(4, 80),
+      FlSpot(5, 25),
+      FlSpot(6, 70),
+      FlSpot(7, 35),
+    ],
+  );
 
   // --------- Axis titles ---------
 
   SideTitles get rightTitles => SideTitles(
-        showTitles: true,
-        interval: 20,
-        reservedSize: 40,
-        getTitlesWidget: (value, meta) {
-          const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
-          final idx = (value ~/ 20);
-          if (idx < 0 || idx >= labels.length) return const SizedBox.shrink();
-          return Text(
-            labels[idx],
-            style: TextStyle(color: TColor.gray, fontSize: 12),
-            textAlign: TextAlign.center,
-          );
-        },
+    showTitles: true,
+    interval: 20,
+    reservedSize: 40,
+    getTitlesWidget: (value, meta) {
+      const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
+      final idx = (value ~/ 20);
+      if (idx < 0 || idx >= labels.length) return const SizedBox.shrink();
+      return Text(
+        labels[idx],
+        style: TextStyle(color: TColor.gray, fontSize: 12),
+        textAlign: TextAlign.center,
       );
+    },
+  );
 
   SideTitles get bottomTitles => SideTitles(
-        showTitles: true,
-        reservedSize: 32,
-        interval: 1,
-        getTitlesWidget: (value, meta) {
-          const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-          final idx = value.toInt() - 1; // data points 1..7
-          final text = (idx >= 0 && idx < labels.length) ? labels[idx] : '';
-          return SideTitleWidget(
-            meta: meta, // API baru: wajib meta
-            space: 10,
-            child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
-          );
-        },
+    showTitles: true,
+    reservedSize: 32,
+    interval: 1,
+    getTitlesWidget: (value, meta) {
+      const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      final idx = value.toInt() - 1; // data points 1..7
+      final text = (idx >= 0 && idx < labels.length) ? labels[idx] : '';
+      return SideTitleWidget(
+        meta: meta, // API baru: wajib meta
+        space: 10,
+        child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
       );
+    },
+  );
 }

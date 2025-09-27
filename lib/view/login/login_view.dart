@@ -36,41 +36,38 @@ class _LoginViewState extends State<LoginView> {
                 Text(
                   "Welcome Back",
                   style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700),
+                    color: TColor.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                SizedBox(
-                  height: media.width * 0.05,
-                ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
+                SizedBox(height: media.width * 0.05),
+                SizedBox(height: media.width * 0.04),
                 const RoundTextField(
                   hitText: "Email",
                   icon: "assets/img/email.png",
                   keyboardType: TextInputType.emailAddress,
                 ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
+                SizedBox(height: media.width * 0.04),
                 RoundTextField(
                   hitText: "Password",
                   icon: "assets/img/lock.png",
                   obscureText: true,
                   rigtIcon: TextButton(
-                      onPressed: () {},
-                      child: Container(
-                          alignment: Alignment.center,
-                          width: 20,
-                          height: 20,
-                          child: Image.asset(
-                            "assets/img/show_password.png",
-                            width: 20,
-                            height: 20,
-                            fit: BoxFit.contain,
-                            color: TColor.gray,
-                          ))),
+                    onPressed: () {},
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 20,
+                      height: 20,
+                      child: Image.asset(
+                        "assets/img/show_password.png",
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.contain,
+                        color: TColor.gray,
+                      ),
+                    ),
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -78,43 +75,43 @@ class _LoginViewState extends State<LoginView> {
                     Text(
                       "Forgot your password?",
                       style: TextStyle(
-                          color: TColor.gray,
-                          fontSize: 10,
-                          decoration: TextDecoration.underline),
+                        color: TColor.gray,
+                        fontSize: 10,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ],
                 ),
-               const Spacer(),
+                const Spacer(),
                 RoundButton(
-                    title: "Login",
-                    onPressed: () {
-                      context.push(AppRoute.completeProfile);
-                    }),
-                SizedBox(
-                  height: media.width * 0.04,
+                  title: "Login",
+                  onPressed: () {
+                    context.push(AppRoute.completeProfile);
+                  },
                 ),
+                SizedBox(height: media.width * 0.04),
                 Row(
                   // crossAxisAlignment: CrossAxisAlignment.,
                   children: [
                     Expanded(
-                        child: Container(
-                      height: 1,
-                      color: TColor.gray.withValues(alpha: 0.5),
-                    )),
+                      child: Container(
+                        height: 1,
+                        color: TColor.gray.withValues(alpha: 0.5),
+                      ),
+                    ),
                     Text(
                       "  Or  ",
                       style: TextStyle(color: TColor.black, fontSize: 12),
                     ),
                     Expanded(
-                        child: Container(
-                      height: 1,
-                      color: TColor.gray.withValues(alpha: 0.5),
-                    )),
+                      child: Container(
+                        height: 1,
+                        color: TColor.gray.withValues(alpha: 0.5),
+                      ),
+                    ),
                   ],
                 ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
+                SizedBox(height: media.width * 0.04),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -139,9 +136,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: media.width * 0.04,
-                    ),
+                    SizedBox(width: media.width * 0.04),
                     GestureDetector(
                       onTap: () {},
                       child: Container(
@@ -162,12 +157,10 @@ class _LoginViewState extends State<LoginView> {
                           height: 20,
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
+                SizedBox(height: media.width * 0.04),
                 TextButton(
                   onPressed: () {
                     context.pop();
@@ -177,24 +170,20 @@ class _LoginViewState extends State<LoginView> {
                     children: [
                       Text(
                         "Don’t have an account yet? ",
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: TColor.black, fontSize: 14),
                       ),
                       Text(
                         "Register",
                         style: TextStyle(
-                            color: TColor.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700),
-                      )
+                          color: TColor.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
+                SizedBox(height: media.width * 0.04),
               ],
             ),
           ),

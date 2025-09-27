@@ -98,8 +98,7 @@ class FullCalendarState extends State<FullCalendar> {
     var referenceDate = firstDate;
     while (referenceDate.isBefore(lastDate)) {
       final referenceParts = referenceDate.toString().split(' ');
-      final newDate =
-          DateTime.parse('${referenceParts.first} 12:00:00.000');
+      final newDate = DateTime.parse('${referenceParts.first} 12:00:00.000');
       dates.add(newDate);
       referenceDate = newDate.add(const Duration(days: 1));
     }
@@ -154,10 +153,9 @@ class FullCalendarState extends State<FullCalendar> {
 
                 final isLast = index == 0;
                 return Padding(
-                  padding:
-                      EdgeInsets.only(bottom: isLast ? 0.0 : 10.0),
-                  child: month(
-                      daysOfMonth, width, widget.locale, widget.fullCalendarDay),
+                  padding: EdgeInsets.only(bottom: isLast ? 0.0 : 10.0),
+                  child: month(daysOfMonth, width, widget.locale,
+                      widget.fullCalendarDay),
                 );
               },
             ),
@@ -216,10 +214,9 @@ class FullCalendarState extends State<FullCalendar> {
                 final isLast = index == 0;
 
                 return Padding(
-                  padding:
-                      EdgeInsets.only(bottom: isLast ? 0.0 : 25.0),
-                  child: month(
-                      daysOfMonth, width, widget.locale, widget.fullCalendarDay),
+                  padding: EdgeInsets.only(bottom: isLast ? 0.0 : 25.0),
+                  child: month(daysOfMonth, width, widget.locale,
+                      widget.fullCalendarDay),
                 );
               },
             ),
@@ -233,11 +230,11 @@ class FullCalendarState extends State<FullCalendar> {
     final List<String> daysNames = [];
     for (var day = 12; day <= 18; day++) {
       if (weekday == WeekDay.long) {
-        daysNames.add(DateFormat.EEEE(locale)
-            .format(DateTime.parse('1970-01-$day')));
+        daysNames.add(
+            DateFormat.EEEE(locale).format(DateTime.parse('1970-01-$day')));
       } else {
-        daysNames.add(DateFormat.E(locale)
-            .format(DateTime.parse('1970-01-$day')));
+        daysNames
+            .add(DateFormat.E(locale).format(DateTime.parse('1970-01-$day')));
       }
     }
 
@@ -270,8 +267,7 @@ class FullCalendarState extends State<FullCalendar> {
     double width,
     bool event,
   ) {
-    final isSelectedDate =
-        date.toString().split(' ').first ==
+    final isSelectedDate = date.toString().split(' ').first ==
         (widget.selectedDate ?? startDate).toString().split(' ').first;
 
     final Color baseDateColor = outOfRange
@@ -305,8 +301,9 @@ class FullCalendarState extends State<FullCalendar> {
               Icon(
                 Icons.bookmark,
                 size: 8,
-                color:
-                    isSelectedDate ? widget.dateSelectedColor : widget.dateSelectedBg,
+                color: isSelectedDate
+                    ? widget.dateSelectedColor
+                    : widget.dateSelectedBg,
               )
             else
               const SizedBox(height: 5.0),

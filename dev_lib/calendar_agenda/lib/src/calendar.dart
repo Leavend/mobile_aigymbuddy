@@ -177,15 +177,14 @@ class CalendarAgendaState extends State<CalendarAgenda>
                       boxShadow: [
                         isSelected
                             ? BoxShadow(
-                                color:
-                                    Colors.black.withValues(alpha: 0.2), // was withOpacity
+                                color: Colors.black
+                                    .withValues(alpha: 0.2), // was withOpacity
                                 spreadRadius: 1,
                                 blurRadius: 10,
                                 offset: const Offset(0, 3),
                               )
                             : BoxShadow(
-                                color:
-                                    Colors.grey.withValues(alpha: 0.0),
+                                color: Colors.grey.withValues(alpha: 0.0),
                                 spreadRadius: 5,
                                 blurRadius: 20,
                                 offset: const Offset(0, 3),
@@ -225,8 +224,8 @@ class CalendarAgendaState extends State<CalendarAgenda>
                                 : Icon(
                                     Icons.bookmark,
                                     size: 8,
-                                    color: widget.dateColor
-                                        .withValues(alpha: 0.5),
+                                    color:
+                                        widget.dateColor.withValues(alpha: 0.5),
                                   ))
                             : const SizedBox(height: 5.0),
                         const SizedBox(height: 2.0),
@@ -365,8 +364,8 @@ class CalendarAgendaState extends State<CalendarAgenda>
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
       ),
       builder: (BuildContext context) {
         double height;
@@ -374,7 +373,8 @@ class CalendarAgendaState extends State<CalendarAgenda>
 
         if (widget.firstDate.year == endDate.year &&
             widget.firstDate.month == endDate.month) {
-          height = ((MediaQuery.of(context).size.width - 2 * padding) / 7) * 5 + 150.0;
+          height = ((MediaQuery.of(context).size.width - 2 * padding) / 7) * 5 +
+              150.0;
         } else {
           height = (MediaQuery.of(context).size.height - 100.0);
         }

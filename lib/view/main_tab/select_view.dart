@@ -17,26 +17,29 @@ class SelectView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RoundButton(
-                title: "Workout Tracker",
-                onPressed: () {
-                  context.push(AppRoute.workoutTracker);
-                }),
+              title: "Workout Tracker",
+              onPressed: () {
+                context.push(AppRoute.workoutTracker);
+              },
+            ),
 
-                const SizedBox(height: 15,),
+            const SizedBox(height: 15),
 
-                  RoundButton(
-                title: "Meal Planner",
-                onPressed: () {
-                  context.push(AppRoute.mealPlanner);
-                }),
+            RoundButton(
+              title: "Meal Planner",
+              onPressed: () {
+                context.push(AppRoute.mealPlanner);
+              },
+            ),
 
-                const SizedBox(height: 15,),
+            const SizedBox(height: 15),
 
-                  RoundButton(
-                title: "Sleep Tracker",
-                onPressed: () {
-                  context.push(AppRoute.sleepTracker);
-                })
+            RoundButton(
+              title: "Sleep Tracker",
+              onPressed: () {
+                context.push(AppRoute.sleepTracker);
+              },
+            ),
           ],
         ),
       ),

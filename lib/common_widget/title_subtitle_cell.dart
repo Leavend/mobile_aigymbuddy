@@ -21,9 +21,7 @@ class TitleSubtitleCell extends StatelessWidget {
       decoration: BoxDecoration(
         color: TColor.white,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 2),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 2)],
       ),
       child: Column(
         children: [
@@ -34,9 +32,7 @@ class TitleSubtitleCell extends StatelessWidget {
                 colors: TColor.primaryG,
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-              ).createShader(
-                Rect.fromLTRB(0, 0, bounds.width, bounds.height),
-              );
+              ).createShader(Rect.fromLTRB(0, 0, bounds.width, bounds.height));
             },
             child: Text(
               title,
@@ -47,13 +43,7 @@ class TitleSubtitleCell extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            subtitle,
-            style: TextStyle(
-              color: TColor.gray,
-              fontSize: 12,
-            ),
-          ),
+          Text(subtitle, style: TextStyle(color: TColor.gray, fontSize: 12)),
         ],
       ),
     );

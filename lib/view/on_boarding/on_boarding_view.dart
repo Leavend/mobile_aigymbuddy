@@ -130,16 +130,20 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                     DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: pageArr[selectPage].gradientColors ?? TColor.primaryG,
+                          colors:
+                              pageArr[selectPage].gradientColors ??
+                              TColor.primaryG,
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: (pageArr[selectPage].gradientColors ?? TColor.primaryG)
-                                .last
-                                .withValues(alpha: 0.3),
+                            color:
+                                (pageArr[selectPage].gradientColors ??
+                                        TColor.primaryG)
+                                    .last
+                                    .withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 6),
                           ),

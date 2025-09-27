@@ -58,10 +58,7 @@ class MealFoodScheduleRow extends StatelessWidget {
                 ),
                 Text(
                   (mObj['time'] ?? '').toString(),
-                  style: TextStyle(
-                    color: TColor.gray,
-                    fontSize: 10,
-                  ),
+                  style: TextStyle(color: TColor.gray, fontSize: 10),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -70,11 +67,7 @@ class MealFoodScheduleRow extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {},
-            icon: Image.asset(
-              'assets/img/next_go.png',
-              width: 25,
-              height: 25,
-            ),
+            icon: Image.asset('assets/img/next_go.png', width: 25, height: 25),
           ),
         ],
       ),

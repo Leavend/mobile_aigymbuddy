@@ -26,23 +26,34 @@ class _SignUpViewState extends State<SignUpView> {
           builder: (context, constraints) {
             return Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 24,
+                ),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 420), // presisi max width
+                  constraints: const BoxConstraints(
+                    maxWidth: 420,
+                  ), // presisi max width
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch, // full-width
+                    crossAxisAlignment:
+                        CrossAxisAlignment.stretch, // full-width
                     children: [
                       // Header
-                      Text("Hey there,",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: TColor.gray, fontSize: 16)),
+                      Text(
+                        "Hey there,",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: TColor.gray, fontSize: 16),
+                      ),
                       const SizedBox(height: 4),
-                      Text("Create an Account",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: TColor.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700)),
+                      Text(
+                        "Create an Account",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: TColor.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       const SizedBox(height: 24),
 
                       // Fields
@@ -86,15 +97,20 @@ class _SignUpViewState extends State<SignUpView> {
                         children: [
                           Checkbox(
                             value: isCheck,
-                            onChanged: (v) => setState(() => isCheck = v ?? false),
+                            onChanged: (v) =>
+                                setState(() => isCheck = v ?? false),
                             visualDensity: VisualDensity.compact,
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               "By continuing you accept our Privacy Policy and\nTerm of Use",
-                              style: TextStyle(color: TColor.gray, fontSize: 12),
+                              style: TextStyle(
+                                color: TColor.gray,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],
@@ -104,21 +120,35 @@ class _SignUpViewState extends State<SignUpView> {
 
                       // Button full-width
                       RoundButton(
-                          title: "Register",
-                          onPressed: () {
-                            context.push(AppRoute.completeProfile);
-                      }),
+                        title: "Register",
+                        onPressed: () {
+                          context.push(AppRoute.completeProfile);
+                        },
+                      ),
 
                       const SizedBox(height: 16),
 
                       // Divider "Or"
                       Row(
                         children: [
-                          Expanded(child: Container(height: 1, color: TColor.gray.withValues(alpha: 0.3))),
+                          Expanded(
+                            child: Container(
+                              height: 1,
+                              color: TColor.gray.withValues(alpha: 0.3),
+                            ),
+                          ),
                           const SizedBox(width: 8),
-                          Text("Or", style: TextStyle(color: TColor.black, fontSize: 12)),
+                          Text(
+                            "Or",
+                            style: TextStyle(color: TColor.black, fontSize: 12),
+                          ),
                           const SizedBox(width: 8),
-                          Expanded(child: Container(height: 1, color: TColor.gray.withValues(alpha: 0.3))),
+                          Expanded(
+                            child: Container(
+                              height: 1,
+                              color: TColor.gray.withValues(alpha: 0.3),
+                            ),
+                          ),
                         ],
                       ),
 
@@ -144,14 +174,21 @@ class _SignUpViewState extends State<SignUpView> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text("Already have an account? ",
-                                style: TextStyle(color: TColor.black, fontSize: 14)),
-                            Text("Login",
-                                style: TextStyle(
-                                  color: TColor.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                )),
+                            Text(
+                              "Already have an account? ",
+                              style: TextStyle(
+                                color: TColor.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              "Login",
+                              style: TextStyle(
+                                color: TColor.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -181,7 +218,10 @@ class _SocialIcon extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: TColor.white,
-          border: Border.all(width: 1, color: TColor.gray.withValues(alpha: 0.4)),
+          border: Border.all(
+            width: 1,
+            color: TColor.gray.withValues(alpha: 0.4),
+          ),
           borderRadius: BorderRadius.circular(15),
         ),
         child: Image.asset(path, width: 20, height: 20),

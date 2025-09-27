@@ -9,8 +9,11 @@ import '../../common_widget/food_step_detail_row.dart';
 class FoodInfoDetailsView extends StatefulWidget {
   final Map mObj;
   final Map dObj;
-  const FoodInfoDetailsView(
-      {super.key, required this.dObj, required this.mObj});
+  const FoodInfoDetailsView({
+    super.key,
+    required this.dObj,
+    required this.mObj,
+  });
 
   @override
   State<FoodInfoDetailsView> createState() => _FoodInfoDetailsViewState();
@@ -28,13 +31,13 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
     {
       "image": "assets/img/flour.png",
       "title": "Wheat Flour",
-      "value": "100grm"
+      "value": "100grm",
     },
     {"image": "assets/img/sugar.png", "title": "Sugar", "value": "3 tbsp"},
     {
       "image": "assets/img/baking_soda.png",
       "title": "Baking Soda",
-      "value": "2tsp"
+      "value": "2tsp",
     },
     {"image": "assets/img/eggs.png", "title": "Eggs", "value": "2 items"},
   ];
@@ -45,12 +48,12 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
     {
       "no": "3",
       "detail":
-          "In a seperate place, mix the eggs and liquid milk until blended"
+          "In a seperate place, mix the eggs and liquid milk until blended",
     },
     {
       "no": "4",
       "detail":
-          "Put the egg and milk mixture into the dry ingredients, Stir untul smooth and smooth"
+          "Put the egg and milk mixture into the dry ingredients, Stir untul smooth and smooth",
     },
     {"no": "5", "detail": "Prepare all of the ingredients that needed"},
   ];
@@ -59,8 +62,9 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     return Container(
-      decoration:
-          BoxDecoration(gradient: LinearGradient(colors: TColor.primaryG)),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: TColor.primaryG),
+      ),
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
@@ -78,8 +82,9 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                   width: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: TColor.lightGray,
-                      borderRadius: BorderRadius.circular(10)),
+                    color: TColor.lightGray,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Image.asset(
                     "assets/img/black_btn.png",
                     width: 15,
@@ -97,8 +102,9 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                     width: 40,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: TColor.lightGray,
-                        borderRadius: BorderRadius.circular(10)),
+                      color: TColor.lightGray,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: Image.asset(
                       "assets/img/more_btn.png",
                       width: 15,
@@ -106,7 +112,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                )
+                ),
               ],
             ),
             SliverAppBar(
@@ -127,8 +133,9 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                         height: media.width * 0.55,
                         decoration: BoxDecoration(
                           color: Colors.white24,
-                          borderRadius:
-                              BorderRadius.circular(media.width * 0.275),
+                          borderRadius: BorderRadius.circular(
+                            media.width * 0.275,
+                          ),
                         ),
                       ),
                     ),
@@ -152,9 +159,12 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
         },
         body: Container(
           decoration: BoxDecoration(
-              color: TColor.white,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+            color: TColor.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
+            ),
+          ),
           child: Scaffold(
             backgroundColor: Colors.transparent,
             body: Stack(
@@ -163,9 +173,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -173,14 +181,13 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                             width: 50,
                             height: 4,
                             decoration: BoxDecoration(
-                                color: TColor.gray.withValues(alpha: 0.3),
-                                borderRadius: BorderRadius.circular(3)),
+                              color: TColor.gray.withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
+                      SizedBox(height: media.width * 0.05),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Row(
@@ -193,14 +200,17 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                   Text(
                                     widget.dObj["name"].toString(),
                                     style: TextStyle(
-                                        color: TColor.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700),
+                                      color: TColor.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                   Text(
                                     "by James Ruth",
                                     style: TextStyle(
-                                        color: TColor.gray, fontSize: 12),
+                                      color: TColor.gray,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -213,85 +223,87 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                 height: 15,
                                 fit: BoxFit.contain,
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
+                      SizedBox(height: media.width * 0.05),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
                           "Nutrition",
                           style: TextStyle(
-                              color: TColor.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700),
+                            color: TColor.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       SizedBox(
                         height: 50,
                         child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemCount: nutritionArr.length,
-                            itemBuilder: (context, index) {
-                              var nObj = nutritionArr[index] as Map? ?? {};
-                              return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 4),
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          TColor.primaryColor2.withValues(alpha: 0.4),
-                                          TColor.primaryColor1.withValues(alpha: 0.4)
-                                        ],
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemCount: nutritionArr.length,
+                          itemBuilder: (context, index) {
+                            var nObj = nutritionArr[index] as Map? ?? {};
+                            return Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 4,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    TColor.primaryColor2.withValues(alpha: 0.4),
+                                    TColor.primaryColor1.withValues(alpha: 0.4),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    nObj["image"].toString(),
+                                    width: 15,
+                                    height: 15,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      nObj["title"].toString(),
+                                      style: TextStyle(
+                                        color: TColor.black,
+                                        fontSize: 12,
                                       ),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        nObj["image"].toString(),
-                                        width: 15,
-                                        height: 15,
-                                        fit: BoxFit.contain,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          nObj["title"].toString(),
-                                          style: TextStyle(
-                                              color: TColor.black,
-                                              fontSize: 12),
-                                        ),
-                                      )
-                                    ],
-                                  ));
-                            }),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
+                      SizedBox(height: media.width * 0.05),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
                           "Descriptions",
                           style: TextStyle(
-                              color: TColor.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700),
+                            color: TColor.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 4,
-                      ),
+                      const SizedBox(height: 4),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: ReadMoreText(
@@ -301,17 +313,14 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           trimMode: TrimMode.Line,
                           trimCollapsedText: ' Read More ...',
                           trimExpandedText: ' Read Less',
-                          style: TextStyle(
-                            color: TColor.gray,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: TColor.gray, fontSize: 12),
                           moreStyle: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w700),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
+                      const SizedBox(height: 15),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Row(
@@ -320,70 +329,75 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                             Text(
                               "Ingredients That You\nWill Need",
                               style: TextStyle(
-                                  color: TColor.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700),
+                                color: TColor.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             TextButton(
                               onPressed: () {},
                               child: Text(
                                 "${stepArr.length} Items",
-                                style:
-                                    TextStyle(color: TColor.gray, fontSize: 12),
+                                style: TextStyle(
+                                  color: TColor.gray,
+                                  fontSize: 12,
+                                ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
                       SizedBox(
                         height: (media.width * 0.25) + 40,
                         child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemCount: ingredientsArr.length,
-                            itemBuilder: (context, index) {
-                              var nObj = ingredientsArr[index] as Map? ?? {};
-                              return Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 4),
-                                  width: media.width * 0.23,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: media.width * 0.23,
-                                        height: media.width * 0.23,
-                                        decoration: BoxDecoration(
-                                            color: TColor.lightGray,
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        alignment: Alignment.center,
-                                        child: Image.asset(
-                                          nObj["image"].toString(),
-                                          width: 45,
-                                          height: 45,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-                                      Text(
-                                        nObj["title"].toString(),
-                                        style: TextStyle(
-                                            color: TColor.black, fontSize: 12),
-                                      ),
-                                      Text(
-                                        nObj["value"].toString(),
-                                        style: TextStyle(
-                                            color: TColor.gray, fontSize: 10),
-                                      ),
-                                    ],
-                                  ));
-                            }),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemCount: ingredientsArr.length,
+                          itemBuilder: (context, index) {
+                            var nObj = ingredientsArr[index] as Map? ?? {};
+                            return Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: media.width * 0.23,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: media.width * 0.23,
+                                    height: media.width * 0.23,
+                                    decoration: BoxDecoration(
+                                      color: TColor.lightGray,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Image.asset(
+                                      nObj["image"].toString(),
+                                      width: 45,
+                                      height: 45,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    nObj["title"].toString(),
+                                    style: TextStyle(
+                                      color: TColor.black,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    nObj["value"].toString(),
+                                    style: TextStyle(
+                                      color: TColor.gray,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -393,18 +407,21 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                             Text(
                               "Step by Step",
                               style: TextStyle(
-                                  color: TColor.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700),
+                                color: TColor.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             TextButton(
                               onPressed: () {},
                               child: Text(
                                 "${stepArr.length} Steps",
-                                style:
-                                    TextStyle(color: TColor.gray, fontSize: 12),
+                                style: TextStyle(
+                                  color: TColor.gray,
+                                  fontSize: 12,
+                                ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -422,9 +439,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           );
                         }),
                       ),
-                      SizedBox(
-                        height: media.width * 0.25,
-                      ),
+                      SizedBox(height: media.width * 0.25),
                     ],
                   ),
                 ),
@@ -436,14 +451,13 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: RoundButton(
-                            title: "Add to ${widget.mObj["name"]} Meal",
-                            onPressed: () {
-                             
-                            }),
+                          title: "Add to ${widget.mObj["name"]} Meal",
+                          onPressed: () {},
+                        ),
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),

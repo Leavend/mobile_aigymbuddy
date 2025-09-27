@@ -74,7 +74,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                 fit: BoxFit.contain,
               ),
             ),
-          )
+          ),
         ],
       ),
       backgroundColor: TColor.white,
@@ -161,7 +161,8 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                 onChanged: (val) => setState(() => _vibrateEnabled = val),
                 iconBuilder: (context, local, global) => const SizedBox(),
                 // onTap signature pada ^0.8.5 menerima nilai yang diketuk
-                onTap: (val) => setState(() => _vibrateEnabled = !_vibrateEnabled),
+                onTap: (val) =>
+                    setState(() => _vibrateEnabled = !_vibrateEnabled),
                 iconsTappable: false,
                 wrapperBuilder: (context, global, child) {
                   return Stack(
@@ -174,7 +175,9 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(colors: TColor.secondaryG),
-                            borderRadius: const BorderRadius.all(Radius.circular(50.0)),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(50.0),
+                            ),
                           ),
                         ),
                       ),
@@ -188,14 +191,16 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: TColor.white,
-                        borderRadius: const BorderRadius.all(Radius.circular(50.0)),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(50.0),
+                        ),
                         boxShadow: const [
                           BoxShadow(
                             color: Colors.black38,
                             spreadRadius: 0.05,
                             blurRadius: 1.1,
                             offset: Offset(0.0, 0.8),
-                          )
+                          ),
                         ],
                       ),
                     ),

@@ -9,11 +9,7 @@ class MealRecommendCell extends StatelessWidget {
   final Map<String, dynamic> fObj;
   final int index;
 
-  const MealRecommendCell({
-    super.key,
-    required this.index,
-    required this.fObj,
-  });
+  const MealRecommendCell({super.key, required this.index, required this.fObj});
 
   @override
   Widget build(BuildContext context) {

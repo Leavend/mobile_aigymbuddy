@@ -85,10 +85,7 @@ class _UpcomingWorkoutRowState extends State<UpcomingWorkoutRow> {
                   time,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: TColor.gray,
-                    fontSize: 10,
-                  ),
+                  style: TextStyle(color: TColor.gray, fontSize: 10),
                 ),
               ],
             ),

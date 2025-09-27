@@ -28,13 +28,13 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       "name": "Bedtime",
       "image": "assets/img/bed.png",
       "time": "01/06/2023 09:00 PM",
-      "duration": "in 6hours 22minutes"
+      "duration": "in 6hours 22minutes",
     },
     {
       "name": "Alarm",
       "image": "assets/img/alaarm.png",
       "time": "02/06/2023 05:10 AM",
-      "duration": "in 14hours 30minutes"
+      "duration": "in 14hours 30minutes",
     },
   ];
 
@@ -99,7 +99,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 fit: BoxFit.contain,
               ),
             ),
-          )
+          ),
         ],
       ),
       backgroundColor: TColor.white,
@@ -132,10 +132,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                         const SizedBox(height: 15),
                         Text(
                           "Ideal Hours for Sleep",
-                          style: TextStyle(
-                            color: TColor.black,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: TColor.black, fontSize: 14),
                         ),
                         Text(
                           "8hours 30minutes",
@@ -154,13 +151,13 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                             fontSize: 12,
                             onPressed: () {},
                           ),
-                        )
+                        ),
                       ],
                     ),
                     Image.asset(
                       "assets/img/sleep_schedule.png",
                       width: media.width * 0.35,
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -238,10 +235,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 children: [
                   Text(
                     "You will get 8hours 10minutes\nfor tonight",
-                    style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: TColor.black, fontSize: 12),
                   ),
                   const SizedBox(height: 15),
                   Stack(
@@ -265,10 +259,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                       ),
                       Text(
                         "96%",
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: TColor.black, fontSize: 12),
                       ),
                     ],
                   ),
@@ -291,7 +282,11 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
             gradient: LinearGradient(colors: TColor.secondaryG),
             borderRadius: BorderRadius.circular(27.5),
             boxShadow: const [
-              BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2)),
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 5,
+                offset: Offset(0, 2),
+              ),
             ],
           ),
           alignment: Alignment.center,

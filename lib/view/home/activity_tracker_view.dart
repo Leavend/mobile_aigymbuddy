@@ -22,12 +22,12 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     {
       "image": "assets/img/pic_4.png",
       "title": "Drinking 300ml Water",
-      "time": "About 1 minutes ago"
+      "time": "About 1 minutes ago",
     },
     {
       "image": "assets/img/pic_5.png",
       "title": "Eat Snack (Fitbar)",
-      "time": "About 3 hours ago"
+      "time": "About 3 hours ago",
     },
   ];
 
@@ -97,7 +97,10 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             children: [
               // Today Target
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 15,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -139,7 +142,11 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                               minWidth: double.maxFinite,
                               elevation: 0,
                               color: Colors.transparent,
-                              child: const Icon(Icons.add, color: Colors.white, size: 15),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 15,
+                              ),
                             ),
                           ),
                         ),
@@ -196,9 +203,13 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                             .map(
                               (name) => DropdownMenuItem<String>(
                                 value: name,
-                                child: Text(name,
-                                    style: TextStyle(
-                                        color: TColor.gray, fontSize: 14)),
+                                child: Text(
+                                  name,
+                                  style: TextStyle(
+                                    color: TColor.gray,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ),
                             )
                             .toList(),
@@ -220,11 +231,16 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
               // Chart
               Container(
                 height: media.width * 0.5,
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 0,
+                ),
                 decoration: BoxDecoration(
                   color: TColor.white,
                   borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 3)],
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black12, blurRadius: 3),
+                  ],
                 ),
                 child: BarChart(
                   BarChartData(
@@ -243,10 +259,12 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                             'Thursday',
                             'Friday',
                             'Saturday',
-                            'Sunday'
+                            'Sunday',
                           ];
                           final weekDay =
-                              group.x >= 0 && group.x < labels.length ? labels[group.x] : '';
+                              group.x >= 0 && group.x < labels.length
+                              ? labels[group.x]
+                              : '';
 
                           return BarTooltipItem(
                             '$weekDay\n',
@@ -276,7 +294,8 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                             touchedIndex = -1;
                             return;
                           }
-                          touchedIndex = barTouchResponse.spot!.touchedBarGroupIndex;
+                          touchedIndex =
+                              barTouchResponse.spot!.touchedBarGroupIndex;
                         });
                       },
                     ),
@@ -375,25 +394,60 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
   }
 
   List<BarChartGroupData> showingGroups() => List.generate(7, (i) {
-        switch (i) {
-          case 0:
-            return makeGroupData(0, 5, TColor.primaryG, isTouched: i == touchedIndex);
-          case 1:
-            return makeGroupData(1, 10.5, TColor.secondaryG, isTouched: i == touchedIndex);
-          case 2:
-            return makeGroupData(2, 5, TColor.primaryG, isTouched: i == touchedIndex);
-          case 3:
-            return makeGroupData(3, 7.5, TColor.secondaryG, isTouched: i == touchedIndex);
-          case 4:
-            return makeGroupData(4, 15, TColor.primaryG, isTouched: i == touchedIndex);
-          case 5:
-            return makeGroupData(5, 5.5, TColor.secondaryG, isTouched: i == touchedIndex);
-          case 6:
-            return makeGroupData(6, 8.5, TColor.primaryG, isTouched: i == touchedIndex);
-          default:
-            throw StateError('Invalid index $i');
-        }
-      });
+    switch (i) {
+      case 0:
+        return makeGroupData(
+          0,
+          5,
+          TColor.primaryG,
+          isTouched: i == touchedIndex,
+        );
+      case 1:
+        return makeGroupData(
+          1,
+          10.5,
+          TColor.secondaryG,
+          isTouched: i == touchedIndex,
+        );
+      case 2:
+        return makeGroupData(
+          2,
+          5,
+          TColor.primaryG,
+          isTouched: i == touchedIndex,
+        );
+      case 3:
+        return makeGroupData(
+          3,
+          7.5,
+          TColor.secondaryG,
+          isTouched: i == touchedIndex,
+        );
+      case 4:
+        return makeGroupData(
+          4,
+          15,
+          TColor.primaryG,
+          isTouched: i == touchedIndex,
+        );
+      case 5:
+        return makeGroupData(
+          5,
+          5.5,
+          TColor.secondaryG,
+          isTouched: i == touchedIndex,
+        );
+      case 6:
+        return makeGroupData(
+          6,
+          8.5,
+          TColor.primaryG,
+          isTouched: i == touchedIndex,
+        );
+      default:
+        throw StateError('Invalid index $i');
+    }
+  });
 
   BarChartGroupData makeGroupData(
     int x,
@@ -414,8 +468,9 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             end: Alignment.bottomCenter,
           ),
           width: width,
-          borderSide:
-              isTouched ? const BorderSide(color: Colors.green) : const BorderSide(color: Colors.white, width: 0),
+          borderSide: isTouched
+              ? const BorderSide(color: Colors.green)
+              : const BorderSide(color: Colors.white, width: 0),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 20,

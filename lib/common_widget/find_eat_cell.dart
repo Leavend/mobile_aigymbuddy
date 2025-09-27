@@ -9,11 +9,7 @@ class FindEatCell extends StatelessWidget {
   final Map<String, dynamic> fObj;
   final int index;
 
-  const FindEatCell({
-    super.key,
-    required this.index,
-    required this.fObj,
-  });
+  const FindEatCell({super.key, required this.index, required this.fObj});
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +74,7 @@ class FindEatCell extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
               (fObj['number'] ?? '').toString(),
-              style: TextStyle(
-                color: TColor.gray,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: TColor.gray, fontSize: 12),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

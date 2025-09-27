@@ -23,18 +23,34 @@ class _MealScheduleViewState extends State<MealScheduleView> {
 
   // Dummy data
   final List<Map<String, String>> breakfastArr = [
-    {"name": "Honey Pancake", "time": "07:00am", "image": "assets/img/honey_pan.png"},
+    {
+      "name": "Honey Pancake",
+      "time": "07:00am",
+      "image": "assets/img/honey_pan.png",
+    },
     {"name": "Coffee", "time": "07:30am", "image": "assets/img/coffee.png"},
   ];
 
   final List<Map<String, String>> lunchArr = [
-    {"name": "Chicken Steak", "time": "01:00pm", "image": "assets/img/chicken.png"},
-    {"name": "Milk", "time": "01:20pm", "image": "assets/img/glass-of-milk 1.png"},
+    {
+      "name": "Chicken Steak",
+      "time": "01:00pm",
+      "image": "assets/img/chicken.png",
+    },
+    {
+      "name": "Milk",
+      "time": "01:20pm",
+      "image": "assets/img/glass-of-milk 1.png",
+    },
   ];
 
   final List<Map<String, String>> snacksArr = [
     {"name": "Orange", "time": "04:30pm", "image": "assets/img/orange.png"},
-    {"name": "Apple Pie", "time": "04:40pm", "image": "assets/img/apple_pie.png"},
+    {
+      "name": "Apple Pie",
+      "time": "04:40pm",
+      "image": "assets/img/apple_pie.png",
+    },
   ];
 
   final List<Map<String, String>> dinnerArr = [
@@ -43,10 +59,34 @@ class _MealScheduleViewState extends State<MealScheduleView> {
   ];
 
   final List<Map<String, String>> nutritionArr = [
-    {"title": "Calories", "image": "assets/img/burn.png", "unit_name": "kCal", "value": "350", "max_value": "500"},
-    {"title": "Proteins", "image": "assets/img/proteins.png", "unit_name": "g", "value": "300", "max_value": "1000"},
-    {"title": "Fats", "image": "assets/img/egg.png", "unit_name": "g", "value": "140", "max_value": "1000"},
-    {"title": "Carbo", "image": "assets/img/carbo.png", "unit_name": "g", "value": "140", "max_value": "1000"},
+    {
+      "title": "Calories",
+      "image": "assets/img/burn.png",
+      "unit_name": "kCal",
+      "value": "350",
+      "max_value": "500",
+    },
+    {
+      "title": "Proteins",
+      "image": "assets/img/proteins.png",
+      "unit_name": "g",
+      "value": "300",
+      "max_value": "1000",
+    },
+    {
+      "title": "Fats",
+      "image": "assets/img/egg.png",
+      "unit_name": "g",
+      "value": "140",
+      "max_value": "1000",
+    },
+    {
+      "title": "Carbo",
+      "image": "assets/img/carbo.png",
+      "unit_name": "g",
+      "value": "140",
+      "max_value": "1000",
+    },
   ];
 
   @override
@@ -88,11 +128,22 @@ class _MealScheduleViewState extends State<MealScheduleView> {
               color: TColor.lightGray,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Image.asset("assets/img/black_btn.png", width: 15, height: 15, fit: BoxFit.contain),
+            child: Image.asset(
+              "assets/img/black_btn.png",
+              width: 15,
+              height: 15,
+              fit: BoxFit.contain,
+            ),
           ),
         ),
-        title: Text("Meal  Schedule",
-            style: TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700)),
+        title: Text(
+          "Meal  Schedule",
+          style: TextStyle(
+            color: TColor.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         actions: [
           InkWell(
             onTap: () {},
@@ -103,7 +154,12 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                 color: TColor.lightGray,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Image.asset("assets/img/more_btn.png", width: 15, height: 15, fit: BoxFit.contain),
+              child: Image.asset(
+                "assets/img/more_btn.png",
+                width: 15,
+                height: 15,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ],
@@ -119,7 +175,11 @@ class _MealScheduleViewState extends State<MealScheduleView> {
               children: [
                 IconButton(
                   onPressed: _goPrevDay,
-                  icon: Image.asset("assets/img/ArrowLeft.png", width: 18, height: 18),
+                  icon: Image.asset(
+                    "assets/img/ArrowLeft.png",
+                    width: 18,
+                    height: 18,
+                  ),
                   tooltip: 'Previous day',
                 ),
                 const SizedBox(width: 6),
@@ -127,13 +187,21 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                   child: Text(
                     dateLabel,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: TColor.black, fontSize: 14, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      color: TColor.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 6),
                 IconButton(
                   onPressed: _goNextDay,
-                  icon: Image.asset("assets/img/ArrowRight.png", width: 18, height: 18),
+                  icon: Image.asset(
+                    "assets/img/ArrowRight.png",
+                    width: 18,
+                    height: 18,
+                  ),
                   tooltip: 'Next day',
                 ),
               ],
@@ -184,16 +252,28 @@ class _MealScheduleViewState extends State<MealScheduleView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _sectionHeader("Breakfast", "${breakfastArr.length} Items | 230 calories"),
+                  _sectionHeader(
+                    "Breakfast",
+                    "${breakfastArr.length} Items | 230 calories",
+                  ),
                   _mealList(breakfastArr),
 
-                  _sectionHeader("Lunch", "${lunchArr.length} Items | 500 calories"),
+                  _sectionHeader(
+                    "Lunch",
+                    "${lunchArr.length} Items | 500 calories",
+                  ),
                   _mealList(lunchArr),
 
-                  _sectionHeader("Snacks", "${snacksArr.length} Items | 140 calories"),
+                  _sectionHeader(
+                    "Snacks",
+                    "${snacksArr.length} Items | 140 calories",
+                  ),
                   _mealList(snacksArr),
 
-                  _sectionHeader("Dinner", "${dinnerArr.length} Items | 120 calories"),
+                  _sectionHeader(
+                    "Dinner",
+                    "${dinnerArr.length} Items | 120 calories",
+                  ),
                   _mealList(dinnerArr),
 
                   SizedBox(height: media.width * 0.05),
@@ -203,8 +283,14 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Today Meal Nutritions",
-                            style: TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700)),
+                        Text(
+                          "Today Meal Nutritions",
+                          style: TextStyle(
+                            color: TColor.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -214,7 +300,8 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: nutritionArr.length,
-                    itemBuilder: (context, index) => NutritionRow(nObj: nutritionArr[index]),
+                    itemBuilder: (context, index) =>
+                        NutritionRow(nObj: nutritionArr[index]),
                   ),
 
                   SizedBox(height: media.width * 0.05),
@@ -235,10 +322,20 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700)),
+          Text(
+            title,
+            style: TextStyle(
+              color: TColor.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           TextButton(
             onPressed: () {},
-            child: Text(trailing, style: TextStyle(color: TColor.gray, fontSize: 12)),
+            child: Text(
+              trailing,
+              style: TextStyle(color: TColor.gray, fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -251,7 +348,8 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: data.length,
-      itemBuilder: (context, index) => MealFoodScheduleRow(mObj: data[index], index: index),
+      itemBuilder: (context, index) =>
+          MealFoodScheduleRow(mObj: data[index], index: index),
     );
   }
 }

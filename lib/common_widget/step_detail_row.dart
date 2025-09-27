@@ -10,7 +10,6 @@ class StepDetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -18,10 +17,7 @@ class StepDetailRow extends StatelessWidget {
           width: 25,
           child: Text(
             sObj["no"].toString(),
-            style: TextStyle(
-              color: TColor.secondaryColor1,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: TColor.secondaryColor1, fontSize: 14),
           ),
         ),
         Column(
@@ -29,7 +25,6 @@ class StepDetailRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              
               width: 20,
               height: 20,
               decoration: BoxDecoration(
@@ -38,25 +33,24 @@ class StepDetailRow extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Container(
-            
-              width: 18,
-              height: 18,
-              decoration: BoxDecoration(
-                border: Border.all(color: TColor.white, width: 3),
-                borderRadius: BorderRadius.circular(9),
-              ),) ,
+                width: 18,
+                height: 18,
+                decoration: BoxDecoration(
+                  border: Border.all(color: TColor.white, width: 3),
+                  borderRadius: BorderRadius.circular(9),
+                ),
+              ),
             ),
             if (!isLast)
               DottedDashedLine(
-                  height: 80,
-                  width: 0,
-                  dashColor: TColor.secondaryColor1,
-                  axis: Axis.vertical)
+                height: 80,
+                width: 0,
+                dashColor: TColor.secondaryColor1,
+                axis: Axis.vertical,
+              ),
           ],
         ),
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -64,10 +58,7 @@ class StepDetailRow extends StatelessWidget {
             children: [
               Text(
                 sObj["title"].toString(),
-                style: TextStyle(
-                  color: TColor.black,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: TColor.black, fontSize: 14),
               ),
               Text(
                 sObj["detail"].toString(),
@@ -75,7 +66,7 @@ class StepDetailRow extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

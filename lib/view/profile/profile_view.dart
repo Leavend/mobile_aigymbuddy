@@ -21,8 +21,16 @@ class _ProfileViewState extends State<ProfileView> {
   final List<Map<String, String>> _accountArr = const [
     {"image": "assets/img/p_personal.png", "name": "Personal Data", "tag": "1"},
     {"image": "assets/img/p_achi.png", "name": "Achievement", "tag": "2"},
-    {"image": "assets/img/p_activity.png", "name": "Activity History", "tag": "3"},
-    {"image": "assets/img/p_workout.png", "name": "Workout Progress", "tag": "4"},
+    {
+      "image": "assets/img/p_activity.png",
+      "name": "Activity History",
+      "tag": "3",
+    },
+    {
+      "image": "assets/img/p_workout.png",
+      "name": "Workout Progress",
+      "tag": "4",
+    },
   ];
 
   final List<Map<String, String>> _otherArr = const [
@@ -46,11 +54,20 @@ class _ProfileViewState extends State<ProfileView> {
               const SizedBox(height: 15),
               const Row(
                 children: [
-                  Expanded(child: TitleSubtitleCell(title: "180cm", subtitle: "Height")),
+                  Expanded(
+                    child: TitleSubtitleCell(
+                      title: "180cm",
+                      subtitle: "Height",
+                    ),
+                  ),
                   SizedBox(width: 15),
-                  Expanded(child: TitleSubtitleCell(title: "65kg", subtitle: "Weight")),
+                  Expanded(
+                    child: TitleSubtitleCell(title: "65kg", subtitle: "Weight"),
+                  ),
                   SizedBox(width: 15),
-                  Expanded(child: TitleSubtitleCell(title: "22yo", subtitle: "Age")),
+                  Expanded(
+                    child: TitleSubtitleCell(title: "22yo", subtitle: "Age"),
+                  ),
                 ],
               ),
               const SizedBox(height: 25),
@@ -125,79 +142,88 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   AppBar _buildAppBar() => AppBar(
-        backgroundColor: TColor.white,
-        centerTitle: true,
-        elevation: 0,
-        leadingWidth: 0,
-        title: Text(
-          "Profile",
-          style: TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700),
+    backgroundColor: TColor.white,
+    centerTitle: true,
+    elevation: 0,
+    leadingWidth: 0,
+    title: Text(
+      "Profile",
+      style: TextStyle(
+        color: TColor.black,
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
+    actions: [
+      InkWell(
+        onTap: () {},
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          height: 40,
+          width: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: TColor.lightGray,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Image.asset(
+            "assets/img/more_btn.png",
+            width: 15,
+            height: 15,
+            fit: BoxFit.contain,
+          ),
         ),
-        actions: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              height: 40,
-              width: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Image.asset(
-                "assets/img/more_btn.png",
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
-              ),
-            ),
-          )
-        ],
-      );
+      ),
+    ],
+  );
 
   Widget _buildHeader() => Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Image.asset(
-              "assets/img/u2.png",
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
+    children: [
+      ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: Image.asset(
+          "assets/img/u2.png",
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+        ),
+      ),
+      const SizedBox(width: 15),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Stefani Wong",
+              style: TextStyle(
+                color: TColor.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Stefani Wong",
-                  style: TextStyle(color: TColor.black, fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "Lose a Fat Program",
-                  style: TextStyle(color: TColor.gray, fontSize: 12),
-                ),
-              ],
+            Text(
+              "Lose a Fat Program",
+              style: TextStyle(color: TColor.gray, fontSize: 12),
             ),
-          ),
-          SizedBox(
-            width: 70,
-            height: 25,
-            child: RoundButton(
-              title: "Edit",
-              type: RoundButtonType.bgGradient,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              onPressed: () {},
-            ),
-          ),
-        ],
-      );
+          ],
+        ),
+      ),
+      SizedBox(
+        width: 70,
+        height: 25,
+        child: RoundButton(
+          title: "Edit",
+          type: RoundButtonType.bgGradient,
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          onPressed: () {},
+        ),
+      ),
+    ],
+  );
 
-  Widget _buildSection({required String title, required Widget child}) => Container(
+  Widget _buildSection({required String title, required Widget child}) =>
+      Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         decoration: BoxDecoration(
           color: TColor.white,
@@ -207,8 +233,14 @@ class _ProfileViewState extends State<ProfileView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style: TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700)),
+            Text(
+              title,
+              style: TextStyle(
+                color: TColor.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             const SizedBox(height: 8),
             child,
           ],
@@ -224,7 +256,8 @@ class _ProfileViewState extends State<ProfileView> {
       animationCurve: Curves.linear,
       onChanged: (val) => setState(() => _notificationEnabled = val),
       iconBuilder: (context, local, global) => const SizedBox(),
-      onTap: (val) => setState(() => _notificationEnabled = !_notificationEnabled),
+      onTap: (val) =>
+          setState(() => _notificationEnabled = !_notificationEnabled),
       iconsTappable: false,
       wrapperBuilder: (context, global, child) {
         return Stack(

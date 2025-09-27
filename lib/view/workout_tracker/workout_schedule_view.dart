@@ -116,7 +116,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 fit: BoxFit.contain,
               ),
             ),
-          )
+          ),
         ],
       ),
       backgroundColor: TColor.white,
@@ -194,8 +194,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                               child: Stack(
                                 alignment: Alignment.centerLeft,
                                 children: slotArr.map((sObj) {
-                                  final min =
-                                      (sObj["date"] as DateTime).minute;
+                                  final min = (sObj["date"] as DateTime).minute;
                                   // range (-1 .. 1)
                                   final pos = (min / 60) * 2 - 1;
 
@@ -213,9 +212,9 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                               content: Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                  vertical: 15,
-                                                  horizontal: 20,
-                                                ),
+                                                      vertical: 15,
+                                                      horizontal: 20,
+                                                    ),
                                                 decoration: BoxDecoration(
                                                   color: TColor.white,
                                                   borderRadius:
@@ -237,21 +236,22 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                                               context.pop(),
                                                           child: Container(
                                                             margin:
-                                                                const EdgeInsets
-                                                                    .all(8),
+                                                                const EdgeInsets.all(
+                                                                  8,
+                                                                ),
                                                             height: 40,
                                                             width: 40,
                                                             alignment: Alignment
                                                                 .center,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: TColor
-                                                                  .lightGray,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                            ),
+                                                                  color: TColor
+                                                                      .lightGray,
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        10,
+                                                                      ),
+                                                                ),
                                                             child: Image.asset(
                                                               "assets/img/closed_btn.png",
                                                               width: 15,
@@ -274,21 +274,22 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                                           onTap: () {},
                                                           child: Container(
                                                             margin:
-                                                                const EdgeInsets
-                                                                    .all(8),
+                                                                const EdgeInsets.all(
+                                                                  8,
+                                                                ),
                                                             height: 40,
                                                             width: 40,
                                                             alignment: Alignment
                                                                 .center,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: TColor
-                                                                  .lightGray,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                            ),
+                                                                  color: TColor
+                                                                      .lightGray,
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        10,
+                                                                      ),
+                                                                ),
                                                             child: Image.asset(
                                                               "assets/img/more_btn.png",
                                                               width: 15,
@@ -319,7 +320,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                                           width: 20,
                                                         ),
                                                         const SizedBox(
-                                                            width: 8),
+                                                          width: 8,
+                                                        ),
                                                         Text(
                                                           "${getDayTitle(sObj["start_time"].toString())} | ${getStringDateToOtherFormate(sObj["start_time"].toString(), outFormatStr: "h:mm aa")}",
                                                           style: TextStyle(
@@ -345,13 +347,16 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                         height: 35,
                                         width: availWidth * 0.5,
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 8),
+                                          horizontal: 8,
+                                        ),
                                         alignment: Alignment.centerLeft,
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
-                                              colors: TColor.secondaryG),
-                                          borderRadius:
-                                              BorderRadius.circular(17.5),
+                                            colors: TColor.secondaryG,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            17.5,
+                                          ),
                                         ),
                                         child: Text(
                                           "${sObj["name"]}, ${getStringDateToOtherFormate(sObj["start_time"].toString(), outFormatStr: "h:mm aa")}",
@@ -380,7 +385,10 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
       ),
       floatingActionButton: InkWell(
         onTap: () {
-          context.push(AppRoute.addWorkoutSchedule, extra: _selectedDateAppBBar);
+          context.push(
+            AppRoute.addWorkoutSchedule,
+            extra: _selectedDateAppBBar,
+          );
         },
         child: Container(
           width: 55,
@@ -393,7 +401,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 color: Colors.black12,
                 blurRadius: 5,
                 offset: Offset(0, 2),
-              )
+              ),
             ],
           ),
           alignment: Alignment.center,

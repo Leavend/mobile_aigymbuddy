@@ -122,7 +122,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                 fit: BoxFit.contain,
               ),
             ),
-          )
+          ),
         ],
       ),
       backgroundColor: TColor.white,
@@ -142,7 +142,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                     color: Colors.black12,
                     blurRadius: 2,
                     offset: Offset(0, 1),
-                  )
+                  ),
                 ],
               ),
               child: Row(
@@ -207,10 +207,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                 itemCount: categoryArr.length,
                 itemBuilder: (context, index) {
                   final Map<String, dynamic> cObj = categoryArr[index];
-                  return MealCategoryCell(
-                    cObj: cObj,
-                    index: index,
-                  );
+                  return MealCategoryCell(cObj: cObj, index: index);
                 },
               ),
             ),
@@ -237,10 +234,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                 itemCount: recommendArr.length,
                 itemBuilder: (context, index) {
                   final Map<String, dynamic> fObj = recommendArr[index];
-                  return MealRecommendCell(
-                    fObj: fObj,
-                    index: index,
-                  );
+                  return MealRecommendCell(fObj: fObj, index: index);
                 },
               ),
             ),

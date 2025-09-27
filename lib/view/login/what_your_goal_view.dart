@@ -87,7 +87,9 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 32, horizontal: 20),
+                        vertical: 32,
+                        horizontal: 20,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -106,17 +108,12 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          Container(
-                            width: 40,
-                            height: 1,
-                            color: TColor.white,
-                          ),
+                          Container(width: 40, height: 1, color: TColor.white),
                           const SizedBox(height: 12),
                           Text(
                             gObj["subtitle"]!,
                             textAlign: TextAlign.center,
-                            style:
-                                TextStyle(color: TColor.white, fontSize: 12),
+                            style: TextStyle(color: TColor.white, fontSize: 12),
                           ),
                         ],
                       ),

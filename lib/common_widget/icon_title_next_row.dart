@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
@@ -9,7 +8,14 @@ class IconTitleNextRow extends StatelessWidget {
   final String time;
   final VoidCallback onPressed;
   final Color color;
-  const IconTitleNextRow({super.key, required this.icon, required this.title, required this.time, required this.onPressed, required this.color});
+  const IconTitleNextRow({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.time,
+    required this.onPressed,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +35,7 @@ class IconTitleNextRow extends StatelessWidget {
               height: 30,
               alignment: Alignment.center,
               child: Image.asset(
-               icon,
+                icon,
                 width: 18,
                 height: 18,
                 fit: BoxFit.contain,
@@ -38,14 +44,14 @@ class IconTitleNextRow extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                title ,
+                title,
                 style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ),
             SizedBox(
               width: 120,
               child: Text(
-               time  ,
+                time,
                 textAlign: TextAlign.right,
                 style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
@@ -54,19 +60,18 @@ class IconTitleNextRow extends StatelessWidget {
             SizedBox(
               width: 25,
               height: 25,
-              child:  Container(
-                  width: 25,
-                  height: 25,
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    "assets/img/p_next.png",
-                    width: 12,
-                    height: 12,
-                    fit: BoxFit.contain,
-                  ),
+              child: Container(
+                width: 25,
+                height: 25,
+                alignment: Alignment.center,
+                child: Image.asset(
+                  "assets/img/p_next.png",
+                  width: 12,
+                  height: 12,
+                  fit: BoxFit.contain,
                 ),
-              
-            )
+              ),
+            ),
           ],
         ),
       ),

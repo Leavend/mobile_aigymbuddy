@@ -43,8 +43,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
               primary: TColor.primaryColor1, // header background
-              onPrimary: TColor.white,       // header text
-              onSurface: TColor.black,       // body text
+              onPrimary: TColor.white, // header text
+              onSurface: TColor.black, // body text
             ),
           ),
           child: child!,
@@ -52,7 +52,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
       },
     );
     if (picked != null) {
-      dobCtrl.text = "${picked.year.toString().padLeft(4, '0')}-"
+      dobCtrl.text =
+          "${picked.year.toString().padLeft(4, '0')}-"
           "${picked.month.toString().padLeft(2, '0')}-"
           "${picked.day.toString().padLeft(2, '0')}";
       setState(() {});
@@ -124,21 +125,31 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                             child: DropdownButton<String>(
                               isExpanded: true,
                               value: gender,
-                              icon: Icon(Icons.keyboard_arrow_down_rounded,
-                                  color: TColor.gray),
+                              icon: Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: TColor.gray,
+                              ),
                               items: const ["Male", "Female"]
-                                  .map((e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(
-                                          e,
-                                          style: TextStyle(
-                                              color: TColor.gray, fontSize: 14),
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(
+                                        e,
+                                        style: TextStyle(
+                                          color: TColor.gray,
+                                          fontSize: 14,
                                         ),
-                                      ))
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
-                              hint: Text("Choose Gender",
-                                  style: TextStyle(
-                                      color: TColor.gray, fontSize: 12)),
+                              hint: Text(
+                                "Choose Gender",
+                                style: TextStyle(
+                                  color: TColor.gray,
+                                  fontSize: 12,
+                                ),
+                              ),
                               onChanged: (v) => setState(() => gender = v),
                             ),
                           ),
@@ -172,8 +183,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                           controller: weightCtrl,
                           hitText: "Your Weight",
                           icon: "assets/img/weight.png",
-                          keyboardType:
-                              const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -191,8 +203,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                           controller: heightCtrl,
                           hitText: "Your Height",
                           icon: "assets/img/hight.png",
-                          keyboardType:
-                              const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -237,13 +250,10 @@ class _UnitTag extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 6),
-          )
+          ),
         ],
       ),
-      child: Text(
-        text,
-        style: TextStyle(color: TColor.white, fontSize: 12),
-      ),
+      child: Text(text, style: TextStyle(color: TColor.white, fontSize: 12)),
     );
   }
 }
