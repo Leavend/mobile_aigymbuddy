@@ -45,7 +45,7 @@ dependencies:
     path: dev_lib/calendar_agenda/
   intl: ^0.20.2
   go_router: ^16.2.4
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

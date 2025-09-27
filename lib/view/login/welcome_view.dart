@@ -57,9 +57,10 @@ SizedBox(
                 RoundButton(
                   title: "Go To Home",
                   onPressed: () async {
+                    final router = GoRouter.of(context);
                     await AuthService.instance.setHasCredentials(true);
                     if (!mounted) return;
-                    context.go(AppRoute.main);
+                    router.go(AppRoute.main);
                 }),
               
             ],
