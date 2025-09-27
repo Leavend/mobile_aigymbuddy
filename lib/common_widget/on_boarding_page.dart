@@ -119,45 +119,53 @@ class OnBoardingPage extends StatelessWidget {
       height: media.height,
       color: TColor.white,
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 12),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Image.asset(
-                    content.image,
-                    fit: BoxFit.contain,
-                    width: media.width * 0.8,
-                  ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final availableHeight = constraints.maxHeight;
+            final imageHeight = (availableHeight * 0.42).clamp(220.0, 360.0);
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: availableHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: availableHeight * 0.03),
+                    SizedBox(
+                      height: imageHeight,
+                      child: Image.asset(
+                        content.image,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    SizedBox(height: availableHeight * 0.04),
+                    Text(
+                      content.title,
+                      textAlign: content.textAlign ?? TextAlign.center,
+                      style: TextStyle(
+                        color: content.titleColor ?? TColor.black,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      content.subtitle,
+                      textAlign: content.textAlign ?? TextAlign.center,
+                      style: TextStyle(
+                        color: content.subtitleColor ?? TColor.gray,
+                        fontSize: 15,
+                        height: 1.5,
+                      ),
+                    ),
+                    SizedBox(height: availableHeight * 0.08),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
-              Text(
-                content.title,
-                textAlign: content.textAlign ?? TextAlign.center,
-                style: TextStyle(
-                  color: content.titleColor ?? TColor.black,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                content.subtitle,
-                textAlign: content.textAlign ?? TextAlign.center,
-                style: TextStyle(
-                  color: content.subtitleColor ?? TColor.gray,
-                  fontSize: 15,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 80),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
