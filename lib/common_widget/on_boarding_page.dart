@@ -135,10 +135,7 @@ class OnBoardingPage extends StatelessWidget {
                     SizedBox(height: availableHeight * 0.03),
                     SizedBox(
                       height: imageHeight,
-                      child: Image.asset(
-                        content.image,
-                        fit: BoxFit.contain,
-                      ),
+                      child: Image.asset(content.image, fit: BoxFit.contain),
                     ),
                     SizedBox(height: availableHeight * 0.04),
                     Text(
