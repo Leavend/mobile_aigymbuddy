@@ -1,9 +1,8 @@
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/on_boarding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../common/color_extension.dart';
 
 class OnBoardingView extends StatefulWidget {
   const OnBoardingView({super.key});
@@ -13,51 +12,78 @@ class OnBoardingView extends StatefulWidget {
 }
 
 class _OnBoardingViewState extends State<OnBoardingView> {
+  final PageController controller = PageController();
   int selectPage = 0;
-  PageController controller = PageController();
 
-  @override
-  void initState() {
-    super.initState();
-
-    controller.addListener(() {
-        selectPage = controller.page?.round() ?? 0;
-
-      setState(() {
-        
-      });
-    });
-  }
-
-  List pageArr = [
-    {
-      "title": "Track Your Goal",
-      "subtitle":
+  late final List<OnBoardingContent> pageArr = [
+    OnBoardingContent(
+      title: 'AI GYM BUDDY',
+      subtitle: 'Everybody Can Train',
+      image: 'assets/img/welcome.png',
+      backgroundColor: TColor.white,
+      titleColor: TColor.primaryColor1,
+      subtitleColor: TColor.gray,
+      textAlign: TextAlign.center,
+      isWelcome: true,
+    ),
+    OnBoardingContent(
+      title: 'Track Your Goal',
+      subtitle:
           "Don't worry if you have trouble determining your goals, We can help you determine your goals and track your goals",
-      "image": "assets/img/on_1.png"
-    },
-    {
-      "title": "Get Burn",
-      "subtitle":
+      image: 'assets/img/on_1.png',
+      gradientColors: TColor.primaryG,
+    ),
+    OnBoardingContent(
+      title: 'Get Burn',
+      subtitle:
           "Let’s keep burning, to achive yours goals, it hurts only temporarily, if you give up now you will be in pain forever",
-      "image": "assets/img/on_2.png"
-    },
-    {
-      "title": "Eat Well",
-      "subtitle":
+      image: 'assets/img/on_2.png',
+      gradientColors: TColor.secondaryG,
+    ),
+    OnBoardingContent(
+      title: 'Eat Well',
+      subtitle:
           "Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun",
-      "image": "assets/img/on_3.png"
-    },
-    {
-      "title": "Improve Sleep\nQuality",
-      "subtitle":
-          "Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning",
-      "image": "assets/img/on_4.png"
-    },
+      image: 'assets/img/on_3.png',
+      gradientColors: const [Color(0xff9DCEFF), Color(0xff92A3FD)],
+    ),
+    OnBoardingContent(
+      title: 'Improve Sleep\nQuality',
+      subtitle:
+          'Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning',
+      image: 'assets/img/on_4.png',
+      gradientColors: const [Color(0xff92A3FD), Color(0xff9DCEFF)],
+    ),
+    OnBoardingContent(
+      title: 'Smart AI Coach',
+      subtitle:
+          'Personalized programs backed with custom AI recommendations help you stay consistent on your fitness journey.',
+      image: 'assets/img/on_5.png',
+      gradientColors: const [Color(0xffC58BF2), Color(0xffEEA4CE)],
+    ),
   ];
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void _handleNext() {
+    if (selectPage < pageArr.length - 1) {
+      controller.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOutCubic,
+      );
+    } else {
+      context.go(AppRoute.signUp);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final totalPages = pageArr.length;
+    final progress = (selectPage + 1) / totalPages;
 
     return Scaffold(
       backgroundColor: TColor.white,
@@ -65,62 +91,64 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         alignment: Alignment.bottomRight,
         children: [
           PageView.builder(
-              controller: controller,
-              itemCount: pageArr.length,
-              itemBuilder: (context, index) {
-                var pObj = pageArr[index] as Map? ?? {};
-                return OnBoardingPage(pObj: pObj) ;
-              }),
-
-          SizedBox(
-            width: 120,
-            height: 120,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-
-                SizedBox(
-                  width: 70,
-                  height: 70,
-                  child: CircularProgressIndicator(
-                    color: TColor.primaryColor1,
-                    value: (selectPage + 1) / 4 ,
-                    strokeWidth: 2,
+            controller: controller,
+            itemCount: totalPages,
+            onPageChanged: (index) {
+              setState(() {
+                selectPage = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              return OnBoardingPage(content: pageArr[index]);
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 24, bottom: 40),
+            child: SizedBox(
+              width: 120,
+              height: 120,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: CircularProgressIndicator(
+                      color: TColor.primaryColor1,
+                      value: progress,
+                      strokeWidth: 3,
+                      backgroundColor: TColor.lightGray,
+                    ),
                   ),
-                ),
-
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(color: TColor.primaryColor1, borderRadius: BorderRadius.circular(35)),
-                  child: IconButton(icon: Icon( Icons.navigate_next, color: TColor.white, ), onPressed: (){
-          
-                      if(selectPage < 3) {
-          
-                         selectPage = selectPage + 1;
-
-                        controller.animateToPage(selectPage, duration: const Duration(milliseconds: 600), curve: Curves.bounceInOut);
-                        
-                        // controller.jumpToPage(selectPage);
-                        
-                          setState(() {
-                            
-                          });
-          
-                      }else{
-                        // Open Welcome Screen
-                        print("Open Welcome Screen");
-                        context.push(AppRoute.signUp);
-                      }
-                      
-                  },),
-                ),
-
-                
-              ],
+                  Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: TColor.primaryColor1,
+                      borderRadius: BorderRadius.circular(40),
+                      boxShadow: [
+                        BoxShadow(
+                          color: TColor.primaryColor1.withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: _handleNext,
+                      icon: Icon(
+                        selectPage == totalPages - 1
+                            ? Icons.check_rounded
+                            : Icons.arrow_forward_rounded,
+                        color: TColor.white,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
