@@ -86,7 +86,9 @@ class OnBoardingPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: TColor.primaryColor1.withValues(alpha: 0.2),
+                              color: TColor.primaryColor1.withValues(
+                                alpha: 0.2,
+                              ),
                               blurRadius: 16,
                               offset: const Offset(0, 8),
                             ),
