@@ -115,22 +115,17 @@ class OnBoardingPage extends StatelessWidget {
     return Container(
       width: media.width,
       height: media.height,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: content.gradientColors ?? TColor.primaryG,
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      color: TColor.white,
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 12),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topCenter,
                   child: Image.asset(
                     content.image,
                     fit: BoxFit.contain,
@@ -138,43 +133,29 @@ class OnBoardingPage extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: TColor.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(32),
-                  topRight: Radius.circular(32),
+              const SizedBox(height: 24),
+              Text(
+                content.title,
+                textAlign: content.textAlign ?? TextAlign.center,
+                style: TextStyle(
+                  color: content.titleColor ?? TColor.black,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-              padding: const EdgeInsets.fromLTRB(24, 32, 24, 48),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    content.title,
-                    textAlign: content.textAlign ?? TextAlign.left,
-                    style: TextStyle(
-                      color: content.titleColor ?? TColor.black,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    content.subtitle,
-                    textAlign: content.textAlign ?? TextAlign.left,
-                    style: TextStyle(
-                      color: content.subtitleColor ?? TColor.gray,
-                      fontSize: 15,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
+              const SizedBox(height: 12),
+              Text(
+                content.subtitle,
+                textAlign: content.textAlign ?? TextAlign.center,
+                style: TextStyle(
+                  color: content.subtitleColor ?? TColor.gray,
+                  fontSize: 15,
+                  height: 1.5,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 80),
+            ],
+          ),
         ),
       ),
     );
