@@ -1,8 +1,8 @@
+import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common_widget/on_boarding_page.dart';
 import 'package:flutter/material.dart';
-
-import '../../common/color_extension.dart';
-import '../../common_widget/on_boarding_page.dart';
-import '../login/signup_view.dart';
+import 'package:go_router/go_router.dart';
 
 class OnBoardingView extends StatefulWidget {
   const OnBoardingView({super.key});
@@ -12,49 +12,57 @@ class OnBoardingView extends StatefulWidget {
 }
 
 class _OnBoardingViewState extends State<OnBoardingView> {
-  late final PageController controller = PageController();
+  final PageController controller = PageController();
   int selectPage = 0;
 
-  final List<Map<String, String>> pageArr = [
-    {
-      'title': 'Track Your Goal',
-      'subtitle':
+  late final List<OnBoardingContent> pageArr = [
+    OnBoardingContent(
+      title: 'AI GYM BUDDY',
+      subtitle: 'Everybody Can Train',
+      image: 'assets/img/welcome.png',
+      backgroundColor: TColor.white,
+      titleColor: TColor.black,
+      subtitleColor: TColor.gray,
+      textAlign: TextAlign.center,
+      buttonText: 'Get Started',
+      isWelcome: true,
+    ),
+    OnBoardingContent(
+      title: 'Track Your Goal',
+      subtitle:
           "Don't worry if you have trouble determining your goals, We can help you determine your goals and track your goals",
-      'image': 'assets/img/on_1.png',
-    },
-    {
-      'title': 'Get Burn',
-      'subtitle':
+      image: 'assets/img/on_1.png',
+      gradientColors: TColor.primaryG,
+    ),
+    OnBoardingContent(
+      title: 'Get Burn',
+      subtitle:
           "Let’s keep burning, to achive yours goals, it hurts only temporarily, if you give up now you will be in pain forever",
-      'image': 'assets/img/on_2.png',
-    },
-    {
-      'title': 'Eat Well',
-      'subtitle':
+      image: 'assets/img/on_2.png',
+      gradientColors: TColor.secondaryG,
+    ),
+    OnBoardingContent(
+      title: 'Eat Well',
+      subtitle:
           "Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun",
-      'image': 'assets/img/on_3.png',
-    },
-    {
-      'title': 'Improve Sleep\nQuality',
-      'subtitle':
+      image: 'assets/img/on_3.png',
+      gradientColors: const [Color(0xff9DCEFF), Color(0xff92A3FD)],
+    ),
+    OnBoardingContent(
+      title: 'Improve Sleep\nQuality',
+      subtitle:
           'Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning',
-      'image': 'assets/img/on_4.png',
-    },
+      image: 'assets/img/on_4.png',
+      gradientColors: const [Color(0xff92A3FD), Color(0xff9DCEFF)],
+    ),
+    OnBoardingContent(
+      title: 'Smart AI Coach',
+      subtitle:
+          'Personalized programs backed with custom AI recommendations help you stay consistent on your fitness journey.',
+      image: 'assets/img/on_5.png',
+      gradientColors: const [Color(0xffC58BF2), Color(0xffEEA4CE)],
+    ),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-
-    controller.addListener(() {
-      final currentPage = controller.page?.round() ?? 0;
-      if (currentPage != selectPage) {
-        setState(() {
-          selectPage = currentPage;
-        });
-      }
-    });
-  }
 
   @override
   void dispose() {
@@ -64,27 +72,22 @@ class _OnBoardingViewState extends State<OnBoardingView> {
 
   void _handleNext() {
     if (selectPage < pageArr.length - 1) {
-      final nextPage = selectPage + 1;
-      controller.animateToPage(
-        nextPage,
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeInOut,
+      controller.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOutCubic,
       );
-      setState(() {
-        selectPage = nextPage;
-      });
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignUpView(),
-        ),
-      );
+      context.go(AppRoute.signUp);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final totalPages = pageArr.length;
+    final progress = (selectPage + 1) / totalPages;
+
+    final isWelcome = pageArr[selectPage].isWelcome;
+
     return Scaffold(
       backgroundColor: TColor.white,
       body: Stack(
@@ -92,50 +95,74 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         children: [
           PageView.builder(
             controller: controller,
-            itemCount: pageArr.length,
+            itemCount: totalPages,
+            onPageChanged: (index) {
+              setState(() {
+                selectPage = index;
+              });
+            },
             itemBuilder: (context, index) {
-              final pObj = pageArr[index];
-              return OnBoardingPage(pObj: pObj);
+              return OnBoardingPage(
+                content: pageArr[index],
+                onNext: _handleNext,
+              );
             },
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 24, bottom: 32),
-            child: SizedBox(
-              width: 120,
-              height: 120,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 70,
-                    height: 70,
-                    child: CircularProgressIndicator(
-                      color: TColor.primaryColor1,
-                      value: (selectPage + 1) / pageArr.length,
-                      strokeWidth: 2,
-                    ),
-                  ),
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: TColor.primaryColor1,
-                      borderRadius: BorderRadius.circular(35),
-                    ),
-                    child: IconButton(
-                      icon: Icon(
-                        selectPage == pageArr.length - 1
-                            ? Icons.check
-                            : Icons.navigate_next,
-                        color: TColor.white,
+          if (!isWelcome)
+            Padding(
+              padding: const EdgeInsets.only(right: 24, bottom: 40),
+              child: SizedBox(
+                width: 88,
+                height: 88,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 72,
+                      height: 72,
+                      child: CircularProgressIndicator(
+                        color: TColor.primaryColor1,
+                        value: progress,
+                        strokeWidth: 3,
+                        backgroundColor: TColor.lightGray,
                       ),
-                      onPressed: _handleNext,
                     ),
-                  ),
-                ],
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: pageArr[selectPage].gradientColors ?? TColor.primaryG,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: (pageArr[selectPage].gradientColors ?? TColor.primaryG)
+                                .last
+                                .withValues(alpha: 0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: SizedBox(
+                        width: 56,
+                        height: 56,
+                        child: IconButton(
+                          onPressed: _handleNext,
+                          icon: Icon(
+                            selectPage == totalPages - 1
+                                ? Icons.check_rounded
+                                : Icons.arrow_forward_rounded,
+                            color: TColor.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
