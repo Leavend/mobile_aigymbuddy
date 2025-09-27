@@ -48,18 +48,12 @@ class OnBoardingPage extends StatelessWidget {
             child: Column(
               children: [
                 const Spacer(),
-                Image.asset(
-                  content.image,
-                  width: media.width * 0.75,
-                  fit: BoxFit.fitWidth,
-                ),
-                SizedBox(height: media.width * 0.1),
                 Text(
                   content.title,
                   textAlign: content.textAlign ?? TextAlign.center,
                   style: TextStyle(
                     color: content.titleColor ?? TColor.black,
-                    fontSize: 20,
+                    fontSize: 30,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -69,7 +63,7 @@ class OnBoardingPage extends StatelessWidget {
                   textAlign: content.textAlign ?? TextAlign.center,
                   style: TextStyle(
                     color: content.subtitleColor ?? TColor.gray,
-                    fontSize: 12,
+                    fontSize: 16,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
