@@ -22,7 +22,7 @@ import 'package:aigymbuddy/view/sleep_tracker/sleep_add_alarm_view.dart';
 import 'package:aigymbuddy/view/sleep_tracker/sleep_schedule_view.dart';
 import 'package:aigymbuddy/view/sleep_tracker/sleep_tracker_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/add_schedule_view.dart';
-import 'package:aigymbuddy/view/workout_tracker/exercises_stpe_details.dart';
+import 'package:aigymbuddy/view/workout_tracker/exercises_step_details.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_schedule_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_tracker_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workour_detail_view.dart';
@@ -146,7 +146,7 @@ class AppRouter {
               'ExercisesStepDetails requires a Map extra.',
             ),
           );
-          return ExercisesStepDetails(eObj: data);
+          return ExercisesStepDetails(exercise: data);
         },
       ),
       GoRoute(
@@ -186,8 +186,8 @@ class AppRouter {
             );
           }
           return FoodInfoDetailsView(
-            mObj: Map<String, dynamic>.from(meal),
-            dObj: Map<String, dynamic>.from(food),
+            meal: Map<String, dynamic>.from(meal),
+            detail: Map<String, dynamic>.from(food),
           );
         },
       ),

@@ -2,11 +2,17 @@ import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
+import '../common/models/instruction_step.dart';
 
 class StepDetailRow extends StatelessWidget {
-  final Map sObj;
+  const StepDetailRow({
+    super.key,
+    required this.step,
+    this.isLast = false,
+  });
+
+  final InstructionStep step;
   final bool isLast;
-  const StepDetailRow({super.key, required this.sObj, this.isLast = false});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,7 @@ class StepDetailRow extends StatelessWidget {
         SizedBox(
           width: 25,
           child: Text(
-            sObj["no"].toString(),
+            step.number,
             style: TextStyle(color: TColor.secondaryColor1, fontSize: 14),
           ),
         ),
@@ -57,11 +63,11 @@ class StepDetailRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                sObj["title"].toString(),
+                step.title ?? 'Step ${step.number}',
                 style: TextStyle(color: TColor.black, fontSize: 14),
               ),
               Text(
-                sObj["detail"].toString(),
+                step.description,
                 style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ],

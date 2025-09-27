@@ -4,48 +4,69 @@ import 'package:go_router/go_router.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../common/color_extension.dart';
+import '../../common/models/instruction_step.dart';
 import '../../common_widget/round_button.dart';
 import '../../common_widget/step_detail_row.dart';
 
-class ExercisesStepDetails extends StatefulWidget {
-  final Map eObj;
-  const ExercisesStepDetails({super.key, required this.eObj});
+class ExercisesStepDetails extends StatelessWidget {
+  const ExercisesStepDetails({
+    super.key,
+    required this.exercise,
+  });
 
-  @override
-  State<ExercisesStepDetails> createState() => _ExercisesStepDetailsState();
-}
+  final Map<String, dynamic> exercise;
 
-class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
-  List stepArr = [
-    {
-      "no": "01",
-      "title": "Spread Your Arms",
-      "detail":
-          "To make the gestures feel more relaxed, stretch your arms as you start this movement. No bending of hands.",
-    },
-    {
-      "no": "02",
-      "title": "Rest at The Toe",
-      "detail":
-          "The basis of this movement is jumping. Now, what needs to be considered is that you have to use the tips of your feet",
-    },
-    {
-      "no": "03",
-      "title": "Adjust Foot Movement",
-      "detail":
-          "Jumping Jack is not just an ordinary jump. But, you also have to pay close attention to leg movements.",
-    },
-    {
-      "no": "04",
-      "title": "Clapping Both Hands",
-      "detail":
-          "This cannot be taken lightly. You see, without realizing it, the clapping of your hands helps you to keep your rhythm while doing the Jumping Jack",
-    },
+  static const _description =
+      'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, '
+      'is a physical jumping exercise performed by jumping to a position with the legs spread wide. '
+      'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, '
+      'is a physical jumping exercise performed by jumping to a position with the legs spread wide.';
+
+  static const List<InstructionStep> _steps = [
+    InstructionStep(
+      number: '01',
+      title: 'Spread Your Arms',
+      description:
+          'To make the gestures feel more relaxed, stretch your arms as you start this movement. Do not bend your hands.',
+    ),
+    InstructionStep(
+      number: '02',
+      title: 'Rest at The Toe',
+      description:
+          'The basis of this movement is jumping. Focus on landing softly using the tips of your feet.',
+    ),
+    InstructionStep(
+      number: '03',
+      title: 'Adjust Foot Movement',
+      description:
+          'Jumping Jack is not just an ordinary jump. You also have to pay close attention to leg movements.',
+    ),
+    InstructionStep(
+      number: '04',
+      title: 'Clapping Both Hands',
+      description:
+          'Without realizing it, clapping your hands helps you keep your rhythm while doing the Jumping Jack.',
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.of(context).size;
+    final media = MediaQuery.of(context).size;
+    final exerciseTitle = exercise['title'] as String? ?? 'Exercise';
+    final difficulty = (exercise['level'] ?? exercise['difficulty']) as String?;
+    final rawCalories = exercise['calories'];
+    final calories = rawCalories is num
+        ? rawCalories.round().toString()
+        : (rawCalories?.toString().replaceAll(RegExp(r'[^0-9]'), '') ?? '');
+    final metadataParts = <String>[];
+    if (difficulty != null && difficulty.isNotEmpty) {
+      metadataParts.add(difficulty);
+    }
+    if (calories.isNotEmpty) {
+      metadataParts.add('$calories Calories Burn');
+    }
+    final metadataText =
+        metadataParts.isEmpty ? 'Easy | 390 Calories Burn' : metadataParts.join(' | ');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: TColor.white,
@@ -138,7 +159,7 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
               ),
               const SizedBox(height: 15),
               Text(
-                widget.eObj["title"].toString(),
+                exerciseTitle,
                 style: TextStyle(
                   color: TColor.black,
                   fontSize: 16,
@@ -147,7 +168,7 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
               ),
               const SizedBox(height: 4),
               Text(
-                "Easy | 390 Calories Burn",
+                metadataText,
                 style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
               const SizedBox(height: 15),
@@ -161,7 +182,7 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
               ),
               const SizedBox(height: 4),
               ReadMoreText(
-                'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide',
+                _description,
                 trimLines: 4,
                 colorClickableText: TColor.black,
                 trimMode: TrimMode.Line,
@@ -188,7 +209,7 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                   TextButton(
                     onPressed: () {},
                     child: Text(
-                      "${stepArr.length} Sets",
+                      "${_steps.length} Sets",
                       style: TextStyle(color: TColor.gray, fontSize: 12),
                     ),
                   ),
@@ -197,15 +218,14 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
               ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: stepArr.length,
-                itemBuilder: ((context, index) {
-                  var sObj = stepArr[index] as Map? ?? {};
-
+                itemCount: _steps.length,
+                itemBuilder: (context, index) {
+                  final step = _steps[index];
                   return StepDetailRow(
-                    sObj: sObj,
-                    isLast: stepArr.last == sObj,
+                    step: step,
+                    isLast: index == _steps.length - 1,
                   );
-                }),
+                },
               ),
               Text(
                 "Custom Repetitions",

@@ -1,4 +1,7 @@
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/models/ingredient.dart';
+import 'package:aigymbuddy/common/models/instruction_step.dart';
+import 'package:aigymbuddy/common/models/nutrition_info.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -6,61 +9,101 @@ import 'package:readmore/readmore.dart';
 
 import '../../common_widget/food_step_detail_row.dart';
 
-class FoodInfoDetailsView extends StatefulWidget {
-  final Map mObj;
-  final Map dObj;
+class FoodInfoDetailsView extends StatelessWidget {
   const FoodInfoDetailsView({
     super.key,
-    required this.dObj,
-    required this.mObj,
+    required this.detail,
+    required this.meal,
   });
 
-  @override
-  State<FoodInfoDetailsView> createState() => _FoodInfoDetailsViewState();
-}
+  final Map<String, dynamic> meal;
+  final Map<String, dynamic> detail;
 
-class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
-  List nutritionArr = [
-    {"image": "assets/img/burn.png", "title": "180kCal"},
-    {"image": "assets/img/egg.png", "title": "30g fats"},
-    {"image": "assets/img/proteins.png", "title": "20g proteins"},
-    {"image": "assets/img/carbo.png", "title": "50g carbo"},
+  static const _description =
+      "Pancakes are some people's favorite breakfast, who doesn't like pancakes? "
+      "Especially with the real honey splash on top of the pancakes, of course everyone loves that! "
+      "besides being Pancakes are some people's favorite breakfast, who doesn't like pancakes? "
+      "Especially with the real honey splash on top of the pancakes, of course everyone loves that! besides being";
+
+  static const List<NutritionInfo> _nutritionItems = [
+    NutritionInfo(
+      image: 'assets/img/burn.png',
+      title: 'Calories',
+      value: '180 kCal',
+    ),
+    NutritionInfo(
+      image: 'assets/img/egg.png',
+      title: 'Fats',
+      value: '30 g',
+    ),
+    NutritionInfo(
+      image: 'assets/img/proteins.png',
+      title: 'Proteins',
+      value: '20 g',
+    ),
+    NutritionInfo(
+      image: 'assets/img/carbo.png',
+      title: 'Carbo',
+      value: '50 g',
+    ),
   ];
 
-  List ingredientsArr = [
-    {
-      "image": "assets/img/flour.png",
-      "title": "Wheat Flour",
-      "value": "100grm",
-    },
-    {"image": "assets/img/sugar.png", "title": "Sugar", "value": "3 tbsp"},
-    {
-      "image": "assets/img/baking_soda.png",
-      "title": "Baking Soda",
-      "value": "2tsp",
-    },
-    {"image": "assets/img/eggs.png", "title": "Eggs", "value": "2 items"},
+  static const List<Ingredient> _ingredients = [
+    Ingredient(
+      image: 'assets/img/flour.png',
+      name: 'Wheat Flour',
+      amount: '100 gr',
+    ),
+    Ingredient(
+      image: 'assets/img/sugar.png',
+      name: 'Sugar',
+      amount: '3 tbsp',
+    ),
+    Ingredient(
+      image: 'assets/img/baking_soda.png',
+      name: 'Baking Soda',
+      amount: '2 tsp',
+    ),
+    Ingredient(
+      image: 'assets/img/eggs.png',
+      name: 'Eggs',
+      amount: '2 items',
+    ),
   ];
 
-  List stepArr = [
-    {"no": "1", "detail": "Prepare all of the ingredients that needed"},
-    {"no": "2", "detail": "Mix flour, sugar, salt, and baking powder"},
-    {
-      "no": "3",
-      "detail":
-          "In a seperate place, mix the eggs and liquid milk until blended",
-    },
-    {
-      "no": "4",
-      "detail":
-          "Put the egg and milk mixture into the dry ingredients, Stir untul smooth and smooth",
-    },
-    {"no": "5", "detail": "Prepare all of the ingredients that needed"},
+  static const List<InstructionStep> _steps = [
+    InstructionStep(
+      number: '1',
+      title: 'Step 1',
+      description: 'Prepare all of the ingredients that are needed.',
+    ),
+    InstructionStep(
+      number: '2',
+      title: 'Step 2',
+      description: 'Mix flour, sugar, salt, and baking powder.',
+    ),
+    InstructionStep(
+      number: '3',
+      title: 'Step 3',
+      description:
+          'In a separate place, mix the eggs and liquid milk until blended.',
+    ),
+    InstructionStep(
+      number: '4',
+      title: 'Step 4',
+      description:
+          'Put the egg and milk mixture into the dry ingredients. Stir until smooth.',
+    ),
+    InstructionStep(
+      number: '5',
+      title: 'Step 5',
+      description: 'Cook until golden brown and serve while warm.',
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.of(context).size;
+    final media = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: TColor.primaryG),
@@ -144,7 +187,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: Image.asset(
-                          widget.dObj["b_image"].toString(),
+                          detail['b_image'].toString(),
                           width: media.width * 0.50,
                           height: media.width * 0.50,
                           fit: BoxFit.contain,
@@ -198,7 +241,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.dObj["name"].toString(),
+                                    detail['name'].toString(),
                                     style: TextStyle(
                                       color: TColor.black,
                                       fontSize: 16,
@@ -245,9 +288,9 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           scrollDirection: Axis.horizontal,
                           shrinkWrap: true,
-                          itemCount: nutritionArr.length,
+                          itemCount: _nutritionItems.length,
                           itemBuilder: (context, index) {
-                            var nObj = nutritionArr[index] as Map? ?? {};
+                            final nutrition = _nutritionItems[index];
                             return Container(
                               margin: const EdgeInsets.symmetric(
                                 vertical: 8,
@@ -270,19 +313,32 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Image.asset(
-                                    nObj["image"].toString(),
+                                    nutrition.image,
                                     width: 15,
                                     height: 15,
                                     fit: BoxFit.contain,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      nObj["title"].toString(),
-                                      style: TextStyle(
-                                        color: TColor.black,
-                                        fontSize: 12,
-                                      ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          nutrition.title,
+                                          style: TextStyle(
+                                            color: TColor.black,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Text(
+                                          nutrition.value,
+                                          style: TextStyle(
+                                            color: TColor.gray,
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -307,7 +363,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: ReadMoreText(
-                          'Pancakes are some people\'s favorite breakfast, who doesn\'t like pancakes? Especially with the real honey splash on top of the pancakes, of course everyone loves that! besides being Pancakes are some people\'s favorite breakfast, who doesn\'t like pancakes? Especially with the real honey splash on top of the pancakes, of course everyone loves that! besides being',
+                          _description,
                           trimLines: 4,
                           colorClickableText: TColor.black,
                           trimMode: TrimMode.Line,
@@ -337,7 +393,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                             TextButton(
                               onPressed: () {},
                               child: Text(
-                                "${stepArr.length} Items",
+                                "${_ingredients.length} Items",
                                 style: TextStyle(
                                   color: TColor.gray,
                                   fontSize: 12,
@@ -353,9 +409,9 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           scrollDirection: Axis.horizontal,
                           shrinkWrap: true,
-                          itemCount: ingredientsArr.length,
+                          itemCount: _ingredients.length,
                           itemBuilder: (context, index) {
-                            var nObj = ingredientsArr[index] as Map? ?? {};
+                            final ingredient = _ingredients[index];
                             return Container(
                               margin: const EdgeInsets.symmetric(horizontal: 4),
                               width: media.width * 0.23,
@@ -372,7 +428,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                     ),
                                     alignment: Alignment.center,
                                     child: Image.asset(
-                                      nObj["image"].toString(),
+                                      ingredient.image,
                                       width: 45,
                                       height: 45,
                                       fit: BoxFit.contain,
@@ -380,14 +436,14 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    nObj["title"].toString(),
+                                    ingredient.name,
                                     style: TextStyle(
                                       color: TColor.black,
                                       fontSize: 12,
                                     ),
                                   ),
                                   Text(
-                                    nObj["value"].toString(),
+                                    ingredient.amount,
                                     style: TextStyle(
                                       color: TColor.gray,
                                       fontSize: 10,
@@ -415,7 +471,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                             TextButton(
                               onPressed: () {},
                               child: Text(
-                                "${stepArr.length} Steps",
+                                "${_steps.length} Steps",
                                 style: TextStyle(
                                   color: TColor.gray,
                                   fontSize: 12,
@@ -429,15 +485,14 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                         physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         shrinkWrap: true,
-                        itemCount: stepArr.length,
-                        itemBuilder: ((context, index) {
-                          var sObj = stepArr[index] as Map? ?? {};
-
+                        itemCount: _steps.length,
+                        itemBuilder: (context, index) {
+                          final step = _steps[index];
                           return FoodStepDetailRow(
-                            sObj: sObj,
-                            isLast: stepArr.last == sObj,
+                            step: step,
+                            isLast: index == _steps.length - 1,
                           );
-                        }),
+                        },
                       ),
                       SizedBox(height: media.width * 0.25),
                     ],
@@ -451,7 +506,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: RoundButton(
-                          title: "Add to ${widget.mObj["name"]} Meal",
+                          title: "Add to ${meal['name']} Meal",
                           onPressed: () {},
                         ),
                       ),
