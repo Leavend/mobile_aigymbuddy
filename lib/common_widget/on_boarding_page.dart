@@ -123,9 +123,7 @@ class OnBoardingPage extends StatelessWidget {
           builder: (context, constraints) {
             final availableHeight = constraints.maxHeight;
             final imageHeight = (availableHeight * 0.42).clamp(220.0, 360.0);
-
             final textAlign = content.textAlign ?? TextAlign.left;
-
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 28),
               child: ConstrainedBox(
