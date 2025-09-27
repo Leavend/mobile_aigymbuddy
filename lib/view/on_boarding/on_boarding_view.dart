@@ -128,7 +128,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                       borderRadius: BorderRadius.circular(40),
                       boxShadow: [
                         BoxShadow(
-                          color: TColor.primaryColor1.withOpacity(0.3),
+                          color: TColor.primaryColor1.withValues(alpha: 0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 6),
                         ),
