@@ -112,14 +112,14 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             Padding(
               padding: const EdgeInsets.only(right: 24, bottom: 40),
               child: SizedBox(
-                width: 120,
-                height: 120,
+                width: 88,
+                height: 88,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     SizedBox(
-                      width: 80,
-                      height: 80,
+                      width: 72,
+                      height: 72,
                       child: CircularProgressIndicator(
                         color: TColor.primaryColor1,
                         value: progress,
@@ -127,28 +127,35 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                         backgroundColor: TColor.lightGray,
                       ),
                     ),
-                    Container(
-                      width: 70,
-                      height: 70,
+                    DecoratedBox(
                       decoration: BoxDecoration(
-                        color: TColor.primaryColor1,
-                        borderRadius: BorderRadius.circular(40),
+                        gradient: LinearGradient(
+                          colors: pageArr[selectPage].gradientColors ?? TColor.primaryG,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: TColor.primaryColor1.withValues(alpha: 0.3),
-                            blurRadius: 12,
+                            color: (pageArr[selectPage].gradientColors ?? TColor.primaryG)
+                                .last
+                                .withValues(alpha: 0.3),
+                            blurRadius: 10,
                             offset: const Offset(0, 6),
                           ),
                         ],
                       ),
-                      child: IconButton(
-                        onPressed: _handleNext,
-                        icon: Icon(
-                          selectPage == totalPages - 1
-                              ? Icons.check_rounded
-                              : Icons.arrow_forward_rounded,
-                          color: TColor.white,
-                          size: 28,
+                      child: SizedBox(
+                        width: 56,
+                        height: 56,
+                        child: IconButton(
+                          onPressed: _handleNext,
+                          icon: Icon(
+                            selectPage == totalPages - 1
+                                ? Icons.check_rounded
+                                : Icons.arrow_forward_rounded,
+                            color: TColor.white,
+                          ),
                         ),
                       ),
                     ),
