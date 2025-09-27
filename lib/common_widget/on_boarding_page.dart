@@ -119,45 +119,67 @@ class OnBoardingPage extends StatelessWidget {
       height: media.height,
       color: TColor.white,
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 12),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Image.asset(
-                    content.image,
-                    fit: BoxFit.contain,
-                    width: media.width * 0.8,
-                  ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final availableHeight = constraints.maxHeight;
+            final imageHeight = (availableHeight * 0.42).clamp(220.0, 360.0);
+
+            final textAlign = content.textAlign ?? TextAlign.left;
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: availableHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: availableHeight * 0.03),
+                    SizedBox(
+                      height: imageHeight,
+                      child: Image.asset(
+                        content.image,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.topCenter,
+                        width: double.infinity,
+                      ),
+                    ),
+                    SizedBox(height: availableHeight * 0.05),
+                    Align(
+                      alignment: textAlign == TextAlign.center
+                          ? Alignment.center
+                          : Alignment.centerLeft,
+                      child: Text(
+                        content.title,
+                        textAlign: textAlign,
+                        style: TextStyle(
+                          color: content.titleColor ?? TColor.black,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: textAlign == TextAlign.center
+                          ? Alignment.center
+                          : Alignment.centerLeft,
+                      child: Text(
+                        content.subtitle,
+                        textAlign: textAlign,
+                        style: TextStyle(
+                          color: content.subtitleColor ?? TColor.gray,
+                          fontSize: 15,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: availableHeight * 0.07),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
-              Text(
-                content.title,
-                textAlign: content.textAlign ?? TextAlign.center,
-                style: TextStyle(
-                  color: content.titleColor ?? TColor.black,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                content.subtitle,
-                textAlign: content.textAlign ?? TextAlign.center,
-                style: TextStyle(
-                  color: content.subtitleColor ?? TColor.gray,
-                  fontSize: 15,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 80),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
