@@ -135,12 +135,16 @@ class OnBoardingPage extends StatelessWidget {
                     SizedBox(height: availableHeight * 0.03),
                     SizedBox(
                       height: imageHeight,
+<<<<<<< HEAD
                       child: Image.asset(
                         content.image,
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
                         width: double.infinity,
                       ),
+=======
+                      child: Image.asset(content.image, fit: BoxFit.contain),
+>>>>>>> 0fec19f (fix: bug)
                     ),
                     SizedBox(height: availableHeight * 0.05),
                     Align(
