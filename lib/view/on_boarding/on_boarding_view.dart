@@ -21,7 +21,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
       subtitle: 'Everybody Can Train',
       image: 'assets/img/welcome.png',
       backgroundColor: TColor.white,
-      titleColor: TColor.primaryColor1,
+      titleColor: TColor.black,
       subtitleColor: TColor.gray,
       textAlign: TextAlign.center,
       buttonText: 'Get Started',
