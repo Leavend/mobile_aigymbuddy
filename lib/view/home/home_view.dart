@@ -340,13 +340,13 @@ class _HomeViewState extends State<HomeView> {
                                           ),
                                           FlDotData(
                                             show: true,
-                                            getDotPainter: (
-                                              _spot,
-                                              _percent,
-                                              _barData,
-                                              _spotIndex,
-                                            ) =>
-                                                FlDotCirclePainter(
+                                            getDotPainter:
+                                                (
+                                                  _spot,
+                                                  _percent,
+                                                  _barData,
+                                                  _spotIndex,
+                                                ) => FlDotCirclePainter(
                                                   radius: 3,
                                                   color: Colors.white,
                                                   strokeWidth: 3,
@@ -684,13 +684,13 @@ class _HomeViewState extends State<HomeView> {
                                   const FlLine(color: Colors.transparent),
                                   FlDotData(
                                     show: true,
-                                    getDotPainter: (
-                                      _spot,
-                                      _percent,
-                                      _barData,
-                                      _spotIndex,
-                                    ) =>
-                                        FlDotCirclePainter(
+                                    getDotPainter:
+                                        (
+                                          _spot,
+                                          _percent,
+                                          _barData,
+                                          _spotIndex,
+                                        ) => FlDotCirclePainter(
                                           radius: 3,
                                           color: Colors.white,
                                           strokeWidth: 3,

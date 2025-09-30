@@ -145,11 +145,12 @@ class _MainTabViewState extends State<MainTabView> {
     
     return LayoutBuilder(
       builder: (context, constraints) {
-        final mediaQuery = MediaQuery.of(context);
+        final scaler = MediaQuery.textScalerOf(context);
+        final textScale = scaler.scale(1.0);
         final metrics = _NavigationMetrics.resolve(
           availableWidth: constraints.maxWidth,
           fabDiameter: _fabDiameter,
-          textScaleFactor: mediaQuery.textScaleFactor,
+          textScaleFactor: textScale,
           leadingCount: leadingItems.length,
           trailingCount: trailingItems.length,
         );
@@ -223,7 +224,7 @@ class _MainTabViewState extends State<MainTabView> {
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
