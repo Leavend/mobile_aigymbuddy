@@ -84,7 +84,9 @@ class OnBoardingPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: TColor.primaryColor1.withValues(alpha: 0.2),
+                              color: TColor.primaryColor1.withValues(
+                                alpha: 0.2,
+                              ),
                               blurRadius: 16,
                               offset: const Offset(0, 8),
                             ),
@@ -118,22 +120,17 @@ class OnBoardingPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            content.image,
-            width: media.width,
-            fit: BoxFit.fitWidth,
-          ),
-          SizedBox(
-            height: media.width * 0.1,
-          ),
+          Image.asset(content.image, width: media.width, fit: BoxFit.fitWidth),
+          SizedBox(height: media.width * 0.1),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               content.title,
               style: TextStyle(
-                  color: content.titleColor ?? TColor.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700),
+                color: content.titleColor ?? TColor.black,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(height: 15),

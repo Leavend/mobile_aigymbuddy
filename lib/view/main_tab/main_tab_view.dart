@@ -238,10 +238,7 @@ class _NavigationItem {
 
 // ignore: unused_element
 class _TabCluster extends StatelessWidget {
-  const _TabCluster({
-    required this.children,
-    required this.spacing,
-  });
+  const _TabCluster({required this.children, required this.spacing});
 
   final List<Widget> children;
   final double spacing;

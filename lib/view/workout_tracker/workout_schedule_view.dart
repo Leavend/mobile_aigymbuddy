@@ -56,8 +56,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
           };
         })
         .where(
-          (wObj) =>
-              DateTimeUtils.startOfDay(wObj["date"] as DateTime) == date,
+          (wObj) => DateTimeUtils.startOfDay(wObj["date"] as DateTime) == date,
         )
         .toList();
 

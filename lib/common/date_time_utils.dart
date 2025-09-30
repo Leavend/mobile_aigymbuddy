@@ -39,9 +39,7 @@ class DateTimeUtils {
   static DateTime parseDate(String value, {String pattern = 'hh:mm a'}) {
     final formatter = DateFormat(pattern);
     try {
-
       return formatter.parseStrict(value);
-
     } on FormatException catch (error, stackTrace) {
       Error.throwWithStackTrace(
         FormatException('Unable to parse "$value" using "$pattern".', error),
@@ -51,10 +49,14 @@ class DateTimeUtils {
   }
 
   /// Returns the start of the day for [date] (i.e. time set to 00:00:00.000).
-  static DateTime startOfDay(DateTime date) => DateTime(date.year, date.month, date.day);
+  static DateTime startOfDay(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
 
   /// Formats [date] with the provided [pattern].
-  static String formatDate(DateTime date, {String pattern = 'dd/MM/yyyy hh:mm a'}) {
+  static String formatDate(
+    DateTime date, {
+    String pattern = 'dd/MM/yyyy hh:mm a',
+  }) {
     final formatter = DateFormat(pattern);
     return formatter.format(date);
   }

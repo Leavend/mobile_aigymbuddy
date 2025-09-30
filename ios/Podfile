@@ -1,16 +1,7 @@
-# Define the minimum supported iOS version explicitly to avoid CocoaPods
-# choosing one for us at install time.
-platform :ios, '13.0'
-
-use_frameworks! :linkage => :static
-use_modular_headers!
-
-# Using static frameworks keeps the Flutter.xcframework available as a module
-# for Swift-based plugins that import `Flutter` while still supporting
-# frameworks when CocoaPods resolves dependencies.
+# Uncomment this line to define a global platform for your project
+# platform :ios, '13.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
-
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -22,78 +13,31 @@ project 'Runner', {
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
-    raise "Generated.xcconfig must exist. Run 'flutter pub get' first."
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
   end
+
   File.foreach(generated_xcode_build_settings_path) do |line|
     matches = line.match(/FLUTTER_ROOT\=(.*)/)
     return matches[1].strip if matches
   end
-  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}."
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
 end
 
-# penting: load podhelper.rb supaya flutter_ios_podfile_setup & flutter_post_install ada
-load File.join(flutter_root, 'packages', 'flutter_tools', 'bin', 'podhelper.rb')
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
-# panggil setup flutter (wajib di atas target Runner)
 flutter_ios_podfile_setup
 
-pre_install do |_installer|
-  # Bersihkan extended attributes dari artefak engine bawaan Flutter SDK supaya
-  # tahap `flutter assemble` tidak gagal saat melakukan codesign sebelum Xcode
-  # sempat menjalankan phase build dari Pods.
-  engine_root = File.join(flutter_root, 'bin', 'cache', 'artifacts', 'engine')
-  next unless File.directory?(engine_root)
-
-  Dir.glob(File.join(engine_root, '**', 'Flutter.framework')).each do |framework|
-    next unless File.directory?(framework)
-
-    Kernel.system('xattr', '-rc', framework)
-  end
-end
-
 target 'Runner' do
+  use_frameworks!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-
-    target.build_configurations.each do |config|
-      # Ensure simulator builds always target the same minimum version and
-      # avoid referencing `config` outside of this scope which previously
-      # caused NameError failures during `pod install`.
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-    end
-
-    target.shell_script_build_phases.each do |phase|
-      next unless ['Thin Binary', '[CP] Embed Pods Frameworks'].include?(phase.name)
-
-      cleanup_script = <<~'SCRIPT'
-        if command -v xattr >/dev/null 2>&1; then
-          find "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}" -type d -name "*.framework" -prune -print0 | \
-            while IFS= read -r -d '' framework; do
-              xattr -rc "$framework" || true
-            done
-        fi
-      SCRIPT
-
-      phase.shell_script = "#{cleanup_script}\n#{phase.shell_script}"
-    end
   end
-
-  # Matikan signing utk Debug (Simulator) di semua Pods → cegah CodeSign di simulator
-  installer.pods_project.targets.each do |t|
-    t.build_configurations.each do |bc|
-      if bc.name == 'Debug'
-        bc.build_settings['CODE_SIGNING_ALLOWED']  = 'NO'
-        bc.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
-        bc.build_settings['CODE_SIGNING_IDENTITY'] = ''
-      end
-    end
-  end
-
-  # Panggil hook flutter jika tersedia (hindari "undefined method flutter_post_install")
-  flutter_post_install(installer) if defined?(flutter_post_install)
 end

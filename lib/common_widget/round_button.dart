@@ -29,9 +29,9 @@ class RoundButton extends StatelessWidget {
     this.borderRadius = const BorderRadius.all(Radius.circular(25)),
     this.isEnabled = true,
     this.textStyle,
-  })  : assert(height > 0, 'height must be greater than zero'),
-        assert(fontSize > 0, 'fontSize must be greater than zero'),
-        assert(elevation >= 0, 'elevation cannot be negative');
+  }) : assert(height > 0, 'height must be greater than zero'),
+       assert(fontSize > 0, 'fontSize must be greater than zero'),
+       assert(elevation >= 0, 'elevation cannot be negative');
 
   final String title;
   final RoundButtonType type;
@@ -58,14 +58,11 @@ class RoundButton extends StatelessWidget {
   );
 
   Color get _textColor =>
-      textStyle?.color ?? (_usesGradientBackground ? TColor.white : TColor.primaryColor1);
+      textStyle?.color ??
+      (_usesGradientBackground ? TColor.white : TColor.primaryColor1);
 
   static const List<BoxShadow> _defaultGradientShadows = [
-    BoxShadow(
-      color: Colors.black26,
-      blurRadius: 0.5,
-      offset: Offset(0, 0.5),
-    ),
+    BoxShadow(color: Colors.black26, blurRadius: 0.5, offset: Offset(0, 0.5)),
   ];
 
   List<BoxShadow>? get _gradientShadows =>
@@ -87,8 +84,9 @@ class RoundButton extends StatelessWidget {
 
     return ShaderMask(
       blendMode: BlendMode.srcIn,
-      shaderCallback: (bounds) => _textGradient
-          .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+      shaderCallback: (bounds) => _textGradient.createShader(
+        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+      ),
       child: Text(title, style: style, textAlign: TextAlign.center),
     );
   }
@@ -143,10 +141,7 @@ class RoundButton extends StatelessWidget {
       return child;
     }
 
-    return Opacity(
-      opacity: 0.6,
-      child: IgnorePointer(child: child),
-    );
+    return Opacity(opacity: 0.6, child: IgnorePointer(child: child));
   }
 
   @override
