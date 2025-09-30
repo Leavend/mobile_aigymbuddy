@@ -155,73 +155,63 @@ class _MainTabViewState extends State<MainTabView> {
           trailingCount: trailingItems.length,
         );
 
-        return SafeArea(
-          top: false,
-          minimum: EdgeInsets.only(bottom: metrics.safeAreaPadding),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              metrics.outerHorizontalPadding,
-              0,
-              metrics.outerHorizontalPadding,
-              metrics.bottomMargin,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(metrics.containerRadius),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(metrics.containerRadius),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 12,
-                        offset: Offset(0, -2),
-                      ),
-                    ],
-                  ),
-                  child: SizedBox(
-                    height: metrics.containerHeight,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: metrics.horizontalPadding,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: _buildTabCluster(
-                                items: leadingItems,
-                                startIndex: 0,
-                                metrics: metrics,
+          return SafeArea(
+            top: false,
+            minimum: EdgeInsets.only(bottom: metrics.safeAreaPadding),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                metrics.outerHorizontalPadding,
+                0,
+                metrics.outerHorizontalPadding,
+                metrics.bottomMargin,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(metrics.containerRadius),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.92),
+                      borderRadius: BorderRadius.circular(metrics.containerRadius),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 12,
+                          offset: Offset(0, -2),
+                        ),
+                      ],
+                    ),
+                    child: SizedBox(
+                      height: metrics.containerHeight,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: metrics.horizontalPadding,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: _buildTabCluster(
+                                  items: leadingItems,
+                                  startIndex: 0,
+                                  metrics: metrics,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: metrics.centerGap),
-                          Flexible(
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: _buildTabCluster(
-                                items: trailingItems,
-                                startIndex: leadingItems.length,
-                                metrics: metrics,
+                            SizedBox(width: metrics.centerGap),
+                            Flexible(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: _buildTabCluster(
+                                  items: trailingItems,
+                                  startIndex: leadingItems.length,
+                                  metrics: metrics,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: metrics.centerGap),
-                      Flexible(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: _buildTabCluster(
-                            items: trailingItems,
-                            startIndex: leadingItems.length,
-                            metrics: metrics,
-                          ),
+                          ],
                         ),
                       ),
                     ),
@@ -229,8 +219,7 @@ class _MainTabViewState extends State<MainTabView> {
                 ),
               ),
             ),
-          ),
-        );
+          );
       },
     );
   }

@@ -331,8 +331,8 @@ class _HomeViewState extends State<HomeView> {
                                     setState(() {});
                                   }
                                 },
-                                getTouchedSpotIndicator: (bar, idxs) {
-                                  return idxs
+                                getTouchedSpotIndicator: (_, indices) {
+                                  return indices
                                       .map(
                                         (_) => TouchedSpotIndicatorData(
                                           const FlLine(
@@ -342,17 +342,35 @@ class _HomeViewState extends State<HomeView> {
                                             show: true,
                                             getDotPainter:
                                                 (
-                                                  _spot,
-                                                  _percent,
-                                                  _barData,
-                                                  _spotIndex,
-                                                ) => FlDotCirclePainter(
-                                                  radius: 3,
-                                                  color: Colors.white,
-                                                  strokeWidth: 3,
-                                                  strokeColor:
-                                                      TColor.secondaryColor1,
-                                                ),
+                                                  spot,
+                                                  percent,
+                                                  barData,
+                                                  spotIndex,
+                                                ) {
+                                              final normalizedPercent =
+                                                  percent.clamp(0.0, 1.0);
+                                              final accentColor =
+                                                  barData.gradient?.colors
+                                                          .first ??
+                                                      TColor.secondaryColor1;
+                                              final fillOpacity =
+                                                  (0.6 +
+                                                          (spot.y / 100)
+                                                              .clamp(0.0, 1.0) *
+                                                              0.3)
+                                                      .clamp(0.0, 1.0);
+                                              final strokeWidth =
+                                                  spotIndex.isEven ? 3.0 : 2.0;
+
+                                              return FlDotCirclePainter(
+                                                radius:
+                                                    3 + normalizedPercent * 2,
+                                                color: accentColor
+                                                    .withOpacity(fillOpacity),
+                                                strokeWidth: strokeWidth,
+                                                strokeColor: accentColor,
+                                              );
+                                            },
                                           ),
                                         ),
                                       )
@@ -678,28 +696,45 @@ class _HomeViewState extends State<HomeView> {
                               setState(() {});
                             }
                           },
-                          getTouchedSpotIndicator: (bar, idx) => idx
-                              .map(
-                                (_) => TouchedSpotIndicatorData(
-                                  const FlLine(color: Colors.transparent),
-                                  FlDotData(
-                                    show: true,
-                                    getDotPainter:
-                                        (
-                                          _spot,
-                                          _percent,
-                                          _barData,
-                                          _spotIndex,
-                                        ) => FlDotCirclePainter(
-                                          radius: 3,
-                                          color: Colors.white,
-                                          strokeWidth: 3,
-                                          strokeColor: TColor.secondaryColor1,
-                                        ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
+                          getTouchedSpotIndicator: (_, touchedIndices) =>
+                              touchedIndices
+                                  .map(
+                                    (_) => TouchedSpotIndicatorData(
+                                      const FlLine(color: Colors.transparent),
+                                      FlDotData(
+                                        show: true,
+                                        getDotPainter:
+                                            (
+                                              spot,
+                                              percent,
+                                              barData,
+                                              spotIndex,
+                                            ) {
+                                          final normalizedPercent =
+                                              percent.clamp(0.0, 1.0);
+                                          final accentColor =
+                                              barData.gradient?.colors.first ??
+                                                  TColor.secondaryColor1;
+                                          final fillOpacity =
+                                              (0.5 +
+                                                      (spot.y / 120)
+                                                          .clamp(0.0, 1.0) *
+                                                          0.4)
+                                                  .clamp(0.0, 1.0);
+
+                                          return FlDotCirclePainter(
+                                            radius: 3 + normalizedPercent * 2,
+                                            color: accentColor
+                                                .withOpacity(fillOpacity),
+                                            strokeWidth:
+                                                spotIndex.isEven ? 3.0 : 2.5,
+                                            strokeColor: accentColor,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                           touchTooltipData: LineTouchTooltipData(
                             getTooltipColor: (_) => TColor.secondaryColor1,
                             getTooltipItems: (spots) => [
@@ -769,7 +804,8 @@ class _HomeViewState extends State<HomeView> {
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: lastWorkoutArr.length,
-                    separatorBuilder: (_, _index) => const SizedBox(height: 12),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
                     itemBuilder: (context, i) => InkWell(
                       onTap: () {
                         context.push(AppRoute.finishedWorkout);
