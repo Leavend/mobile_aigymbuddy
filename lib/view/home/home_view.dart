@@ -366,7 +366,7 @@ class _HomeViewState extends State<HomeView> {
                                                 radius:
                                                     3 + normalizedPercent * 2,
                                                 color: accentColor
-                                                    .withOpacity(fillOpacity),
+                                                    .withValues(alpha: fillOpacity),
                                                 strokeWidth: strokeWidth,
                                                 strokeColor: accentColor,
                                               );
@@ -725,7 +725,7 @@ class _HomeViewState extends State<HomeView> {
                                           return FlDotCirclePainter(
                                             radius: 3 + normalizedPercent * 2,
                                             color: accentColor
-                                                .withOpacity(fillOpacity),
+                                                .withValues(alpha: fillOpacity),
                                             strokeWidth:
                                                 spotIndex.isEven ? 3.0 : 2.5,
                                             strokeColor: accentColor,
