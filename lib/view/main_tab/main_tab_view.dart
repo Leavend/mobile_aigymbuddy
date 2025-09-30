@@ -142,7 +142,7 @@ class _MainTabViewState extends State<MainTabView> {
     final midpoint = (_items.length / 2).ceil();
     final leadingItems = _items.sublist(0, midpoint);
     final trailingItems = _items.sublist(midpoint);
-
+    
     return LayoutBuilder(
       builder: (context, constraints) {
         final mediaQuery = MediaQuery.of(context);
@@ -212,7 +212,18 @@ class _MainTabViewState extends State<MainTabView> {
                           ),
                         ],
                       ),
-                    ),
+                      SizedBox(width: metrics.centerGap),
+                      Flexible(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: _buildTabCluster(
+                            items: trailingItems,
+                            startIndex: leadingItems.length,
+                            metrics: metrics,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
