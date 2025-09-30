@@ -1,7 +1,7 @@
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../common/common.dart';
+import '../common/date_time_utils.dart';
 
 class TodayMealRow extends StatelessWidget {
   final Map mObj;
@@ -42,7 +42,7 @@ class TodayMealRow extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "${getDayTitle(mObj["time"].toString())} | ${getStringDateToOtherFormate(mObj["time"].toString(), outFormatStr: "h:mm aa")}",
+                  "${DateTimeUtils.describeDayFromString(mObj["time"].toString())} | ${DateTimeUtils.reformatDateString(mObj["time"].toString(), outputPattern: "h:mm aa")}",
                   style: TextStyle(color: TColor.gray, fontSize: 10),
                 ),
               ],
