@@ -78,7 +78,7 @@ class _ProfileViewState extends State<ProfileView> {
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: _accountArr.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                  separatorBuilder: (_, _index) => const SizedBox(height: 6),
                   itemBuilder: (context, index) {
                     final iObj = _accountArr[index];
                     return SettingRow(
@@ -123,7 +123,7 @@ class _ProfileViewState extends State<ProfileView> {
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: _otherArr.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                  separatorBuilder: (_, _index) => const SizedBox(height: 6),
                   itemBuilder: (context, index) {
                     final iObj = _otherArr[index];
                     return SettingRow(

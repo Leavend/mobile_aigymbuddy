@@ -292,7 +292,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: todaySleepArr.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    separatorBuilder: (_, _index) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final sObj = todaySleepArr[index];
                       return TodaySleepScheduleRow(sObj: sObj);
