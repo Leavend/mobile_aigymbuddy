@@ -37,6 +37,20 @@ load File.join(flutter_root, 'packages', 'flutter_tools', 'bin', 'podhelper.rb')
 # panggil setup flutter (wajib di atas target Runner)
 flutter_ios_podfile_setup
 
+pre_install do |_installer|
+  # Bersihkan extended attributes dari artefak engine bawaan Flutter SDK supaya
+  # tahap `flutter assemble` tidak gagal saat melakukan codesign sebelum Xcode
+  # sempat menjalankan phase build dari Pods.
+  engine_root = File.join(flutter_root, 'bin', 'cache', 'artifacts', 'engine')
+  next unless File.directory?(engine_root)
+
+  Dir.glob(File.join(engine_root, '**', 'Flutter.framework')).each do |framework|
+    next unless File.directory?(framework)
+
+    Kernel.system('xattr', '-rc', framework)
+  end
+end
+
 target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
