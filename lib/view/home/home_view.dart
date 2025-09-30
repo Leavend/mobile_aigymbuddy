@@ -347,30 +347,40 @@ class _HomeViewState extends State<HomeView> {
                                                   barData,
                                                   spotIndex,
                                                 ) {
-                                              final normalizedPercent =
-                                                  percent.clamp(0.0, 1.0);
-                                              final accentColor =
-                                                  barData.gradient?.colors
+                                                  final normalizedPercent =
+                                                      percent.clamp(0.0, 1.0);
+                                                  final accentColor =
+                                                      barData
+                                                          .gradient
+                                                          ?.colors
                                                           .first ??
                                                       TColor.secondaryColor1;
-                                              final fillOpacity =
-                                                  (0.6 +
-                                                          (spot.y / 100)
-                                                              .clamp(0.0, 1.0) *
-                                                              0.3)
-                                                      .clamp(0.0, 1.0);
-                                              final strokeWidth =
-                                                  spotIndex.isEven ? 3.0 : 2.0;
+                                                  final fillOpacity =
+                                                      (0.6 +
+                                                              (spot.y / 100)
+                                                                      .clamp(
+                                                                        0.0,
+                                                                        1.0,
+                                                                      ) *
+                                                                  0.3)
+                                                          .clamp(0.0, 1.0);
+                                                  final strokeWidth =
+                                                      spotIndex.isEven
+                                                      ? 3.0
+                                                      : 2.0;
 
-                                              return FlDotCirclePainter(
-                                                radius:
-                                                    3 + normalizedPercent * 2,
-                                                color: accentColor
-                                                    .withValues(alpha: fillOpacity),
-                                                strokeWidth: strokeWidth,
-                                                strokeColor: accentColor,
-                                              );
-                                            },
+                                                  return FlDotCirclePainter(
+                                                    radius:
+                                                        3 +
+                                                        normalizedPercent * 2,
+                                                    color: accentColor
+                                                        .withValues(
+                                                          alpha: fillOpacity,
+                                                        ),
+                                                    strokeWidth: strokeWidth,
+                                                    strokeColor: accentColor,
+                                                  );
+                                                },
                                           ),
                                         ),
                                       )
@@ -710,27 +720,35 @@ class _HomeViewState extends State<HomeView> {
                                               barData,
                                               spotIndex,
                                             ) {
-                                          final normalizedPercent =
-                                              percent.clamp(0.0, 1.0);
-                                          final accentColor =
-                                              barData.gradient?.colors.first ??
-                                                  TColor.secondaryColor1;
-                                          final fillOpacity =
-                                              (0.5 +
-                                                      (spot.y / 120)
-                                                          .clamp(0.0, 1.0) *
-                                                          0.4)
+                                              final normalizedPercent = percent
                                                   .clamp(0.0, 1.0);
+                                              final accentColor =
+                                                  barData
+                                                      .gradient
+                                                      ?.colors
+                                                      .first ??
+                                                  TColor.secondaryColor1;
+                                              final fillOpacity =
+                                                  (0.5 +
+                                                          (spot.y / 120).clamp(
+                                                                0.0,
+                                                                1.0,
+                                                              ) *
+                                                              0.4)
+                                                      .clamp(0.0, 1.0);
 
-                                          return FlDotCirclePainter(
-                                            radius: 3 + normalizedPercent * 2,
-                                            color: accentColor
-                                                .withValues(alpha: fillOpacity),
-                                            strokeWidth:
-                                                spotIndex.isEven ? 3.0 : 2.5,
-                                            strokeColor: accentColor,
-                                          );
-                                        },
+                                              return FlDotCirclePainter(
+                                                radius:
+                                                    3 + normalizedPercent * 2,
+                                                color: accentColor.withValues(
+                                                  alpha: fillOpacity,
+                                                ),
+                                                strokeWidth: spotIndex.isEven
+                                                    ? 3.0
+                                                    : 2.5,
+                                                strokeColor: accentColor,
+                                              );
+                                            },
                                       ),
                                     ),
                                   )
@@ -804,8 +822,8 @@ class _HomeViewState extends State<HomeView> {
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: lastWorkoutArr.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
                     itemBuilder: (context, i) => InkWell(
                       onTap: () {
                         context.push(AppRoute.finishedWorkout);

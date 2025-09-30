@@ -142,7 +142,7 @@ class _MainTabViewState extends State<MainTabView> {
     final midpoint = (_items.length / 2).ceil();
     final leadingItems = _items.sublist(0, midpoint);
     final trailingItems = _items.sublist(midpoint);
-    
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final scaler = MediaQuery.textScalerOf(context);
@@ -155,71 +155,73 @@ class _MainTabViewState extends State<MainTabView> {
           trailingCount: trailingItems.length,
         );
 
-          return SafeArea(
-            top: false,
-            minimum: EdgeInsets.only(bottom: metrics.safeAreaPadding),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                metrics.outerHorizontalPadding,
-                0,
-                metrics.outerHorizontalPadding,
-                metrics.bottomMargin,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(metrics.containerRadius),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(metrics.containerRadius),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 12,
-                          offset: Offset(0, -2),
-                        ),
-                      ],
+        return SafeArea(
+          top: false,
+          minimum: EdgeInsets.only(bottom: metrics.safeAreaPadding),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              metrics.outerHorizontalPadding,
+              0,
+              metrics.outerHorizontalPadding,
+              metrics.bottomMargin,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(metrics.containerRadius),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.92),
+                    borderRadius: BorderRadius.circular(
+                      metrics.containerRadius,
                     ),
-                    child: SizedBox(
-                      height: metrics.containerHeight,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: metrics.horizontalPadding,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: _buildTabCluster(
-                                  items: leadingItems,
-                                  startIndex: 0,
-                                  metrics: metrics,
-                                ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 12,
+                        offset: Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                  child: SizedBox(
+                    height: metrics.containerHeight,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: metrics.horizontalPadding,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: _buildTabCluster(
+                                items: leadingItems,
+                                startIndex: 0,
+                                metrics: metrics,
                               ),
                             ),
-                            SizedBox(width: metrics.centerGap),
-                            Flexible(
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: _buildTabCluster(
-                                  items: trailingItems,
-                                  startIndex: leadingItems.length,
-                                  metrics: metrics,
-                                ),
+                          ),
+                          SizedBox(width: metrics.centerGap),
+                          Flexible(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: _buildTabCluster(
+                                items: trailingItems,
+                                startIndex: leadingItems.length,
+                                metrics: metrics,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -289,7 +291,8 @@ class _NavigationMetrics {
     final outerPadding = lerpDouble(16, 32, t)!;
     final innerPadding = lerpDouble(16, 28, t)!;
     final totalButtons = leadingCount + trailingCount;
-    final totalSpacing = _spacingCount(leadingCount) + _spacingCount(trailingCount);
+    final totalSpacing =
+        _spacingCount(leadingCount) + _spacingCount(trailingCount);
     final minCenterGap = fabDiameter + 8;
     const minTabSpacing = 8.0;
     const minButtonWidth = 36.0;
@@ -305,7 +308,8 @@ class _NavigationMetrics {
     }
 
     if (availableInnerWidth > 0 && totalButtons > 0) {
-      final initialRequiredWidth = _clusterWidth(leadingCount, buttonWidth, tabSpacing) +
+      final initialRequiredWidth =
+          _clusterWidth(leadingCount, buttonWidth, tabSpacing) +
           centerGap +
           _clusterWidth(trailingCount, buttonWidth, tabSpacing);
 
@@ -314,24 +318,32 @@ class _NavigationMetrics {
       if (overflow > 0) {
         final maxGapReduction = centerGap - minCenterGap;
         if (maxGapReduction > 0) {
-          final reduction = overflow < maxGapReduction ? overflow : maxGapReduction;
+          final reduction = overflow < maxGapReduction
+              ? overflow
+              : maxGapReduction;
           centerGap -= reduction;
           overflow -= reduction;
         }
 
         if (overflow > 0 && totalSpacing > 0) {
-          final maxSpacingReduction = (tabSpacing - minTabSpacing) * totalSpacing;
+          final maxSpacingReduction =
+              (tabSpacing - minTabSpacing) * totalSpacing;
           if (maxSpacingReduction > 0) {
-            final reduction = overflow < maxSpacingReduction ? overflow : maxSpacingReduction;
+            final reduction = overflow < maxSpacingReduction
+                ? overflow
+                : maxSpacingReduction;
             tabSpacing -= reduction / totalSpacing;
             overflow -= reduction;
           }
         }
 
         if (overflow > 0) {
-          final maxButtonReduction = (buttonWidth - minButtonWidth) * totalButtons;
+          final maxButtonReduction =
+              (buttonWidth - minButtonWidth) * totalButtons;
           if (maxButtonReduction > 0) {
-            final reduction = overflow < maxButtonReduction ? overflow : maxButtonReduction;
+            final reduction = overflow < maxButtonReduction
+                ? overflow
+                : maxButtonReduction;
             buttonWidth -= reduction / totalButtons;
             overflow -= reduction;
           }
