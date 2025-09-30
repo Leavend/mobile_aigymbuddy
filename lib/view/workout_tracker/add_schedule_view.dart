@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
-import '../../common/common.dart';
+import '../../common/date_time_utils.dart';
 import '../../common_widget/icon_title_next_row.dart';
 import '../../common_widget/round_button.dart';
 
@@ -87,7 +87,10 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                 Image.asset("assets/img/date.png", width: 20, height: 20),
                 const SizedBox(width: 8),
                 Text(
-                  dateToString(widget.date, formatStr: "E, dd MMMM yyyy"),
+                  DateTimeUtils.formatDate(
+                    widget.date,
+                    pattern: "E, dd MMMM yyyy",
+                  ),
                   style: TextStyle(color: TColor.gray, fontSize: 14),
                 ),
               ],
@@ -152,7 +155,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
               color: TColor.lightGray,
               onPressed: () {},
             ),
-            Spacer(),
+            const Spacer(),
             RoundButton(title: "Save", onPressed: () {}),
             const SizedBox(height: 20),
           ],

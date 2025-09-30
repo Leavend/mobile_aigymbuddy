@@ -2,7 +2,7 @@ import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../common/common.dart';
+import '../common/date_time_utils.dart';
 
 class TodaySleepScheduleRow extends StatefulWidget {
   final Map sObj;
@@ -53,7 +53,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                       ),
                     ),
                     Text(
-                      ", ${getStringDateToOtherFormate(widget.sObj["time"].toString())}",
+                      ", ${DateTimeUtils.reformatDateString(widget.sObj["time"].toString())}",
                       style: TextStyle(color: TColor.black, fontSize: 12),
                     ),
                   ],
