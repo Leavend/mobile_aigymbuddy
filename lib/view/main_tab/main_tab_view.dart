@@ -22,8 +22,6 @@ class MainTabView extends StatefulWidget {
 
 class _MainTabViewState extends State<MainTabView> {
   static const double _fabDiameter = 64;
-  static const double _centerGap = _fabDiameter + 20;
-  static const double _tabSpacing = 32;
 
   int _selected = 0;
 
@@ -120,17 +118,19 @@ class _MainTabViewState extends State<MainTabView> {
   Widget _buildTabCluster({
     required List<_NavigationItem> items,
     required int startIndex,
+    required _NavigationMetrics metrics,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         for (var i = 0; i < items.length; i++) ...[
-          if (i > 0) const SizedBox(width: _tabSpacing),
+          if (i > 0) SizedBox(width: metrics.tabSpacing),
           TabButton(
             icon: items[i].icon,
             selectIcon: items[i].selectedIcon,
             semanticsLabel: items[i].semanticsLabel,
             isActive: _selected == startIndex + i,
+            width: metrics.buttonWidth,
             onTap: () => _handleTabSelected(startIndex + i),
           ),
         ],
@@ -155,50 +155,61 @@ class _MainTabViewState extends State<MainTabView> {
           16,
           bottomInset > 0 ? bottomInset : 12,
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              height: 64,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.92),
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 12,
-                    offset: Offset(0, -2),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: _buildTabCluster(
-                        items: leadingItems,
-                        startIndex: 0,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final metrics = _NavigationMetrics.resolve(
+              availableWidth: constraints.maxWidth,
+              fabDiameter: _fabDiameter,
+            );
+
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(metrics.containerRadius),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  height: metrics.containerHeight,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.92),
+                    borderRadius: BorderRadius.circular(metrics.containerRadius),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 12,
+                        offset: Offset(0, -2),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: _centerGap),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: _buildTabCluster(
-                        items: trailingItems,
-                        startIndex: leadingItems.length,
+                  padding: EdgeInsets.symmetric(horizontal: metrics.horizontalPadding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: _buildTabCluster(
+                            items: leadingItems,
+                            startIndex: 0,
+                            metrics: metrics,
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(width: metrics.centerGap),
+                      Flexible(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: _buildTabCluster(
+                            items: trailingItems,
+                            startIndex: leadingItems.length,
+                            metrics: metrics,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -218,6 +229,51 @@ class _MainTabViewState extends State<MainTabView> {
 
       // Bottom bar: pill + blur + dua cluster tab dengan gap tetap di tengah
       bottomNavigationBar: _buildBottomNavigationBar(context),
+    );
+  }
+}
+
+class _NavigationMetrics {
+  const _NavigationMetrics({
+    required this.buttonWidth,
+    required this.tabSpacing,
+    required this.centerGap,
+    required this.containerHeight,
+    required this.containerRadius,
+    required this.horizontalPadding,
+  });
+
+  final double buttonWidth;
+  final double tabSpacing;
+  final double centerGap;
+  final double containerHeight;
+  final double containerRadius;
+  final double horizontalPadding;
+
+  static const double _minWidth = 320;
+  static const double _maxWidth = 520;
+
+  static _NavigationMetrics resolve({
+    required double availableWidth,
+    required double fabDiameter,
+  }) {
+    final clampedWidth = availableWidth.clamp(_minWidth, _maxWidth);
+    final t = (clampedWidth - _minWidth) / (_maxWidth - _minWidth);
+
+    final buttonWidth = lerpDouble(48, 56, t)!;
+    final tabSpacing = lerpDouble(14, 28, t)!;
+    final centerGap = lerpDouble(fabDiameter + 8, fabDiameter + 22, t)!;
+    final containerHeight = lerpDouble(60, 70, t)!;
+    final containerRadius = lerpDouble(24, 28, t)!;
+    final horizontalPadding = lerpDouble(16, 22, t)!;
+
+    return _NavigationMetrics(
+      buttonWidth: buttonWidth,
+      tabSpacing: tabSpacing,
+      centerGap: centerGap,
+      containerHeight: containerHeight,
+      containerRadius: containerRadius,
+      horizontalPadding: horizontalPadding,
     );
   }
 }
