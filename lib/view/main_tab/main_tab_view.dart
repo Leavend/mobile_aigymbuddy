@@ -168,7 +168,9 @@ class _MainTabViewState extends State<MainTabView> {
                   height: metrics.containerHeight,
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(metrics.containerRadius),
+                    borderRadius: BorderRadius.circular(
+                      metrics.containerRadius,
+                    ),
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
@@ -177,7 +179,9 @@ class _MainTabViewState extends State<MainTabView> {
                       ),
                     ],
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: metrics.horizontalPadding),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: metrics.horizontalPadding,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
