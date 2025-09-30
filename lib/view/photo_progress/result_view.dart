@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 
 import '../../common/color_extension.dart';
-import '../../common/common.dart';
+import '../../common/date_time_utils.dart';
 import '../../common_widget/round_button.dart';
 
 class ResultView extends StatefulWidget {
@@ -289,7 +289,7 @@ class _ResultViewState extends State<ResultView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              dateToString(widget.date1, formatStr: "MMMM"),
+              DateTimeUtils.formatDate(widget.date1, pattern: "MMMM"),
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
@@ -297,7 +297,7 @@ class _ResultViewState extends State<ResultView> {
               ),
             ),
             Text(
-              dateToString(widget.date2, formatStr: "MMMM"),
+              DateTimeUtils.formatDate(widget.date2, pattern: "MMMM"),
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
@@ -470,7 +470,7 @@ class _ResultViewState extends State<ResultView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              dateToString(widget.date1, formatStr: "MMMM"),
+              DateTimeUtils.formatDate(widget.date1, pattern: "MMMM"),
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
@@ -478,7 +478,7 @@ class _ResultViewState extends State<ResultView> {
               ),
             ),
             Text(
-              dateToString(widget.date2, formatStr: "MMMM"),
+              DateTimeUtils.formatDate(widget.date2, pattern: "MMMM"),
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
