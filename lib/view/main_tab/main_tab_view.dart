@@ -148,21 +148,19 @@ class _MainTabViewState extends State<MainTabView> {
 
     return SafeArea(
       top: false,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          0,
-          16,
-          bottomInset > 0 ? bottomInset : 12,
-        ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final metrics = _NavigationMetrics.resolve(
-              availableWidth: constraints.maxWidth,
-              fabDiameter: _fabDiameter,
-            );
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final metrics = _NavigationMetrics.resolve(
+            availableWidth: constraints.maxWidth,
+            fabDiameter: _fabDiameter,
+          );
+          final bottomPadding = bottomInset > 0
+              ? bottomInset + metrics.bottomPadding
+              : metrics.bottomPadding;
 
-            return ClipRRect(
+          return Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, bottomPadding),
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(metrics.containerRadius),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
@@ -170,9 +168,7 @@ class _MainTabViewState extends State<MainTabView> {
                   height: metrics.containerHeight,
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(
-                      metrics.containerRadius,
-                    ),
+                    borderRadius: BorderRadius.circular(metrics.containerRadius),
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
@@ -181,9 +177,7 @@ class _MainTabViewState extends State<MainTabView> {
                       ),
                     ],
                   ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: metrics.horizontalPadding,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: metrics.horizontalPadding),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -212,9 +206,9 @@ class _MainTabViewState extends State<MainTabView> {
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -245,6 +239,7 @@ class _NavigationMetrics {
     required this.containerHeight,
     required this.containerRadius,
     required this.horizontalPadding,
+    required this.bottomPadding,
   });
 
   final double buttonWidth;
@@ -253,6 +248,7 @@ class _NavigationMetrics {
   final double containerHeight;
   final double containerRadius;
   final double horizontalPadding;
+  final double bottomPadding;
 
   static const double _minWidth = 320;
   static const double _maxWidth = 520;
@@ -267,9 +263,10 @@ class _NavigationMetrics {
     final buttonWidth = lerpDouble(48, 56, t)!;
     final tabSpacing = lerpDouble(14, 28, t)!;
     final centerGap = lerpDouble(fabDiameter + 8, fabDiameter + 22, t)!;
-    final containerHeight = lerpDouble(60, 70, t)!;
-    final containerRadius = lerpDouble(24, 28, t)!;
+    final containerHeight = lerpDouble(56, 66, t)!;
+    final containerRadius = lerpDouble(22, 26, t)!;
     final horizontalPadding = lerpDouble(16, 22, t)!;
+    final bottomPadding = lerpDouble(6, 10, t)!;
 
     return _NavigationMetrics(
       buttonWidth: buttonWidth,
@@ -278,6 +275,7 @@ class _NavigationMetrics {
       containerHeight: containerHeight,
       containerRadius: containerRadius,
       horizontalPadding: horizontalPadding,
+      bottomPadding: bottomPadding,
     );
   }
 }
