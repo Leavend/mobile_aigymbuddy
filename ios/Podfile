@@ -52,6 +52,21 @@ post_install do |installer|
       # caused NameError failures during `pod install`.
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
     end
+
+    target.shell_script_build_phases.each do |phase|
+      next unless ['Thin Binary', '[CP] Embed Pods Frameworks'].include?(phase.name)
+
+      cleanup_script = <<~'SCRIPT'
+        if command -v xattr >/dev/null 2>&1; then
+          find "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}" -type d -name "*.framework" -prune -print0 | \
+            while IFS= read -r -d '' framework; do
+              xattr -rc "$framework" || true
+            done
+        fi
+      SCRIPT
+
+      phase.shell_script = "#{cleanup_script}\n#{phase.shell_script}"
+    end
   end
 
   # Matikan signing utk Debug (Simulator) di semua Pods → cegah CodeSign di simulator
