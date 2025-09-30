@@ -24,6 +24,6 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   simple_animation_progress_bar: 3f818acdbd78de0a8c48ddd7fdc88e1998a7b33f
 
-PODFILE CHECKSUM: d4daceff8361d3c54c328dbceb0459c85ecf77f5
+PODFILE CHECKSUM: 70ad459eafd1ef35c98aa0e358e546b0ea405319
 
 COCOAPODS: 1.16.2
