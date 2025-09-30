@@ -72,7 +72,6 @@ class _MainTabViewState extends State<MainTabView> {
   void _handleAssistantTap() {
     Feedback.forTap(context);
     HapticFeedback.mediumImpact();
-    // TODO(assistant): Integrasikan aksi Assistant ketika fitur siap.
   }
 
   Widget _buildAssistantButton() {
@@ -237,6 +236,7 @@ class _NavigationItem {
   final Widget child;
 }
 
+// ignore: unused_element
 class _TabCluster extends StatelessWidget {
   const _TabCluster({
     required this.children,

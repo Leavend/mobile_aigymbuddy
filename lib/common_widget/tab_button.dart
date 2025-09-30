@@ -73,7 +73,7 @@ class TabButton extends StatelessWidget {
         enableFeedback: true,
         preferBelow: false,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           borderRadius: const BorderRadius.all(Radius.circular(6)),
         ),
         textStyle: const TextStyle(color: Colors.white, fontSize: 12),
