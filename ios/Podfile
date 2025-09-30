@@ -37,6 +37,20 @@ load File.join(flutter_root, 'packages', 'flutter_tools', 'bin', 'podhelper.rb')
 # panggil setup flutter (wajib di atas target Runner)
 flutter_ios_podfile_setup
 
+pre_install do |_installer|
+  # Bersihkan extended attributes dari artefak engine bawaan Flutter SDK supaya
+  # tahap `flutter assemble` tidak gagal saat melakukan codesign sebelum Xcode
+  # sempat menjalankan phase build dari Pods.
+  engine_root = File.join(flutter_root, 'bin', 'cache', 'artifacts', 'engine')
+  next unless File.directory?(engine_root)
+
+  Dir.glob(File.join(engine_root, '**', 'Flutter.framework')).each do |framework|
+    next unless File.directory?(framework)
+
+    Kernel.system('xattr', '-rc', framework)
+  end
+end
+
 target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
@@ -51,6 +65,21 @@ post_install do |installer|
       # avoid referencing `config` outside of this scope which previously
       # caused NameError failures during `pod install`.
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
+
+    target.shell_script_build_phases.each do |phase|
+      next unless ['Thin Binary', '[CP] Embed Pods Frameworks'].include?(phase.name)
+
+      cleanup_script = <<~'SCRIPT'
+        if command -v xattr >/dev/null 2>&1; then
+          find "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}" -type d -name "*.framework" -prune -print0 | \
+            while IFS= read -r -d '' framework; do
+              xattr -rc "$framework" || true
+            done
+        fi
+      SCRIPT
+
+      phase.shell_script = "#{cleanup_script}\n#{phase.shell_script}"
     end
   end
 
