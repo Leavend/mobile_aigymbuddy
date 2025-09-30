@@ -19,12 +19,15 @@ class TabButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isActive;
   final double width;
+
   final String? semanticsLabel;
   final bool enableHaptics;
+
 
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(width / 2);
+
 
     final tooltipMessage = semanticsLabel?.trim();
 
@@ -85,6 +88,7 @@ class TabButton extends StatelessWidget {
       child: SizedBox(
         width: width,
         child: button,
+
       ),
     );
   }

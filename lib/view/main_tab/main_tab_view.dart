@@ -236,3 +236,30 @@ class _NavigationItem {
   final String semanticsLabel;
   final Widget child;
 }
+
+class _TabCluster extends StatelessWidget {
+  const _TabCluster({
+    required this.children,
+    required this.spacing,
+  });
+
+  final List<Widget> children;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    if (children.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < children.length; i++) ...[
+          if (i > 0) SizedBox(width: spacing),
+          children[i],
+        ],
+      ],
+    );
+  }
+}

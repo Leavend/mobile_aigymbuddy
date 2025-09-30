@@ -18,6 +18,7 @@ class DateTimeUtils {
 
     final formatter = DateFormat(pattern);
     final dateTime = DateTime(1970, 1, 1).add(Duration(minutes: minutes));
+
     return formatter.format(dateTime);
   }
 
@@ -38,7 +39,9 @@ class DateTimeUtils {
   static DateTime parseDate(String value, {String pattern = 'hh:mm a'}) {
     final formatter = DateFormat(pattern);
     try {
+
       return formatter.parseStrict(value);
+
     } on FormatException catch (error, stackTrace) {
       Error.throwWithStackTrace(
         FormatException('Unable to parse "$value" using "$pattern".', error),
