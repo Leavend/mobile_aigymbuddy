@@ -340,7 +340,12 @@ class _HomeViewState extends State<HomeView> {
                                           ),
                                           FlDotData(
                                             show: true,
-                                            getDotPainter: (s, __, ___, ____) =>
+                                              getDotPainter: (
+                                                _,
+                                                _,
+                                                _,
+                                                _,
+                                              ) =>
                                                 FlDotCirclePainter(
                                                   radius: 3,
                                                   color: Colors.white,
@@ -679,7 +684,12 @@ class _HomeViewState extends State<HomeView> {
                                   const FlLine(color: Colors.transparent),
                                   FlDotData(
                                     show: true,
-                                    getDotPainter: (s, __, ___, ____) =>
+                                      getDotPainter: (
+                                        _,
+                                        _,
+                                        _,
+                                        _,
+                                      ) =>
                                         FlDotCirclePainter(
                                           radius: 3,
                                           color: Colors.white,
@@ -759,7 +769,7 @@ class _HomeViewState extends State<HomeView> {
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: lastWorkoutArr.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, i) => InkWell(
                       onTap: () {
                         context.push(AppRoute.finishedWorkout);

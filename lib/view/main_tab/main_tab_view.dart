@@ -22,8 +22,6 @@ class MainTabView extends StatefulWidget {
 
 class _MainTabViewState extends State<MainTabView> {
   static const double _fabDiameter = 64;
-  static const double _centerGap = _fabDiameter + 20;
-  static const double _tabSpacing = 32;
 
   int _selected = 0;
 
@@ -120,17 +118,19 @@ class _MainTabViewState extends State<MainTabView> {
   Widget _buildTabCluster({
     required List<_NavigationItem> items,
     required int startIndex,
+    required _NavigationMetrics metrics,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         for (var i = 0; i < items.length; i++) ...[
-          if (i > 0) const SizedBox(width: _tabSpacing),
+          if (i > 0) SizedBox(width: metrics.tabSpacing),
           TabButton(
             icon: items[i].icon,
             selectIcon: items[i].selectedIcon,
             semanticsLabel: items[i].semanticsLabel,
             isActive: _selected == startIndex + i,
+            width: metrics.buttonWidth,
             onTap: () => _handleTabSelected(startIndex + i),
           ),
         ],
@@ -139,68 +139,87 @@ class _MainTabViewState extends State<MainTabView> {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
-    final pad = MediaQuery.of(context).padding;
-    final bottomInset = pad.bottom;
-
     final midpoint = (_items.length / 2).ceil();
     final leadingItems = _items.sublist(0, midpoint);
     final trailingItems = _items.sublist(midpoint);
 
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          0,
-          16,
-          bottomInset > 0 ? bottomInset : 12,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              height: 64,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.92),
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 12,
-                    offset: Offset(0, -2),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final mediaQuery = MediaQuery.of(context);
+        final metrics = _NavigationMetrics.resolve(
+          availableWidth: constraints.maxWidth,
+          fabDiameter: _fabDiameter,
+          textScaleFactor: mediaQuery.textScaleFactor,
+          leadingCount: leadingItems.length,
+          trailingCount: trailingItems.length,
+        );
+
+        return SafeArea(
+          top: false,
+          minimum: EdgeInsets.only(bottom: metrics.safeAreaPadding),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              metrics.outerHorizontalPadding,
+              0,
+              metrics.outerHorizontalPadding,
+              metrics.bottomMargin,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(metrics.containerRadius),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.92),
+                    borderRadius: BorderRadius.circular(metrics.containerRadius),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 12,
+                        offset: Offset(0, -2),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: _buildTabCluster(
-                        items: leadingItems,
-                        startIndex: 0,
+                  child: SizedBox(
+                    height: metrics.containerHeight,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: metrics.horizontalPadding,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: _buildTabCluster(
+                                items: leadingItems,
+                                startIndex: 0,
+                                metrics: metrics,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: metrics.centerGap),
+                          Flexible(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: _buildTabCluster(
+                                items: trailingItems,
+                                startIndex: leadingItems.length,
+                                metrics: metrics,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(width: _centerGap),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: _buildTabCluster(
-                        items: trailingItems,
-                        startIndex: leadingItems.length,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -219,6 +238,149 @@ class _MainTabViewState extends State<MainTabView> {
       // Bottom bar: pill + blur + dua cluster tab dengan gap tetap di tengah
       bottomNavigationBar: _buildBottomNavigationBar(context),
     );
+  }
+}
+
+class _NavigationMetrics {
+  const _NavigationMetrics({
+    required this.buttonWidth,
+    required this.tabSpacing,
+    required this.centerGap,
+    required this.containerHeight,
+    required this.containerRadius,
+    required this.horizontalPadding,
+    required this.outerHorizontalPadding,
+    required this.bottomMargin,
+    required this.safeAreaPadding,
+  });
+
+  final double buttonWidth;
+  final double tabSpacing;
+  final double centerGap;
+  final double containerHeight;
+  final double containerRadius;
+  final double horizontalPadding;
+  final double outerHorizontalPadding;
+  final double bottomMargin;
+  final double safeAreaPadding;
+
+  static const double _minWidth = 320;
+  static const double _maxWidth = 840;
+
+  static _NavigationMetrics resolve({
+    required double availableWidth,
+    required double fabDiameter,
+    required double textScaleFactor,
+    required int leadingCount,
+    required int trailingCount,
+  }) {
+    final clampedWidth = availableWidth.clamp(_minWidth, _maxWidth);
+    final t = (clampedWidth - _minWidth) / (_maxWidth - _minWidth);
+
+    var buttonWidth = lerpDouble(48, 64, t)!;
+    var tabSpacing = lerpDouble(12, 28, t)!;
+    final gapOffset = lerpDouble(12, 28, t)!;
+    var centerGap = fabDiameter + gapOffset;
+    final baseHeight = lerpDouble(56, 72, t)!;
+    final textScale = textScaleFactor.clamp(1.0, 1.3);
+    final heightBoost = (textScale - 1.0) * 12;
+
+    final outerPadding = lerpDouble(16, 32, t)!;
+    final innerPadding = lerpDouble(16, 28, t)!;
+    final totalButtons = leadingCount + trailingCount;
+    final totalSpacing = _spacingCount(leadingCount) + _spacingCount(trailingCount);
+    final minCenterGap = fabDiameter + 8;
+    const minTabSpacing = 8.0;
+    const minButtonWidth = 36.0;
+
+    var availableContentWidth = availableWidth - (outerPadding * 2);
+    if (availableContentWidth < 0) {
+      availableContentWidth = 0;
+    }
+
+    var availableInnerWidth = availableContentWidth - (innerPadding * 2);
+    if (availableInnerWidth < 0) {
+      availableInnerWidth = 0;
+    }
+
+    if (availableInnerWidth > 0 && totalButtons > 0) {
+      final initialRequiredWidth = _clusterWidth(leadingCount, buttonWidth, tabSpacing) +
+          centerGap +
+          _clusterWidth(trailingCount, buttonWidth, tabSpacing);
+
+      var overflow = initialRequiredWidth - availableInnerWidth;
+
+      if (overflow > 0) {
+        final maxGapReduction = centerGap - minCenterGap;
+        if (maxGapReduction > 0) {
+          final reduction = overflow < maxGapReduction ? overflow : maxGapReduction;
+          centerGap -= reduction;
+          overflow -= reduction;
+        }
+
+        if (overflow > 0 && totalSpacing > 0) {
+          final maxSpacingReduction = (tabSpacing - minTabSpacing) * totalSpacing;
+          if (maxSpacingReduction > 0) {
+            final reduction = overflow < maxSpacingReduction ? overflow : maxSpacingReduction;
+            tabSpacing -= reduction / totalSpacing;
+            overflow -= reduction;
+          }
+        }
+
+        if (overflow > 0) {
+          final maxButtonReduction = (buttonWidth - minButtonWidth) * totalButtons;
+          if (maxButtonReduction > 0) {
+            final reduction = overflow < maxButtonReduction ? overflow : maxButtonReduction;
+            buttonWidth -= reduction / totalButtons;
+            overflow -= reduction;
+          }
+        }
+
+        if (overflow > 0) {
+          final shrinkDenominator = totalButtons + totalSpacing + 1;
+          if (shrinkDenominator > 0) {
+            final shrinkStep = overflow / shrinkDenominator;
+            final nextButtonWidth = buttonWidth - shrinkStep;
+            buttonWidth = nextButtonWidth < 28.0 ? 28.0 : nextButtonWidth;
+            if (totalSpacing > 0) {
+              final nextSpacing = tabSpacing - shrinkStep;
+              tabSpacing = nextSpacing < 4.0 ? 4.0 : nextSpacing;
+            }
+            final nextGap = centerGap - shrinkStep;
+            final minGap = fabDiameter + 4;
+            centerGap = nextGap < minGap ? minGap : nextGap;
+          }
+        }
+      }
+    }
+
+    return _NavigationMetrics(
+      buttonWidth: buttonWidth,
+      tabSpacing: tabSpacing,
+      centerGap: centerGap,
+      containerHeight: baseHeight + heightBoost,
+      containerRadius: lerpDouble(22, 30, t)!,
+      horizontalPadding: innerPadding,
+      outerHorizontalPadding: outerPadding,
+      bottomMargin: lerpDouble(8, 16, t)!,
+      safeAreaPadding: lerpDouble(8, 14, t)!,
+    );
+  }
+
+  static int _spacingCount(int itemCount) => itemCount > 1 ? itemCount - 1 : 0;
+
+  static double _clusterWidth(
+    int itemCount,
+    double buttonWidth,
+    double tabSpacing,
+  ) {
+    if (itemCount <= 0) {
+      return 0;
+    }
+    if (itemCount == 1) {
+      return buttonWidth;
+    }
+    return (itemCount * buttonWidth) + ((itemCount - 1) * tabSpacing);
   }
 }
 
