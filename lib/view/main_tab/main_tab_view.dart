@@ -35,7 +35,8 @@ class _MainTabViewState extends State<MainTabView> {
 
     // ukuran FAB & gap tengah agar jarak tab konsisten
     const fabDiameter = 64.0;
-    const centerGap = fabDiameter + 16; // FAB + margin kecil
+    const centerGap = fabDiameter + 20; // FAB + margin kecil
+    const tabSpacing = 32.0;
 
     return Scaffold(
       backgroundColor: TColor.white,
@@ -106,52 +107,55 @@ class _MainTabViewState extends State<MainTabView> {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // CLUSTER KIRI (2 tab)
                     Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          TabButton(
-                            icon: "assets/img/home_tab.png",
-                            selectIcon: "assets/img/home_tab_select.png",
-                            isActive: _selected == 0,
-                            onTap: () => setState(() => _selected = 0),
-                          ),
-                          TabButton(
-                            icon: "assets/img/activity_tab.png",
-                            selectIcon: "assets/img/activity_tab_select.png",
-                            isActive: _selected == 1,
-                            onTap: () => setState(() => _selected = 1),
-                          ),
-                        ],
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: _TabCluster(
+                          spacing: tabSpacing,
+                          children: [
+                            TabButton(
+                              icon: "assets/img/home_tab.png",
+                              selectIcon: "assets/img/home_tab_select.png",
+                              isActive: _selected == 0,
+                              onTap: () => setState(() => _selected = 0),
+                            ),
+                            TabButton(
+                              icon: "assets/img/activity_tab.png",
+                              selectIcon: "assets/img/activity_tab_select.png",
+                              isActive: _selected == 1,
+                              onTap: () => setState(() => _selected = 1),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
-                    // GAP TETAP untuk FAB (tanpa Spacer biar jarak tidak melebar)
                     const SizedBox(width: centerGap),
 
-                    // CLUSTER KANAN (2 tab)
                     Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          TabButton(
-                            icon: "assets/img/camera_tab.png",
-                            selectIcon: "assets/img/camera_tab_select.png",
-                            isActive: _selected == 2,
-                            onTap: () => setState(() => _selected = 2),
-                          ),
-                          TabButton(
-                            icon: "assets/img/profile_tab.png",
-                            selectIcon: "assets/img/profile_tab_select.png",
-                            isActive: _selected == 3,
-                            onTap: () => setState(() => _selected = 3),
-                          ),
-                        ],
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: _TabCluster(
+                          spacing: tabSpacing,
+                          children: [
+                            TabButton(
+                              icon: "assets/img/camera_tab.png",
+                              selectIcon: "assets/img/camera_tab_select.png",
+                              isActive: _selected == 2,
+                              onTap: () => setState(() => _selected = 2),
+                            ),
+                            TabButton(
+                              icon: "assets/img/profile_tab.png",
+                              selectIcon: "assets/img/profile_tab_select.png",
+                              isActive: _selected == 3,
+                              onTap: () => setState(() => _selected = 3),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -161,6 +165,33 @@ class _MainTabViewState extends State<MainTabView> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TabCluster extends StatelessWidget {
+  const _TabCluster({
+    required this.children,
+    required this.spacing,
+  });
+
+  final List<Widget> children;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    if (children.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < children.length; i++) ...[
+          if (i > 0) SizedBox(width: spacing),
+          children[i],
+        ],
+      ],
     );
   }
 }
