@@ -1,6 +1,7 @@
 // lib/view/workout_tracker/workout_tracker_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -346,7 +347,9 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                           // Pastikan parameter bertipe Map<String, dynamic>
                           context.push(
                             AppRoute.workoutDetail,
-                            extra: Map<String, dynamic>.from(wObj),
+                            extra: WorkoutDetailArgs(
+                              workout: Map<String, dynamic>.from(wObj),
+                            ),
                           );
                         },
                         child: WhatTrainRow(

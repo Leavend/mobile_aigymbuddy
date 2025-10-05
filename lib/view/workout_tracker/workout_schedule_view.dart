@@ -1,12 +1,13 @@
 // lib/view/workout_tracker/workout_schedule_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
-import '../../common/common.dart';
+import '../../common/date_time_utils.dart';
 import '../../common_widget/round_button.dart';
 
 class WorkoutScheduleView extends StatefulWidget {
@@ -43,19 +44,21 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
   }
 
   void setDayEventWorkoutList() {
-    final date = dateToStartDate(_selectedDateAppBBar);
+    final date = DateTimeUtils.startOfDay(_selectedDateAppBBar);
     selectDayEventArr = eventArr
         .map((wObj) {
           return {
             "name": wObj["name"],
             "start_time": wObj["start_time"],
-            "date": stringToDate(
+            "date": DateTimeUtils.parseDate(
               wObj["start_time"]!,
-              formatStr: "dd/MM/yyyy hh:mm aa",
+              pattern: "dd/MM/yyyy hh:mm aa",
             ),
           };
         })
-        .where((wObj) => dateToStartDate(wObj["date"] as DateTime) == date)
+        .where(
+          (wObj) => DateTimeUtils.startOfDay(wObj["date"] as DateTime) == date,
+        )
         .toList();
 
     if (mounted) setState(() {});
@@ -182,7 +185,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                           SizedBox(
                             width: 80,
                             child: Text(
-                              getTime(index * 60),
+                              DateTimeUtils.formatMinutesToTime(index * 60),
                               style: TextStyle(
                                 color: TColor.black,
                                 fontSize: 12,
@@ -323,7 +326,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                                           width: 8,
                                                         ),
                                                         Text(
-                                                          "${getDayTitle(sObj["start_time"].toString())} | ${getStringDateToOtherFormate(sObj["start_time"].toString(), outFormatStr: "h:mm aa")}",
+                                                          "${DateTimeUtils.describeDayFromString(sObj["start_time"].toString())} | ${DateTimeUtils.reformatDateString(sObj["start_time"].toString(), outputPattern: "h:mm aa")}",
                                                           style: TextStyle(
                                                             color: TColor.gray,
                                                             fontSize: 12,
@@ -359,7 +362,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                           ),
                                         ),
                                         child: Text(
-                                          "${sObj["name"]}, ${getStringDateToOtherFormate(sObj["start_time"].toString(), outFormatStr: "h:mm aa")}",
+                                          "${sObj["name"]}, ${DateTimeUtils.reformatDateString(sObj["start_time"].toString(), outputPattern: "h:mm aa")}",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -387,7 +390,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         onTap: () {
           context.push(
             AppRoute.addWorkoutSchedule,
-            extra: _selectedDateAppBBar,
+            extra: AddScheduleArgs(date: _selectedDateAppBBar),
           );
         },
         child: Container(

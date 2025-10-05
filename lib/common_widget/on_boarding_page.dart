@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../common/color_extension.dart';
 
 class OnBoardingContent {
@@ -54,19 +53,18 @@ class OnBoardingPage extends StatelessWidget {
                   textAlign: content.textAlign ?? TextAlign.center,
                   style: TextStyle(
                     color: content.titleColor ?? TColor.black,
-                    fontSize: 34,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.2,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
                   content.subtitle,
                   textAlign: content.textAlign ?? TextAlign.center,
                   style: TextStyle(
                     color: content.subtitleColor ?? TColor.gray,
                     fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 const Spacer(),
@@ -118,52 +116,35 @@ class OnBoardingPage extends StatelessWidget {
       width: media.width,
       height: media.height,
       color: TColor.white,
-      child: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final availableHeight = constraints.maxHeight;
-            final imageHeight = (availableHeight * 0.42).clamp(220.0, 360.0);
-
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 28),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: availableHeight),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: availableHeight * 0.03),
-                    SizedBox(
-                      height: imageHeight,
-                      child: Image.asset(content.image, fit: BoxFit.contain),
-                    ),
-                    SizedBox(height: availableHeight * 0.04),
-                    Text(
-                      content.title,
-                      textAlign: content.textAlign ?? TextAlign.center,
-                      style: TextStyle(
-                        color: content.titleColor ?? TColor.black,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      content.subtitle,
-                      textAlign: content.textAlign ?? TextAlign.center,
-                      style: TextStyle(
-                        color: content.subtitleColor ?? TColor.gray,
-                        fontSize: 15,
-                        height: 1.5,
-                      ),
-                    ),
-                    SizedBox(height: availableHeight * 0.08),
-                  ],
-                ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(content.image, width: media.width, fit: BoxFit.fitWidth),
+          SizedBox(height: media.width * 0.1),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              content.title,
+              style: TextStyle(
+                color: content.titleColor ?? TColor.black,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
               ),
-            );
-          },
-        ),
+            ),
+          ),
+          const SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              content.subtitle,
+              style: TextStyle(
+                color: content.subtitleColor ?? TColor.gray,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
