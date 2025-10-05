@@ -143,8 +143,18 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     super.dispose();
   }
 
+  OnBoardingContent get _currentPage => _pages[_currentPageIndex];
+
+  bool get _isLastPage => _currentPageIndex == _pages.length - 1;
+
+  bool get _showProgressButton => !_currentPage.isWelcome;
+
+  double get _progressValue => (_currentPageIndex + 1) / _pages.length;
+
+  List<Color> get _progressGradient => _currentPage.gradientOrDefault();
+
   void _handleNext() {
-    if (_currentPageIndex < _pages.length - 1) {
+    if (!_isLastPage) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeOutCubic,
@@ -152,6 +162,14 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     } else {
       context.go(AppRoute.signUp);
     }
+  }
+
+  void _handlePageChanged(int index) {
+    if (index == _currentPageIndex) return;
+
+    setState(() {
+      _currentPageIndex = index;
+    });
   }
 
   void _updateLanguage(AppLanguage language) {
@@ -164,13 +182,6 @@ class _OnBoardingViewState extends State<OnBoardingView> {
 
   @override
   Widget build(BuildContext context) {
-    final totalPages = _pages.length;
-    final currentContent = _pages[_currentPageIndex];
-    final isLastPage = _currentPageIndex == totalPages - 1;
-    final showProgressButton = !currentContent.isWelcome;
-    final progressValue = (_currentPageIndex + 1) / totalPages;
-    final progressGradient = currentContent.gradientOrDefault();
-
     return Scaffold(
       backgroundColor: TColor.white,
       body: Stack(
@@ -178,12 +189,8 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         children: [
           PageView.builder(
             controller: _pageController,
-            itemCount: totalPages,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPageIndex = index;
-              });
-            },
+            itemCount: _pages.length,
+            onPageChanged: _handlePageChanged,
             itemBuilder: (context, index) {
               return OnBoardingPage(
                 content: _pages[index],
@@ -192,12 +199,12 @@ class _OnBoardingViewState extends State<OnBoardingView> {
               );
             },
           ),
-          if (showProgressButton)
+          if (_showProgressButton)
             _OnboardingProgressButton(
-              progress: progressValue,
-              gradient: progressGradient,
+              progress: _progressValue,
+              gradient: _progressGradient,
               onPressed: _handleNext,
-              isLastPage: isLastPage,
+              isLastPage: _isLastPage,
             ),
           Positioned(
             top: 16,
