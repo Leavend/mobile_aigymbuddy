@@ -183,7 +183,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             top: 16,
             right: 16,
             child: SafeArea(
-              child: _OnboardingLanguageMenu(
+              child: _OnboardingLanguageSwitcher(
                 selectedLanguage: _language,
                 onLanguageSelected: _updateLanguage,
               ),
@@ -195,8 +195,8 @@ class _OnBoardingViewState extends State<OnBoardingView> {
   }
 }
 
-class _OnboardingLanguageMenu extends StatelessWidget {
-  const _OnboardingLanguageMenu({
+class _OnboardingLanguageSwitcher extends StatelessWidget {
+  const _OnboardingLanguageSwitcher({
     required this.selectedLanguage,
     required this.onLanguageSelected,
   });
@@ -206,56 +206,57 @@ class _OnboardingLanguageMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<AppLanguage>(
-      tooltip: 'Select language',
-      initialValue: selectedLanguage,
-      onSelected: onLanguageSelected,
-      itemBuilder: (context) {
-        return AppLanguage.values
+    final selections = AppLanguage.values
+        .map((language) => language == selectedLanguage)
+        .toList(growable: false);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: TColor.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: TColor.primaryColor1.withValues(alpha: 0.12),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ToggleButtons(
+        isSelected: selections,
+        onPressed: (index) {
+          final language = AppLanguage.values[index];
+          if (language != selectedLanguage) {
+            onLanguageSelected(language);
+          }
+        },
+        borderRadius: BorderRadius.circular(24),
+        borderColor: TColor.primaryColor1,
+        selectedBorderColor: TColor.primaryColor1,
+        color: TColor.primaryColor1,
+        selectedColor: TColor.white,
+        fillColor: TColor.primaryColor1,
+        splashColor: TColor.primaryColor2,
+        renderBorder: true,
+        constraints: const BoxConstraints(minHeight: 40, minWidth: 52),
+        children: AppLanguage.values
             .map(
-              (language) => PopupMenuItem<AppLanguage>(
-                value: language,
+              (language) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.translate, size: 18),
-                    const SizedBox(width: 8),
-                    Text(language.displayName),
-                    const Spacer(),
-                    if (language == selectedLanguage)
-                      Icon(Icons.check, color: TColor.primaryColor1, size: 18),
+                    const Icon(Icons.translate, size: 16),
+                    const SizedBox(width: 6),
+                    Text(
+                      language.buttonLabel,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ],
                 ),
               ),
             )
-            .toList();
-      },
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(color: TColor.primaryColor1),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.translate,
-                size: 18,
-                color: TColor.primaryColor1,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                selectedLanguage.buttonLabel,
-                style: const TextStyle(
-                  color: TColor.primaryColor1,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
+            .toList(growable: false),
       ),
     );
   }
