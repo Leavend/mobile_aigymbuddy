@@ -9,16 +9,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class WhatYourGoalView extends StatefulWidget {
+class WhatYourGoalView extends StatelessWidget {
   const WhatYourGoalView({super.key});
-
-  @override
-  State<WhatYourGoalView> createState() => _WhatYourGoalViewState();
-}
-
-class _WhatYourGoalViewState extends State<WhatYourGoalView>
-    with AppLanguageState<WhatYourGoalView> {
-  final CarouselSliderController _controller = CarouselSliderController();
 
   static const _title = LocalizedText(
     english: 'What is your goal?',
@@ -103,7 +95,6 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView>
               const SizedBox(height: 32),
               Expanded(
                 child: CarouselSlider.builder(
-                  carouselController: _controller,
                   itemCount: _goals.length,
                   itemBuilder: (context, index, realIdx) {
                     final goal = _goals[index];
