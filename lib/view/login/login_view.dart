@@ -170,8 +170,7 @@ class _LoginViewState extends State<LoginView> {
                         children: [
                           Text(
                             context.localize(_noAccountText),
-                            style:
-                                TextStyle(color: TColor.black, fontSize: 14),
+                            style: TextStyle(color: TColor.black, fontSize: 14),
                           ),
                           Text(
                             context.localize(_registerText),
