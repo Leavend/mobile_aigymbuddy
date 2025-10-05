@@ -3,8 +3,7 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_state.dart';
-import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +16,7 @@ class CompleteProfileView extends StatefulWidget {
   State<CompleteProfileView> createState() => _CompleteProfileViewState();
 }
 
-class _CompleteProfileViewState extends State<CompleteProfileView>
-    with AppLanguageState<CompleteProfileView> {
+class _CompleteProfileViewState extends State<CompleteProfileView> {
   final TextEditingController dobCtrl = TextEditingController();
   final TextEditingController weightCtrl = TextEditingController();
   final TextEditingController heightCtrl = TextEditingController();
@@ -72,7 +70,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
       initialDate: DateTime(now.year - 18, now.month, now.day),
       firstDate: DateTime(now.year - 90),
       lastDate: now,
-      helpText: localized(_dobHelpText),
+      helpText: context.localize(_dobHelpText),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -110,13 +108,6 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: AppLanguageToggle(
-                      selectedLanguage: language,
-                      onSelected: updateLanguage,
-                    ),
-                  ),
                   const SizedBox(height: 24),
                   Image.asset(
                     'assets/img/complete_profile.png',
@@ -125,7 +116,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    localized(_title),
+                    context.localize(_title),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: TColor.black,
@@ -135,7 +126,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    localized(_subtitle),
+                    context.localize(_subtitle),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: TColor.gray, fontSize: 12),
                   ),
@@ -170,7 +161,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
                                     (gender) => DropdownMenuItem(
                                       value: gender,
                                       child: Text(
-                                        localized(gender.label),
+                                        context.localize(gender.label),
                                         style: TextStyle(
                                           color: TColor.gray,
                                           fontSize: 14,
@@ -180,7 +171,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
                                   )
                                   .toList(),
                               hint: Text(
-                                localized(_genderHint),
+                                context.localize(_genderHint),
                                 style: TextStyle(
                                   color: TColor.gray,
                                   fontSize: 12,
@@ -204,7 +195,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
                     child: AbsorbPointer(
                       child: RoundTextField(
                         controller: dobCtrl,
-                        hitText: localized(_dobHint),
+                        hitText: context.localize(_dobHint),
                         icon: 'assets/img/date.png',
                       ),
                     ),
@@ -215,7 +206,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
                       Expanded(
                         child: RoundTextField(
                           controller: weightCtrl,
-                          hitText: localized(_weightHint),
+                          hitText: context.localize(_weightHint),
                           icon: 'assets/img/weight.png',
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
@@ -232,7 +223,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
                       Expanded(
                         child: RoundTextField(
                           controller: heightCtrl,
-                          hitText: localized(_heightHint),
+                          hitText: context.localize(_heightHint),
                           icon: 'assets/img/hight.png',
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
@@ -245,7 +236,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView>
                   ),
                   const SizedBox(height: 28),
                   RoundButton(
-                    title: localized(_nextText),
+                    title: context.localize(_nextText),
                     onPressed: () {
                       context.push(AppRoute.goal);
                     },
@@ -291,10 +282,9 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
-    _Gender.female => const LocalizedText(
-      english: 'Female',
-      indonesian: 'Wanita',
-    ),
-  };
+        _Gender.male => const LocalizedText(
+            english: 'Male', indonesian: 'Pria'),
+        _Gender.female => const LocalizedText(
+            english: 'Female', indonesian: 'Wanita'),
+      };
 }

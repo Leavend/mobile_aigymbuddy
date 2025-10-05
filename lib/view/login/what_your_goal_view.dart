@@ -3,8 +3,7 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_state.dart';
-import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +62,10 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView>
     ),
     _GoalCardData(
       image: 'assets/img/goal_3.png',
-      title: LocalizedText(english: 'Lose a Fat', indonesian: 'Turunkan Lemak'),
+      title: LocalizedText(
+        english: 'Lose a Fat',
+        indonesian: 'Turunkan Lemak',
+      ),
       subtitle: LocalizedText(
         english:
             'I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle mass',
@@ -85,16 +87,9 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: AppLanguageToggle(
-                  selectedLanguage: language,
-                  onSelected: updateLanguage,
-                ),
-              ),
               const SizedBox(height: 16),
               Text(
-                localized(_title),
+                context.localize(_title),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: TColor.black,
@@ -104,7 +99,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView>
               ),
               const SizedBox(height: 6),
               Text(
-                localized(_subtitle),
+                context.localize(_subtitle),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
@@ -138,7 +133,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView>
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            localized(goal.title),
+                            context.localize(goal.title),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: TColor.white,
@@ -150,7 +145,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView>
                           Container(width: 40, height: 1, color: TColor.white),
                           const SizedBox(height: 12),
                           Text(
-                            localized(goal.subtitle),
+                            context.localize(goal.subtitle),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: TColor.white, fontSize: 12),
                           ),
@@ -167,7 +162,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView>
               ),
               const SizedBox(height: 24),
               RoundButton(
-                title: localized(_confirmText),
+                title: context.localize(_confirmText),
                 onPressed: () {
                   context.push(AppRoute.welcome);
                 },

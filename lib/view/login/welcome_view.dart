@@ -3,7 +3,7 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_state.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
@@ -17,15 +17,16 @@ class WelcomeView extends StatefulWidget {
   State<WelcomeView> createState() => _WelcomeViewState();
 }
 
-class _WelcomeViewState extends State<WelcomeView>
-    with AppLanguageState<WelcomeView> {
+class _WelcomeViewState extends State<WelcomeView> {
   static const _title = LocalizedText(
     english: 'Welcome, GYM Buddy',
     indonesian: 'Selamat datang, GYM Buddy',
   );
   static const _subtitle = LocalizedText(
-    english: 'You are all set now, let’s reach your\ngoals together with us',
-    indonesian: 'Semua sudah siap, ayo capai\ntujuanmu bersama kami',
+    english:
+        'You are all set now, let’s reach your\ngoals together with us',
+    indonesian:
+        'Semua sudah siap, ayo capai\ntujuanmu bersama kami',
   );
   static const _cta = LocalizedText(
     english: 'Go To Home',
@@ -40,19 +41,13 @@ class _WelcomeViewState extends State<WelcomeView>
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: AppLanguageToggle(
-                        selectedLanguage: language,
-                        onSelected: updateLanguage,
-                      ),
-                    ),
                     const SizedBox(height: 32),
                     Image.asset(
                       'assets/img/welcome.png',
@@ -61,7 +56,7 @@ class _WelcomeViewState extends State<WelcomeView>
                     ),
                     const SizedBox(height: 32),
                     Text(
-                      localized(_title),
+                      context.localize(_title),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: TColor.black,
@@ -71,13 +66,13 @@ class _WelcomeViewState extends State<WelcomeView>
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      localized(_subtitle),
+                      context.localize(_subtitle),
                       textAlign: TextAlign.center,
                       style: TextStyle(color: TColor.gray, fontSize: 14),
                     ),
                     const SizedBox(height: 40),
                     RoundButton(
-                      title: localized(_cta),
+                      title: context.localize(_cta),
                       onPressed: () async {
                         final router = GoRouter.of(context);
                         await AuthService.instance.setHasCredentials(true);

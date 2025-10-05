@@ -1,7 +1,7 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_state.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
 import 'package:aigymbuddy/common_widget/on_boarding_page.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +14,7 @@ class OnBoardingView extends StatefulWidget {
   State<OnBoardingView> createState() => _OnBoardingViewState();
 }
 
-class _OnBoardingViewState extends State<OnBoardingView>
-    with AppLanguageState<OnBoardingView> {
+class _OnBoardingViewState extends State<OnBoardingView> {
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
 
@@ -149,6 +148,9 @@ class _OnBoardingViewState extends State<OnBoardingView>
 
   @override
   Widget build(BuildContext context) {
+    final languageController = AppLanguageScope.of(context);
+    final language = context.appLanguage;
+
     return Scaffold(
       backgroundColor: TColor.white,
       body: Stack(
@@ -179,7 +181,7 @@ class _OnBoardingViewState extends State<OnBoardingView>
             child: SafeArea(
               child: AppLanguageToggle(
                 selectedLanguage: language,
-                onSelected: updateLanguage,
+                onSelected: languageController.select,
               ),
             ),
           ),

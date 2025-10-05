@@ -3,8 +3,7 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_state.dart';
-import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
@@ -18,8 +17,7 @@ class SignUpView extends StatefulWidget {
   State<SignUpView> createState() => _SignUpViewState();
 }
 
-class _SignUpViewState extends State<SignUpView>
-    with AppLanguageState<SignUpView> {
+class _SignUpViewState extends State<SignUpView> {
   bool _isTermsAccepted = false;
 
   static const _greetingText = LocalizedText(
@@ -47,7 +45,8 @@ class _SignUpViewState extends State<SignUpView>
     indonesian: 'Kata Sandi',
   );
   static const _termsText = LocalizedText(
-    english: 'By continuing you accept our Privacy Policy and\nTerm of Use',
+    english:
+        'By continuing you accept our Privacy Policy and\nTerm of Use',
     indonesian:
         'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
   );
@@ -55,7 +54,10 @@ class _SignUpViewState extends State<SignUpView>
     english: 'Register',
     indonesian: 'Daftar',
   );
-  static const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
+  static const _dividerText = LocalizedText(
+    english: 'Or',
+    indonesian: 'Atau',
+  );
   static const _footerQuestionText = LocalizedText(
     english: 'Already have an account? ',
     indonesian: 'Sudah punya akun? ',
@@ -80,22 +82,15 @@ class _SignUpViewState extends State<SignUpView>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: AppLanguageToggle(
-                          selectedLanguage: language,
-                          onSelected: updateLanguage,
-                        ),
-                      ),
                       const SizedBox(height: 32),
                       Text(
-                        localized(_greetingText),
+                        context.localize(_greetingText),
                         textAlign: TextAlign.center,
                         style: TextStyle(color: TColor.gray, fontSize: 16),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        localized(_createAccountText),
+                        context.localize(_createAccountText),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: TColor.black,
@@ -105,23 +100,23 @@ class _SignUpViewState extends State<SignUpView>
                       ),
                       const SizedBox(height: 24),
                       RoundTextField(
-                        hitText: localized(_firstNameHint),
+                        hitText: context.localize(_firstNameHint),
                         icon: 'assets/img/user_text.png',
                       ),
                       const SizedBox(height: 16),
                       RoundTextField(
-                        hitText: localized(_lastNameHint),
+                        hitText: context.localize(_lastNameHint),
                         icon: 'assets/img/user_text.png',
                       ),
                       const SizedBox(height: 16),
                       RoundTextField(
-                        hitText: localized(_emailHint),
+                        hitText: context.localize(_emailHint),
                         icon: 'assets/img/email.png',
                         keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: 16),
                       RoundTextField(
-                        hitText: localized(_passwordHint),
+                        hitText: context.localize(_passwordHint),
                         icon: 'assets/img/lock.png',
                         obscureText: true,
                         rigtIcon: IconButton(
@@ -154,7 +149,7 @@ class _SignUpViewState extends State<SignUpView>
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              localized(_termsText),
+                              context.localize(_termsText),
                               style: TextStyle(
                                 color: TColor.gray,
                                 fontSize: 12,
@@ -165,7 +160,7 @@ class _SignUpViewState extends State<SignUpView>
                       ),
                       const SizedBox(height: 24),
                       RoundButton(
-                        title: localized(_registerText),
+                        title: context.localize(_registerText),
                         onPressed: () {
                           context.push(AppRoute.completeProfile);
                         },
@@ -181,7 +176,7 @@ class _SignUpViewState extends State<SignUpView>
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            localized(_dividerText),
+                            context.localize(_dividerText),
                             style: TextStyle(color: TColor.black, fontSize: 12),
                           ),
                           const SizedBox(width: 8),
@@ -199,9 +194,7 @@ class _SignUpViewState extends State<SignUpView>
                         children: const [
                           SocialAuthButton(assetPath: 'assets/img/google.png'),
                           SizedBox(width: 16),
-                          SocialAuthButton(
-                            assetPath: 'assets/img/facebook.png',
-                          ),
+                          SocialAuthButton(assetPath: 'assets/img/facebook.png'),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -213,14 +206,12 @@ class _SignUpViewState extends State<SignUpView>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              localized(_footerQuestionText),
-                              style: TextStyle(
-                                color: TColor.black,
-                                fontSize: 14,
-                              ),
+                              context.localize(_footerQuestionText),
+                              style:
+                                  TextStyle(color: TColor.black, fontSize: 14),
                             ),
                             Text(
-                              localized(_footerActionText),
+                              context.localize(_footerActionText),
                               style: TextStyle(
                                 color: TColor.black,
                                 fontSize: 14,

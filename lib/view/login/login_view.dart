@@ -3,8 +3,7 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_state.dart';
-import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
@@ -18,8 +17,7 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView>
-    with AppLanguageState<LoginView> {
+class _LoginViewState extends State<LoginView> {
   static const _greetingText = LocalizedText(
     english: 'Hey there,',
     indonesian: 'Hai,',
@@ -71,21 +69,14 @@ class _LoginViewState extends State<LoginView>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: AppLanguageToggle(
-                        selectedLanguage: language,
-                        onSelected: updateLanguage,
-                      ),
-                    ),
                     const SizedBox(height: 32),
                     Text(
-                      localized(_greetingText),
+                      context.localize(_greetingText),
                       style: TextStyle(color: TColor.gray, fontSize: 16),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      localized(_welcomeBackText),
+                      context.localize(_welcomeBackText),
                       style: TextStyle(
                         color: TColor.black,
                         fontSize: 24,
@@ -94,13 +85,13 @@ class _LoginViewState extends State<LoginView>
                     ),
                     const SizedBox(height: 32),
                     RoundTextField(
-                      hitText: localized(_emailHint),
+                      hitText: context.localize(_emailHint),
                       icon: 'assets/img/email.png',
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 20),
                     RoundTextField(
-                      hitText: localized(_passwordHint),
+                      hitText: context.localize(_passwordHint),
                       icon: 'assets/img/lock.png',
                       obscureText: true,
                       rigtIcon: IconButton(
@@ -124,7 +115,7 @@ class _LoginViewState extends State<LoginView>
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
-                        localized(_forgotPasswordText),
+                        context.localize(_forgotPasswordText),
                         style: TextStyle(
                           color: TColor.gray,
                           fontSize: 12,
@@ -134,7 +125,7 @@ class _LoginViewState extends State<LoginView>
                     ),
                     const SizedBox(height: 32),
                     RoundButton(
-                      title: localized(_loginButtonText),
+                      title: context.localize(_loginButtonText),
                       onPressed: () {
                         context.push(AppRoute.completeProfile);
                       },
@@ -149,7 +140,7 @@ class _LoginViewState extends State<LoginView>
                           ),
                         ),
                         Text(
-                          localized(_dividerText),
+                          context.localize(_dividerText),
                           style: TextStyle(color: TColor.black, fontSize: 12),
                         ),
                         Expanded(
@@ -178,11 +169,12 @@ class _LoginViewState extends State<LoginView>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            localized(_noAccountText),
-                            style: TextStyle(color: TColor.black, fontSize: 14),
+                            context.localize(_noAccountText),
+                            style:
+                                TextStyle(color: TColor.black, fontSize: 14),
                           ),
                           Text(
-                            localized(_registerText),
+                            context.localize(_registerText),
                             style: TextStyle(
                               color: TColor.black,
                               fontSize: 14,
