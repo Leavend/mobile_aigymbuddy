@@ -1,4 +1,5 @@
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
@@ -345,7 +346,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             onPressed: (obj) {
                               context.push(
                                 AppRoute.exerciseSteps,
-                                extra: Map<String, dynamic>.from(obj),
+                                extra: ExerciseStepsArgs(
+                                  exercise: Map<String, dynamic>.from(obj),
+                                ),
                               );
                             },
                           );
