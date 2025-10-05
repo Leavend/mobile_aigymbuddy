@@ -212,7 +212,8 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                     DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: _pages[_currentPageIndex].gradientColors ??
+                          colors:
+                              _pages[_currentPageIndex].gradientColors ??
                               TColor.primaryG,
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -220,10 +221,11 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: (_pages[_currentPageIndex].gradientColors ??
-                                    TColor.primaryG)
-                                .last
-                                .withValues(alpha: 0.3),
+                            color:
+                                (_pages[_currentPageIndex].gradientColors ??
+                                        TColor.primaryG)
+                                    .last
+                                    .withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 6),
                           ),
@@ -308,7 +310,11 @@ class _LanguageMenuButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.translate, size: 18, color: TColor.primaryColor1),
+              const Icon(
+                Icons.translate,
+                size: 18,
+                color: TColor.primaryColor1,
+              ),
               const SizedBox(width: 8),
               Text(
                 selectedLanguage.shortLabel,
