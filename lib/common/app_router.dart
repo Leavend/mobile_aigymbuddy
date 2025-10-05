@@ -220,10 +220,7 @@ FoodInfoDetailsView _buildFoodInfoDetailsView(GoRouterState state) {
     state,
     'FoodInfoDetailsView requires FoodInfoArgs as extra.',
   );
-  return FoodInfoDetailsView(
-    meal: args.meal,
-    detail: args.food,
-  );
+  return FoodInfoDetailsView(meal: args.meal, detail: args.food);
 }
 
 ResultView _buildPhotoResultView(GoRouterState state) {

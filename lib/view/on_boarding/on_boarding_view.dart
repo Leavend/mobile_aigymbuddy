@@ -260,7 +260,11 @@ class _OnboardingLanguageMenu extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.translate, size: 18, color: TColor.primaryColor1),
+              const Icon(
+                Icons.translate,
+                size: 18,
+                color: TColor.primaryColor1,
+              ),
               const SizedBox(width: 8),
               Text(
                 selectedLanguage.buttonLabel,
@@ -455,7 +459,11 @@ class _LanguageMenuButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.translate, size: 18, color: TColor.primaryColor1),
+              const Icon(
+                Icons.translate,
+                size: 18,
+                color: TColor.primaryColor1,
+              ),
               const SizedBox(width: 8),
               Text(
                 selectedLanguage.buttonLabel,
