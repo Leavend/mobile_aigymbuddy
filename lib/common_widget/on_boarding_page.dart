@@ -32,8 +32,7 @@ class OnBoardingContent {
 
   String subtitleFor(AppLanguage language) => subtitle.resolve(language);
 
-  String? buttonTextFor(AppLanguage language) =>
-      buttonText?.resolve(language);
+  String? buttonTextFor(AppLanguage language) => buttonText?.resolve(language);
 }
 
 class OnBoardingPage extends StatelessWidget {
