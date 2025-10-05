@@ -19,8 +19,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   _Gender? _selectedGender;
-  static const _decimalKeyboard =
-      TextInputType.numberWithOptions(decimal: true);
+  static const _decimalKeyboard = TextInputType.numberWithOptions(
+    decimal: true,
+  );
 
   static const _title = LocalizedText(
     english: "Let’s complete your profile",
@@ -203,10 +204,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                 value: _selectedGender,
                 hint: Text(
                   context.localize(_genderHint),
-                  style: TextStyle(
-                    color: TColor.gray,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: TColor.gray, fontSize: 12),
                 ),
                 icon: Icon(
                   Icons.keyboard_arrow_down_rounded,
@@ -218,10 +216,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                         value: gender,
                         child: Text(
                           context.localize(gender.label),
-                          style: TextStyle(
-                            color: TColor.gray,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: TColor.gray, fontSize: 14),
                         ),
                       ),
                     )
@@ -281,10 +276,7 @@ class _UnitTag extends StatelessWidget {
           ),
         ],
       ),
-      child: Text(
-        text,
-        style: TextStyle(color: TColor.white, fontSize: 12),
-      ),
+      child: Text(text, style: TextStyle(color: TColor.white, fontSize: 12)),
     );
   }
 }
@@ -323,9 +315,10 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-        _Gender.male => const LocalizedText(
-            english: 'Male', indonesian: 'Pria'),
-        _Gender.female => const LocalizedText(
-            english: 'Female', indonesian: 'Wanita'),
-      };
+    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
+    _Gender.female => const LocalizedText(
+      english: 'Female',
+      indonesian: 'Wanita',
+    ),
+  };
 }

@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 
 /// Square social authentication button with rounded corners.
 class SocialAuthButton extends StatelessWidget {
-  const SocialAuthButton({
-    super.key,
-    required this.assetPath,
-    this.onTap,
-  });
+  const SocialAuthButton({super.key, required this.assetPath, this.onTap});
 
   final String assetPath;
   final VoidCallback? onTap;
