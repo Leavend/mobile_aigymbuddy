@@ -187,7 +187,6 @@ class _OnBoardingViewState extends State<OnBoardingView> {
               );
             },
           ),
-<<<<<<< HEAD
           if (!isWelcome)
             Padding(
               padding: const EdgeInsets.only(right: 24, bottom: 40),
@@ -247,9 +246,6 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                 ),
               ),
             ),
-=======
-          _buildProgressButton(totalPages),
->>>>>>> 29e1fd5754b79afb99bae291649d7691e6ee3c61
           Positioned(
             top: 16,
             right: 16,
