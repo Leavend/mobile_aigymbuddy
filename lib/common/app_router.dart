@@ -176,6 +176,7 @@ class AppRouter {
             meal: args.meal,
             detail: args.food,
           );
+          return FoodInfoDetailsView(meal: args.meal, detail: args.food);
         },
       ),
       GoRoute(
