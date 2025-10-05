@@ -1,6 +1,7 @@
 // lib/view/meal_planner/meal_planner_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -399,7 +400,9 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                     onTap: () {
                       context.push(
                         AppRoute.mealFoodDetails,
-                        extra: Map<String, dynamic>.from(fObj),
+                        extra: MealFoodDetailsArgs(
+                          food: Map<String, dynamic>.from(fObj),
+                        ),
                       );
                     },
                     child: FindEatCell(fObj: fObj, index: index),

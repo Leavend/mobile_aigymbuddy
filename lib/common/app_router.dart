@@ -12,7 +12,6 @@ import 'package:aigymbuddy/view/meal_planner/food_info_details_view.dart';
 import 'package:aigymbuddy/view/meal_planner/meal_food_details_view.dart';
 import 'package:aigymbuddy/view/meal_planner/meal_planner_view.dart';
 import 'package:aigymbuddy/view/meal_planner/meal_schedule_view.dart';
-import 'package:aigymbuddy/view/splash/launch_view.dart';
 import 'package:aigymbuddy/view/on_boarding/on_boarding_view.dart';
 import 'package:aigymbuddy/view/photo_progress/comparison_view.dart';
 import 'package:aigymbuddy/view/photo_progress/photo_progress_view.dart';
@@ -21,12 +20,15 @@ import 'package:aigymbuddy/view/profile/profile_view.dart';
 import 'package:aigymbuddy/view/sleep_tracker/sleep_add_alarm_view.dart';
 import 'package:aigymbuddy/view/sleep_tracker/sleep_schedule_view.dart';
 import 'package:aigymbuddy/view/sleep_tracker/sleep_tracker_view.dart';
+import 'package:aigymbuddy/view/splash/launch_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/add_schedule_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/exercises_step_details.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_schedule_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_tracker_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workour_detail_view.dart';
 import 'package:go_router/go_router.dart';
+
+import 'models/navigation_args.dart';
 
 class AppRoute {
   static const String launch = '/';
@@ -118,35 +120,31 @@ class AppRouter {
       GoRoute(
         path: AppRoute.addWorkoutSchedule,
         builder: (context, state) {
-          final date = _requireExtra<DateTime>(
+          final args = _requireExtra<AddScheduleArgs>(
             state,
-            'AddScheduleView requires a DateTime extra.',
+            'AddScheduleView requires AddScheduleArgs as extra.',
           );
-          return AddScheduleView(date: date);
+          return AddScheduleView(date: args.date);
         },
       ),
       GoRoute(
         path: AppRoute.workoutDetail,
         builder: (context, state) {
-          final data = Map<String, dynamic>.from(
-            _requireExtra<Map>(
-              state,
-              'WorkoutDetailView requires a Map extra.',
-            ),
+          final args = _requireExtra<WorkoutDetailArgs>(
+            state,
+            'WorkoutDetailView requires WorkoutDetailArgs as extra.',
           );
-          return WorkoutDetailView(dObj: data);
+          return WorkoutDetailView(dObj: args.workout);
         },
       ),
       GoRoute(
         path: AppRoute.exerciseSteps,
         builder: (context, state) {
-          final data = Map<String, dynamic>.from(
-            _requireExtra<Map>(
-              state,
-              'ExercisesStepDetails requires a Map extra.',
-            ),
+          final args = _requireExtra<ExerciseStepsArgs>(
+            state,
+            'ExercisesStepDetails requires ExerciseStepsArgs as extra.',
           );
-          return ExercisesStepDetails(exercise: data);
+          return ExercisesStepDetails(exercise: args.exercise);
         },
       ),
       GoRoute(
@@ -159,37 +157,11 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.mealFoodDetails,
-        builder: (context, state) {
-          final data = Map<String, dynamic>.from(
-            _requireExtra<Map>(
-              state,
-              'MealFoodDetailsView requires a Map extra.',
-            ),
-          );
-          return MealFoodDetailsView(eObj: data);
-        },
+        builder: (context, state) => _buildMealFoodDetailsView(state),
       ),
       GoRoute(
         path: AppRoute.foodInfo,
-        builder: (context, state) {
-          final map = Map<String, dynamic>.from(
-            _requireExtra<Map>(
-              state,
-              'FoodInfoDetailsView requires a Map extra.',
-            ),
-          );
-          final meal = map['meal'];
-          final food = map['food'];
-          if (meal is! Map || food is! Map) {
-            throw ArgumentError(
-              'FoodInfoDetailsView requires meal and food Map extras.',
-            );
-          }
-          return FoodInfoDetailsView(
-            meal: Map<String, dynamic>.from(meal),
-            detail: Map<String, dynamic>.from(food),
-          );
-        },
+        builder: (context, state) => _buildFoodInfoDetailsView(state),
       ),
       GoRoute(
         path: AppRoute.photoProgress,
@@ -201,17 +173,7 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.photoResult,
-        builder: (context, state) {
-          final map = Map<String, dynamic>.from(
-            _requireExtra<Map>(state, 'ResultView requires a Map extra.'),
-          );
-          final date1 = map['date1'];
-          final date2 = map['date2'];
-          if (date1 is! DateTime || date2 is! DateTime) {
-            throw ArgumentError('ResultView requires DateTime extras.');
-          }
-          return ResultView(date1: date1, date2: date2);
-        },
+        builder: (context, state) => _buildPhotoResultView(state),
       ),
       GoRoute(
         path: AppRoute.sleepTracker,
@@ -223,13 +185,7 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.sleepAddAlarm,
-        builder: (context, state) {
-          final date = _requireExtra<DateTime>(
-            state,
-            'SleepAddAlarmView requires a DateTime extra.',
-          );
-          return SleepAddAlarmView(date: date);
-        },
+        builder: (context, state) => _buildSleepAddAlarmView(state),
       ),
       GoRoute(
         path: AppRoute.profile,
@@ -249,4 +205,39 @@ T _requireExtra<T extends Object>(GoRouterState state, String message) {
     throw ArgumentError(message);
   }
   return extra;
+}
+
+MealFoodDetailsView _buildMealFoodDetailsView(GoRouterState state) {
+  final args = _requireExtra<MealFoodDetailsArgs>(
+    state,
+    'MealFoodDetailsView requires MealFoodDetailsArgs as extra.',
+  );
+  return MealFoodDetailsView(eObj: args.food);
+}
+
+FoodInfoDetailsView _buildFoodInfoDetailsView(GoRouterState state) {
+  final args = _requireExtra<FoodInfoArgs>(
+    state,
+    'FoodInfoDetailsView requires FoodInfoArgs as extra.',
+  );
+  return FoodInfoDetailsView(
+    meal: args.meal,
+    detail: args.food,
+  );
+}
+
+ResultView _buildPhotoResultView(GoRouterState state) {
+  final args = _requireExtra<PhotoResultArgs>(
+    state,
+    'ResultView requires PhotoResultArgs as extra.',
+  );
+  return ResultView(date1: args.firstDate, date2: args.secondDate);
+}
+
+SleepAddAlarmView _buildSleepAddAlarmView(GoRouterState state) {
+  final args = _requireExtra<SleepAddAlarmArgs>(
+    state,
+    'SleepAddAlarmView requires SleepAddAlarmArgs as extra.',
+  );
+  return SleepAddAlarmView(date: args.date);
 }
