@@ -1,28 +1,24 @@
-Tentu, ini adalah hasil terjemahannya dalam Bahasa Indonesia dengan gaya semi-formal.
+# Onboarding & Profile Data Capture Review
 
----
+## Scope
+This document evaluates whether the current Flutter implementation allows end-to-end testing of the MVP's first feature: collecting onboarding and profile information (age, height, weight, gender, target goal, and fitness level) and persisting it.
 
-### **Evaluasi Pengambilan Data Onboarding & Profil Pengguna**
+## User Flow Overview
+1. **OnBoardingView** (`lib/view/on_boarding/on_boarding_view.dart`) presents marketing slides and, on completion, routes users to the sign-up screen via `context.go(AppRoute.signUp)`.
+2. **SignUpView** (`lib/view/login/signup_view.dart`) offers text fields for first name, last name, email, and password but does not submit or store the data before pushing to the complete profile screen.
+3. **CompleteProfileView** (`lib/view/login/complete_profile_view.dart`) captures gender (dropdown), date of birth (mapped to age), weight, and height, yet the collected values are never validated, saved, or propagated to a backing store.
+4. **WhatYourGoalView** (`lib/view/login/what_your_goal_view.dart`) displays a carousel of goals but lacks selection state management or persistence; pressing "Confirm" simply navigates to the welcome screen.
+5. **WelcomeView** (`lib/view/login/welcome_view.dart`) marks onboarding complete by toggling a `SharedPreferences` flag (`AuthService.setHasCredentials(true)`) without saving any profile attributes.
 
-#### **Ruang Lingkup**
-Dokumen ini mengevaluasi apakah implementasi Flutter saat ini memungkinkan pengujian *end-to-end* untuk fitur pertama dari MVP: yaitu pengumpulan informasi *onboarding* dan profil (usia, tinggi badan, berat badan, jenis kelamin, target tujuan, dan tingkat kebugaran) beserta penyimpanannya.
+## Data Persistence & Validation Findings
+- There is **no integration with Drift** (or any database layer) anywhere in the project. The codebase never imports Drift packages nor defines data access objects, so profile data cannot be stored locally yet.
+- None of the onboarding/profile screens call into a repository or service to persist the captured values. The only state written to storage is a boolean flag signaling that onboarding has finished.
+- Form fields lack validation or controllers in several cases (e.g., the sign-up form's text fields are `const` and uncontrolled), preventing realistic data handling.
+- Fitness **level selection is entirely absent**—no view provides a UI to choose experience level, and no data structure references it.
 
-#### **Gambaran Umum Alur Pengguna**
-1.  **OnBoardingView** (`lib/view/on_boarding/on_boarding_view.dart`) menyajikan *slide* marketing dan, setelah selesai, mengarahkan pengguna ke layar pendaftaran melalui `context.go(AppRoute.signUp)`.
-2.  **SignUpView** (`lib/view/login/signup_view.dart`) menyediakan kolom isian untuk nama depan, nama belakang, email, dan *password*, namun tidak mengirim atau menyimpan data tersebut sebelum beralih ke layar pelengkapan profil.
-3.  **CompleteProfileView** (`lib/view/login/complete_profile_view.dart`) menangkap data jenis kelamin (*dropdown*), tanggal lahir (yang dipetakan menjadi usia), berat, dan tinggi badan. Namun, nilai yang dikumpulkan tidak pernah divalidasi, disimpan, atau diteruskan ke penyimpanan data.
-4.  **WhatYourGoalView** (`lib/view/login/what_your_goal_view.dart`) menampilkan *carousel* tujuan tetapi tidak memiliki pengelolaan *state* untuk pilihan ataupun persistensi data; menekan "Confirm" hanya akan bernavigasi ke layar selamat datang.
-5.  **WelcomeView** (`lib/view/login/welcome_view.dart`) menandai selesainya proses *onboarding* dengan mengubah sebuah *flag* di `SharedPreferences` (`AuthService.setHasCredentials(true)`) tanpa menyimpan atribut profil apa pun.
-
-#### **Temuan Persistensi & Validasi Data**
--   **Tidak ada integrasi dengan Drift** (atau lapisan database lainnya) di seluruh proyek. Kode program tidak pernah mengimpor paket Drift atau mendefinisikan *Data Access Object* (DAO), sehingga data profil belum dapat disimpan secara lokal.
--   Tidak ada satu pun layar *onboarding*/profil yang memanggil *repository* atau *service* untuk menyimpan nilai yang telah diisi. Satu-satunya *state* yang ditulis ke penyimpanan adalah sebuah *flag boolean* yang menandakan proses *onboarding* telah selesai.
--   Kolom isian pada form tidak memiliki validasi atau *controller* dalam beberapa kasus (contoh: kolom teks di form pendaftaran bersifat `const` dan tidak memiliki *controller*), sehingga menghalangi penanganan data yang realistis.
--   Pilihan **tingkat kebugaran (*fitness level*) sama sekali tidak ada**—tidak ada tampilan UI untuk memilih tingkat pengalaman, dan tidak ada struktur data yang merujuk padanya.
-
-#### **Kesimpulan**
-Implementasi saat ini **tidak** memungkinkan Anda untuk menguji fitur "Onboarding & Profil Pengguna" secara menyeluruh. Meskipun tampilan UI-nya sudah ada, semuanya beroperasi sebagai alur statis tanpa adanya persistensi data atau pilihan tingkat kebugaran. Agar fitur ini dapat diuji, Anda perlu:
--   Mengimplementasikan penyimpanan (misalnya, Drift) untuk atribut profil pengguna.
--   Menghubungkan form *onboarding* ke *controller*, validasi, dan lapisan *repository/service* yang akan menyimpan data usia, tinggi, berat, jenis kelamin, target tujuan, dan tingkat kebugaran.
--   Menambahkan UI dan logika untuk menangkap data tingkat kebugaran pengguna, di samping *carousel* tujuan yang sudah ada.
--   Memastikan data yang tersimpan dapat ditampilkan kembali di halaman lain (misalnya, di `ProfileView`) untuk memverifikasi proses penyimpanan data secara *end-to-end*.
+## Conclusion
+The current implementation does **not** allow you to test the full "Onboarding & Profil Pengguna" feature. While the UI screens exist, they operate as static flows with no data persistence or level selection. To make this feature testable, you will need to:
+- Implement storage (e.g., Drift) for user profile attributes.
+- Wire the onboarding forms to controllers, validation, and a repository/service layer that persists age, height, weight, gender, target goal, and fitness level.
+- Add UI and logic to capture the user's fitness level alongside the existing goal carousel.
+- Ensure saved data is surfaced later (e.g., in `ProfileView`) to verify persistence end-to-end.

@@ -1,5 +1,6 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common_widget/on_boarding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -11,54 +12,126 @@ class OnBoardingView extends StatefulWidget {
   State<OnBoardingView> createState() => _OnBoardingViewState();
 }
 
+class _LanguageToggleButton extends StatelessWidget {
+  const _LanguageToggleButton({
+    required this.language,
+    required this.onPressed,
+  });
+
+  final AppLanguage language;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: TColor.primaryColor1,
+        side: BorderSide(color: TColor.primaryColor1),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      onPressed: onPressed,
+      icon: const Icon(Icons.language, size: 18),
+      label: Text(
+        language.buttonLabel,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
 class _OnBoardingViewState extends State<OnBoardingView> {
   final PageController controller = PageController();
   int selectPage = 0;
+  AppLanguage _language = AppLanguage.english;
 
   late final List<OnBoardingContent> pageArr = [
     OnBoardingContent(
-      title: 'AI GYM BUDDY',
-      subtitle: 'Everybody Can Train',
+      title: const LocalizedText(
+        english: 'AI GYM BUDDY',
+        indonesian: 'AI GYM BUDDY',
+      ),
+      subtitle: const LocalizedText(
+        english: 'Everybody Can Train',
+        indonesian: 'Semua Bisa Latihan',
+      ),
       image: 'assets/img/welcome.png',
       backgroundColor: TColor.white,
       titleColor: TColor.black,
       subtitleColor: TColor.gray,
       textAlign: TextAlign.center,
-      buttonText: 'Get Started',
+      buttonText: const LocalizedText(
+        english: 'Get Started',
+        indonesian: 'Mulai',
+      ),
       isWelcome: true,
     ),
     OnBoardingContent(
-      title: 'Track Your Goal',
-      subtitle:
-          "Don't worry if you have trouble determining your goals, We can help you determine your goals and track your goals",
+      title: const LocalizedText(
+        english: 'Track Your Goal',
+        indonesian: 'Lacak Tujuanmu',
+      ),
+      subtitle: const LocalizedText(
+        english:
+            "Don't worry if you have trouble determining your goals, We can help you determine your goals and track your goals",
+        indonesian:
+            'Jangan khawatir jika kamu kesulitan menentukan tujuan. Kami membantu menentukan dan melacak progresmu.',
+      ),
       image: 'assets/img/on_1.png',
       gradientColors: TColor.primaryG,
     ),
     OnBoardingContent(
-      title: 'Get Burn',
-      subtitle:
-          "Let’s keep burning, to achive yours goals, it hurts only temporarily, if you give up now you will be in pain forever",
+      title: const LocalizedText(
+        english: 'Get Burn',
+        indonesian: 'Terus Bakar Kalori',
+      ),
+      subtitle: const LocalizedText(
+        english:
+            "Let’s keep burning, to achive yours goals, it hurts only temporarily, if you give up now you will be in pain forever",
+        indonesian:
+            'Tetap semangat membakar kalori demi tujuanmu. Rasa sakitnya hanya sementara, menyerah justru membuatmu menyesal selamanya.',
+      ),
       image: 'assets/img/on_2.png',
       gradientColors: TColor.secondaryG,
     ),
     OnBoardingContent(
-      title: 'Eat Well',
-      subtitle:
-          "Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun",
+      title: const LocalizedText(
+        english: 'Eat Well',
+        indonesian: 'Makan Sehat',
+      ),
+      subtitle: const LocalizedText(
+        english:
+            "Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun",
+        indonesian:
+            'Mulai gaya hidup sehat bersama kami. Kami bantu atur menu harianmu karena makan sehat itu menyenangkan.',
+      ),
       image: 'assets/img/on_3.png',
       gradientColors: const [Color(0xff9DCEFF), Color(0xff92A3FD)],
     ),
     OnBoardingContent(
-      title: 'Improve Sleep\nQuality',
-      subtitle:
-          'Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning',
+      title: const LocalizedText(
+        english: 'Improve Sleep\nQuality',
+        indonesian: 'Tingkatkan Kualitas\nTidur',
+      ),
+      subtitle: const LocalizedText(
+        english:
+            'Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning',
+        indonesian:
+            'Tingkatkan kualitas tidurmu bersama kami. Tidur yang cukup menghadirkan energi positif di pagi hari.',
+      ),
       image: 'assets/img/on_4.png',
       gradientColors: const [Color(0xff92A3FD), Color(0xff9DCEFF)],
     ),
     OnBoardingContent(
-      title: 'Smart AI Coach',
-      subtitle:
-          'Personalized programs backed with custom AI recommendations help you stay consistent on your fitness journey.',
+      title: const LocalizedText(
+        english: 'Smart AI Coach',
+        indonesian: 'Pelatih AI Pintar',
+      ),
+      subtitle: const LocalizedText(
+        english:
+            'Personalized programs backed with custom AI recommendations help you stay consistent on your fitness journey.',
+        indonesian:
+            'Program personal disertai rekomendasi AI membantumu tetap konsisten dalam perjalanan kebugaranmu.',
+      ),
       image: 'assets/img/on_5.png',
       gradientColors: const [Color(0xffC58BF2), Color(0xffEEA4CE)],
     ),
@@ -79,6 +152,12 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     } else {
       context.go(AppRoute.signUp);
     }
+  }
+
+  void _toggleLanguage() {
+    setState(() {
+      _language = _language.toggled;
+    });
   }
 
   @override
@@ -104,6 +183,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             itemBuilder: (context, index) {
               return OnBoardingPage(
                 content: pageArr[index],
+                language: _language,
                 onNext: _handleNext,
               );
             },
@@ -167,6 +247,16 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                 ),
               ),
             ),
+          Positioned(
+            top: 16,
+            right: 16,
+            child: SafeArea(
+              child: _LanguageToggleButton(
+                language: _language,
+                onPressed: _toggleLanguage,
+              ),
+            ),
+          ),
         ],
       ),
     );
