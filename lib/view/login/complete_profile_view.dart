@@ -103,6 +103,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final localize = context.localize;
+    final title = localize(_title);
+    final subtitle = localize(_subtitle);
 
     return Scaffold(
       backgroundColor: TColor.white,
@@ -127,21 +130,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                         fit: BoxFit.contain,
                       ),
                       const SizedBox(height: 24),
-                      Text(
-                        context.localize(_title),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        context.localize(_subtitle),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: TColor.gray, fontSize: 12),
-                      ),
+                      _Header(title: title, subtitle: subtitle),
                       const SizedBox(height: 24),
                       _buildGenderField(context),
                       const SizedBox(height: 16),
@@ -174,7 +163,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       ),
                       const SizedBox(height: 28),
                       RoundButton(
-                        title: context.localize(_nextText),
+                        title: localize(_nextText),
                         onPressed: () {
                           context.push(AppRoute.goal);
                         },
@@ -233,34 +222,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                             color: TColor.gray,
                             fontSize: 14,
                           ),
-                          const SizedBox(width: 8),
-                          const _UnitTag(text: 'KG'),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RoundTextField(
-                              controller: heightCtrl,
-                              hitText: context.localize(_heightHint),
-                              icon: 'assets/img/hight.png',
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                    decimal: true,
-                                  ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const _UnitTag(text: 'CM'),
-                        ],
-                      ),
-                      const SizedBox(height: 28),
-                      RoundButton(
-                        title: context.localize(_nextText),
-                        onPressed: () {
-                          context.push(AppRoute.goal);
-                        },
+                        ),
                       ),
                     )
                     .toList(),
@@ -323,6 +285,36 @@ class _UnitTag extends StatelessWidget {
         text,
         style: TextStyle(color: TColor.white, fontSize: 12),
       ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: TColor.black,
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: TColor.gray, fontSize: 12),
+        ),
+      ],
     );
   }
 }

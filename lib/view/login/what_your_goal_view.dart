@@ -54,7 +54,10 @@ class WhatYourGoalView extends StatelessWidget {
     ),
     _GoalCardData(
       image: 'assets/img/goal_3.png',
-      title: LocalizedText(english: 'Lose a Fat', indonesian: 'Turunkan Lemak'),
+      title: LocalizedText(
+        english: 'Lose a Fat',
+        indonesian: 'Turunkan Lemak',
+      ),
       subtitle: LocalizedText(
         english:
             'I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle mass',
