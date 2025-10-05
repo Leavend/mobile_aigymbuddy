@@ -16,7 +16,8 @@ class WhatYourGoalView extends StatefulWidget {
   State<WhatYourGoalView> createState() => _WhatYourGoalViewState();
 }
 
-class _WhatYourGoalViewState extends State<WhatYourGoalView> {
+class _WhatYourGoalViewState extends State<WhatYourGoalView>
+    with AppLanguageState<WhatYourGoalView> {
   final CarouselSliderController _controller = CarouselSliderController();
 
   static const _title = LocalizedText(
