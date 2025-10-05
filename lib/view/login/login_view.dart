@@ -40,7 +40,10 @@ class LoginView extends StatelessWidget {
     english: 'Login',
     indonesian: 'Masuk',
   );
-  static const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
+  static const _dividerText = LocalizedText(
+    english: 'Or',
+    indonesian: 'Atau',
+  );
   static const _noAccountText = LocalizedText(
     english: 'Don’t have an account yet? ',
     indonesian: 'Belum punya akun? ',
@@ -147,10 +150,7 @@ class LoginView extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               context.localize(_dividerText),
-                              style: TextStyle(
-                                color: TColor.black,
-                                fontSize: 12,
-                              ),
+                              style: TextStyle(color: TColor.black, fontSize: 12),
                             ),
                           ),
                           Expanded(
