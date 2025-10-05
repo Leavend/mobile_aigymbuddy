@@ -233,7 +233,34 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                             color: TColor.gray,
                             fontSize: 14,
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          const _UnitTag(text: 'KG'),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RoundTextField(
+                              controller: heightCtrl,
+                              hitText: context.localize(_heightHint),
+                              icon: 'assets/img/hight.png',
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const _UnitTag(text: 'CM'),
+                        ],
+                      ),
+                      const SizedBox(height: 28),
+                      RoundButton(
+                        title: context.localize(_nextText),
+                        onPressed: () {
+                          context.push(AppRoute.goal);
+                        },
                       ),
                     )
                     .toList(),
