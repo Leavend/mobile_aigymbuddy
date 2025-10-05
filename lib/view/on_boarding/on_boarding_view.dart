@@ -143,8 +143,18 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     super.dispose();
   }
 
+  OnBoardingContent get _currentPage => _pages[_currentPageIndex];
+
+  bool get _isLastPage => _currentPageIndex == _pages.length - 1;
+
+  bool get _showProgressButton => !_currentPage.isWelcome;
+
+  double get _progressValue => (_currentPageIndex + 1) / _pages.length;
+
+  List<Color> get _progressGradient => _currentPage.gradientOrDefault();
+
   void _handleNext() {
-    if (_currentPageIndex < _pages.length - 1) {
+    if (!_isLastPage) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeOutCubic,
@@ -152,6 +162,14 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     } else {
       context.go(AppRoute.signUp);
     }
+  }
+
+  void _handlePageChanged(int index) {
+    if (index == _currentPageIndex) return;
+
+    setState(() {
+      _currentPageIndex = index;
+    });
   }
 
   void _updateLanguage(AppLanguage language) {
@@ -164,13 +182,6 @@ class _OnBoardingViewState extends State<OnBoardingView> {
 
   @override
   Widget build(BuildContext context) {
-    final totalPages = _pages.length;
-    final currentContent = _pages[_currentPageIndex];
-    final isLastPage = _currentPageIndex == totalPages - 1;
-    final showProgressButton = !currentContent.isWelcome;
-    final progressValue = (_currentPageIndex + 1) / totalPages;
-    final progressGradient = currentContent.gradientOrDefault();
-
     return Scaffold(
       backgroundColor: TColor.white,
       body: Stack(
@@ -178,12 +189,8 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         children: [
           PageView.builder(
             controller: _pageController,
-            itemCount: totalPages,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPageIndex = index;
-              });
-            },
+            itemCount: _pages.length,
+            onPageChanged: _handlePageChanged,
             itemBuilder: (context, index) {
               return OnBoardingPage(
                 content: _pages[index],
@@ -192,12 +199,12 @@ class _OnBoardingViewState extends State<OnBoardingView> {
               );
             },
           ),
-          if (showProgressButton)
+          if (_showProgressButton)
             _OnboardingProgressButton(
-              progress: progressValue,
-              gradient: progressGradient,
+              progress: _progressValue,
+              gradient: _progressGradient,
               onPressed: _handleNext,
-              isLastPage: isLastPage,
+              isLastPage: _isLastPage,
             ),
           Positioned(
             top: 16,
@@ -341,197 +348,6 @@ class _OnboardingProgressButton extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProgressButton(int totalPages) {
-    final content = _pages[_currentPageIndex];
-    if (content.isWelcome) {
-      return const SizedBox.shrink();
-    }
-
-    final progress = (_currentPageIndex + 1) / totalPages;
-    final gradient = content.gradientColors ?? TColor.primaryG;
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 24, bottom: 40),
-      child: SizedBox(
-        width: 88,
-        height: 88,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              width: 72,
-              height: 72,
-              child: CircularProgressIndicator(
-                color: TColor.primaryColor1,
-                value: progress,
-                strokeWidth: 3,
-                backgroundColor: TColor.lightGray,
-              ),
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: gradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: gradient.last.withValues(alpha: 0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: SizedBox(
-                width: 56,
-                height: 56,
-                child: IconButton(
-                  onPressed: _handleNext,
-                  icon: Icon(
-                    _currentPageIndex == totalPages - 1
-                        ? Icons.check_rounded
-                        : Icons.arrow_forward_rounded,
-                    color: TColor.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LanguageMenuButton extends StatelessWidget {
-  const _LanguageMenuButton({
-    required this.selectedLanguage,
-    required this.onLanguageSelected,
-  });
-
-  final AppLanguage selectedLanguage;
-  final ValueChanged<AppLanguage> onLanguageSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<AppLanguage>(
-      tooltip: 'Select language',
-      initialValue: selectedLanguage,
-      onSelected: onLanguageSelected,
-      itemBuilder: (context) {
-        return AppLanguage.values
-            .map(
-              (language) => PopupMenuItem<AppLanguage>(
-                value: language,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.translate, size: 18),
-                    const SizedBox(width: 8),
-                    Text(language.displayName),
-                    const Spacer(),
-                    if (language == selectedLanguage)
-                      Icon(Icons.check, color: TColor.primaryColor1, size: 18),
-                  ],
-                ),
-              ),
-            )
-            .toList();
-      },
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(color: TColor.primaryColor1),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.translate, size: 18, color: TColor.primaryColor1),
-              const SizedBox(width: 8),
-              Text(
-                selectedLanguage.buttonLabel,
-                style: const TextStyle(
-                  color: TColor.primaryColor1,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LanguageMenuButton extends StatelessWidget {
-  const _LanguageMenuButton({
-    required this.selectedLanguage,
-    required this.onLanguageSelected,
-  });
-
-  final AppLanguage selectedLanguage;
-  final ValueChanged<AppLanguage> onLanguageSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<AppLanguage>(
-      tooltip: 'Select language',
-      initialValue: selectedLanguage,
-      onSelected: onLanguageSelected,
-      itemBuilder: (context) {
-        return AppLanguage.values
-            .map(
-              (language) => PopupMenuItem<AppLanguage>(
-                value: language,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.translate, size: 18),
-                    const SizedBox(width: 8),
-                    Text(language.displayName),
-                    const Spacer(),
-                    if (language == selectedLanguage)
-                      Icon(Icons.check, color: TColor.primaryColor1, size: 18),
-                  ],
-                ),
-              ),
-            )
-            .toList();
-      },
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(color: TColor.primaryColor1),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.translate,
-                size: 18,
-                color: TColor.primaryColor1,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                selectedLanguage.shortLabel,
-                style: const TextStyle(
-                  color: TColor.primaryColor1,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
