@@ -1,4 +1,5 @@
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
@@ -98,10 +99,10 @@ class _ComparisonViewState extends State<ComparisonView> {
               onPressed: () {
                 context.push(
                   AppRoute.photoResult,
-                  extra: {
-                    'date1': DateTime(2023, 5, 1),
-                    'date2': DateTime(2023, 6, 1),
-                  },
+                  extra: PhotoResultArgs(
+                    firstDate: DateTime(2023, 5, 1),
+                    secondDate: DateTime(2023, 6, 1),
+                  ),
                 );
               },
             ),
