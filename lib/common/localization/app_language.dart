@@ -9,8 +9,11 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.indonesian => 'id',
       };
 
-  /// Short code used for compact indicators.
-  String get shortLabel => code.toUpperCase();
+  /// Friendly label optimised for toggle buttons and menus.
+  String get buttonLabel => switch (this) {
+        AppLanguage.english => 'EN',
+        AppLanguage.indonesian => 'ID',
+      };
 
   /// Human friendly language name for selection controls.
   String get displayName => switch (this) {

@@ -165,9 +165,6 @@ class _OnBoardingViewState extends State<OnBoardingView> {
   @override
   Widget build(BuildContext context) {
     final totalPages = _pages.length;
-    final progress = (_currentPageIndex + 1) / totalPages;
-
-    final isWelcome = _pages[_currentPageIndex].isWelcome;
 
     return Scaffold(
       backgroundColor: TColor.white,
@@ -190,63 +187,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
               );
             },
           ),
-          if (!isWelcome)
-            Padding(
-              padding: const EdgeInsets.only(right: 24, bottom: 40),
-              child: SizedBox(
-                width: 88,
-                height: 88,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 72,
-                      height: 72,
-                      child: CircularProgressIndicator(
-                        color: TColor.primaryColor1,
-                        value: progress,
-                        strokeWidth: 3,
-                        backgroundColor: TColor.lightGray,
-                      ),
-                    ),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: _pages[_currentPageIndex].gradientColors ??
-                              TColor.primaryG,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: (_pages[_currentPageIndex].gradientColors ??
-                                    TColor.primaryG)
-                                .last
-                                .withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: SizedBox(
-                        width: 56,
-                        height: 56,
-                        child: IconButton(
-                          onPressed: _handleNext,
-                          icon: Icon(
-                            _currentPageIndex == totalPages - 1
-                                ? Icons.check_rounded
-                                : Icons.arrow_forward_rounded,
-                            color: TColor.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          _buildProgressButton(totalPages),
           Positioned(
             top: 16,
             right: 16,
@@ -258,6 +199,131 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProgressButton(int totalPages) {
+    final content = _pages[_currentPageIndex];
+    if (content.isWelcome) {
+      return const SizedBox.shrink();
+    }
+
+    final progress = (_currentPageIndex + 1) / totalPages;
+    final gradient = content.gradientColors ?? TColor.primaryG;
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 24, bottom: 40),
+      child: SizedBox(
+        width: 88,
+        height: 88,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 72,
+              height: 72,
+              child: CircularProgressIndicator(
+                color: TColor.primaryColor1,
+                value: progress,
+                strokeWidth: 3,
+                backgroundColor: TColor.lightGray,
+              ),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: gradient,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: gradient.last.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: SizedBox(
+                width: 56,
+                height: 56,
+                child: IconButton(
+                  onPressed: _handleNext,
+                  icon: Icon(
+                    _currentPageIndex == totalPages - 1
+                        ? Icons.check_rounded
+                        : Icons.arrow_forward_rounded,
+                    color: TColor.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LanguageMenuButton extends StatelessWidget {
+  const _LanguageMenuButton({
+    required this.selectedLanguage,
+    required this.onLanguageSelected,
+  });
+
+  final AppLanguage selectedLanguage;
+  final ValueChanged<AppLanguage> onLanguageSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<AppLanguage>(
+      tooltip: 'Select language',
+      initialValue: selectedLanguage,
+      onSelected: onLanguageSelected,
+      itemBuilder: (context) {
+        return AppLanguage.values
+            .map(
+              (language) => PopupMenuItem<AppLanguage>(
+                value: language,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.translate, size: 18),
+                    const SizedBox(width: 8),
+                    Text(language.displayName),
+                    const Spacer(),
+                    if (language == selectedLanguage)
+                      Icon(Icons.check, color: TColor.primaryColor1, size: 18),
+                  ],
+                ),
+              ),
+            )
+            .toList();
+      },
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(color: TColor.primaryColor1),
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.translate, size: 18, color: TColor.primaryColor1),
+              const SizedBox(width: 8),
+              Text(
+                selectedLanguage.buttonLabel,
+                style: const TextStyle(
+                  color: TColor.primaryColor1,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

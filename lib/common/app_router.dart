@@ -157,27 +157,11 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.mealFoodDetails,
-        builder: (context, state) {
-          final args = _requireExtra<MealFoodDetailsArgs>(
-            state,
-            'MealFoodDetailsView requires MealFoodDetailsArgs as extra.',
-          );
-          return MealFoodDetailsView(eObj: args.food);
-        },
+        builder: (context, state) => _buildMealFoodDetailsView(state),
       ),
       GoRoute(
         path: AppRoute.foodInfo,
-        builder: (context, state) {
-          final args = _requireExtra<FoodInfoArgs>(
-            state,
-            'FoodInfoDetailsView requires FoodInfoArgs as extra.',
-          );
-          return FoodInfoDetailsView(
-            meal: args.meal,
-            detail: args.food,
-          );
-          return FoodInfoDetailsView(meal: args.meal, detail: args.food);
-        },
+        builder: (context, state) => _buildFoodInfoDetailsView(state),
       ),
       GoRoute(
         path: AppRoute.photoProgress,
@@ -189,13 +173,7 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.photoResult,
-        builder: (context, state) {
-          final args = _requireExtra<PhotoResultArgs>(
-            state,
-            'ResultView requires PhotoResultArgs as extra.',
-          );
-          return ResultView(date1: args.firstDate, date2: args.secondDate);
-        },
+        builder: (context, state) => _buildPhotoResultView(state),
       ),
       GoRoute(
         path: AppRoute.sleepTracker,
@@ -207,13 +185,7 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.sleepAddAlarm,
-        builder: (context, state) {
-          final args = _requireExtra<SleepAddAlarmArgs>(
-            state,
-            'SleepAddAlarmView requires SleepAddAlarmArgs as extra.',
-          );
-          return SleepAddAlarmView(date: args.date);
-        },
+        builder: (context, state) => _buildSleepAddAlarmView(state),
       ),
       GoRoute(
         path: AppRoute.profile,
@@ -233,4 +205,39 @@ T _requireExtra<T extends Object>(GoRouterState state, String message) {
     throw ArgumentError(message);
   }
   return extra;
+}
+
+MealFoodDetailsView _buildMealFoodDetailsView(GoRouterState state) {
+  final args = _requireExtra<MealFoodDetailsArgs>(
+    state,
+    'MealFoodDetailsView requires MealFoodDetailsArgs as extra.',
+  );
+  return MealFoodDetailsView(eObj: args.food);
+}
+
+FoodInfoDetailsView _buildFoodInfoDetailsView(GoRouterState state) {
+  final args = _requireExtra<FoodInfoArgs>(
+    state,
+    'FoodInfoDetailsView requires FoodInfoArgs as extra.',
+  );
+  return FoodInfoDetailsView(
+    meal: args.meal,
+    detail: args.food,
+  );
+}
+
+ResultView _buildPhotoResultView(GoRouterState state) {
+  final args = _requireExtra<PhotoResultArgs>(
+    state,
+    'ResultView requires PhotoResultArgs as extra.',
+  );
+  return ResultView(date1: args.firstDate, date2: args.secondDate);
+}
+
+SleepAddAlarmView _buildSleepAddAlarmView(GoRouterState state) {
+  final args = _requireExtra<SleepAddAlarmArgs>(
+    state,
+    'SleepAddAlarmView requires SleepAddAlarmArgs as extra.',
+  );
+  return SleepAddAlarmView(date: args.date);
 }
