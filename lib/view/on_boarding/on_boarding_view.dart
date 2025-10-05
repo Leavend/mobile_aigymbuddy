@@ -40,11 +40,11 @@ class _LanguageToggleButton extends StatelessWidget {
 }
 
 class _OnBoardingViewState extends State<OnBoardingView> {
-  final PageController controller = PageController();
-  int selectPage = 0;
+  final PageController _pageController = PageController();
+  int _currentPageIndex = 0;
   AppLanguage _language = AppLanguage.english;
 
-  late final List<OnBoardingContent> pageArr = [
+  late final List<OnBoardingContent> _pages = [
     OnBoardingContent(
       title: const LocalizedText(
         english: 'AI GYM BUDDY',
@@ -139,13 +139,13 @@ class _OnBoardingViewState extends State<OnBoardingView> {
 
   @override
   void dispose() {
-    controller.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
   void _handleNext() {
-    if (selectPage < pageArr.length - 1) {
-      controller.nextPage(
+    if (_currentPageIndex < _pages.length - 1) {
+      _pageController.nextPage(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeOutCubic,
       );
@@ -154,18 +154,20 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     }
   }
 
-  void _toggleLanguage() {
+  void _updateLanguage(AppLanguage language) {
+    if (language == _language) return;
+
     setState(() {
-      _language = _language.toggled;
+      _language = language;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final totalPages = pageArr.length;
-    final progress = (selectPage + 1) / totalPages;
+    final totalPages = _pages.length;
+    final progress = (_currentPageIndex + 1) / totalPages;
 
-    final isWelcome = pageArr[selectPage].isWelcome;
+    final isWelcome = _pages[_currentPageIndex].isWelcome;
 
     return Scaffold(
       backgroundColor: TColor.white,
@@ -173,16 +175,16 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         alignment: Alignment.bottomRight,
         children: [
           PageView.builder(
-            controller: controller,
+            controller: _pageController,
             itemCount: totalPages,
             onPageChanged: (index) {
               setState(() {
-                selectPage = index;
+                _currentPageIndex = index;
               });
             },
             itemBuilder: (context, index) {
               return OnBoardingPage(
-                content: pageArr[index],
+                content: _pages[index],
                 language: _language,
                 onNext: _handleNext,
               );
@@ -210,8 +212,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                     DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors:
-                              pageArr[selectPage].gradientColors ??
+                          colors: _pages[_currentPageIndex].gradientColors ??
                               TColor.primaryG,
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -219,11 +220,10 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                (pageArr[selectPage].gradientColors ??
-                                        TColor.primaryG)
-                                    .last
-                                    .withValues(alpha: 0.3),
+                            color: (_pages[_currentPageIndex].gradientColors ??
+                                    TColor.primaryG)
+                                .last
+                                .withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 6),
                           ),
@@ -235,7 +235,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                         child: IconButton(
                           onPressed: _handleNext,
                           icon: Icon(
-                            selectPage == totalPages - 1
+                            _currentPageIndex == totalPages - 1
                                 ? Icons.check_rounded
                                 : Icons.arrow_forward_rounded,
                             color: TColor.white,
@@ -251,13 +251,75 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             top: 16,
             right: 16,
             child: SafeArea(
-              child: _LanguageToggleButton(
-                language: _language,
-                onPressed: _toggleLanguage,
+              child: _LanguageMenuButton(
+                selectedLanguage: _language,
+                onLanguageSelected: _updateLanguage,
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LanguageMenuButton extends StatelessWidget {
+  const _LanguageMenuButton({
+    required this.selectedLanguage,
+    required this.onLanguageSelected,
+  });
+
+  final AppLanguage selectedLanguage;
+  final ValueChanged<AppLanguage> onLanguageSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<AppLanguage>(
+      tooltip: 'Select language',
+      initialValue: selectedLanguage,
+      onSelected: onLanguageSelected,
+      itemBuilder: (context) {
+        return AppLanguage.values
+            .map(
+              (language) => PopupMenuItem<AppLanguage>(
+                value: language,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.translate, size: 18),
+                    const SizedBox(width: 8),
+                    Text(language.displayName),
+                    const Spacer(),
+                    if (language == selectedLanguage)
+                      Icon(Icons.check, color: TColor.primaryColor1, size: 18),
+                  ],
+                ),
+              ),
+            )
+            .toList();
+      },
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(color: TColor.primaryColor1),
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.translate, size: 18, color: TColor.primaryColor1),
+              const SizedBox(width: 8),
+              Text(
+                selectedLanguage.shortLabel,
+                style: const TextStyle(
+                  color: TColor.primaryColor1,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
