@@ -1,5 +1,3 @@
-// lib/view/login/complete_profile_view.dart
-
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -17,13 +15,15 @@ class CompleteProfileView extends StatefulWidget {
 }
 
 class _CompleteProfileViewState extends State<CompleteProfileView> {
-  final TextEditingController dobCtrl = TextEditingController();
-  final TextEditingController weightCtrl = TextEditingController();
-  final TextEditingController heightCtrl = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
   _Gender? _selectedGender;
+  static const _decimalKeyboard =
+      TextInputType.numberWithOptions(decimal: true);
 
   static const _title = LocalizedText(
-    english: 'Let’s complete your profile',
+    english: "Let’s complete your profile",
     indonesian: 'Lengkapi profil Anda',
   );
   static const _subtitle = LocalizedText(
@@ -38,6 +38,10 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     english: 'Date of Birth',
     indonesian: 'Tanggal Lahir',
   );
+  static const _dobHelpText = LocalizedText(
+    english: 'Select Date of Birth',
+    indonesian: 'Pilih Tanggal Lahir',
+  );
   static const _weightHint = LocalizedText(
     english: 'Your Weight',
     indonesian: 'Berat Badan',
@@ -50,16 +54,12 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     english: 'Next >',
     indonesian: 'Berikutnya >',
   );
-  static const _dobHelpText = LocalizedText(
-    english: 'Select Date of Birth',
-    indonesian: 'Pilih Tanggal Lahir',
-  );
 
   @override
   void dispose() {
-    dobCtrl.dispose();
-    weightCtrl.dispose();
-    heightCtrl.dispose();
+    _dobController.dispose();
+    _weightController.dispose();
+    _heightController.dispose();
     super.dispose();
   }
 
@@ -84,13 +84,20 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
         );
       },
     );
+
     if (picked != null) {
-      dobCtrl.text =
+      _dobController.text =
           '${picked.year.toString().padLeft(4, '0')}-'
           '${picked.month.toString().padLeft(2, '0')}-'
           '${picked.day.toString().padLeft(2, '0')}';
       setState(() {});
     }
+  }
+
+  void _onGenderChanged(_Gender? gender) {
+    setState(() {
+      _selectedGender = gender;
+    });
   }
 
   @override
@@ -120,125 +127,51 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                         fit: BoxFit.contain,
                       ),
                       const SizedBox(height: 24),
-                  Text(
-                    context.localize(_title),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    context.localize(_subtitle),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: TColor.gray, fontSize: 12),
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: TColor.lightGray,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/img/gender.png',
-                          width: 20,
-                          height: 20,
-                          color: TColor.gray,
+                      Text(
+                        context.localize(_title),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: TColor.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<_Gender>(
-                              isExpanded: true,
-                              value: _selectedGender,
-                              icon: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: TColor.gray,
-                              ),
-                              items: _Gender.values
-                                  .map(
-                                    (gender) => DropdownMenuItem(
-                                      value: gender,
-                                      child: Text(
-                                        context.localize(gender.label),
-                                        style: TextStyle(
-                                          color: TColor.gray,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              hint: Text(
-                                context.localize(_genderHint),
-                                style: TextStyle(
-                                  color: TColor.gray,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedGender = value;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: _pickDob,
-                    behavior: HitTestBehavior.opaque,
-                    child: AbsorbPointer(
-                      child: RoundTextField(
-                        controller: dobCtrl,
-                        hitText: context.localize(_dobHint),
-                        icon: 'assets/img/date.png',
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RoundTextField(
-                          controller: weightCtrl,
-                          hitText: context.localize(_weightHint),
-                          icon: 'assets/img/weight.png',
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
+                      const SizedBox(height: 6),
+                      Text(
+                        context.localize(_subtitle),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: TColor.gray, fontSize: 12),
+                      ),
+                      const SizedBox(height: 24),
+                      _buildGenderField(context),
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onTap: _pickDob,
+                        behavior: HitTestBehavior.opaque,
+                        child: AbsorbPointer(
+                          child: RoundTextField(
+                            controller: _dobController,
+                            hitText: context.localize(_dobHint),
+                            icon: 'assets/img/date.png',
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      const _UnitTag(text: 'KG'),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RoundTextField(
-                          controller: heightCtrl,
-                          hitText: context.localize(_heightHint),
-                          icon: 'assets/img/hight.png',
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                        ),
+                      const SizedBox(height: 16),
+                      _buildMeasurementField(
+                        context,
+                        controller: _weightController,
+                        hint: _weightHint,
+                        iconAsset: 'assets/img/weight.png',
+                        unit: 'KG',
                       ),
-                      const SizedBox(width: 8),
-                      const _UnitTag(text: 'CM'),
-                    ],
-                  ),
+                      const SizedBox(height: 16),
+                      _buildMeasurementField(
+                        context,
+                        controller: _heightController,
+                        hint: _heightHint,
+                        iconAsset: 'assets/img/hight.png',
+                        unit: 'CM',
+                      ),
                       const SizedBox(height: 28),
                       RoundButton(
                         title: context.localize(_nextText),
@@ -254,6 +187,85 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildGenderField(BuildContext context) {
+    return Container(
+      height: 50,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: TColor.lightGray,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          Image.asset(
+            'assets/img/gender.png',
+            width: 20,
+            height: 20,
+            color: TColor.gray,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<_Gender>(
+                isExpanded: true,
+                value: _selectedGender,
+                hint: Text(
+                  context.localize(_genderHint),
+                  style: TextStyle(
+                    color: TColor.gray,
+                    fontSize: 12,
+                  ),
+                ),
+                icon: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: TColor.gray,
+                ),
+                items: _Gender.values
+                    .map(
+                      (gender) => DropdownMenuItem<_Gender>(
+                        value: gender,
+                        child: Text(
+                          context.localize(gender.label),
+                          style: TextStyle(
+                            color: TColor.gray,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: _onGenderChanged,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMeasurementField(
+    BuildContext context, {
+    required TextEditingController controller,
+    required LocalizedText hint,
+    required String iconAsset,
+    required String unit,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: RoundTextField(
+            controller: controller,
+            hitText: context.localize(hint),
+            icon: iconAsset,
+            keyboardType: _decimalKeyboard,
+          ),
+        ),
+        const SizedBox(width: 8),
+        _UnitTag(text: unit),
+      ],
     );
   }
 }
@@ -280,7 +292,10 @@ class _UnitTag extends StatelessWidget {
           ),
         ],
       ),
-      child: Text(text, style: TextStyle(color: TColor.white, fontSize: 12)),
+      child: Text(
+        text,
+        style: TextStyle(color: TColor.white, fontSize: 12),
+      ),
     );
   }
 }
