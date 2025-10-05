@@ -12,6 +12,33 @@ class OnBoardingView extends StatefulWidget {
   State<OnBoardingView> createState() => _OnBoardingViewState();
 }
 
+class _LanguageToggleButton extends StatelessWidget {
+  const _LanguageToggleButton({
+    required this.language,
+    required this.onPressed,
+  });
+
+  final AppLanguage language;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: TColor.primaryColor1,
+        side: BorderSide(color: TColor.primaryColor1),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      onPressed: onPressed,
+      icon: const Icon(Icons.language, size: 18),
+      label: Text(
+        language.buttonLabel,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
 class _OnBoardingViewState extends State<OnBoardingView> {
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
