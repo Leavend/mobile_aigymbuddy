@@ -1,5 +1,3 @@
-// lib/view/login/login_view.dart
-
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -10,14 +8,14 @@ import 'package:aigymbuddy/common_widget/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
-  @override
-  State<LoginView> createState() => _LoginViewState();
-}
+  static const _socialProviders = [
+    'assets/img/google.png',
+    'assets/img/facebook.png',
+  ];
 
-class _LoginViewState extends State<LoginView> {
   static const _greetingText = LocalizedText(
     english: 'Hey there,',
     indonesian: 'Hai,',
@@ -43,8 +41,8 @@ class _LoginViewState extends State<LoginView> {
     indonesian: 'Masuk',
   );
   static const _dividerText = LocalizedText(
-    english: '  Or  ',
-    indonesian: '  Atau  ',
+    english: 'Or',
+    indonesian: 'Atau',
   );
   static const _noAccountText = LocalizedText(
     english: 'Don’t have an account yet? ',
@@ -131,38 +129,6 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        SocialAuthButton(assetPath: 'assets/img/google.png'),
-                        SizedBox(width: 16),
-                        SocialAuthButton(assetPath: 'assets/img/facebook.png'),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    TextButton(
-                      onPressed: () {
-                        context.pop();
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            context.localize(_noAccountText),
-                            style: TextStyle(color: TColor.black, fontSize: 14),
-                          ),
-                          Text(
-                            context.localize(_registerText),
-                            style: TextStyle(
-                              color: TColor.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
                       ),
                       const SizedBox(height: 28),
                       RoundButton(
@@ -196,39 +162,9 @@ class _LoginViewState extends State<LoginView> {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          SocialAuthButton(assetPath: 'assets/img/google.png'),
-                          SizedBox(width: 16),
-                          SocialAuthButton(assetPath: 'assets/img/facebook.png'),
-                        ],
-                      ),
+                      _buildSocialRow(),
                       const SizedBox(height: 28),
-                      TextButton(
-                        onPressed: () {
-                          context.pop();
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              context.localize(_noAccountText),
-                              style: TextStyle(color: TColor.black, fontSize: 14),
-                            ),
-                            Text(
-                              context.localize(_registerText),
-                              style: TextStyle(
-                                color: TColor.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                      _buildSignUpPrompt(context),
                     ],
                   ),
                 ),
@@ -236,6 +172,44 @@ class _LoginViewState extends State<LoginView> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildSocialRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (var i = 0; i < _socialProviders.length; i++) ...[
+          SocialAuthButton(assetPath: _socialProviders[i]),
+          if (i < _socialProviders.length - 1) const SizedBox(width: 16),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSignUpPrompt(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        context.go(AppRoute.signUp);
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            context.localize(_noAccountText),
+            style: TextStyle(color: TColor.black, fontSize: 14),
+          ),
+          Text(
+            context.localize(_registerText),
+            style: TextStyle(
+              color: TColor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
       ),
     );
   }
