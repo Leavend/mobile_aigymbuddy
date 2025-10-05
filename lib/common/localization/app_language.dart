@@ -5,9 +5,9 @@ enum AppLanguage { english, indonesian }
 
 extension AppLanguageX on AppLanguage {
   String get code => switch (this) {
-    AppLanguage.english => 'en',
-    AppLanguage.indonesian => 'id',
-  };
+        AppLanguage.english => 'en',
+        AppLanguage.indonesian => 'id',
+      };
 
   /// Friendly label optimised for toggle buttons and menus.
   String get buttonLabel => switch (this) {
@@ -15,24 +15,32 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.indonesian => 'ID',
       };
 
+  /// Short-hand label alias kept for backward compatibility with older
+  /// widgets that expected a `shortLabel` getter.
+  String get shortLabel => buttonLabel;
+
   /// Human friendly language name for selection controls.
   String get displayName => switch (this) {
-    AppLanguage.english => 'English',
-    AppLanguage.indonesian => 'Bahasa Indonesia',
-  };
+        AppLanguage.english => 'English',
+        AppLanguage.indonesian => 'Bahasa Indonesia',
+      };
+
 }
 
 /// Wraps a pair of localized strings for easy language resolution.
 class LocalizedText {
-  const LocalizedText({required this.english, required this.indonesian});
+  const LocalizedText({
+    required this.english,
+    required this.indonesian,
+  });
 
   final String english;
   final String indonesian;
 
   String resolve(AppLanguage language) => switch (language) {
-    AppLanguage.english => english,
-    AppLanguage.indonesian => indonesian,
-  };
+        AppLanguage.english => english,
+        AppLanguage.indonesian => indonesian,
+      };
 }
 
 /// Converts an [AppLanguage] code into a [Locale].

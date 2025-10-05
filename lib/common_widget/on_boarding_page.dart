@@ -32,7 +32,16 @@ class OnBoardingContent {
 
   String subtitleFor(AppLanguage language) => subtitle.resolve(language);
 
-  String? buttonTextFor(AppLanguage language) => buttonText?.resolve(language);
+  String? buttonTextFor(AppLanguage language) =>
+      buttonText?.resolve(language);
+
+  List<Color> gradientOrDefault() {
+    final colors = gradientColors;
+    if (colors == null || colors.isEmpty) {
+      return TColor.primaryG;
+    }
+    return colors;
+  }
 }
 
 class OnBoardingPage extends StatelessWidget {
@@ -92,7 +101,7 @@ class OnBoardingPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: content.gradientColors ?? TColor.primaryG,
+                            colors: content.gradientOrDefault(),
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                           ),
