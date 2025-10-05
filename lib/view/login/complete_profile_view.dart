@@ -120,125 +120,127 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                         fit: BoxFit.contain,
                       ),
                       const SizedBox(height: 24),
-                  Text(
-                    context.localize(_title),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    context.localize(_subtitle),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: TColor.gray, fontSize: 12),
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: TColor.lightGray,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/img/gender.png',
-                          width: 20,
-                          height: 20,
-                          color: TColor.gray,
+                      Text(
+                        context.localize(_title),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: TColor.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<_Gender>(
-                              isExpanded: true,
-                              value: _selectedGender,
-                              icon: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: TColor.gray,
-                              ),
-                              items: _Gender.values
-                                  .map(
-                                    (gender) => DropdownMenuItem(
-                                      value: gender,
-                                      child: Text(
-                                        context.localize(gender.label),
-                                        style: TextStyle(
-                                          color: TColor.gray,
-                                          fontSize: 14,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        context.localize(_subtitle),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: TColor.gray, fontSize: 12),
+                      ),
+                      const SizedBox(height: 24),
+                      Container(
+                        height: 50,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: TColor.lightGray,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/img/gender.png',
+                              width: 20,
+                              height: 20,
+                              color: TColor.gray,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<_Gender>(
+                                  isExpanded: true,
+                                  value: _selectedGender,
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: TColor.gray,
+                                  ),
+                                  items: _Gender.values
+                                      .map(
+                                        (gender) => DropdownMenuItem(
+                                          value: gender,
+                                          child: Text(
+                                            context.localize(gender.label),
+                                            style: TextStyle(
+                                              color: TColor.gray,
+                                              fontSize: 14,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      )
+                                      .toList(),
+                                  hint: Text(
+                                    context.localize(_genderHint),
+                                    style: TextStyle(
+                                      color: TColor.gray,
+                                      fontSize: 12,
                                     ),
-                                  )
-                                  .toList(),
-                              hint: Text(
-                                context.localize(_genderHint),
-                                style: TextStyle(
-                                  color: TColor.gray,
-                                  fontSize: 12,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedGender = value;
+                                    });
+                                  },
                                 ),
                               ),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedGender = value;
-                                });
-                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onTap: _pickDob,
+                        behavior: HitTestBehavior.opaque,
+                        child: AbsorbPointer(
+                          child: RoundTextField(
+                            controller: dobCtrl,
+                            hitText: context.localize(_dobHint),
+                            icon: 'assets/img/date.png',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RoundTextField(
+                              controller: weightCtrl,
+                              hitText: context.localize(_weightHint),
+                              icon: 'assets/img/weight.png',
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: _pickDob,
-                    behavior: HitTestBehavior.opaque,
-                    child: AbsorbPointer(
-                      child: RoundTextField(
-                        controller: dobCtrl,
-                        hitText: context.localize(_dobHint),
-                        icon: 'assets/img/date.png',
+                          const SizedBox(width: 8),
+                          const _UnitTag(text: 'KG'),
+                        ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RoundTextField(
-                          controller: weightCtrl,
-                          hitText: context.localize(_weightHint),
-                          icon: 'assets/img/weight.png',
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RoundTextField(
+                              controller: heightCtrl,
+                              hitText: context.localize(_heightHint),
+                              icon: 'assets/img/hight.png',
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          const _UnitTag(text: 'CM'),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      const _UnitTag(text: 'KG'),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RoundTextField(
-                          controller: heightCtrl,
-                          hitText: context.localize(_heightHint),
-                          icon: 'assets/img/hight.png',
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const _UnitTag(text: 'CM'),
-                    ],
-                  ),
                       const SizedBox(height: 28),
                       RoundButton(
                         title: context.localize(_nextText),
@@ -289,9 +291,10 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-        _Gender.male => const LocalizedText(
-            english: 'Male', indonesian: 'Pria'),
-        _Gender.female => const LocalizedText(
-            english: 'Female', indonesian: 'Wanita'),
-      };
+    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
+    _Gender.female => const LocalizedText(
+      english: 'Female',
+      indonesian: 'Wanita',
+    ),
+  };
 }
