@@ -45,7 +45,8 @@ class _SignUpViewState extends State<SignUpView> {
     indonesian: 'Kata Sandi',
   );
   static const _termsText = LocalizedText(
-    english: 'By continuing you accept our Privacy Policy and\nTerm of Use',
+    english:
+        'By continuing you accept our Privacy Policy and\nTerm of Use',
     indonesian:
         'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
   );
@@ -53,7 +54,10 @@ class _SignUpViewState extends State<SignUpView> {
     english: 'Register',
     indonesian: 'Daftar',
   );
-  static const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
+  static const _dividerText = LocalizedText(
+    english: 'Or',
+    indonesian: 'Atau',
+  );
   static const _footerQuestionText = LocalizedText(
     english: 'Already have an account? ',
     indonesian: 'Sudah punya akun? ',
@@ -71,14 +75,17 @@ class _SignUpViewState extends State<SignUpView> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 420),
+                  constraints: BoxConstraints(
+                    maxWidth: 420,
+                    minHeight: constraints.maxHeight,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 24),
                       Text(
                         context.localize(_greetingText),
                         textAlign: TextAlign.center,
@@ -94,7 +101,7 @@ class _SignUpViewState extends State<SignUpView> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 28),
                       RoundTextField(
                         hitText: context.localize(_firstNameHint),
                         icon: 'assets/img/user_text.png',
@@ -190,9 +197,7 @@ class _SignUpViewState extends State<SignUpView> {
                         children: const [
                           SocialAuthButton(assetPath: 'assets/img/google.png'),
                           SizedBox(width: 16),
-                          SocialAuthButton(
-                            assetPath: 'assets/img/facebook.png',
-                          ),
+                          SocialAuthButton(assetPath: 'assets/img/facebook.png'),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -205,10 +210,8 @@ class _SignUpViewState extends State<SignUpView> {
                           children: [
                             Text(
                               context.localize(_footerQuestionText),
-                              style: TextStyle(
-                                color: TColor.black,
-                                fontSize: 14,
-                              ),
+                              style:
+                                  TextStyle(color: TColor.black, fontSize: 14),
                             ),
                             Text(
                               context.localize(_footerActionText),

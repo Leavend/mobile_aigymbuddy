@@ -100,21 +100,26 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     return Scaffold(
       backgroundColor: TColor.white,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 24),
-                  Image.asset(
-                    'assets/img/complete_profile.png',
-                    width: media.width * 0.7,
-                    fit: BoxFit.contain,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: 420,
+                    minHeight: constraints.maxHeight,
                   ),
-                  const SizedBox(height: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 16),
+                      Image.asset(
+                        'assets/img/complete_profile.png',
+                        width: media.width * 0.65,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 24),
                   Text(
                     context.localize(_title),
                     textAlign: TextAlign.center,
@@ -234,17 +239,19 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       const _UnitTag(text: 'CM'),
                     ],
                   ),
-                  const SizedBox(height: 28),
-                  RoundButton(
-                    title: context.localize(_nextText),
-                    onPressed: () {
-                      context.push(AppRoute.goal);
-                    },
+                      const SizedBox(height: 28),
+                      RoundButton(
+                        title: context.localize(_nextText),
+                        onPressed: () {
+                          context.push(AppRoute.goal);
+                        },
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -282,10 +289,9 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
-    _Gender.female => const LocalizedText(
-      english: 'Female',
-      indonesian: 'Wanita',
-    ),
-  };
+        _Gender.male => const LocalizedText(
+            english: 'Male', indonesian: 'Pria'),
+        _Gender.female => const LocalizedText(
+            english: 'Female', indonesian: 'Wanita'),
+      };
 }
