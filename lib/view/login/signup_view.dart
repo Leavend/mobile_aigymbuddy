@@ -47,8 +47,7 @@ class _SignUpViewState extends State<SignUpView>
     indonesian: 'Kata Sandi',
   );
   static const _termsText = LocalizedText(
-    english:
-        'By continuing you accept our Privacy Policy and\nTerm of Use',
+    english: 'By continuing you accept our Privacy Policy and\nTerm of Use',
     indonesian:
         'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
   );
@@ -56,10 +55,7 @@ class _SignUpViewState extends State<SignUpView>
     english: 'Register',
     indonesian: 'Daftar',
   );
-  static const _dividerText = LocalizedText(
-    english: 'Or',
-    indonesian: 'Atau',
-  );
+  static const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
   static const _footerQuestionText = LocalizedText(
     english: 'Already have an account? ',
     indonesian: 'Sudah punya akun? ',
@@ -203,7 +199,9 @@ class _SignUpViewState extends State<SignUpView>
                         children: const [
                           SocialAuthButton(assetPath: 'assets/img/google.png'),
                           SizedBox(width: 16),
-                          SocialAuthButton(assetPath: 'assets/img/facebook.png'),
+                          SocialAuthButton(
+                            assetPath: 'assets/img/facebook.png',
+                          ),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -216,8 +214,10 @@ class _SignUpViewState extends State<SignUpView>
                           children: [
                             Text(
                               localized(_footerQuestionText),
-                              style:
-                                  TextStyle(color: TColor.black, fontSize: 14),
+                              style: TextStyle(
+                                color: TColor.black,
+                                fontSize: 14,
+                              ),
                             ),
                             Text(
                               localized(_footerActionText),

@@ -291,9 +291,10 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-        _Gender.male => const LocalizedText(
-            english: 'Male', indonesian: 'Pria'),
-        _Gender.female => const LocalizedText(
-            english: 'Female', indonesian: 'Wanita'),
-      };
+    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
+    _Gender.female => const LocalizedText(
+      english: 'Female',
+      indonesian: 'Wanita',
+    ),
+  };
 }
