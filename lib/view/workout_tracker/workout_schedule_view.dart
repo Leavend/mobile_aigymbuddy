@@ -1,6 +1,7 @@
 // lib/view/workout_tracker/workout_schedule_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -389,7 +390,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         onTap: () {
           context.push(
             AppRoute.addWorkoutSchedule,
-            extra: _selectedDateAppBBar,
+            extra: AddScheduleArgs(date: _selectedDateAppBBar),
           );
         },
         child: Container(

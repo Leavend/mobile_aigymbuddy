@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../common/color_extension.dart';
+import '../common/localization/app_language.dart';
 
 class OnBoardingContent {
   const OnBoardingContent({
@@ -15,22 +17,43 @@ class OnBoardingContent {
     this.isWelcome = false,
   });
 
-  final String title;
-  final String subtitle;
+  final LocalizedText title;
+  final LocalizedText subtitle;
   final String image;
   final List<Color>? gradientColors;
   final Color? backgroundColor;
   final Color? titleColor;
   final Color? subtitleColor;
   final TextAlign? textAlign;
-  final String? buttonText;
+  final LocalizedText? buttonText;
   final bool isWelcome;
+
+  String titleFor(AppLanguage language) => title.resolve(language);
+
+  String subtitleFor(AppLanguage language) => subtitle.resolve(language);
+
+  String? buttonTextFor(AppLanguage language) =>
+      buttonText?.resolve(language);
+
+  List<Color> gradientOrDefault() {
+    final colors = gradientColors;
+    if (colors == null || colors.isEmpty) {
+      return TColor.primaryG;
+    }
+    return colors;
+  }
 }
 
 class OnBoardingPage extends StatelessWidget {
-  const OnBoardingPage({super.key, required this.content, this.onNext});
+  const OnBoardingPage({
+    super.key,
+    required this.content,
+    required this.language,
+    this.onNext,
+  });
 
   final OnBoardingContent content;
+  final AppLanguage language;
   final VoidCallback? onNext;
 
   @override
@@ -38,6 +61,7 @@ class OnBoardingPage extends StatelessWidget {
     final media = MediaQuery.of(context).size;
 
     if (content.isWelcome) {
+      final buttonText = content.buttonTextFor(language);
       return Container(
         width: media.width,
         height: media.height,
@@ -49,7 +73,7 @@ class OnBoardingPage extends StatelessWidget {
               children: [
                 const Spacer(),
                 Text(
-                  content.title,
+                  content.titleFor(language),
                   textAlign: content.textAlign ?? TextAlign.center,
                   style: TextStyle(
                     color: content.titleColor ?? TColor.black,
@@ -59,7 +83,7 @@ class OnBoardingPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  content.subtitle,
+                  content.subtitleFor(language),
                   textAlign: content.textAlign ?? TextAlign.center,
                   style: TextStyle(
                     color: content.subtitleColor ?? TColor.gray,
@@ -68,7 +92,7 @@ class OnBoardingPage extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                if (content.buttonText != null)
+                if (buttonText != null)
                   SizedBox(
                     width: double.infinity,
                     child: GestureDetector(
@@ -77,7 +101,7 @@ class OnBoardingPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: content.gradientColors ?? TColor.primaryG,
+                            colors: content.gradientOrDefault(),
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                           ),
@@ -93,7 +117,7 @@ class OnBoardingPage extends StatelessWidget {
                           ],
                         ),
                         child: Text(
-                          content.buttonText!,
+                          buttonText,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: TColor.white,
@@ -125,7 +149,7 @@ class OnBoardingPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              content.title,
+              content.titleFor(language),
               style: TextStyle(
                 color: content.titleColor ?? TColor.black,
                 fontSize: 24,
@@ -137,7 +161,7 @@ class OnBoardingPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              content.subtitle,
+              content.subtitleFor(language),
               style: TextStyle(
                 color: content.subtitleColor ?? TColor.gray,
                 fontSize: 14,

@@ -1,6 +1,7 @@
 // lib/view/sleep_tracker/sleep_schedule_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -273,7 +274,10 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       ),
       floatingActionButton: InkWell(
         onTap: () {
-          context.push(AppRoute.sleepAddAlarm, extra: _selectedDateAppBBar);
+          context.push(
+            AppRoute.sleepAddAlarm,
+            extra: SleepAddAlarmArgs(date: _selectedDateAppBBar),
+          );
         },
         child: Container(
           width: 55,
