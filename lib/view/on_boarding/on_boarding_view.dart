@@ -1,6 +1,8 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
 import 'package:aigymbuddy/common_widget/on_boarding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,37 +14,9 @@ class OnBoardingView extends StatefulWidget {
   State<OnBoardingView> createState() => _OnBoardingViewState();
 }
 
-class _LanguageToggleButton extends StatelessWidget {
-  const _LanguageToggleButton({
-    required this.language,
-    required this.onPressed,
-  });
-
-  final AppLanguage language;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: TColor.primaryColor1,
-        side: BorderSide(color: TColor.primaryColor1),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
-      onPressed: onPressed,
-      icon: const Icon(Icons.language, size: 18),
-      label: Text(
-        language.buttonLabel,
-        style: const TextStyle(fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-}
-
 class _OnBoardingViewState extends State<OnBoardingView> {
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
-  AppLanguage _language = AppLanguage.english;
 
   late final List<OnBoardingContent> _pages = [
     OnBoardingContent(
@@ -172,16 +146,11 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     });
   }
 
-  void _updateLanguage(AppLanguage language) {
-    if (language == _language) return;
-
-    setState(() {
-      _language = language;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final languageController = AppLanguageScope.of(context);
+    final language = context.appLanguage;
+
     return Scaffold(
       backgroundColor: TColor.white,
       body: Stack(
@@ -194,7 +163,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             itemBuilder: (context, index) {
               return OnBoardingPage(
                 content: _pages[index],
-                language: _language,
+                language: language,
                 onNext: _handleNext,
               );
             },
@@ -210,79 +179,13 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             top: 16,
             right: 16,
             child: SafeArea(
-              child: _OnboardingLanguageMenu(
-                selectedLanguage: _language,
-                onLanguageSelected: _updateLanguage,
+              child: AppLanguageToggle(
+                selectedLanguage: language,
+                onSelected: languageController.select,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _OnboardingLanguageMenu extends StatelessWidget {
-  const _OnboardingLanguageMenu({
-    required this.selectedLanguage,
-    required this.onLanguageSelected,
-  });
-
-  final AppLanguage selectedLanguage;
-  final ValueChanged<AppLanguage> onLanguageSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<AppLanguage>(
-      tooltip: 'Select language',
-      initialValue: selectedLanguage,
-      onSelected: onLanguageSelected,
-      itemBuilder: (context) {
-        return AppLanguage.values
-            .map(
-              (language) => PopupMenuItem<AppLanguage>(
-                value: language,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.translate, size: 18),
-                    const SizedBox(width: 8),
-                    Text(language.displayName),
-                    const Spacer(),
-                    if (language == selectedLanguage)
-                      Icon(Icons.check, color: TColor.primaryColor1, size: 18),
-                  ],
-                ),
-              ),
-            )
-            .toList();
-      },
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(color: TColor.primaryColor1),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.translate,
-                size: 18,
-                color: TColor.primaryColor1,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                selectedLanguage.buttonLabel,
-                style: const TextStyle(
-                  color: TColor.primaryColor1,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -352,201 +255,6 @@ class _OnboardingProgressButton extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProgressButton(int totalPages) {
-    final content = _pages[_currentPageIndex];
-    if (content.isWelcome) {
-      return const SizedBox.shrink();
-    }
-
-    final progress = (_currentPageIndex + 1) / totalPages;
-    final gradient = content.gradientColors ?? TColor.primaryG;
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 24, bottom: 40),
-      child: SizedBox(
-        width: 88,
-        height: 88,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              width: 72,
-              height: 72,
-              child: CircularProgressIndicator(
-                color: TColor.primaryColor1,
-                value: progress,
-                strokeWidth: 3,
-                backgroundColor: TColor.lightGray,
-              ),
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: gradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: gradient.last.withValues(alpha: 0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: SizedBox(
-                width: 56,
-                height: 56,
-                child: IconButton(
-                  onPressed: _handleNext,
-                  icon: Icon(
-                    _currentPageIndex == totalPages - 1
-                        ? Icons.check_rounded
-                        : Icons.arrow_forward_rounded,
-                    color: TColor.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LanguageMenuButton extends StatelessWidget {
-  const _LanguageMenuButton({
-    required this.selectedLanguage,
-    required this.onLanguageSelected,
-  });
-
-  final AppLanguage selectedLanguage;
-  final ValueChanged<AppLanguage> onLanguageSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<AppLanguage>(
-      tooltip: 'Select language',
-      initialValue: selectedLanguage,
-      onSelected: onLanguageSelected,
-      itemBuilder: (context) {
-        return AppLanguage.values
-            .map(
-              (language) => PopupMenuItem<AppLanguage>(
-                value: language,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.translate, size: 18),
-                    const SizedBox(width: 8),
-                    Text(language.displayName),
-                    const Spacer(),
-                    if (language == selectedLanguage)
-                      Icon(Icons.check, color: TColor.primaryColor1, size: 18),
-                  ],
-                ),
-              ),
-            )
-            .toList();
-      },
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(color: TColor.primaryColor1),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.translate,
-                size: 18,
-                color: TColor.primaryColor1,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                selectedLanguage.buttonLabel,
-                style: const TextStyle(
-                  color: TColor.primaryColor1,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LanguageMenuButton extends StatelessWidget {
-  const _LanguageMenuButton({
-    required this.selectedLanguage,
-    required this.onLanguageSelected,
-  });
-
-  final AppLanguage selectedLanguage;
-  final ValueChanged<AppLanguage> onLanguageSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<AppLanguage>(
-      tooltip: 'Select language',
-      initialValue: selectedLanguage,
-      onSelected: onLanguageSelected,
-      itemBuilder: (context) {
-        return AppLanguage.values
-            .map(
-              (language) => PopupMenuItem<AppLanguage>(
-                value: language,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.translate, size: 18),
-                    const SizedBox(width: 8),
-                    Text(language.displayName),
-                    const Spacer(),
-                    if (language == selectedLanguage)
-                      Icon(Icons.check, color: TColor.primaryColor1, size: 18),
-                  ],
-                ),
-              ),
-            )
-            .toList();
-      },
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(color: TColor.primaryColor1),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.translate,
-                size: 18,
-                color: TColor.primaryColor1,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                selectedLanguage.shortLabel,
-                style: const TextStyle(
-                  color: TColor.primaryColor1,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
