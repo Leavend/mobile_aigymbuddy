@@ -325,16 +325,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         ),
       ),
       floatingActionButton: InkWell(
-        onTap: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => SleepAddAlarmView(
-          //       date: _selectedDateAppBBar,
-          //     ),
-          //   ),
-          // );
-        },
+        onTap: () {},
         child: Container(
           width: 55,
           height: 55,
