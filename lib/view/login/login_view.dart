@@ -131,6 +131,38 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        SocialAuthButton(assetPath: 'assets/img/google.png'),
+                        SizedBox(width: 16),
+                        SocialAuthButton(assetPath: 'assets/img/facebook.png'),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    TextButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            context.localize(_noAccountText),
+                            style: TextStyle(color: TColor.black, fontSize: 14),
+                          ),
+                          Text(
+                            context.localize(_registerText),
+                            style: TextStyle(
+                              color: TColor.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 28),
                       RoundButton(
