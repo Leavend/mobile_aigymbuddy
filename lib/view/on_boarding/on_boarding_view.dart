@@ -1,6 +1,8 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_state.dart';
+import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
 import 'package:aigymbuddy/common_widget/on_boarding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,10 +14,10 @@ class OnBoardingView extends StatefulWidget {
   State<OnBoardingView> createState() => _OnBoardingViewState();
 }
 
-class _OnBoardingViewState extends State<OnBoardingView> {
+class _OnBoardingViewState extends State<OnBoardingView>
+    with AppLanguageState<OnBoardingView> {
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
-  AppLanguage _language = AppLanguage.english;
 
   late final List<OnBoardingContent> _pages = [
     OnBoardingContent(
@@ -145,14 +147,6 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     });
   }
 
-  void _updateLanguage(AppLanguage language) {
-    if (language == _language) return;
-
-    setState(() {
-      _language = language;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,7 +161,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             itemBuilder: (context, index) {
               return OnBoardingPage(
                 content: _pages[index],
-                language: _language,
+                language: language,
                 onNext: _handleNext,
               );
             },
@@ -183,80 +177,13 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             top: 16,
             right: 16,
             child: SafeArea(
-              child: _OnboardingLanguageSwitcher(
-                selectedLanguage: _language,
-                onLanguageSelected: _updateLanguage,
+              child: AppLanguageToggle(
+                selectedLanguage: language,
+                onSelected: updateLanguage,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _OnboardingLanguageSwitcher extends StatelessWidget {
-  const _OnboardingLanguageSwitcher({
-    required this.selectedLanguage,
-    required this.onLanguageSelected,
-  });
-
-  final AppLanguage selectedLanguage;
-  final ValueChanged<AppLanguage> onLanguageSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final selections = AppLanguage.values
-        .map((language) => language == selectedLanguage)
-        .toList(growable: false);
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: TColor.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: TColor.primaryColor1.withValues(alpha: 0.12),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ToggleButtons(
-        isSelected: selections,
-        onPressed: (index) {
-          final language = AppLanguage.values[index];
-          if (language != selectedLanguage) {
-            onLanguageSelected(language);
-          }
-        },
-        borderRadius: BorderRadius.circular(24),
-        borderColor: TColor.primaryColor1,
-        selectedBorderColor: TColor.primaryColor1,
-        color: TColor.primaryColor1,
-        selectedColor: TColor.white,
-        fillColor: TColor.primaryColor1,
-        splashColor: TColor.primaryColor2,
-        renderBorder: true,
-        constraints: const BoxConstraints(minHeight: 40, minWidth: 52),
-        children: AppLanguage.values
-            .map(
-              (language) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.translate, size: 16),
-                    const SizedBox(width: 6),
-                    Text(
-                      language.buttonLabel,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-            )
-            .toList(growable: false),
       ),
     );
   }

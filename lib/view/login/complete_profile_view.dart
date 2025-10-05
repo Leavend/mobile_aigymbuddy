@@ -2,11 +2,13 @@
 
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_state.dart';
+import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
+import 'package:aigymbuddy/common_widget/round_button.dart';
+import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../common_widget/round_button.dart';
-import '../../common_widget/round_textfield.dart';
 
 class CompleteProfileView extends StatefulWidget {
   const CompleteProfileView({super.key});
@@ -15,11 +17,45 @@ class CompleteProfileView extends StatefulWidget {
   State<CompleteProfileView> createState() => _CompleteProfileViewState();
 }
 
-class _CompleteProfileViewState extends State<CompleteProfileView> {
-  String? gender;
+class _CompleteProfileViewState extends State<CompleteProfileView>
+    with AppLanguageState<CompleteProfileView> {
   final TextEditingController dobCtrl = TextEditingController();
   final TextEditingController weightCtrl = TextEditingController();
   final TextEditingController heightCtrl = TextEditingController();
+  _Gender? _selectedGender;
+
+  static const _title = LocalizedText(
+    english: 'Let’s complete your profile',
+    indonesian: 'Lengkapi profil Anda',
+  );
+  static const _subtitle = LocalizedText(
+    english: 'It will help us to know more about you!',
+    indonesian: 'Ini membantu kami mengenal Anda lebih baik!',
+  );
+  static const _genderHint = LocalizedText(
+    english: 'Choose Gender',
+    indonesian: 'Pilih Jenis Kelamin',
+  );
+  static const _dobHint = LocalizedText(
+    english: 'Date of Birth',
+    indonesian: 'Tanggal Lahir',
+  );
+  static const _weightHint = LocalizedText(
+    english: 'Your Weight',
+    indonesian: 'Berat Badan',
+  );
+  static const _heightHint = LocalizedText(
+    english: 'Your Height',
+    indonesian: 'Tinggi Badan',
+  );
+  static const _nextText = LocalizedText(
+    english: 'Next >',
+    indonesian: 'Berikutnya >',
+  );
+  static const _dobHelpText = LocalizedText(
+    english: 'Select Date of Birth',
+    indonesian: 'Pilih Tanggal Lahir',
+  );
 
   @override
   void dispose() {
@@ -36,15 +72,14 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
       initialDate: DateTime(now.year - 18, now.month, now.day),
       firstDate: DateTime(now.year - 90),
       lastDate: now,
-      helpText: 'Select Date of Birth',
+      helpText: localized(_dobHelpText),
       builder: (context, child) {
-        // opsional: tema datepicker biar selaras
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: TColor.primaryColor1, // header background
-              onPrimary: TColor.white, // header text
-              onSurface: TColor.black, // body text
+              primary: TColor.primaryColor1,
+              onPrimary: TColor.white,
+              onSurface: TColor.black,
             ),
           ),
           child: child!,
@@ -53,9 +88,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     );
     if (picked != null) {
       dobCtrl.text =
-          "${picked.year.toString().padLeft(4, '0')}-"
-          "${picked.month.toString().padLeft(2, '0')}-"
-          "${picked.day.toString().padLeft(2, '0')}";
+          '${picked.year.toString().padLeft(4, '0')}-'
+          '${picked.month.toString().padLeft(2, '0')}-'
+          '${picked.day.toString().padLeft(2, '0')}';
       setState(() {});
     }
   }
@@ -71,22 +106,26 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420), // presisi lebar
+              constraints: const BoxConstraints(maxWidth: 420),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Ilustrasi proporsional (tidak full lebar)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: AppLanguageToggle(
+                      selectedLanguage: language,
+                      onSelected: updateLanguage,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   Image.asset(
-                    "assets/img/complete_profile.png",
+                    'assets/img/complete_profile.png',
                     width: media.width * 0.7,
                     fit: BoxFit.contain,
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Title & subtitle
                   Text(
-                    "Let’s complete your profile",
+                    localized(_title),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: TColor.black,
@@ -96,14 +135,11 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    "It will help us to know more about you!",
+                    localized(_subtitle),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: TColor.gray, fontSize: 12),
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Gender dropdown (card style)
                   Container(
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -114,7 +150,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                     child: Row(
                       children: [
                         Image.asset(
-                          "assets/img/gender.png",
+                          'assets/img/gender.png',
                           width: 20,
                           height: 20,
                           color: TColor.gray,
@@ -122,19 +158,19 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
+                            child: DropdownButton<_Gender>(
                               isExpanded: true,
-                              value: gender,
+                              value: _selectedGender,
                               icon: Icon(
                                 Icons.keyboard_arrow_down_rounded,
                                 color: TColor.gray,
                               ),
-                              items: const ["Male", "Female"]
+                              items: _Gender.values
                                   .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
+                                    (gender) => DropdownMenuItem(
+                                      value: gender,
                                       child: Text(
-                                        e,
+                                        localized(gender.label),
                                         style: TextStyle(
                                           color: TColor.gray,
                                           fontSize: 14,
@@ -144,80 +180,72 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                                   )
                                   .toList(),
                               hint: Text(
-                                "Choose Gender",
+                                localized(_genderHint),
                                 style: TextStyle(
                                   color: TColor.gray,
                                   fontSize: 12,
                                 ),
                               ),
-                              onChanged: (v) => setState(() => gender = v),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedGender = value;
+                                });
+                              },
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Date of Birth (tap open picker)
                   GestureDetector(
                     onTap: _pickDob,
                     behavior: HitTestBehavior.opaque,
                     child: AbsorbPointer(
                       child: RoundTextField(
                         controller: dobCtrl,
-                        hitText: "Date of Birth",
-                        icon: "assets/img/date.png",
+                        hitText: localized(_dobHint),
+                        icon: 'assets/img/date.png',
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Weight
                   Row(
                     children: [
                       Expanded(
                         child: RoundTextField(
                           controller: weightCtrl,
-                          hitText: "Your Weight",
-                          icon: "assets/img/weight.png",
+                          hitText: localized(_weightHint),
+                          icon: 'assets/img/weight.png',
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      _UnitTag(text: "KG"),
+                      const _UnitTag(text: 'KG'),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Height
                   Row(
                     children: [
                       Expanded(
                         child: RoundTextField(
                           controller: heightCtrl,
-                          hitText: "Your Height",
-                          icon: "assets/img/hight.png",
+                          hitText: localized(_heightHint),
+                          icon: 'assets/img/hight.png',
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      _UnitTag(text: "CM"),
+                      const _UnitTag(text: 'CM'),
                     ],
                   ),
-
                   const SizedBox(height: 28),
-
-                  // Button Next
                   RoundButton(
-                    title: "Next >",
+                    title: localized(_nextText),
                     onPressed: () {
                       context.push(AppRoute.goal);
                     },
@@ -233,8 +261,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
 }
 
 class _UnitTag extends StatelessWidget {
-  final String text;
   const _UnitTag({required this.text});
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -256,4 +285,15 @@ class _UnitTag extends StatelessWidget {
       child: Text(text, style: TextStyle(color: TColor.white, fontSize: 12)),
     );
   }
+}
+
+enum _Gender { male, female }
+
+extension on _Gender {
+  LocalizedText get label => switch (this) {
+        _Gender.male => const LocalizedText(
+            english: 'Male', indonesian: 'Pria'),
+        _Gender.female => const LocalizedText(
+            english: 'Female', indonesian: 'Wanita'),
+      };
 }
