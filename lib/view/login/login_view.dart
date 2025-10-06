@@ -182,10 +182,7 @@ class LoginView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
             context.localize(_dividerText),
-            style: TextStyle(
-              color: TColor.black,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: TColor.black, fontSize: 12),
           ),
         ),
         Expanded(
