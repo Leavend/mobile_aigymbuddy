@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 
 class CompleteProfileView extends StatefulWidget {
   const CompleteProfileView({super.key});
-
   @override
   State<CompleteProfileView> createState() => _CompleteProfileViewState();
 }
@@ -22,7 +21,6 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   static const _decimalKeyboard = TextInputType.numberWithOptions(
     decimal: true,
   );
-
   static const _title = LocalizedText(
     english: "Let’s complete your profile",
     indonesian: 'Lengkapi profil Anda',
@@ -55,7 +53,6 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     english: 'Next >',
     indonesian: 'Berikutnya >',
   );
-
   @override
   void dispose() {
     _dobController.dispose();
@@ -85,10 +82,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
         );
       },
     );
-
     if (picked != null) {
-      _dobController.text =
-          '${picked.year.toString().padLeft(4, '0')}-'
+      _dobController.text = '${picked.year.toString().padLeft(4, '0')}-'
           '${picked.month.toString().padLeft(2, '0')}-'
           '${picked.day.toString().padLeft(2, '0')}';
       setState(() {});
@@ -107,14 +102,14 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     final localize = context.localize;
     final title = localize(_title);
     final subtitle = localize(_subtitle);
-
     return Scaffold(
       backgroundColor: TColor.white,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
@@ -122,6 +117,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                     minHeight: constraints.maxHeight,
                   ),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 16),
@@ -256,9 +252,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
 
 class _UnitTag extends StatelessWidget {
   const _UnitTag({required this.text});
-
   final String text;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -283,10 +277,8 @@ class _UnitTag extends StatelessWidget {
 
 class _Header extends StatelessWidget {
   const _Header({required this.title, required this.subtitle});
-
   final String title;
   final String subtitle;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -315,10 +307,11 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
-    _Gender.female => const LocalizedText(
-      english: 'Female',
-      indonesian: 'Wanita',
-    ),
-  };
+        _Gender.male =>
+          const LocalizedText(english: 'Male', indonesian: 'Pria'),
+        _Gender.female => const LocalizedText(
+            english: 'Female',
+            indonesian: 'Wanita',
+          ),
+      };
 }
