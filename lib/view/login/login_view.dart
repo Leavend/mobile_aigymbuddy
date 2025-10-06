@@ -55,124 +55,146 @@ class LoginView extends StatelessWidget {
     return Scaffold(
       backgroundColor: TColor.white,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: 420,
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 24),
-                      Text(
-                        context.localize(_greetingText),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: TColor.gray, fontSize: 16),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        context.localize(_welcomeBackText),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 36),
-                      RoundTextField(
-                        hitText: context.localize(_emailHint),
-                        icon: 'assets/img/email.png',
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 20),
-                      RoundTextField(
-                        hitText: context.localize(_passwordHint),
-                        icon: 'assets/img/lock.png',
-                        obscureText: true,
-                        rigtIcon: IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          onPressed: () {},
-                          icon: Image.asset(
-                            'assets/img/show_password.png',
-                            width: 20,
-                            height: 20,
-                            color: TColor.gray,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {},
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: Text(
-                            context.localize(_forgotPasswordText),
-                            style: TextStyle(
-                              color: TColor.gray,
-                              fontSize: 12,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      RoundButton(
-                        title: context.localize(_loginButtonText),
-                        onPressed: () {
-                          context.push(AppRoute.completeProfile);
-                        },
-                      ),
-                      const SizedBox(height: 28),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 1,
-                              color: TColor.gray.withValues(alpha: 0.5),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(
-                              context.localize(_dividerText),
-                              style: TextStyle(
-                                color: TColor.black,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: 1,
-                              color: TColor.gray.withValues(alpha: 0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      _buildSocialRow(),
-                      const SizedBox(height: 28),
-                      _buildSignUpPrompt(context),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: _buildContent(context),
+            ),
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildHeader(context),
+        const SizedBox(height: 36),
+        _buildEmailField(context),
+        const SizedBox(height: 20),
+        _buildPasswordField(context),
+        const SizedBox(height: 16),
+        _buildForgotPasswordButton(context),
+        const SizedBox(height: 28),
+        RoundButton(
+          title: context.localize(_loginButtonText),
+          onPressed: () {
+            context.push(AppRoute.completeProfile);
+          },
+        ),
+        const SizedBox(height: 28),
+        _buildDivider(context),
+        const SizedBox(height: 24),
+        _buildSocialRow(),
+        const SizedBox(height: 28),
+        _buildSignUpPrompt(context),
+      ],
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        Text(
+          context.localize(_greetingText),
+          textAlign: TextAlign.center,
+          style: TextStyle(color: TColor.gray, fontSize: 16),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          context.localize(_welcomeBackText),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: TColor.black,
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmailField(BuildContext context) {
+    return RoundTextField(
+      hitText: context.localize(_emailHint),
+      icon: 'assets/img/email.png',
+      keyboardType: TextInputType.emailAddress,
+    );
+  }
+
+  Widget _buildPasswordField(BuildContext context) {
+    return RoundTextField(
+      hitText: context.localize(_passwordHint),
+      icon: 'assets/img/lock.png',
+      obscureText: true,
+      rigtIcon: IconButton(
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+        onPressed: () {},
+        icon: Image.asset(
+          'assets/img/show_password.png',
+          width: 20,
+          height: 20,
+          color: TColor.gray,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForgotPasswordButton(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: () {},
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          minimumSize: const Size(0, 0),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: Text(
+          context.localize(_forgotPasswordText),
+          style: TextStyle(
+            color: TColor.gray,
+            fontSize: 12,
+            decoration: TextDecoration.underline,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 1,
+            color: TColor.gray.withValues(alpha: 0.5),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            context.localize(_dividerText),
+            style: TextStyle(
+              color: TColor.black,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 1,
+            color: TColor.gray.withValues(alpha: 0.5),
+          ),
+        ),
+      ],
     );
   }
 
