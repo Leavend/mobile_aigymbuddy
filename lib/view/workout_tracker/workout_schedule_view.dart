@@ -21,6 +21,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
   final CalendarAgendaController _calendarAgendaControllerAppBar =
       CalendarAgendaController();
   late DateTime _selectedDateAppBBar;
+  late final DateTime _firstAvailableDate;
+  late final DateTime _lastAvailableDate;
 
   final List<Map<String, String>> eventArr = [
     {"name": "Ab Workout", "start_time": "25/05/2023 07:30 AM"},
@@ -39,7 +41,10 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
   @override
   void initState() {
     super.initState();
-    _selectedDateAppBBar = DateTime.now();
+    final now = DateTime.now();
+    _selectedDateAppBBar = now;
+    _firstAvailableDate = now.subtract(const Duration(days: 140));
+    _lastAvailableDate = now.add(const Duration(days: 60));
     setDayEventWorkoutList();
   }
 
@@ -102,7 +107,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         ),
         actions: [
           InkWell(
-            onTap: () {},
+            onTap: _navigateToAddSchedule,
             child: Container(
               margin: const EdgeInsets.all(8),
               height: 40,
@@ -131,13 +136,29 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
             controller: _calendarAgendaControllerAppBar,
             appbar: false,
             selectedDayPosition: SelectedDayPosition.center,
-            leading: IconButton(
-              onPressed: () {},
-              icon: Image.asset(
-                "assets/img/ArrowLeft.png",
-                width: 15,
-                height: 15,
-              ),
+            leading: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () => _changeSelectedDay(-1),
+                  icon: Image.asset(
+                    "assets/img/ArrowLeft.png",
+                    width: 15,
+                    height: 15,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => _changeSelectedDay(1),
+                  icon: Transform.flip(
+                    flipX: true,
+                    child: Image.asset(
+                      "assets/img/ArrowLeft.png",
+                      width: 15,
+                      height: 15,
+                    ),
+                  ),
+                ),
+              ],
             ),
             // NOTE: 'training' parameter tidak ada di paket → dihapus
             weekDay: WeekDay.short,
@@ -147,10 +168,10 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
             selectedDateColor: Colors.white,
             dateColor: Colors.black,
             locale: 'en',
-            initialDate: DateTime.now(),
+            initialDate: _selectedDateAppBBar,
             calendarEventColor: TColor.primaryColor2,
-            firstDate: DateTime.now().subtract(const Duration(days: 140)),
-            lastDate: DateTime.now().add(const Duration(days: 60)),
+            firstDate: _firstAvailableDate,
+            lastDate: _lastAvailableDate,
             onDateSelected: (date) {
               _selectedDateAppBBar = date;
               setDayEventWorkoutList();
@@ -196,156 +217,19 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                             Expanded(
                               child: Stack(
                                 alignment: Alignment.centerLeft,
-                                children: slotArr.map((sObj) {
-                                  final min = (sObj["date"] as DateTime).minute;
-                                  // range (-1 .. 1)
+                                children: slotArr.map((raw) {
+                                  final schedule =
+                                      Map<String, dynamic>.from(raw);
+                                  final date =
+                                      schedule["date"] as DateTime;
+                                  final min = date.minute;
                                   final pos = (min / 60) * 2 - 1;
 
                                   return Align(
                                     alignment: Alignment(pos, 0),
                                     child: InkWell(
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              contentPadding: EdgeInsets.zero,
-                                              content: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 15,
-                                                      horizontal: 20,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  color: TColor.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        InkWell(
-                                                          onTap: () =>
-                                                              context.pop(),
-                                                          child: Container(
-                                                            margin:
-                                                                const EdgeInsets.all(
-                                                                  8,
-                                                                ),
-                                                            height: 40,
-                                                            width: 40,
-                                                            alignment: Alignment
-                                                                .center,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                  color: TColor
-                                                                      .lightGray,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                        10,
-                                                                      ),
-                                                                ),
-                                                            child: Image.asset(
-                                                              "assets/img/closed_btn.png",
-                                                              width: 15,
-                                                              height: 15,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          "Workout Schedule",
-                                                          style: TextStyle(
-                                                            color: TColor.black,
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                          ),
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {},
-                                                          child: Container(
-                                                            margin:
-                                                                const EdgeInsets.all(
-                                                                  8,
-                                                                ),
-                                                            height: 40,
-                                                            width: 40,
-                                                            alignment: Alignment
-                                                                .center,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                  color: TColor
-                                                                      .lightGray,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                        10,
-                                                                      ),
-                                                                ),
-                                                            child: Image.asset(
-                                                              "assets/img/more_btn.png",
-                                                              width: 15,
-                                                              height: 15,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 15),
-                                                    Text(
-                                                      sObj["name"].toString(),
-                                                      style: TextStyle(
-                                                        color: TColor.black,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Row(
-                                                      children: [
-                                                        Image.asset(
-                                                          "assets/img/time_workout.png",
-                                                          height: 20,
-                                                          width: 20,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 8,
-                                                        ),
-                                                        Text(
-                                                          "${DateTimeUtils.describeDayFromString(sObj["start_time"].toString())} | ${DateTimeUtils.reformatDateString(sObj["start_time"].toString(), outputPattern: "h:mm aa")}",
-                                                          style: TextStyle(
-                                                            color: TColor.gray,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 15),
-                                                    RoundButton(
-                                                      title: "Mark Done",
-                                                      onPressed: () {},
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
+                                      onTap: () =>
+                                          _showWorkoutDialog(schedule),
                                       child: Container(
                                         height: 35,
                                         width: availWidth * 0.5,
@@ -362,7 +246,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                           ),
                                         ),
                                         child: Text(
-                                          "${sObj["name"]}, ${DateTimeUtils.reformatDateString(sObj["start_time"].toString(), outputPattern: "h:mm aa")}",
+                                          "${schedule["name"]}, ${DateTimeUtils.reformatDateString(schedule["start_time"].toString(), outputPattern: "h:mm aa")}",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -387,12 +271,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         ],
       ),
       floatingActionButton: InkWell(
-        onTap: () {
-          context.push(
-            AppRoute.addWorkoutSchedule,
-            extra: AddScheduleArgs(date: _selectedDateAppBBar),
-          );
-        },
+        onTap: _navigateToAddSchedule,
         child: Container(
           width: 55,
           height: 55,
@@ -412,5 +291,145 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         ),
       ),
     );
+  }
+
+  void _changeSelectedDay(int offsetDays) {
+    final target = _selectedDateAppBBar.add(Duration(days: offsetDays));
+    final clamped = target.isBefore(_firstAvailableDate)
+        ? _firstAvailableDate
+        : target.isAfter(_lastAvailableDate)
+            ? _lastAvailableDate
+            : target;
+    _selectedDateAppBBar = clamped;
+    _calendarAgendaControllerAppBar.goToDay(clamped);
+    setDayEventWorkoutList();
+  }
+
+  void _navigateToAddSchedule() {
+    context.push(
+      AppRoute.addWorkoutSchedule,
+      extra: AddScheduleArgs(date: _selectedDateAppBBar),
+    );
+  }
+
+  Future<void> _showWorkoutDialog(Map<String, dynamic> schedule) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+            decoration: BoxDecoration(
+              color: TColor.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.of(dialogContext).pop(false),
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        height: 40,
+                        width: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: TColor.lightGray,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Image.asset(
+                          "assets/img/closed_btn.png",
+                          width: 15,
+                          height: 15,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "Workout Schedule",
+                      style: TextStyle(
+                        color: TColor.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(dialogContext).pop(false);
+                        _navigateToAddSchedule();
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        height: 40,
+                        width: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: TColor.lightGray,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Image.asset(
+                          "assets/img/more_btn.png",
+                          width: 15,
+                          height: 15,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  schedule["name"].toString(),
+                  style: TextStyle(
+                    color: TColor.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Image.asset(
+                      "assets/img/time_workout.png",
+                      height: 20,
+                      width: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "${DateTimeUtils.describeDayFromString(schedule["start_time"].toString())} | ${DateTimeUtils.reformatDateString(schedule["start_time"].toString(), outputPattern: "h:mm aa")}",
+                      style: TextStyle(
+                        color: TColor.gray,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                RoundButton(
+                  title: "Mark Done",
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (result == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Marked ${schedule["name"]} as done',
+          ),
+        ),
+      );
+    }
   }
 }
