@@ -52,18 +52,30 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     final date = DateTimeUtils.startOfDay(_selectedDateAppBBar);
     selectDayEventArr = eventArr
         .map((wObj) {
-          return {
-            "name": wObj["name"],
-            "start_time": wObj["start_time"],
-            "date": DateTimeUtils.parseDate(
-              wObj["start_time"]!,
-              pattern: "dd/MM/yyyy hh:mm aa",
-            ),
-          };
+          try {
+            // Try to parse the date
+            return {
+              "name": wObj["name"],
+              "start_time": wObj["start_time"],
+              "date": DateTimeUtils.parseDate(
+                wObj["start_time"]!,
+                pattern: "dd/MM/yyyy hh:mm aa",
+              ),
+            };
+          } catch (e) {
+            // If parsing fails, print an error and return null
+            debugPrint(
+              'Failed to parse date for event: ${wObj["name"]}, value: ${wObj["start_time"]}. Error: $e',
+            );
+            return null;
+          }
         })
+        // Filter out any items that failed to parse
+        .where((item) => item != null)
         .where(
-          (wObj) => DateTimeUtils.startOfDay(wObj["date"] as DateTime) == date,
+          (wObj) => DateTimeUtils.startOfDay(wObj!["date"] as DateTime) == date,
         )
+        .cast<Map<String, dynamic>>() // Ensure the list type is correct
         .toList();
 
     if (mounted) setState(() {});
