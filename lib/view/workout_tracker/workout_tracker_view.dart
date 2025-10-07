@@ -99,7 +99,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
               ),
               actions: [
                 InkWell(
-                  onTap: () {},
+                  onTap: _showMoreActions,
                   child: Container(
                     margin: const EdgeInsets.all(8),
                     height: 40,
@@ -269,9 +269,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                             type: RoundButtonType.bgGradient,
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            onPressed: () {
-                              // Navigate ke halaman schedule kalau sudah ada
-                            },
+                            onPressed: _handleOpenSchedule,
                           ),
                         ),
                       ],
@@ -293,7 +291,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: _handleOpenSchedule,
                         child: Text(
                           "See More",
                           style: TextStyle(
@@ -312,9 +310,12 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                     itemCount: latestArr.length,
                     itemBuilder: (context, index) {
                       final wObj = latestArr[index];
-                      // UpcomingWorkoutRow biasanya ambil Map<String, dynamic>
-                      return UpcomingWorkoutRow(
-                        wObj: Map<String, dynamic>.from(wObj),
+                      final workout = Map<String, String>.from(wObj);
+                      return InkWell(
+                        onTap: () => _handleOpenWorkoutDetail(workout),
+                        child: UpcomingWorkoutRow(
+                          wObj: Map<String, dynamic>.from(wObj),
+                        ),
                       );
                     },
                   ),
@@ -366,6 +367,77 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
           ),
         ),
       ),
+    );
+  }
+
+  void _handleOpenSchedule() {
+    if (!mounted) return;
+    context.push(AppRoute.workoutSchedule);
+  }
+
+  void _handleOpenWorkoutDetail(Map<String, String> workout) {
+    if (!mounted) return;
+
+    final detailData = <String, dynamic>{
+      'title': workout['title'] ?? 'Workout',
+      'time': workout['time'] ?? 'Today, 03:00pm',
+      'exercises': workout['exercises'] ?? '11 Exercises',
+      'image': workout['image'],
+    };
+
+    context.push(
+      AppRoute.workoutDetail,
+      extra: WorkoutDetailArgs(workout: detailData),
+    );
+  }
+
+  void _showMoreActions() {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: TColor.gray.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  leading: const Icon(Icons.schedule_outlined),
+                  title: const Text('View schedule'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _handleOpenSchedule();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.flag_outlined),
+                  title: const Text('Set a new goal'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(this.context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Goal settings coming soon.'),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

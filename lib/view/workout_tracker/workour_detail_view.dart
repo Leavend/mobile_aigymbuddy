@@ -17,26 +17,13 @@ class WorkoutDetailView extends StatefulWidget {
 }
 
 class _WorkoutDetailViewState extends State<WorkoutDetailView> {
-  List latestArr = [
-    {
-      "image": "assets/img/Workout1.png",
-      "title": "Fullbody Workout",
-      "time": "Today, 03:00pm",
-    },
-    {
-      "image": "assets/img/Workout2.png",
-      "title": "Upperbody Workout",
-      "time": "June 05, 02:00pm",
-    },
-  ];
-
-  List youArr = [
+  final List<Map<String, String>> youArr = [
     {"image": "assets/img/barbell.png", "title": "Barbell"},
     {"image": "assets/img/skipping_rope.png", "title": "Skipping Rope"},
     {"image": "assets/img/bottle.png", "title": "Bottle 1 Liters"},
   ];
 
-  List exercisesArr = [
+  final List<Map<String, dynamic>> exercisesArr = [
     {
       "name": "Set 1",
       "set": [
@@ -84,6 +71,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
       ],
     },
   ];
+
+  bool _isFavorite = false;
 
   @override
   Widget build(BuildContext context) {
@@ -213,12 +202,15 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: _toggleFavorite,
                             child: Image.asset(
                               "assets/img/fav.png",
                               width: 15,
                               height: 15,
                               fit: BoxFit.contain,
+                              color: _isFavorite
+                                  ? TColor.secondaryColor2
+                                  : null,
                             ),
                           ),
                         ],
@@ -239,7 +231,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                         title: "Difficulity",
                         time: "Beginner",
                         color: TColor.secondaryColor2.withValues(alpha: 0.3),
-                        onPressed: () {},
+                        onPressed: _showDifficultyInfo,
                       ),
                       SizedBox(height: media.width * 0.05),
                       Row(
@@ -254,7 +246,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: _showEquipmentSheet,
                             child: Text(
                               "${youArr.length} Items",
                               style: TextStyle(
@@ -323,7 +315,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: _showExerciseSummary,
                             child: Text(
                               "${youArr.length} Sets",
                               style: TextStyle(
@@ -363,7 +355,10 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      RoundButton(title: "Start Workout", onPressed: () {}),
+                      RoundButton(
+                        title: "Start Workout",
+                        onPressed: _startWorkout,
+                      ),
                     ],
                   ),
                 ),
@@ -372,6 +367,187 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           ),
         ),
       ),
+    );
+  }
+
+  void _toggleFavorite() {
+    setState(() => _isFavorite = !_isFavorite);
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          _isFavorite ? 'Added to favourites' : 'Removed from favourites',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showDifficultyInfo() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Difficulty Levels',
+                  style: TextStyle(
+                    color: TColor.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Beginner workouts focus on mastering form and building a consistent routine. '
+                  'Increase to Intermediate or Advanced once you can complete every set without breaking form.',
+                  style: TextStyle(color: TColor.gray, fontSize: 13),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Got it'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showEquipmentSheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: TColor.gray.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "You'll Need",
+                  style: TextStyle(
+                    color: TColor.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...youArr.map((item) {
+                  return ListTile(
+                    leading: Image.asset(
+                      item['image']!,
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.contain,
+                    ),
+                    title: Text(
+                      item['title']!,
+                      style: TextStyle(color: TColor.black),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showExerciseSummary() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: TColor.gray.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Exercises Overview',
+                  style: TextStyle(
+                    color: TColor.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...exercisesArr.map((set) {
+                  final exercises =
+                      (set['set'] as List<dynamic>? ?? const []).length;
+                  return ListTile(
+                    title: Text(
+                      set['name'].toString(),
+                      style: TextStyle(color: TColor.black),
+                    ),
+                    subtitle: Text(
+                      '$exercises exercises',
+                      style: TextStyle(color: TColor.gray),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _startWorkout() {
+    final firstSet = exercisesArr.isNotEmpty ? exercisesArr.first : null;
+    final setItems = firstSet != null
+        ? (firstSet['set'] as List<dynamic>? ?? const [])
+        : const [];
+    if (setItems.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No exercises available yet.')),
+      );
+      return;
+    }
+
+    final firstExercise = Map<String, dynamic>.from(
+      setItems.first as Map,
+    );
+
+    context.push(
+      AppRoute.exerciseSteps,
+      extra: ExerciseStepsArgs(exercise: firstExercise),
     );
   }
 }

@@ -146,7 +146,13 @@ class ExercisesStepDetails extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Video preview will be available soon.'),
+                        ),
+                      );
+                    },
                     icon: Image.asset(
                       "assets/img/Play.png",
                       width: 30,
@@ -205,7 +211,7 @@ class ExercisesStepDetails extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => _showStepsSummary(context),
                     child: Text(
                       "${_steps.length} Sets",
                       style: TextStyle(color: TColor.gray, fontSize: 12),
@@ -286,7 +292,16 @@ class ExercisesStepDetails extends StatelessWidget {
                   },
                 ),
               ),
-              RoundButton(title: "Save", elevation: 0, onPressed: () {}),
+              RoundButton(
+                title: "Save",
+                elevation: 0,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Exercise saved.')),
+                  );
+                  context.pop();
+                },
+              ),
               const SizedBox(height: 15),
             ],
           ),
@@ -294,4 +309,61 @@ class ExercisesStepDetails extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showStepsSummary(BuildContext context) {
+  showModalBottomSheet<void>(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: TColor.gray.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Step Summary',
+                style: TextStyle(
+                  color: TColor.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...ExercisesStepDetails._steps.map(
+                (step) => ListTile(
+                  title: Text(step.title),
+                  subtitle: Text(step.description),
+                  leading: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: TColor.primaryColor2.withValues(alpha: 0.15),
+                    child: Text(
+                      step.number,
+                      style: TextStyle(
+                        color: TColor.primaryColor2,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
