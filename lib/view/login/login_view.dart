@@ -8,8 +8,15 @@ import 'package:aigymbuddy/common_widget/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  bool _isPasswordVisible = false;
 
   static const _socialProviders = [
     'assets/img/google.png',
@@ -57,12 +64,12 @@ class LoginView extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final viewportHeight =
-                constraints.maxHeight.isFinite ? constraints.maxHeight : 0.0;
+            final viewportHeight = constraints.maxHeight.isFinite
+                ? constraints.maxHeight
+                : 0.0;
 
             return SingleChildScrollView(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 420),
@@ -144,13 +151,19 @@ class LoginView extends StatelessWidget {
     return RoundTextField(
       hitText: context.localize(_passwordHint),
       icon: 'assets/img/lock.png',
-      obscureText: true,
+      obscureText: !_isPasswordVisible,
       rigtIcon: IconButton(
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            _isPasswordVisible = !_isPasswordVisible;
+          });
+        },
         icon: Image.asset(
-          'assets/img/show_password.png',
+          _isPasswordVisible
+              ? 'assets/img/hide_password.png'
+              : 'assets/img/show_password.png',
           width: 20,
           height: 20,
           color: TColor.gray,
@@ -194,10 +207,7 @@ class LoginView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
             context.localize(_dividerText),
-            style: TextStyle(
-              color: TColor.black,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: TColor.black, fontSize: 12),
           ),
         ),
         Expanded(

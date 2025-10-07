@@ -1,5 +1,3 @@
-// lib/view/home/home_view.dart
-
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/workout_row.dart';
@@ -222,6 +220,7 @@ class _HomeViewState extends State<HomeView> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Text(
@@ -234,8 +233,8 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         ),
                         SizedBox(
-                          width: 86,
-                          height: 30,
+                          width: 95,
+                          height: 36,
                           child: RoundButton(
                             title: "Check",
                             type: RoundButtonType.bgGradient,

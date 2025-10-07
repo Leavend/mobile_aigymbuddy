@@ -1,5 +1,3 @@
-// lib/view/login/signup_view.dart
-
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -19,6 +17,7 @@ class SignUpView extends StatefulWidget {
 
 class _SignUpViewState extends State<SignUpView> {
   bool _isTermsAccepted = false;
+  bool _isPasswordVisible = false;
 
   static const _greetingText = LocalizedText(
     english: 'Hey there,',
@@ -118,13 +117,19 @@ class _SignUpViewState extends State<SignUpView> {
                       RoundTextField(
                         hitText: context.localize(_passwordHint),
                         icon: 'assets/img/lock.png',
-                        obscureText: true,
+                        obscureText: !_isPasswordVisible,
                         rigtIcon: IconButton(
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
                           icon: Image.asset(
-                            'assets/img/show_password.png',
+                            _isPasswordVisible
+                                ? 'assets/img/hide_password.png'
+                                : 'assets/img/show_password.png',
                             width: 20,
                             height: 20,
                             color: TColor.gray,
