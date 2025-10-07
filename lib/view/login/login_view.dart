@@ -8,6 +8,54 @@ import 'package:aigymbuddy/common_widget/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+// --- Constants moved outside the class for better separation of concerns ---
+
+const _socialProviders = ['assets/img/google.png', 'assets/img/facebook.png'];
+
+const _greetingText = LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
+const _welcomeBackText = LocalizedText(
+  english: 'Welcome Back',
+  indonesian: 'Selamat Datang Kembali',
+);
+const _emailHint = LocalizedText(english: 'Email', indonesian: 'Email');
+const _passwordHint = LocalizedText(
+  english: 'Password',
+  indonesian: 'Kata Sandi',
+);
+const _forgotPasswordText = LocalizedText(
+  english: 'Forgot your password?',
+  indonesian: 'Lupa kata sandi?',
+);
+const _loginButtonText = LocalizedText(english: 'Login', indonesian: 'Masuk');
+const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
+const _noAccountText = LocalizedText(
+  english: 'Don’t have an account yet? ',
+  indonesian: 'Belum punya akun? ',
+);
+const _registerText = LocalizedText(english: 'Register', indonesian: 'Daftar');
+
+final _emailRegExp = RegExp(
+  r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$',
+  caseSensitive: false,
+);
+
+const _emailRequiredError = LocalizedText(
+  english: 'Email is required',
+  indonesian: 'Email wajib diisi',
+);
+const _emailInvalidError = LocalizedText(
+  english: 'Enter a valid email address',
+  indonesian: 'Masukkan alamat email yang valid',
+);
+const _passwordRequiredError = LocalizedText(
+  english: 'Password is required',
+  indonesian: 'Kata sandi wajib diisi',
+);
+const _passwordLengthError = LocalizedText(
+  english: 'Password must be at least 8 characters',
+  indonesian: 'Kata sandi minimal 8 karakter',
+);
+
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -26,44 +74,56 @@ class _LoginViewState extends State<LoginView> {
   bool _isLoginEnabled = false;
   bool _autoValidate = false;
 
-  static const _socialProviders = [
-    'assets/img/google.png',
-    'assets/img/facebook.png',
-  ];
+  void _validateForm() {
+    final isValid = _canSubmit();
+    if (isValid != _isLoginEnabled) {
+      setState(() {
+        _isLoginEnabled = isValid;
+      });
+    }
+  }
 
-  static const _greetingText = LocalizedText(
-    english: 'Hey there,',
-    indonesian: 'Hai,',
-  );
-  static const _welcomeBackText = LocalizedText(
-    english: 'Welcome Back',
-    indonesian: 'Selamat Datang Kembali',
-  );
-  static const _emailHint = LocalizedText(
-    english: 'Email',
-    indonesian: 'Email',
-  );
-  static const _passwordHint = LocalizedText(
-    english: 'Password',
-    indonesian: 'Kata Sandi',
-  );
-  static const _forgotPasswordText = LocalizedText(
-    english: 'Forgot your password?',
-    indonesian: 'Lupa kata sandi?',
-  );
-  static const _loginButtonText = LocalizedText(
-    english: 'Login',
-    indonesian: 'Masuk',
-  );
-  static const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
-  static const _noAccountText = LocalizedText(
-    english: 'Don’t have an account yet? ',
-    indonesian: 'Belum punya akun? ',
-  );
-  static const _registerText = LocalizedText(
-    english: 'Register',
-    indonesian: 'Daftar',
-  );
+  void _onLoginPressed() {
+    // Unfocus all fields to hide keyboard
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _autoValidate = true;
+    });
+
+    // Validate the form
+    if (_formKey.currentState?.validate() ?? false) {
+      // Navigate to the next screen if the form is valid
+      context.push(AppRoute.completeProfile);
+    }
+  }
+
+  String? _validateEmail(String? value) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) {
+      return context.localize(_emailRequiredError);
+    }
+    if (!_emailRegExp.hasMatch(text)) {
+      return context.localize(_emailInvalidError);
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    final text = value ?? '';
+    if (text.isEmpty) {
+      return context.localize(_passwordRequiredError);
+    }
+    if (text.length < 8) {
+      return context.localize(_passwordLengthError);
+    }
+    return null;
+  }
+
+  bool _canSubmit() {
+    return _validateEmail(_emailController.text) == null &&
+        _validatePassword(_passwordController.text) == null;
+  }
 
   static final RegExp _emailRegExp = RegExp(
     '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$',
@@ -103,16 +163,15 @@ class _LoginViewState extends State<LoginView> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final viewportHeight = constraints.maxHeight.isFinite
-                ? constraints.maxHeight
-                : 0.0;
-
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 420),
-                  child: _buildContent(context, viewportHeight),
+                  constraints: BoxConstraints(
+                    maxWidth: 420,
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: _buildContent(context),
                 ),
               ),
             );
@@ -222,6 +281,7 @@ class _LoginViewState extends State<LoginView> {
         icon: Image.asset(
           _isPasswordVisible
               ? 'assets/img/hide_password.png'
+              // Assuming you have this asset. If not, you can use a different icon.
               : 'assets/img/show_password.png',
           width: 20,
           height: 20,

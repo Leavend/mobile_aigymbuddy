@@ -8,6 +8,73 @@ import 'package:aigymbuddy/common_widget/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+// --- Constants moved outside the class for better separation of concerns ---
+
+const _greetingText = LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
+const _createAccountText = LocalizedText(
+  english: 'Create an Account',
+  indonesian: 'Buat Akun',
+);
+const _firstNameHint = LocalizedText(
+  english: 'First Name',
+  indonesian: 'Nama Depan',
+);
+const _lastNameHint = LocalizedText(
+  english: 'Last Name',
+  indonesian: 'Nama Belakang',
+);
+const _emailHint = LocalizedText(english: 'Email', indonesian: 'Email');
+const _passwordHint = LocalizedText(
+  english: 'Password',
+  indonesian: 'Kata Sandi',
+);
+const _termsText = LocalizedText(
+  english: 'By continuing you accept our Privacy Policy and\nTerm of Use',
+  indonesian:
+      'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
+);
+const _registerText = LocalizedText(english: 'Register', indonesian: 'Daftar');
+const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
+const _footerQuestionText = LocalizedText(
+  english: 'Already have an account? ',
+  indonesian: 'Sudah punya akun? ',
+);
+const _footerActionText = LocalizedText(english: 'Login', indonesian: 'Masuk');
+
+const _firstNameRequiredError = LocalizedText(
+  english: 'First name is required',
+  indonesian: 'Nama depan wajib diisi',
+);
+const _lastNameRequiredError = LocalizedText(
+  english: 'Last name is required',
+  indonesian: 'Nama belakang wajib diisi',
+);
+const _emailRequiredError = LocalizedText(
+  english: 'Email is required',
+  indonesian: 'Email wajib diisi',
+);
+const _emailInvalidError = LocalizedText(
+  english: 'Enter a valid email address',
+  indonesian: 'Masukkan alamat email yang valid',
+);
+const _passwordRequiredError = LocalizedText(
+  english: 'Password is required',
+  indonesian: 'Kata sandi wajib diisi',
+);
+const _passwordLengthError = LocalizedText(
+  english: 'Password must be at least 8 characters',
+  indonesian: 'Kata sandi minimal 8 karakter',
+);
+const _termsRequiredError = LocalizedText(
+  english: 'Please accept the terms to continue',
+  indonesian: 'Silakan setujui syarat dan ketentuan terlebih dahulu',
+);
+
+final _emailRegExp = RegExp(
+  r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$',
+  caseSensitive: false,
+);
+
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
 
@@ -33,48 +100,55 @@ class _SignUpViewState extends State<SignUpView> {
   bool _autoValidate = false;
   bool _showTermsError = false;
 
-  static const _greetingText = LocalizedText(
-    english: 'Hey there,',
-    indonesian: 'Hai,',
-  );
-  static const _createAccountText = LocalizedText(
-    english: 'Create an Account',
-    indonesian: 'Buat Akun',
-  );
-  static const _firstNameHint = LocalizedText(
-    english: 'First Name',
-    indonesian: 'Nama Depan',
-  );
-  static const _lastNameHint = LocalizedText(
-    english: 'Last Name',
-    indonesian: 'Nama Belakang',
-  );
-  static const _emailHint = LocalizedText(
-    english: 'Email',
-    indonesian: 'Email',
-  );
-  static const _passwordHint = LocalizedText(
-    english: 'Password',
-    indonesian: 'Kata Sandi',
-  );
-  static const _termsText = LocalizedText(
-    english: 'By continuing you accept our Privacy Policy and\nTerm of Use',
-    indonesian:
-        'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
-  );
-  static const _registerText = LocalizedText(
-    english: 'Register',
-    indonesian: 'Daftar',
-  );
-  static const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
-  static const _footerQuestionText = LocalizedText(
-    english: 'Already have an account? ',
-    indonesian: 'Sudah punya akun? ',
-  );
-  static const _footerActionText = LocalizedText(
-    english: 'Login',
-    indonesian: 'Masuk',
-  );
+    if ((_formKey.currentState?.validate() ?? false) && _isTermsAccepted) {
+      context.push(AppRoute.completeProfile);
+    }
+  }
+
+  String? _validateFirstName(String? value) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) {
+      return context.localize(_firstNameRequiredError);
+    }
+    return null;
+  }
+
+  String? _validateLastName(String? value) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) {
+      return context.localize(_lastNameRequiredError);
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) {
+      return context.localize(_emailRequiredError);
+    }
+    if (!_emailRegExp.hasMatch(text)) {
+      return context.localize(_emailInvalidError);
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    final text = value ?? '';
+    if (text.isEmpty) {
+      return context.localize(_passwordRequiredError);
+    }
+    if (text.length < 8) {
+      return context.localize(_passwordLengthError);
+    }
+    return null;
+  }
+
+  bool _canSubmitForm() {
+    return _validateFirstName(_firstNameController.text) == null &&
+        _validateLastName(_lastNameController.text) == null &&
+        _validateEmail(_emailController.text) == null &&
+        _validatePassword(_passwordController.text) == null;
+  }
 
   static const _firstNameRequiredError = LocalizedText(
     english: 'First name is required',
