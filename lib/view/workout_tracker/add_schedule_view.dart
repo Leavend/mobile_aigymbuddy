@@ -312,7 +312,8 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                   final label = labelBuilder != null
                       ? labelBuilder(option)
                       : option.toString();
-                  final isSelected = currentValue != null && option == currentValue;
+                  final isSelected =
+                      currentValue != null && option == currentValue;
                   return ListTile(
                     title: Text(label),
                     trailing: isSelected
@@ -337,21 +338,15 @@ class _AddScheduleViewState extends State<AddScheduleView> {
     );
 
     messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          'Schedule saved for $formattedDate',
-        ),
-      ),
+      SnackBar(content: Text('Schedule saved for $formattedDate')),
     );
 
-    context.pop(
-      {
-        'date': _selectedDateTime,
-        'workout': _selectedWorkout,
-        'difficulty': _selectedDifficulty,
-        'repetitions': _customRepetitions,
-        'weight': _customWeight,
-      },
-    );
+    context.pop({
+      'date': _selectedDateTime,
+      'workout': _selectedWorkout,
+      'difficulty': _selectedDifficulty,
+      'repetitions': _customRepetitions,
+      'weight': _customWeight,
+    });
   }
 }

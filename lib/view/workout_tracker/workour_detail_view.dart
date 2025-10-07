@@ -541,9 +541,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
       return;
     }
 
-    final firstExercise = Map<String, dynamic>.from(
-      setItems.first as Map,
-    );
+    final firstExercise = Map<String, dynamic>.from(setItems.first as Map);
 
     context.push(
       AppRoute.exerciseSteps,

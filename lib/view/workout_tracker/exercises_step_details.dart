@@ -149,7 +149,9 @@ class ExercisesStepDetails extends StatelessWidget {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Video preview will be available soon.'),
+                          content: Text(
+                            'Video preview will be available soon.',
+                          ),
                         ),
                       );
                     },
@@ -345,11 +347,13 @@ void _showStepsSummary(BuildContext context) {
               const SizedBox(height: 12),
               ...ExercisesStepDetails._steps.map(
                 (step) => ListTile(
-                  title: Text(step.title),
+                  title: Text(step.title ?? 'Untitled Step'),
                   subtitle: Text(step.description),
                   leading: CircleAvatar(
                     radius: 16,
-                    backgroundColor: TColor.primaryColor2.withValues(alpha: 0.15),
+                    backgroundColor: TColor.primaryColor2.withValues(
+                      alpha: 0.15,
+                    ),
                     child: Text(
                       step.number,
                       style: TextStyle(

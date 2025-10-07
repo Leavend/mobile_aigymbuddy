@@ -218,18 +218,17 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                               child: Stack(
                                 alignment: Alignment.centerLeft,
                                 children: slotArr.map((raw) {
-                                  final schedule =
-                                      Map<String, dynamic>.from(raw);
-                                  final date =
-                                      schedule["date"] as DateTime;
+                                  final schedule = Map<String, dynamic>.from(
+                                    raw,
+                                  );
+                                  final date = schedule["date"] as DateTime;
                                   final min = date.minute;
                                   final pos = (min / 60) * 2 - 1;
 
                                   return Align(
                                     alignment: Alignment(pos, 0),
                                     child: InkWell(
-                                      onTap: () =>
-                                          _showWorkoutDialog(schedule),
+                                      onTap: () => _showWorkoutDialog(schedule),
                                       child: Container(
                                         height: 35,
                                         width: availWidth * 0.5,
@@ -298,8 +297,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     final clamped = target.isBefore(_firstAvailableDate)
         ? _firstAvailableDate
         : target.isAfter(_lastAvailableDate)
-            ? _lastAvailableDate
-            : target;
+        ? _lastAvailableDate
+        : target;
     _selectedDateAppBBar = clamped;
     _calendarAgendaControllerAppBar.goToDay(clamped);
     setDayEventWorkoutList();
@@ -403,10 +402,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                     const SizedBox(width: 8),
                     Text(
                       "${DateTimeUtils.describeDayFromString(schedule["start_time"].toString())} | ${DateTimeUtils.reformatDateString(schedule["start_time"].toString(), outputPattern: "h:mm aa")}",
-                      style: TextStyle(
-                        color: TColor.gray,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: TColor.gray, fontSize: 12),
                     ),
                   ],
                 ),
@@ -424,11 +420,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
 
     if (result == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Marked ${schedule["name"]} as done',
-          ),
-        ),
+        SnackBar(content: Text('Marked ${schedule["name"]} as done')),
       );
     }
   }
