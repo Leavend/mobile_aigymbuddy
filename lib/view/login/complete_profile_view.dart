@@ -32,7 +32,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   static const double _maxHeightCm = 300;
   static const int _minAgeYears = 13;
   static final List<TextInputFormatter> _numericInputFormatters = [
-    FilteringTextInputFormatter.allow(RegExp(r'^[0-9]{0,3}(?:\.[0-9]{0,2})?$')),
+    FilteringTextInputFormatter.allow(
+      RegExp(r'^[0-9]{0,3}(?:\.[0-9]{0,2})?$'),
+    ),
     LengthLimitingTextInputFormatter(6),
   ];
   static const _title = LocalizedText(
@@ -171,9 +173,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   }
 
   void _onNextPressed() {
-    final genderError = _selectedGender == null
-        ? context.localize(_genderRequiredError)
-        : null;
+    final genderError =
+        _selectedGender == null ? context.localize(_genderRequiredError) : null;
     final dobError = _validateDob(context, _dobController.text);
     final weightError = _validateWeight(context, _weightController.text);
     final heightError = _validateHeight(context, _heightController.text);
@@ -183,12 +184,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
       _weightError = weightError;
       _heightError = heightError;
     });
-    if ([
-      genderError,
-      dobError,
-      weightError,
-      heightError,
-    ].every((e) => e == null)) {
+    if ([genderError, dobError, weightError, heightError].every((e) => e == null)) {
       context.push(AppRoute.goal);
     }
   }
@@ -362,10 +358,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                             value: gender,
                             child: Text(
                               context.localize(gender.label),
-                              style: TextStyle(
-                                color: TColor.gray,
-                                fontSize: 14,
-                              ),
+                              style: TextStyle(color: TColor.gray, fontSize: 14),
                             ),
                           ),
                         )
@@ -395,7 +388,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           child: AbsorbPointer(
             child: RoundTextField(
               controller: _dobController,
-              hitText: context.localize(_dobHint),
+              hintText: context.localize(_dobHint),
               icon: 'assets/img/date.png',
             ),
           ),
@@ -424,7 +417,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
             Expanded(
               child: RoundTextField(
                 controller: controller,
-                hitText: context.localize(hint),
+                hintText: context.localize(hint),
                 icon: iconAsset,
                 keyboardType: _decimalKeyboard,
                 inputFormatters: _numericInputFormatters,

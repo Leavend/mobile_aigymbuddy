@@ -16,7 +16,15 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+
   bool _isPasswordVisible = false;
+  bool _isLoginEnabled = false;
+  bool _autoValidate = false;
 
   static const _socialProviders = [
     'assets/img/google.png',
@@ -57,6 +65,37 @@ class _LoginViewState extends State<LoginView> {
     indonesian: 'Daftar',
   );
 
+  static final RegExp _emailRegExp = RegExp(
+    '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$',
+    caseSensitive: false,
+  );
+
+  static const _emailRequiredError = LocalizedText(
+    english: 'Email is required',
+    indonesian: 'Email wajib diisi',
+  );
+  static const _emailInvalidError = LocalizedText(
+    english: 'Enter a valid email address',
+    indonesian: 'Masukkan alamat email yang valid',
+  );
+  static const _passwordRequiredError = LocalizedText(
+    english: 'Password is required',
+    indonesian: 'Kata sandi wajib diisi',
+  );
+  static const _passwordLengthError = LocalizedText(
+    english: 'Password must be at least 8 characters',
+    indonesian: 'Kata sandi minimal 8 karakter',
+  );
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,34 +123,40 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Widget _buildContent(BuildContext context, double minHeight) {
+    final autovalidateMode =
+        _autoValidate ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled;
+
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: minHeight),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 36),
-          _buildEmailField(context),
-          const SizedBox(height: 20),
-          _buildPasswordField(context),
-          const SizedBox(height: 16),
-          _buildForgotPasswordButton(context),
-          const SizedBox(height: 28),
-          RoundButton(
-            title: context.localize(_loginButtonText),
-            onPressed: () {
-              context.push(AppRoute.completeProfile);
-            },
-          ),
-          const SizedBox(height: 28),
-          _buildDivider(context),
-          const SizedBox(height: 24),
-          _buildSocialRow(),
-          const SizedBox(height: 28),
-          _buildSignUpPrompt(context),
-        ],
+      child: Form(
+        key: _formKey,
+        autovalidateMode: autovalidateMode,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildHeader(context),
+            const SizedBox(height: 36),
+            _buildEmailField(context, autovalidateMode),
+            const SizedBox(height: 20),
+            _buildPasswordField(context, autovalidateMode),
+            const SizedBox(height: 16),
+            _buildForgotPasswordButton(context),
+            const SizedBox(height: 28),
+            RoundButton(
+              title: context.localize(_loginButtonText),
+              onPressed: _onLoginPressed,
+              isEnabled: _isLoginEnabled,
+            ),
+            const SizedBox(height: 28),
+            _buildDivider(context),
+            const SizedBox(height: 24),
+            _buildSocialRow(),
+            const SizedBox(height: 28),
+            _buildSignUpPrompt(context),
+          ],
+        ),
       ),
     );
   }
@@ -139,20 +184,34 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _buildEmailField(BuildContext context) {
+  Widget _buildEmailField(BuildContext context, AutovalidateMode autovalidateMode) {
     return RoundTextField(
-      hitText: context.localize(_emailHint),
+      controller: _emailController,
+      focusNode: _emailFocusNode,
+      hintText: context.localize(_emailHint),
       icon: 'assets/img/email.png',
       keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      autovalidateMode: autovalidateMode,
+      validator: _validateEmail,
+      onChanged: _onFieldChanged,
+      onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
     );
   }
 
-  Widget _buildPasswordField(BuildContext context) {
+  Widget _buildPasswordField(BuildContext context, AutovalidateMode autovalidateMode) {
     return RoundTextField(
-      hitText: context.localize(_passwordHint),
+      controller: _passwordController,
+      focusNode: _passwordFocusNode,
+      hintText: context.localize(_passwordHint),
       icon: 'assets/img/lock.png',
       obscureText: !_isPasswordVisible,
-      rigtIcon: IconButton(
+      textInputAction: TextInputAction.done,
+      autovalidateMode: autovalidateMode,
+      validator: _validatePassword,
+      onChanged: _onFieldChanged,
+      onFieldSubmitted: (_) => _onLoginPressed(),
+      rightIcon: IconButton(
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
         onPressed: () {
@@ -256,5 +315,59 @@ class _LoginViewState extends State<LoginView> {
         ],
       ),
     );
+  }
+
+  void _onFieldChanged(String _) {
+    final isValid = _canSubmit();
+    if (isValid != _isLoginEnabled) {
+      setState(() {
+        _isLoginEnabled = isValid;
+      });
+    }
+  }
+
+  void _onLoginPressed() {
+    final form = _formKey.currentState;
+    if (form == null) {
+      return;
+    }
+
+    setState(() {
+      _autoValidate = true;
+    });
+
+    if (!form.validate()) {
+      _onFieldChanged('');
+      return;
+    }
+
+    context.push(AppRoute.completeProfile);
+  }
+
+  String? _validateEmail(String? value) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) {
+      return context.localize(_emailRequiredError);
+    }
+    if (!_emailRegExp.hasMatch(text)) {
+      return context.localize(_emailInvalidError);
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    final text = value ?? '';
+    if (text.isEmpty) {
+      return context.localize(_passwordRequiredError);
+    }
+    if (text.length < 8) {
+      return context.localize(_passwordLengthError);
+    }
+    return null;
+  }
+
+  bool _canSubmit() {
+    return _validateEmail(_emailController.text) == null &&
+        _validatePassword(_passwordController.text) == null;
   }
 }
