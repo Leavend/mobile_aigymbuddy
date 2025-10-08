@@ -104,80 +104,77 @@ class _HomeViewState extends State<HomeView> {
   }
 
   LineChartBarData get _heartRateLine => LineChartBarData(
-        showingIndicators: _heartRateTooltipSpots,
-        spots: _heartRateSpots,
-        isCurved: true,
-        barWidth: 3,
-        gradient: LinearGradient(colors: TColor.primaryG),
-        belowBarData: BarAreaData(
-          show: true,
-          gradient: LinearGradient(
-            colors: [
-              TColor.primaryColor2.withValues(alpha: .2),
-              TColor.primaryColor1.withValues(alpha: .05),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        dotData: const FlDotData(show: false),
-      );
+    showingIndicators: _heartRateTooltipSpots,
+    spots: _heartRateSpots,
+    isCurved: true,
+    barWidth: 3,
+    gradient: LinearGradient(colors: TColor.primaryG),
+    belowBarData: BarAreaData(
+      show: true,
+      gradient: LinearGradient(
+        colors: [
+          TColor.primaryColor2.withValues(alpha: .2),
+          TColor.primaryColor1.withValues(alpha: .05),
+        ],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+    ),
+    dotData: const FlDotData(show: false),
+  );
 
   LineChartBarData get _workoutLine1 => LineChartBarData(
-        isCurved: true,
-        gradient: LinearGradient(
-          colors: [
-            TColor.primaryColor2.withValues(alpha: .5),
-            TColor.primaryColor1.withValues(alpha: .5),
-          ],
-        ),
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        spots: const [
-          FlSpot(1, 35),
-          FlSpot(2, 70),
-          FlSpot(3, 40),
-          FlSpot(4, 80),
-          FlSpot(5, 25),
-          FlSpot(6, 70),
-          FlSpot(7, 35),
-        ],
-      );
+    isCurved: true,
+    gradient: LinearGradient(
+      colors: [
+        TColor.primaryColor2.withValues(alpha: .5),
+        TColor.primaryColor1.withValues(alpha: .5),
+      ],
+    ),
+    barWidth: 4,
+    isStrokeCapRound: true,
+    dotData: const FlDotData(show: false),
+    spots: const [
+      FlSpot(1, 35),
+      FlSpot(2, 70),
+      FlSpot(3, 40),
+      FlSpot(4, 80),
+      FlSpot(5, 25),
+      FlSpot(6, 70),
+      FlSpot(7, 35),
+    ],
+  );
 
   LineChartBarData get _workoutLine2 => LineChartBarData(
-        isCurved: true,
-        gradient: LinearGradient(
-          colors: [
-            TColor.secondaryColor2.withValues(alpha: .5),
-            TColor.secondaryColor1.withValues(alpha: .5),
-          ],
-        ),
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        spots: const [
-          FlSpot(1, 80),
-          FlSpot(2, 50),
-          FlSpot(3, 90),
-          FlSpot(4, 40),
-          FlSpot(5, 80),
-          FlSpot(6, 35),
-          FlSpot(7, 60),
-        ],
-      );
+    isCurved: true,
+    gradient: LinearGradient(
+      colors: [
+        TColor.secondaryColor2.withValues(alpha: .5),
+        TColor.secondaryColor1.withValues(alpha: .5),
+      ],
+    ),
+    barWidth: 2,
+    isStrokeCapRound: true,
+    dotData: const FlDotData(show: false),
+    spots: const [
+      FlSpot(1, 80),
+      FlSpot(2, 50),
+      FlSpot(3, 90),
+      FlSpot(4, 40),
+      FlSpot(5, 80),
+      FlSpot(6, 35),
+      FlSpot(7, 60),
+    ],
+  );
 
-  TextStyle get _sectionTitleStyle => TextStyle(
-        color: TColor.black,
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-      );
+  TextStyle get _sectionTitleStyle =>
+      TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700);
 
   BoxDecoration get _cardDecoration => BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-      );
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(20),
+    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +221,10 @@ class _HomeViewState extends State<HomeView> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Welcome Back,', style: TextStyle(color: TColor.gray, fontSize: 12)),
+            Text(
+              'Welcome Back,',
+              style: TextStyle(color: TColor.gray, fontSize: 12),
+            ),
             Text(
               'GYM Buddy',
               style: TextStyle(
@@ -338,17 +338,18 @@ class _HomeViewState extends State<HomeView> {
                           const FlLine(color: Colors.transparent),
                           FlDotData(
                             show: true,
-                            getDotPainter: (spot, percent, barData, spotIndex) =>
-                                _buildIndicatorPainter(
-                              spot: spot,
-                              percent: percent,
-                              barData: barData,
-                              spotIndex: spotIndex,
-                              baseOpacity: 0.6,
-                              opacityScale: 0.3,
-                              maxSpotValue: 100,
-                              oddStrokeWidth: 2,
-                            ),
+                            getDotPainter:
+                                (spot, percent, barData, spotIndex) =>
+                                    _buildIndicatorPainter(
+                                      spot: spot,
+                                      percent: percent,
+                                      barData: barData,
+                                      spotIndex: spotIndex,
+                                      baseOpacity: 0.6,
+                                      opacityScale: 0.3,
+                                      maxSpotValue: 100,
+                                      oddStrokeWidth: 2,
+                                    ),
                           ),
                         ),
                       )
@@ -423,7 +424,10 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       const SizedBox(height: 8),
                       ..._waterSchedule.map(
-                        (entry) => _WaterRow(entry: entry, isLast: entry == _waterSchedule.last),
+                        (entry) => _WaterRow(
+                          entry: entry,
+                          isLast: entry == _waterSchedule.last,
+                        ),
                       ),
                     ],
                   ),
@@ -437,7 +441,10 @@ class _HomeViewState extends State<HomeView> {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 16,
+                ),
                 decoration: _cardDecoration,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -463,7 +470,10 @@ class _HomeViewState extends State<HomeView> {
               ),
               const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 16,
+                ),
                 decoration: _cardDecoration,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -491,13 +501,18 @@ class _HomeViewState extends State<HomeView> {
                               height: 90,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(colors: TColor.primaryG),
+                                gradient: LinearGradient(
+                                  colors: TColor.primaryG,
+                                ),
                                 borderRadius: BorderRadius.circular(45),
                               ),
                               child: const Text(
                                 '230kCal\nleft',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white, fontSize: 12),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                             SimpleCircularProgressBar(
@@ -547,7 +562,10 @@ class _HomeViewState extends State<HomeView> {
                       .map(
                         (value) => DropdownMenuItem(
                           value: value,
-                          child: Text(value, style: TextStyle(color: TColor.gray)),
+                          child: Text(
+                            value,
+                            style: TextStyle(color: TColor.gray),
+                          ),
                         ),
                       )
                       .toList(),
@@ -600,15 +618,15 @@ class _HomeViewState extends State<HomeView> {
                           show: true,
                           getDotPainter: (spot, percent, barData, spotIndex) =>
                               _buildIndicatorPainter(
-                            spot: spot,
-                            percent: percent,
-                            barData: barData,
-                            spotIndex: spotIndex,
-                            baseOpacity: 0.5,
-                            opacityScale: 0.4,
-                            maxSpotValue: 120,
-                            oddStrokeWidth: 2.5,
-                          ),
+                                spot: spot,
+                                percent: percent,
+                                barData: barData,
+                                spotIndex: spotIndex,
+                                baseOpacity: 0.5,
+                                opacityScale: 0.4,
+                                maxSpotValue: 120,
+                                oddStrokeWidth: 2.5,
+                              ),
                         ),
                       ),
                     )
@@ -631,21 +649,38 @@ class _HomeViewState extends State<HomeView> {
               minY: 0,
               maxY: 100,
               titlesData: FlTitlesData(
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: 28,
                     interval: 1,
                     getTitlesWidget: (value, meta) {
-                      const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                      const labels = [
+                        'Sun',
+                        'Mon',
+                        'Tue',
+                        'Wed',
+                        'Thu',
+                        'Fri',
+                        'Sat',
+                      ];
                       final index = value.toInt() - 1;
-                      final text = (index >= 0 && index < labels.length) ? labels[index] : '';
+                      final text = (index >= 0 && index < labels.length)
+                          ? labels[index]
+                          : '';
                       return SideTitleWidget(
                         meta: meta,
                         space: 8,
-                        child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
+                        child: Text(
+                          text,
+                          style: TextStyle(color: TColor.gray, fontSize: 12),
+                        ),
                       );
                     },
                   ),
@@ -660,7 +695,10 @@ class _HomeViewState extends State<HomeView> {
                       final index = (value ~/ 20).clamp(0, labels.length - 1);
                       return Text(
                         labels[index],
-                        style: const TextStyle(fontSize: 12, color: Color(0xFF8E8E93)),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF8E8E93),
+                        ),
                       );
                     },
                   ),
@@ -707,7 +745,7 @@ class _HomeViewState extends State<HomeView> {
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: _lastWorkoutList.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) => InkWell(
             onTap: () => context.push(AppRoute.finishedWorkout),
             child: WorkoutRow(wObj: _lastWorkoutList[index]),
@@ -718,27 +756,22 @@ class _HomeViewState extends State<HomeView> {
   }
 
   List<PieChartSectionData> _buildBmiSections() => [
-        PieChartSectionData(
-          color: TColor.secondaryColor1,
-          value: 33,
-          title: '',
-          radius: 55,
-          badgeWidget: const Text(
-            '20,1',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        PieChartSectionData(
+    PieChartSectionData(
+      color: TColor.secondaryColor1,
+      value: 33,
+      title: '',
+      radius: 55,
+      badgeWidget: const Text(
+        '20,1',
+        style: TextStyle(
           color: Colors.white,
-          value: 75,
-          title: '',
-          radius: 45,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
         ),
-      ];
+      ),
+    ),
+    PieChartSectionData(color: Colors.white, value: 75, title: '', radius: 45),
+  ];
 
   Widget _buildGradientText(
     String text, {
@@ -749,7 +782,8 @@ class _HomeViewState extends State<HomeView> {
     final gradientColors = colors ?? TColor.primaryG;
     return ShaderMask(
       blendMode: BlendMode.srcIn,
-      shaderCallback: (rect) => LinearGradient(colors: gradientColors).createShader(rect),
+      shaderCallback: (rect) =>
+          LinearGradient(colors: gradientColors).createShader(rect),
       child: Text(
         text,
         style: TextStyle(
@@ -772,9 +806,11 @@ class _HomeViewState extends State<HomeView> {
     double oddStrokeWidth = 2,
   }) {
     final normalizedPercent = percent.clamp(0.0, 1.0);
-    final accentColor = barData.gradient?.colors.first ?? TColor.secondaryColor1;
-    final fillOpacity = (baseOpacity + (spot.y / maxSpotValue).clamp(0.0, 1.0) * opacityScale)
-        .clamp(0.0, 1.0);
+    final accentColor =
+        barData.gradient?.colors.first ?? TColor.secondaryColor1;
+    final fillOpacity =
+        (baseOpacity + (spot.y / maxSpotValue).clamp(0.0, 1.0) * opacityScale)
+            .clamp(0.0, 1.0);
 
     final strokeWidth = spotIndex.isEven ? 3.0 : oddStrokeWidth;
 
@@ -904,11 +940,15 @@ class _WaterRow extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(entry.timeRange, style: TextStyle(color: TColor.gray, fontSize: 10)),
+              Text(
+                entry.timeRange,
+                style: TextStyle(color: TColor.gray, fontSize: 10),
+              ),
               ShaderMask(
                 blendMode: BlendMode.srcIn,
-                shaderCallback: (rect) =>
-                    LinearGradient(colors: TColor.secondaryG).createShader(rect),
+                shaderCallback: (rect) => LinearGradient(
+                  colors: TColor.secondaryG,
+                ).createShader(rect),
                 child: Text(
                   entry.amount,
                   style: TextStyle(

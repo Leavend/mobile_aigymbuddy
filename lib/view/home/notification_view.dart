@@ -59,19 +59,16 @@ class NotificationView extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        actions: const [
-          _SquareIconButton(asset: 'assets/img/more_btn.png'),
-        ],
+        actions: const [_SquareIconButton(asset: 'assets/img/more_btn.png')],
       ),
       backgroundColor: TColor.white,
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
         itemCount: _notifications.length,
-        itemBuilder: (context, index) => NotificationRow(nObj: _notifications[index]),
-        separatorBuilder: (_, __) => Divider(
-          color: TColor.gray.withValues(alpha: 0.5),
-          height: 1,
-        ),
+        itemBuilder: (context, index) =>
+            NotificationRow(nObj: _notifications[index]),
+        separatorBuilder: (_, index) =>
+            Divider(color: TColor.gray.withValues(alpha: 0.5), height: 1),
       ),
     );
   }
@@ -96,12 +93,7 @@ class _SquareIconButton extends StatelessWidget {
           color: TColor.lightGray,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Image.asset(
-          asset,
-          width: 15,
-          height: 15,
-          fit: BoxFit.contain,
-        ),
+        child: Image.asset(asset, width: 15, height: 15, fit: BoxFit.contain),
       ),
     );
   }

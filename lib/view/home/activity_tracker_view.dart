@@ -76,9 +76,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
           fontWeight: FontWeight.w700,
         ),
       ),
-      actions: const [
-        _CircleIconButton(asset: 'assets/img/more_btn.png'),
-      ],
+      actions: const [_CircleIconButton(asset: 'assets/img/more_btn.png')],
     );
   }
 
@@ -229,8 +227,9 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                   'Saturday',
                   'Sunday',
                 ];
-                final weekDay =
-                    (group.x >= 0 && group.x < labels.length) ? labels[group.x] : '';
+                final weekDay = (group.x >= 0 && group.x < labels.length)
+                    ? labels[group.x]
+                    : '';
 
                 return BarTooltipItem(
                   '$weekDay\n',
@@ -265,8 +264,12 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
           ),
           titlesData: FlTitlesData(
             show: true,
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
@@ -274,7 +277,9 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                 reservedSize: 38,
               ),
             ),
-            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
           ),
           borderData: FlBorderData(show: false),
           barGroups: _buildBarGroups(),
@@ -341,25 +346,60 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
   }
 
   List<BarChartGroupData> _buildBarGroups() => List.generate(7, (index) {
-        switch (index) {
-          case 0:
-            return _buildGroupData(0, 5, TColor.primaryG, isTouched: index == _touchedBarIndex);
-          case 1:
-            return _buildGroupData(1, 10.5, TColor.secondaryG, isTouched: index == _touchedBarIndex);
-          case 2:
-            return _buildGroupData(2, 5, TColor.primaryG, isTouched: index == _touchedBarIndex);
-          case 3:
-            return _buildGroupData(3, 7.5, TColor.secondaryG, isTouched: index == _touchedBarIndex);
-          case 4:
-            return _buildGroupData(4, 15, TColor.primaryG, isTouched: index == _touchedBarIndex);
-          case 5:
-            return _buildGroupData(5, 5.5, TColor.secondaryG, isTouched: index == _touchedBarIndex);
-          case 6:
-            return _buildGroupData(6, 8.5, TColor.primaryG, isTouched: index == _touchedBarIndex);
-          default:
-            throw StateError('Invalid index $index');
-        }
-      });
+    switch (index) {
+      case 0:
+        return _buildGroupData(
+          0,
+          5,
+          TColor.primaryG,
+          isTouched: index == _touchedBarIndex,
+        );
+      case 1:
+        return _buildGroupData(
+          1,
+          10.5,
+          TColor.secondaryG,
+          isTouched: index == _touchedBarIndex,
+        );
+      case 2:
+        return _buildGroupData(
+          2,
+          5,
+          TColor.primaryG,
+          isTouched: index == _touchedBarIndex,
+        );
+      case 3:
+        return _buildGroupData(
+          3,
+          7.5,
+          TColor.secondaryG,
+          isTouched: index == _touchedBarIndex,
+        );
+      case 4:
+        return _buildGroupData(
+          4,
+          15,
+          TColor.primaryG,
+          isTouched: index == _touchedBarIndex,
+        );
+      case 5:
+        return _buildGroupData(
+          5,
+          5.5,
+          TColor.secondaryG,
+          isTouched: index == _touchedBarIndex,
+        );
+      case 6:
+        return _buildGroupData(
+          6,
+          8.5,
+          TColor.primaryG,
+          isTouched: index == _touchedBarIndex,
+        );
+      default:
+        throw StateError('Invalid index $index');
+    }
+  });
 
   BarChartGroupData _buildGroupData(
     int x,
@@ -414,12 +454,7 @@ class _CircleIconButton extends StatelessWidget {
           color: TColor.lightGray,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Image.asset(
-          asset,
-          width: 15,
-          height: 15,
-          fit: BoxFit.contain,
-        ),
+        child: Image.asset(asset, width: 15, height: 15, fit: BoxFit.contain),
       ),
     );
   }
