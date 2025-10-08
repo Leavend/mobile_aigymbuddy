@@ -1,5 +1,3 @@
-// lib/view/home/activity_tracker_view.dart
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,376 +14,325 @@ class ActivityTrackerView extends StatefulWidget {
 }
 
 class _ActivityTrackerViewState extends State<ActivityTrackerView> {
-  int touchedIndex = -1;
+  static const _periodOptions = ['Weekly', 'Monthly'];
 
-  final List<Map<String, String>> latestArr = const [
+  int _touchedBarIndex = -1;
+  String _selectedPeriod = _periodOptions.first;
+
+  final List<Map<String, String>> _latestActivities = const [
     {
-      "image": "assets/img/pic_4.png",
-      "title": "Drinking 300ml Water",
-      "time": "About 1 minutes ago",
+      'image': 'assets/img/pic_4.png',
+      'title': 'Drinking 300ml Water',
+      'time': 'About 1 minutes ago',
     },
     {
-      "image": "assets/img/pic_5.png",
-      "title": "Eat Snack (Fitbar)",
-      "time": "About 3 hours ago",
+      'image': 'assets/img/pic_5.png',
+      'title': 'Eat Snack (Fitbar)',
+      'time': 'About 3 hours ago',
     },
   ];
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final spacing = media.width * 0.05;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: TColor.white,
-        centerTitle: true,
-        elevation: 0,
-        leading: InkWell(
-          onTap: () => context.pop(),
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            height: 40,
-            width: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: TColor.lightGray,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Image.asset(
-              "assets/img/black_btn.png",
-              width: 15,
-              height: 15,
-              fit: BoxFit.contain,
-            ),
-          ),
+      appBar: _buildAppBar(context),
+      backgroundColor: TColor.white,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
+        child: Column(
+          children: [
+            _buildTodayTarget(),
+            SizedBox(height: media.width * 0.1),
+            _buildProgressHeader(),
+            SizedBox(height: spacing),
+            _buildBarChart(media),
+            SizedBox(height: spacing),
+            _buildLatestWorkoutHeader(),
+            _buildLatestActivityList(),
+            SizedBox(height: media.width * 0.1),
+          ],
         ),
-        title: Text(
-          "Activity Tracker",
+      ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: TColor.white,
+      centerTitle: true,
+      elevation: 0,
+      leading: _CircleIconButton(
+        asset: 'assets/img/black_btn.png',
+        onTap: () => context.pop(),
+      ),
+      title: Text(
+        'Activity Tracker',
+        style: TextStyle(
+          color: TColor.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: const [
+        _CircleIconButton(asset: 'assets/img/more_btn.png'),
+      ],
+    );
+  }
+
+  Widget _buildTodayTarget() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            TColor.primaryColor2.withValues(alpha: 0.3),
+            TColor.primaryColor1.withValues(alpha: 0.3),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Today Target',
+                style: TextStyle(
+                  color: TColor.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(
+                width: 30,
+                height: 30,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: TColor.primaryG),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: MaterialButton(
+                    onPressed: () {},
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    textColor: Colors.white,
+                    elevation: 0,
+                    child: const Icon(Icons.add, size: 15),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          const Row(
+            children: [
+              Expanded(
+                child: TodayTargetCell(
+                  icon: 'assets/img/water.png',
+                  value: '8L',
+                  title: 'Water Intake',
+                ),
+              ),
+              SizedBox(width: 15),
+              Expanded(
+                child: TodayTargetCell(
+                  icon: 'assets/img/foot.png',
+                  value: '2400',
+                  title: 'Foot Steps',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Activity  Progress',
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
         ),
-        actions: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              height: 40,
-              width: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Image.asset(
-                "assets/img/more_btn.png",
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
-              ),
+        Container(
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: TColor.primaryG),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedPeriod,
+              items: _periodOptions
+                  .map(
+                    (name) => DropdownMenuItem<String>(
+                      value: name,
+                      child: Text(
+                        name,
+                        style: TextStyle(color: TColor.gray, fontSize: 14),
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                if (value == null || value == _selectedPeriod) {
+                  return;
+                }
+                setState(() => _selectedPeriod = value);
+              },
+              icon: Icon(Icons.expand_more, color: TColor.white),
+              dropdownColor: Colors.white,
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBarChart(Size media) {
+    return Container(
+      height: media.width * 0.5,
+      padding: const EdgeInsets.symmetric(vertical: 15),
+      decoration: BoxDecoration(
+        color: TColor.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 3)],
       ),
-      backgroundColor: TColor.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
-          child: Column(
-            children: [
-              // Today Target
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 15,
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      TColor.primaryColor2.withValues(alpha: 0.3),
-                      TColor.primaryColor1.withValues(alpha: 0.3),
-                    ],
+      child: BarChart(
+        BarChartData(
+          barTouchData: BarTouchData(
+            handleBuiltInTouches: true,
+            touchTooltipData: BarTouchTooltipData(
+              getTooltipColor: (_) => Colors.grey,
+              tooltipHorizontalAlignment: FLHorizontalAlignment.right,
+              tooltipMargin: 10,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                final labels = const [
+                  'Monday',
+                  'Tuesday',
+                  'Wednesday',
+                  'Thursday',
+                  'Friday',
+                  'Saturday',
+                  'Sunday',
+                ];
+                final weekDay =
+                    (group.x >= 0 && group.x < labels.length) ? labels[group.x] : '';
+
+                return BarTooltipItem(
+                  '$weekDay\n',
+                  const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Today Target",
-                          style: TextStyle(
-                            color: TColor.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(colors: TColor.primaryG),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: MaterialButton(
-                              onPressed: () {},
-                              padding: EdgeInsets.zero,
-                              height: 30,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              textColor: TColor.primaryColor1,
-                              minWidth: double.maxFinite,
-                              elevation: 0,
-                              color: Colors.transparent,
-                              child: const Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    const Row(
-                      children: [
-                        Expanded(
-                          child: TodayTargetCell(
-                            icon: "assets/img/water.png",
-                            value: "8L",
-                            title: "Water Intake",
-                          ),
-                        ),
-                        SizedBox(width: 15),
-                        Expanded(
-                          child: TodayTargetCell(
-                            icon: "assets/img/foot.png",
-                            value: "2400",
-                            title: "Foot Steps",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: media.width * 0.1),
-
-              // Header Activity
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Activity  Progress",
-                    style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Container(
-                    height: 30,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: TColor.primaryG),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        items: const ["Weekly", "Monthly"]
-                            .map(
-                              (name) => DropdownMenuItem<String>(
-                                value: name,
-                                child: Text(
-                                  name,
-                                  style: TextStyle(
-                                    color: TColor.gray,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {},
-                        icon: Icon(Icons.expand_more, color: TColor.white),
-                        hint: Text(
-                          "Weekly",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: TColor.white, fontSize: 12),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: media.width * 0.05),
-
-              // Chart
-              Container(
-                height: media.width * 0.5,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 0,
-                ),
-                decoration: BoxDecoration(
-                  color: TColor.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black12, blurRadius: 3),
-                  ],
-                ),
-                child: BarChart(
-                  BarChartData(
-                    barTouchData: BarTouchData(
-                      handleBuiltInTouches: true,
-                      touchTooltipData: BarTouchTooltipData(
-                        // API baru: pakai getTooltipColor, bukan tooltipBgColor
-                        getTooltipColor: (group) => Colors.grey,
-                        tooltipHorizontalAlignment: FLHorizontalAlignment.right,
-                        tooltipMargin: 10,
-                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                          final labels = const [
-                            'Monday',
-                            'Tuesday',
-                            'Wednesday',
-                            'Thursday',
-                            'Friday',
-                            'Saturday',
-                            'Sunday',
-                          ];
-                          final weekDay =
-                              group.x >= 0 && group.x < labels.length
-                              ? labels[group.x]
-                              : '';
-
-                          return BarTooltipItem(
-                            '$weekDay\n',
-                            const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: (rod.toY - 1).toString(),
-                                style: TextStyle(
-                                  color: TColor.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      touchCallback: (FlTouchEvent event, barTouchResponse) {
-                        setState(() {
-                          if (!event.isInterestedForInteractions ||
-                              barTouchResponse == null ||
-                              barTouchResponse.spot == null) {
-                            touchedIndex = -1;
-                            return;
-                          }
-                          touchedIndex =
-                              barTouchResponse.spot!.touchedBarGroupIndex;
-                        });
-                      },
-                    ),
-                    titlesData: FlTitlesData(
-                      show: true,
-                      rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: getTitles,
-                          reservedSize: 38,
-                        ),
-                      ),
-                      leftTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                    ),
-                    borderData: FlBorderData(show: false),
-                    barGroups: showingGroups(),
-                    gridData: const FlGridData(show: false),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: media.width * 0.05),
-
-              // Latest Workout
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Latest Workout",
-                    style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "See More",
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: (rod.toY - 1).toString(),
                       style: TextStyle(
-                        color: TColor.gray,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                        color: TColor.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ],
-              ),
-
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: latestArr.length,
-                itemBuilder: (context, index) {
-                  final wObj = latestArr[index];
-                  return LatestActivityRow(wObj: wObj);
-                },
-              ),
-
-              SizedBox(height: media.width * 0.1),
-            ],
+                  ],
+                );
+              },
+            ),
+            touchCallback: (event, response) {
+              setState(() {
+                if (!event.isInterestedForInteractions ||
+                    response?.spot == null) {
+                  _touchedBarIndex = -1;
+                  return;
+                }
+                _touchedBarIndex = response!.spot!.touchedBarGroupIndex;
+              });
+            },
           ),
+          titlesData: FlTitlesData(
+            show: true,
+            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: _buildBottomTitle,
+                reservedSize: 38,
+              ),
+            ),
+            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          borderData: FlBorderData(show: false),
+          barGroups: _buildBarGroups(),
+          gridData: const FlGridData(show: false),
         ),
       ),
     );
   }
 
-  // ---- Chart helpers --------------------------------------------------------
+  Widget _buildLatestWorkoutHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Latest Workout',
+          style: TextStyle(
+            color: TColor.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            'See More',
+            style: TextStyle(
+              color: TColor.gray,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-  Widget getTitles(double value, TitleMeta meta) {
+  Widget _buildLatestActivityList() {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _latestActivities.length,
+      itemBuilder: (context, index) {
+        final data = _latestActivities[index];
+        return LatestActivityRow(wObj: data);
+      },
+    );
+  }
+
+  Widget _buildBottomTitle(double value, TitleMeta meta) {
     final style = TextStyle(
       color: TColor.gray,
       fontWeight: FontWeight.w500,
       fontSize: 12,
     );
-
-    final labels = const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     final idx = value.toInt();
     final text = (idx >= 0 && idx < labels.length) ? labels[idx] : '';
-
-    // API baru: SideTitleWidget butuh meta:
     return SideTitleWidget(
       meta: meta,
       space: 16,
@@ -393,63 +340,28 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
   }
 
-  List<BarChartGroupData> showingGroups() => List.generate(7, (i) {
-    switch (i) {
-      case 0:
-        return makeGroupData(
-          0,
-          5,
-          TColor.primaryG,
-          isTouched: i == touchedIndex,
-        );
-      case 1:
-        return makeGroupData(
-          1,
-          10.5,
-          TColor.secondaryG,
-          isTouched: i == touchedIndex,
-        );
-      case 2:
-        return makeGroupData(
-          2,
-          5,
-          TColor.primaryG,
-          isTouched: i == touchedIndex,
-        );
-      case 3:
-        return makeGroupData(
-          3,
-          7.5,
-          TColor.secondaryG,
-          isTouched: i == touchedIndex,
-        );
-      case 4:
-        return makeGroupData(
-          4,
-          15,
-          TColor.primaryG,
-          isTouched: i == touchedIndex,
-        );
-      case 5:
-        return makeGroupData(
-          5,
-          5.5,
-          TColor.secondaryG,
-          isTouched: i == touchedIndex,
-        );
-      case 6:
-        return makeGroupData(
-          6,
-          8.5,
-          TColor.primaryG,
-          isTouched: i == touchedIndex,
-        );
-      default:
-        throw StateError('Invalid index $i');
-    }
-  });
+  List<BarChartGroupData> _buildBarGroups() => List.generate(7, (index) {
+        switch (index) {
+          case 0:
+            return _buildGroupData(0, 5, TColor.primaryG, isTouched: index == _touchedBarIndex);
+          case 1:
+            return _buildGroupData(1, 10.5, TColor.secondaryG, isTouched: index == _touchedBarIndex);
+          case 2:
+            return _buildGroupData(2, 5, TColor.primaryG, isTouched: index == _touchedBarIndex);
+          case 3:
+            return _buildGroupData(3, 7.5, TColor.secondaryG, isTouched: index == _touchedBarIndex);
+          case 4:
+            return _buildGroupData(4, 15, TColor.primaryG, isTouched: index == _touchedBarIndex);
+          case 5:
+            return _buildGroupData(5, 5.5, TColor.secondaryG, isTouched: index == _touchedBarIndex);
+          case 6:
+            return _buildGroupData(6, 8.5, TColor.primaryG, isTouched: index == _touchedBarIndex);
+          default:
+            throw StateError('Invalid index $index');
+        }
+      });
 
-  BarChartGroupData makeGroupData(
+  BarChartGroupData _buildGroupData(
     int x,
     double y,
     List<Color> barColor, {
@@ -479,6 +391,36 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
         ),
       ],
       showingTooltipIndicators: showTooltips,
+    );
+  }
+}
+
+class _CircleIconButton extends StatelessWidget {
+  final String asset;
+  final VoidCallback? onTap;
+
+  const _CircleIconButton({required this.asset, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        height: 40,
+        width: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: TColor.lightGray,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Image.asset(
+          asset,
+          width: 15,
+          height: 15,
+          fit: BoxFit.contain,
+        ),
+      ),
     );
   }
 }

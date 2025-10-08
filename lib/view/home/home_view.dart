@@ -1,57 +1,57 @@
+import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/workout_row.dart';
 import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
-import 'package:aigymbuddy/common/app_router.dart';
-import 'package:go_router/go_router.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  // ----- dummy data
-  final lastWorkoutArr = const [
+  static const _periodOptions = ['Weekly', 'Monthly'];
+
+  static const List<Map<String, Object>> _lastWorkoutList = [
     {
-      "name": "Full Body Workout",
-      "image": "assets/img/Workout1.png",
-      "kcal": "180",
-      "time": "20",
-      "progress": 0.3,
+      'name': 'Full Body Workout',
+      'image': 'assets/img/Workout1.png',
+      'kcal': '180',
+      'time': '20',
+      'progress': 0.3,
     },
     {
-      "name": "Lower Body Workout",
-      "image": "assets/img/Workout2.png",
-      "kcal": "200",
-      "time": "30",
-      "progress": 0.4,
+      'name': 'Lower Body Workout',
+      'image': 'assets/img/Workout2.png',
+      'kcal': '200',
+      'time': '30',
+      'progress': 0.4,
     },
     {
-      "name": "Ab Workout",
-      "image": "assets/img/Workout3.png",
-      "kcal": "300",
-      "time": "40",
-      "progress": 0.7,
+      'name': 'Ab Workout',
+      'image': 'assets/img/Workout3.png',
+      'kcal': '300',
+      'time': '40',
+      'progress': 0.7,
     },
   ];
 
-  final waterArr = const [
-    {"title": "6am - 8am", "subtitle": "600ml"},
-    {"title": "9am - 11am", "subtitle": "500ml"},
-    {"title": "11am - 2pm", "subtitle": "1000ml"},
-    {"title": "2pm - 4pm", "subtitle": "700ml"},
-    {"title": "4pm - now", "subtitle": "900ml"},
+  static const List<_WaterIntakeEntry> _waterSchedule = [
+    _WaterIntakeEntry('6am - 8am', '600ml'),
+    _WaterIntakeEntry('9am - 11am', '500ml'),
+    _WaterIntakeEntry('11am - 2pm', '1000ml'),
+    _WaterIntakeEntry('2pm - 4pm', '700ml'),
+    _WaterIntakeEntry('4pm - now', '900ml'),
   ];
 
-  // mini heart rate
-  final List<int> heartRateTooltipSpots = [21];
-  List<FlSpot> get allSpots => const [
+  static const List<FlSpot> _heartRateSpots = [
     FlSpot(0, 20),
     FlSpot(1, 25),
     FlSpot(2, 40),
@@ -85,59 +85,27 @@ class _HomeViewState extends State<HomeView> {
     FlSpot(30, 40),
   ];
 
-  // workout progress
-  final List<int> workoutTooltipSpots = [];
-  LineChartBarData get _workoutLine1 => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(
-      colors: [
-        TColor.primaryColor2.withValues(alpha: .5),
-        TColor.primaryColor1.withValues(alpha: .5),
-      ],
-    ),
-    barWidth: 4,
-    isStrokeCapRound: true,
-    dotData: const FlDotData(show: false),
-    spots: const [
-      FlSpot(1, 35),
-      FlSpot(2, 70),
-      FlSpot(3, 40),
-      FlSpot(4, 80),
-      FlSpot(5, 25),
-      FlSpot(6, 70),
-      FlSpot(7, 35),
-    ],
-  );
-  LineChartBarData get _workoutLine2 => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(
-      colors: [
-        TColor.secondaryColor2.withValues(alpha: .5),
-        TColor.secondaryColor1.withValues(alpha: .5),
-      ],
-    ),
-    barWidth: 2,
-    isStrokeCapRound: true,
-    dotData: const FlDotData(show: false),
-    spots: const [
-      FlSpot(1, 80),
-      FlSpot(2, 50),
-      FlSpot(3, 90),
-      FlSpot(4, 40),
-      FlSpot(5, 80),
-      FlSpot(6, 35),
-      FlSpot(7, 60),
-    ],
-  );
+  final List<int> _heartRateTooltipSpots = [21];
+  final List<int> _workoutTooltipSpots = [];
+
+  late final ValueNotifier<double> _calorieProgressNotifier;
+  String _workoutPeriod = _periodOptions.first;
 
   @override
-  Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
+  void initState() {
+    super.initState();
+    _calorieProgressNotifier = ValueNotifier<double>(50);
+  }
 
-    final lineBarsData = [
-      LineChartBarData(
-        showingIndicators: heartRateTooltipSpots,
-        spots: allSpots,
+  @override
+  void dispose() {
+    _calorieProgressNotifier.dispose();
+    super.dispose();
+  }
+
+  LineChartBarData get _heartRateLine => LineChartBarData(
+        showingIndicators: _heartRateTooltipSpots,
+        spots: _heartRateSpots,
         isCurved: true,
         barWidth: 3,
         gradient: LinearGradient(colors: TColor.primaryG),
@@ -153,10 +121,66 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
         dotData: const FlDotData(show: false),
-      ),
-    ];
-    final tooltipsOnBar = lineBarsData[0];
+      );
 
+  LineChartBarData get _workoutLine1 => LineChartBarData(
+        isCurved: true,
+        gradient: LinearGradient(
+          colors: [
+            TColor.primaryColor2.withValues(alpha: .5),
+            TColor.primaryColor1.withValues(alpha: .5),
+          ],
+        ),
+        barWidth: 4,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        spots: const [
+          FlSpot(1, 35),
+          FlSpot(2, 70),
+          FlSpot(3, 40),
+          FlSpot(4, 80),
+          FlSpot(5, 25),
+          FlSpot(6, 70),
+          FlSpot(7, 35),
+        ],
+      );
+
+  LineChartBarData get _workoutLine2 => LineChartBarData(
+        isCurved: true,
+        gradient: LinearGradient(
+          colors: [
+            TColor.secondaryColor2.withValues(alpha: .5),
+            TColor.secondaryColor1.withValues(alpha: .5),
+          ],
+        ),
+        barWidth: 2,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        spots: const [
+          FlSpot(1, 80),
+          FlSpot(2, 50),
+          FlSpot(3, 90),
+          FlSpot(4, 40),
+          FlSpot(5, 80),
+          FlSpot(6, 35),
+          FlSpot(7, 60),
+        ],
+      );
+
+  TextStyle get _sectionTitleStyle => TextStyle(
+        color: TColor.black,
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+      );
+
+  BoxDecoration get _cardDecoration => BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+      );
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TColor.white,
       body: SafeArea(
@@ -168,669 +192,21 @@ class _HomeViewState extends State<HomeView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // HEADER
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Welcome Back,",
-                            style: TextStyle(color: TColor.gray, fontSize: 12),
-                          ),
-                          Text(
-                            "GYM Buddy",
-                            style: TextStyle(
-                              color: TColor.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          context.push(AppRoute.notification);
-                        },
-                        icon: Image.asset(
-                          "assets/img/notification_active.png",
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                    ],
-                  ),
-
+                  _buildHeader(context),
                   const SizedBox(height: 16),
-
-                  // BMI CARD (responsive)
-                  _BmiCard(showingSections: _bmiSections(), media: media),
-
+                  _BmiCard(showingSections: _buildBmiSections()),
                   const SizedBox(height: 16),
-
-                  // TODAY TARGET
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: TColor.primaryColor2.withValues(alpha: .15),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Today Target",
-                            style: TextStyle(
-                              color: TColor.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 95,
-                          height: 36,
-                          child: RoundButton(
-                            title: "Check",
-                            type: RoundButtonType.bgGradient,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            onPressed: () {
-                              context.push(AppRoute.activityTracker);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
+                  _buildTodayTarget(context),
                   const SizedBox(height: 16),
-
-                  // ACTIVITY STATUS
-                  Text(
-                    "Activity Status",
-                    style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text('Activity Status', style: _sectionTitleStyle),
                   const SizedBox(height: 8),
-
-                  // HEART RATE CARD (fixed safe height)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: TColor.primaryColor2.withValues(alpha: .15),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Heart Rate",
-                          style: TextStyle(
-                            color: TColor.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        ShaderMask(
-                          blendMode: BlendMode.srcIn,
-                          shaderCallback: (r) => LinearGradient(
-                            colors: TColor.primaryG,
-                          ).createShader(r),
-                          child: Text(
-                            "78 BPM",
-                            style: TextStyle(
-                              color: TColor.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          height: 160, // aman
-                          width: double.infinity,
-                          child: LineChart(
-                            LineChartData(
-                              showingTooltipIndicators: heartRateTooltipSpots
-                                  .map((i) {
-                                    return ShowingTooltipIndicators([
-                                      LineBarSpot(
-                                        tooltipsOnBar,
-                                        0,
-                                        tooltipsOnBar.spots[i],
-                                      ),
-                                    ]);
-                                  })
-                                  .toList(),
-                              lineTouchData: LineTouchData(
-                                enabled: true,
-                                handleBuiltInTouches: false,
-                                touchCallback: (e, resp) {
-                                  if (resp == null ||
-                                      resp.lineBarSpots == null) {
-                                    return;
-                                  }
-                                  if (e is FlTapUpEvent) {
-                                    heartRateTooltipSpots
-                                      ..clear()
-                                      ..add(resp.lineBarSpots!.first.spotIndex);
-                                    setState(() {});
-                                  }
-                                },
-                                getTouchedSpotIndicator: (_, indices) {
-                                  return indices
-                                      .map(
-                                        (_) => TouchedSpotIndicatorData(
-                                          const FlLine(
-                                            color: Colors.transparent,
-                                          ),
-                                          FlDotData(
-                                            show: true,
-                                            getDotPainter:
-                                                (
-                                                  spot,
-                                                  percent,
-                                                  barData,
-                                                  spotIndex,
-                                                ) {
-                                                  final normalizedPercent =
-                                                      percent.clamp(0.0, 1.0);
-                                                  final accentColor =
-                                                      barData
-                                                          .gradient
-                                                          ?.colors
-                                                          .first ??
-                                                      TColor.secondaryColor1;
-                                                  final fillOpacity =
-                                                      (0.6 +
-                                                              (spot.y / 100)
-                                                                      .clamp(
-                                                                        0.0,
-                                                                        1.0,
-                                                                      ) *
-                                                                  0.3)
-                                                          .clamp(0.0, 1.0);
-                                                  final strokeWidth =
-                                                      spotIndex.isEven
-                                                      ? 3.0
-                                                      : 2.0;
-
-                                                  return FlDotCirclePainter(
-                                                    radius:
-                                                        3 +
-                                                        normalizedPercent * 2,
-                                                    color: accentColor
-                                                        .withValues(
-                                                          alpha: fillOpacity,
-                                                        ),
-                                                    strokeWidth: strokeWidth,
-                                                    strokeColor: accentColor,
-                                                  );
-                                                },
-                                          ),
-                                        ),
-                                      )
-                                      .toList();
-                                },
-                                touchTooltipData: LineTouchTooltipData(
-                                  getTooltipColor: (_) =>
-                                      TColor.secondaryColor1,
-                                  getTooltipItems: (spots) => [
-                                    const LineTooltipItem(
-                                      "now",
-                                      TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              lineBarsData: lineBarsData,
-                              minY: 0,
-                              maxY: 130,
-                              titlesData: const FlTitlesData(show: false),
-                              gridData: const FlGridData(show: false),
-                              borderData: FlBorderData(show: false),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
+                  _buildHeartRateCard(),
                   const SizedBox(height: 16),
-
-                  // WATER + SLEEP & CALORIES (tanpa fixed height)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // WATER
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 20,
-                            horizontal: 16,
-                          ),
-                          decoration: _cardDeco(),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SimpleAnimationProgressBar(
-                                height: 160,
-                                width: 12,
-                                backgroundColor: Colors.grey.shade100,
-                                foregroundColor: Colors.purple,
-                                ratio: .5,
-                                direction: Axis.vertical,
-                                duration: const Duration(seconds: 2),
-                                curve: Curves.easeInOut,
-                                borderRadius: BorderRadius.circular(12),
-                                gradientColor: LinearGradient(
-                                  colors: TColor.primaryG,
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Water Intake",
-                                      style: TextStyle(
-                                        color: TColor.black,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    ShaderMask(
-                                      blendMode: BlendMode.srcIn,
-                                      shaderCallback: (r) => LinearGradient(
-                                        colors: TColor.primaryG,
-                                      ).createShader(r),
-                                      child: Text(
-                                        "4 Liters",
-                                        style: TextStyle(
-                                          color: TColor.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "Real time updates",
-                                      style: TextStyle(
-                                        color: TColor.gray,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    ...waterArr.map(
-                                      (w) => _WaterRow(
-                                        title: w["title"]!,
-                                        sub: w["subtitle"]!,
-                                        isLast: w == waterArr.last,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      // SLEEP & CALORIES
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 20,
-                                horizontal: 16,
-                              ),
-                              decoration: _cardDeco(),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Sleep",
-                                    style: TextStyle(
-                                      color: TColor.black,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (r) => LinearGradient(
-                                      colors: TColor.primaryG,
-                                    ).createShader(r),
-                                    child: Text(
-                                      "8h 20m",
-                                      style: TextStyle(
-                                        color: TColor.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Image.asset(
-                                    "assets/img/sleep_grap.png",
-                                    width: double.infinity,
-                                    fit: BoxFit.fitWidth,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 20,
-                                horizontal: 16,
-                              ),
-                              decoration: _cardDeco(),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Calories",
-                                    style: TextStyle(
-                                      color: TColor.black,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (r) => LinearGradient(
-                                      colors: TColor.primaryG,
-                                    ).createShader(r),
-                                    child: Text(
-                                      "760 kCal",
-                                      style: TextStyle(
-                                        color: TColor.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Center(
-                                    child: SizedBox(
-                                      width: 120,
-                                      height: 120,
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Container(
-                                            width: 90,
-                                            height: 90,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                colors: TColor.primaryG,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(45),
-                                            ),
-                                            child: const Text(
-                                              "230kCal\nleft",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ),
-                                          SimpleCircularProgressBar(
-                                            progressStrokeWidth: 10,
-                                            backStrokeWidth: 10,
-                                            progressColors: TColor.primaryG,
-                                            backColor: Colors.grey.shade100,
-                                            valueNotifier: ValueNotifier(50),
-                                            startAngle: -180,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
+                  _buildHydrationAndRest(),
                   const SizedBox(height: 24),
-
-                  // WORKOUT PROGRESS
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Workout Progress",
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Container(
-                        height: 32,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: TColor.primaryG),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            icon: Icon(Icons.expand_more, color: TColor.white),
-                            items: const ["Weekly", "Monthly"]
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(
-                                      e,
-                                      style: TextStyle(color: TColor.gray),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (_) {},
-                            hint: const Text(
-                              "Weekly",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  SizedBox(
-                    height: 220,
-                    child: LineChart(
-                      LineChartData(
-                        showingTooltipIndicators: workoutTooltipSpots
-                            .map(
-                              (i) => ShowingTooltipIndicators([
-                                LineBarSpot(
-                                  _workoutLine1,
-                                  0,
-                                  _workoutLine1.spots[i],
-                                ),
-                              ]),
-                            )
-                            .toList(),
-                        lineTouchData: LineTouchData(
-                          enabled: true,
-                          handleBuiltInTouches: false,
-                          touchCallback: (e, resp) {
-                            if (resp == null || resp.lineBarSpots == null) {
-                              return;
-                            }
-                            if (e is FlTapUpEvent) {
-                              workoutTooltipSpots
-                                ..clear()
-                                ..add(resp.lineBarSpots!.first.spotIndex);
-                              setState(() {});
-                            }
-                          },
-                          getTouchedSpotIndicator: (_, touchedIndices) =>
-                              touchedIndices
-                                  .map(
-                                    (_) => TouchedSpotIndicatorData(
-                                      const FlLine(color: Colors.transparent),
-                                      FlDotData(
-                                        show: true,
-                                        getDotPainter:
-                                            (
-                                              spot,
-                                              percent,
-                                              barData,
-                                              spotIndex,
-                                            ) {
-                                              final normalizedPercent = percent
-                                                  .clamp(0.0, 1.0);
-                                              final accentColor =
-                                                  barData
-                                                      .gradient
-                                                      ?.colors
-                                                      .first ??
-                                                  TColor.secondaryColor1;
-                                              final fillOpacity =
-                                                  (0.5 +
-                                                          (spot.y / 120).clamp(
-                                                                0.0,
-                                                                1.0,
-                                                              ) *
-                                                              0.4)
-                                                      .clamp(0.0, 1.0);
-
-                                              return FlDotCirclePainter(
-                                                radius:
-                                                    3 + normalizedPercent * 2,
-                                                color: accentColor.withValues(
-                                                  alpha: fillOpacity,
-                                                ),
-                                                strokeWidth: spotIndex.isEven
-                                                    ? 3.0
-                                                    : 2.5,
-                                                strokeColor: accentColor,
-                                              );
-                                            },
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                          touchTooltipData: LineTouchTooltipData(
-                            getTooltipColor: (_) => TColor.secondaryColor1,
-                            getTooltipItems: (spots) => [
-                              const LineTooltipItem(
-                                "now",
-                                TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        lineBarsData: [_workoutLine1, _workoutLine2],
-                        minY: -0.5,
-                        maxY: 110,
-                        titlesData: FlTitlesData(
-                          leftTitles: const AxisTitles(),
-                          topTitles: const AxisTitles(),
-                          rightTitles: AxisTitles(sideTitles: _rightTitles()),
-                          bottomTitles: AxisTitles(
-                            sideTitles: _bottomTitles(TColor.gray),
-                          ),
-                        ),
-                        gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: false,
-                          horizontalInterval: 25,
-                          getDrawingHorizontalLine: (v) => FlLine(
-                            color: TColor.gray.withValues(alpha: .15),
-                            strokeWidth: 2,
-                          ),
-                        ),
-                        borderData: FlBorderData(show: false),
-                      ),
-                    ),
-                  ),
-
+                  _buildWorkoutProgress(),
                   const SizedBox(height: 16),
-
-                  // LATEST WORKOUT
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Latest Workout",
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "See More",
-                          style: TextStyle(
-                            color: TColor.gray,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  ListView.separated(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: lastWorkoutArr.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
-                    itemBuilder: (context, i) => InkWell(
-                      onTap: () {
-                        context.push(AppRoute.finishedWorkout);
-                      },
-                      child: WorkoutRow(wObj: lastWorkoutArr[i]),
-                    ),
-                  ),
-
+                  _buildLatestWorkout(context),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -841,68 +217,579 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  // ---------- helpers
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Welcome Back,', style: TextStyle(color: TColor.gray, fontSize: 12)),
+            Text(
+              'GYM Buddy',
+              style: TextStyle(
+                color: TColor.black,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+        IconButton(
+          onPressed: () => context.push(AppRoute.notification),
+          icon: Image.asset(
+            'assets/img/notification_active.png',
+            width: 24,
+            height: 24,
+          ),
+        ),
+      ],
+    );
+  }
 
-  BoxDecoration _cardDeco() => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(20),
-    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-  );
+  Widget _buildTodayTarget(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      decoration: BoxDecoration(
+        color: TColor.primaryColor2.withValues(alpha: .15),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Text(
+              'Today Target',
+              style: TextStyle(
+                color: TColor.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 95,
+            height: 36,
+            child: RoundButton(
+              title: 'Check',
+              type: RoundButtonType.bgGradient,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              onPressed: () => context.push(AppRoute.activityTracker),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  List<PieChartSectionData> _bmiSections() => [
-    PieChartSectionData(
-      color: TColor.secondaryColor1,
-      value: 33,
-      title: '',
-      radius: 55,
-      badgeWidget: const Text(
-        "20,1",
-        style: TextStyle(
+  Widget _buildHeartRateCard() {
+    final heartRateLine = _heartRateLine;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      decoration: BoxDecoration(
+        color: TColor.primaryColor2.withValues(alpha: .15),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Heart Rate',
+            style: TextStyle(
+              color: TColor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          _buildGradientText('78 BPM', fontSize: 18),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 160,
+            width: double.infinity,
+            child: LineChart(
+              LineChartData(
+                showingTooltipIndicators: _heartRateTooltipSpots
+                    .map(
+                      (i) => ShowingTooltipIndicators([
+                        LineBarSpot(heartRateLine, 0, heartRateLine.spots[i]),
+                      ]),
+                    )
+                    .toList(),
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  handleBuiltInTouches: false,
+                  touchCallback: (event, response) {
+                    if (response?.lineBarSpots == null) {
+                      return;
+                    }
+                    if (event is FlTapUpEvent) {
+                      setState(() {
+                        _heartRateTooltipSpots
+                          ..clear()
+                          ..add(response!.lineBarSpots!.first.spotIndex);
+                      });
+                    }
+                  },
+                  getTouchedSpotIndicator: (_, indices) => indices
+                      .map(
+                        (index) => TouchedSpotIndicatorData(
+                          const FlLine(color: Colors.transparent),
+                          FlDotData(
+                            show: true,
+                            getDotPainter: (spot, percent, barData, spotIndex) =>
+                                _buildIndicatorPainter(
+                              spot: spot,
+                              percent: percent,
+                              barData: barData,
+                              spotIndex: spotIndex,
+                              baseOpacity: 0.6,
+                              opacityScale: 0.3,
+                              maxSpotValue: 100,
+                              oddStrokeWidth: 2,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (_) => TColor.secondaryColor1,
+                    getTooltipItems: (_) => const [
+                      LineTooltipItem(
+                        'now',
+                        TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                lineBarsData: [heartRateLine],
+                minY: 0,
+                maxY: 130,
+                titlesData: const FlTitlesData(show: false),
+                gridData: const FlGridData(show: false),
+                borderData: FlBorderData(show: false),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHydrationAndRest() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            decoration: _cardDecoration,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SimpleAnimationProgressBar(
+                  height: 160,
+                  width: 12,
+                  backgroundColor: Colors.grey.shade100,
+                  foregroundColor: Colors.purple,
+                  ratio: .5,
+                  direction: Axis.vertical,
+                  duration: const Duration(seconds: 2),
+                  curve: Curves.easeInOut,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Water Intake',
+                        style: TextStyle(
+                          color: TColor.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Real time updates',
+                        style: TextStyle(color: TColor.gray, fontSize: 12),
+                      ),
+                      const SizedBox(height: 8),
+                      ..._waterSchedule.map(
+                        (entry) => _WaterRow(entry: entry, isLast: entry == _waterSchedule.last),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                decoration: _cardDecoration,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Sleep',
+                      style: TextStyle(
+                        color: TColor.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    _buildGradientText('8h 20m'),
+                    const SizedBox(height: 12),
+                    Image.asset(
+                      'assets/img/sleep_grap.png',
+                      width: double.infinity,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                decoration: _cardDecoration,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Calories',
+                      style: TextStyle(
+                        color: TColor.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    _buildGradientText('760 kCal'),
+                    const SizedBox(height: 12),
+                    Center(
+                      child: SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: 90,
+                              height: 90,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: TColor.primaryG),
+                                borderRadius: BorderRadius.circular(45),
+                              ),
+                              child: const Text(
+                                '230kCal\nleft',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white, fontSize: 12),
+                              ),
+                            ),
+                            SimpleCircularProgressBar(
+                              progressStrokeWidth: 10,
+                              backStrokeWidth: 10,
+                              progressColors: TColor.primaryG,
+                              backColor: Colors.grey.shade100,
+                              valueNotifier: _calorieProgressNotifier,
+                              startAngle: -180,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWorkoutProgress() {
+    final line1 = _workoutLine1;
+    final line2 = _workoutLine2;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Workout Progress', style: _sectionTitleStyle),
+            Container(
+              height: 32,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: TColor.primaryG),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _workoutPeriod,
+                  icon: Icon(Icons.expand_more, color: TColor.white),
+                  items: _periodOptions
+                      .map(
+                        (value) => DropdownMenuItem(
+                          value: value,
+                          child: Text(value, style: TextStyle(color: TColor.gray)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null || value == _workoutPeriod) {
+                      return;
+                    }
+                    setState(() => _workoutPeriod = value);
+                  },
+                  dropdownColor: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  style: TextStyle(color: TColor.gray),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 220,
+          child: LineChart(
+            LineChartData(
+              showingTooltipIndicators: _workoutTooltipSpots
+                  .map(
+                    (i) => ShowingTooltipIndicators([
+                      LineBarSpot(line1, 0, line1.spots[i]),
+                    ]),
+                  )
+                  .toList(),
+              lineTouchData: LineTouchData(
+                enabled: true,
+                handleBuiltInTouches: false,
+                touchCallback: (event, response) {
+                  if (response?.lineBarSpots == null) {
+                    return;
+                  }
+                  if (event is FlTapUpEvent) {
+                    setState(() {
+                      _workoutTooltipSpots
+                        ..clear()
+                        ..add(response!.lineBarSpots!.first.spotIndex);
+                    });
+                  }
+                },
+                getTouchedSpotIndicator: (_, indices) => indices
+                    .map(
+                      (index) => TouchedSpotIndicatorData(
+                        const FlLine(color: Colors.transparent),
+                        FlDotData(
+                          show: true,
+                          getDotPainter: (spot, percent, barData, spotIndex) =>
+                              _buildIndicatorPainter(
+                            spot: spot,
+                            percent: percent,
+                            barData: barData,
+                            spotIndex: spotIndex,
+                            baseOpacity: 0.5,
+                            opacityScale: 0.4,
+                            maxSpotValue: 120,
+                            oddStrokeWidth: 2.5,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipColor: (_) => TColor.secondaryColor1,
+                  getTooltipItems: (_) => const [
+                    LineTooltipItem(
+                      'now',
+                      TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              lineBarsData: [line1, line2],
+              minY: 0,
+              maxY: 100,
+              titlesData: FlTitlesData(
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 28,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
+                      const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                      final index = value.toInt() - 1;
+                      final text = (index >= 0 && index < labels.length) ? labels[index] : '';
+                      return SideTitleWidget(
+                        meta: meta,
+                        space: 8,
+                        child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
+                      );
+                    },
+                  ),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 40,
+                    interval: 20,
+                    getTitlesWidget: (value, _) {
+                      const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
+                      final index = (value ~/ 20).clamp(0, labels.length - 1);
+                      return Text(
+                        labels[index],
+                        style: const TextStyle(fontSize: 12, color: Color(0xFF8E8E93)),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                horizontalInterval: 25,
+                getDrawingHorizontalLine: (value) => FlLine(
+                  color: TColor.gray.withValues(alpha: .15),
+                  strokeWidth: 2,
+                ),
+              ),
+              borderData: FlBorderData(show: false),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLatestWorkout(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Latest Workout', style: _sectionTitleStyle),
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                'See More',
+                style: TextStyle(
+                  color: TColor.gray,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
+        ListView.separated(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: _lastWorkoutList.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          itemBuilder: (context, index) => InkWell(
+            onTap: () => context.push(AppRoute.finishedWorkout),
+            child: WorkoutRow(wObj: _lastWorkoutList[index]),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<PieChartSectionData> _buildBmiSections() => [
+        PieChartSectionData(
+          color: TColor.secondaryColor1,
+          value: 33,
+          title: '',
+          radius: 55,
+          badgeWidget: const Text(
+            '20,1',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        PieChartSectionData(
           color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
+          value: 75,
+          title: '',
+          radius: 45,
+        ),
+      ];
+
+  Widget _buildGradientText(
+    String text, {
+    double fontSize = 14,
+    FontWeight fontWeight = FontWeight.w700,
+    List<Color>? colors,
+  }) {
+    final gradientColors = colors ?? TColor.primaryG;
+    return ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (rect) => LinearGradient(colors: gradientColors).createShader(rect),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: TColor.white,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
         ),
       ),
-    ),
-    PieChartSectionData(color: Colors.white, value: 75, title: '', radius: 45),
-  ];
+    );
+  }
 
-  static SideTitles _rightTitles() => SideTitles(
-    showTitles: true,
-    interval: 20,
-    reservedSize: 40,
-    getTitlesWidget: (v, meta) {
-      const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
-      final i = (v ~/ 20);
-      if (i < 0 || i >= labels.length) return const SizedBox.shrink();
-      return Text(
-        labels[i],
-        style: const TextStyle(fontSize: 12, color: Color(0xFF8E8E93)),
-      );
-    },
-  );
+  FlDotCirclePainter _buildIndicatorPainter({
+    required FlSpot spot,
+    required double percent,
+    required LineChartBarData barData,
+    required int spotIndex,
+    required double baseOpacity,
+    required double opacityScale,
+    required double maxSpotValue,
+    double oddStrokeWidth = 2,
+  }) {
+    final normalizedPercent = percent.clamp(0.0, 1.0);
+    final accentColor = barData.gradient?.colors.first ?? TColor.secondaryColor1;
+    final fillOpacity = (baseOpacity + (spot.y / maxSpotValue).clamp(0.0, 1.0) * opacityScale)
+        .clamp(0.0, 1.0);
 
-  static SideTitles _bottomTitles(Color color) => SideTitles(
-    showTitles: true,
-    reservedSize: 24,
-    interval: 1,
-    getTitlesWidget: (v, meta) {
-      const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      final idx = v.toInt() - 1;
-      final text = (idx >= 0 && idx < labels.length) ? labels[idx] : '';
-      return SideTitleWidget(
-        meta: meta,
-        space: 8,
-        child: Text(text, style: TextStyle(color: color, fontSize: 12)),
-      );
-    },
-  );
+    final strokeWidth = spotIndex.isEven ? 3.0 : oddStrokeWidth;
+
+    return FlDotCirclePainter(
+      radius: 3 + normalizedPercent * 2,
+      color: accentColor.withValues(alpha: fillOpacity),
+      strokeWidth: strokeWidth,
+      strokeColor: accentColor,
+    );
+  }
 }
 
 class _BmiCard extends StatelessWidget {
   final List<PieChartSectionData> showingSections;
-  final Size media;
-  const _BmiCard({required this.showingSections, required this.media});
+  const _BmiCard({required this.showingSections});
 
   @override
   Widget build(BuildContext context) {
@@ -915,7 +802,7 @@ class _BmiCard extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Image.asset(
-              "assets/img/bg_dots.png",
+              'assets/img/bg_dots.png',
               fit: BoxFit.cover,
               opacity: const AlwaysStoppedAnimation(.2),
             ),
@@ -929,7 +816,7 @@ class _BmiCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "BMI (Body Mass Index)",
+                        'BMI (Body Mass Index)',
                         style: TextStyle(
                           color: TColor.white,
                           fontSize: 14,
@@ -938,7 +825,7 @@ class _BmiCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "You have a normal weight",
+                        'You have a normal weight',
                         style: TextStyle(
                           color: TColor.white.withValues(alpha: .8),
                           fontSize: 12,
@@ -949,7 +836,7 @@ class _BmiCard extends StatelessWidget {
                         width: 120,
                         height: 36,
                         child: RoundButton(
-                          title: "View More",
+                          title: 'View More',
                           type: RoundButtonType.bgSGradient,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -982,18 +869,13 @@ class _BmiCard extends StatelessWidget {
 }
 
 class _WaterRow extends StatelessWidget {
-  final String title;
-  final String sub;
+  final _WaterIntakeEntry entry;
   final bool isLast;
-  const _WaterRow({
-    required this.title,
-    required this.sub,
-    required this.isLast,
-  });
+  const _WaterRow({required this.entry, required this.isLast});
 
   @override
   Widget build(BuildContext context) {
-    final tColor = TColor.secondaryColor1.withValues(alpha: .5);
+    final indicatorColor = TColor.secondaryColor1.withValues(alpha: .5);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -1005,7 +887,7 @@ class _WaterRow extends StatelessWidget {
                 width: 10,
                 height: 10,
                 decoration: BoxDecoration(
-                  color: tColor,
+                  color: indicatorColor,
                   borderRadius: BorderRadius.circular(5),
                 ),
               ),
@@ -1013,7 +895,7 @@ class _WaterRow extends StatelessWidget {
                 DottedDashedLine(
                   height: 28,
                   width: 0,
-                  dashColor: tColor,
+                  dashColor: indicatorColor,
                   axis: Axis.vertical,
                 ),
             ],
@@ -1022,13 +904,13 @@ class _WaterRow extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(color: TColor.gray, fontSize: 10)),
+              Text(entry.timeRange, style: TextStyle(color: TColor.gray, fontSize: 10)),
               ShaderMask(
                 blendMode: BlendMode.srcIn,
-                shaderCallback: (r) =>
-                    LinearGradient(colors: TColor.secondaryG).createShader(r),
+                shaderCallback: (rect) =>
+                    LinearGradient(colors: TColor.secondaryG).createShader(rect),
                 child: Text(
-                  sub,
+                  entry.amount,
                   style: TextStyle(
                     color: TColor.white.withValues(alpha: .8),
                     fontSize: 12,
@@ -1041,4 +923,10 @@ class _WaterRow extends StatelessWidget {
       ),
     );
   }
+}
+
+class _WaterIntakeEntry {
+  final String timeRange;
+  final String amount;
+  const _WaterIntakeEntry(this.timeRange, this.amount);
 }
