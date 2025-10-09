@@ -6,42 +6,65 @@ import 'package:go_router/go_router.dart';
 class SelectView extends StatelessWidget {
   const SelectView({super.key});
 
+  static const List<_FeatureDestination> _destinations = [
+    _FeatureDestination(
+      label: 'Workout Tracker',
+      route: AppRoute.workoutTracker,
+    ),
+    _FeatureDestination(
+      label: 'Meal Planner',
+      route: AppRoute.mealPlanner,
+    ),
+    _FeatureDestination(
+      label: 'Sleep Tracker',
+      route: AppRoute.sleepTracker,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    // var media = MediaQuery.of(context).size;
-
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RoundButton(
-              title: "Workout Tracker",
-              onPressed: () {
-                context.push(AppRoute.workoutTracker);
-              },
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var i = 0; i < _destinations.length; i++) ...[
+                  if (i > 0) const SizedBox(height: 16),
+                  _FeatureButton(destination: _destinations[i]),
+                ],
+              ],
             ),
-
-            const SizedBox(height: 15),
-
-            RoundButton(
-              title: "Meal Planner",
-              onPressed: () {
-                context.push(AppRoute.mealPlanner);
-              },
-            ),
-
-            const SizedBox(height: 15),
-
-            RoundButton(
-              title: "Sleep Tracker",
-              onPressed: () {
-                context.push(AppRoute.sleepTracker);
-              },
-            ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _FeatureDestination {
+  const _FeatureDestination({required this.label, required this.route});
+
+  final String label;
+  final String route;
+}
+
+class _FeatureButton extends StatelessWidget {
+  const _FeatureButton({required this.destination});
+
+  final _FeatureDestination destination;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: destination.label,
+      child: RoundButton(
+        title: destination.label,
+        onPressed: () => context.push(destination.route),
       ),
     );
   }
