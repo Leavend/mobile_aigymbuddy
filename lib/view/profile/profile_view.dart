@@ -2,11 +2,58 @@
 
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../common/app_router.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
 import '../../common_widget/setting_row.dart';
 import '../../common_widget/title_subtitle_cell.dart';
+
+enum _ProfileAction {
+  personalData(
+    label: 'Personal Data',
+    iconPath: 'assets/img/p_personal.png',
+    route: AppRoute.completeProfile,
+  ),
+  achievement(
+    label: 'Achievement',
+    iconPath: 'assets/img/p_achi.png',
+    route: AppRoute.finishedWorkout,
+  ),
+  activityHistory(
+    label: 'Activity History',
+    iconPath: 'assets/img/p_activity.png',
+    route: AppRoute.activityTracker,
+  ),
+  workoutProgress(
+    label: 'Workout Progress',
+    iconPath: 'assets/img/p_workout.png',
+    route: AppRoute.workoutTracker,
+  ),
+  contactUs(
+    label: 'Contact Us',
+    iconPath: 'assets/img/p_contact.png',
+  ),
+  privacyPolicy(
+    label: 'Privacy Policy',
+    iconPath: 'assets/img/p_privacy.png',
+  ),
+  settings(
+    label: 'Settings',
+    iconPath: 'assets/img/p_setting.png',
+  );
+
+  const _ProfileAction({
+    required this.label,
+    required this.iconPath,
+    this.route,
+  });
+
+  final String label;
+  final String iconPath;
+  final String? route;
+}
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -16,36 +63,28 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  bool _notificationEnabled = false;
+  bool _isNotificationEnabled = false;
 
-  final List<Map<String, String>> _accountArr = const [
-    {"image": "assets/img/p_personal.png", "name": "Personal Data", "tag": "1"},
-    {"image": "assets/img/p_achi.png", "name": "Achievement", "tag": "2"},
-    {
-      "image": "assets/img/p_activity.png",
-      "name": "Activity History",
-      "tag": "3",
-    },
-    {
-      "image": "assets/img/p_workout.png",
-      "name": "Workout Progress",
-      "tag": "4",
-    },
+  static const List<_ProfileAction> _accountActions = [
+    _ProfileAction.personalData,
+    _ProfileAction.achievement,
+    _ProfileAction.activityHistory,
+    _ProfileAction.workoutProgress,
   ];
 
-  final List<Map<String, String>> _otherArr = const [
-    {"image": "assets/img/p_contact.png", "name": "Contact Us", "tag": "5"},
-    {"image": "assets/img/p_privacy.png", "name": "Privacy Policy", "tag": "6"},
-    {"image": "assets/img/p_setting.png", "name": "Setting", "tag": "7"},
+  static const List<_ProfileAction> _otherActions = [
+    _ProfileAction.contactUs,
+    _ProfileAction.privacyPolicy,
+    _ProfileAction.settings,
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
       backgroundColor: TColor.white,
-      body: SingleChildScrollView(
-        child: Padding(
+      appBar: _buildAppBar(),
+      body: SafeArea(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -56,85 +95,34 @@ class _ProfileViewState extends State<ProfileView> {
                 children: [
                   Expanded(
                     child: TitleSubtitleCell(
-                      title: "180cm",
-                      subtitle: "Height",
+                      title: '180cm',
+                      subtitle: 'Height',
                     ),
                   ),
                   SizedBox(width: 15),
                   Expanded(
-                    child: TitleSubtitleCell(title: "65kg", subtitle: "Weight"),
+                    child: TitleSubtitleCell(title: '65kg', subtitle: 'Weight'),
                   ),
                   SizedBox(width: 15),
                   Expanded(
-                    child: TitleSubtitleCell(title: "22yo", subtitle: "Age"),
+                    child: TitleSubtitleCell(title: '22yo', subtitle: 'Age'),
                   ),
                 ],
               ),
               const SizedBox(height: 25),
               _buildSection(
-                title: "Account",
-                child: ListView.separated(
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _accountArr.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 6),
-                  itemBuilder: (context, index) {
-                    final iObj = _accountArr[index];
-                    return SettingRow(
-                      icon: iObj["image"]!,
-                      title: iObj["name"]!,
-                      onPressed: () {},
-                    );
-                  },
-                ),
+                title: 'Account',
+                child: _buildMenuList(_accountActions),
               ),
               const SizedBox(height: 25),
               _buildSection(
-                title: "Notification",
-                child: SizedBox(
-                  height: 30,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/img/p_notification.png",
-                        height: 15,
-                        width: 15,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: Text(
-                          "Pop-up Notification",
-                          style: TextStyle(color: TColor.black, fontSize: 12),
-                        ),
-                      ),
-                      _buildToggle(),
-                    ],
-                  ),
-                ),
+                title: 'Notification',
+                child: _buildNotificationToggle(),
               ),
               const SizedBox(height: 25),
               _buildSection(
-                title: "Other",
-                child: ListView.separated(
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _otherArr.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 6),
-                  itemBuilder: (context, index) {
-                    final iObj = _otherArr[index];
-                    return SettingRow(
-                      icon: iObj["image"]!,
-                      title: iObj["name"]!,
-                      onPressed: () {},
-                    );
-                  },
-                ),
+                title: 'Other',
+                child: _buildMenuList(_otherActions),
               ),
             ],
           ),
@@ -143,123 +131,170 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  AppBar _buildAppBar() => AppBar(
-    backgroundColor: TColor.white,
-    centerTitle: true,
-    elevation: 0,
-    leadingWidth: 0,
-    title: Text(
-      "Profile",
-      style: TextStyle(
-        color: TColor.black,
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: TColor.white,
+      elevation: 0,
+      automaticallyImplyLeading: false,
+      centerTitle: true,
+      title: Text(
+        'Profile',
+        style: TextStyle(
+          color: TColor.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
       ),
-    ),
-    actions: [
-      InkWell(
-        onTap: () {},
-        child: Container(
-          margin: const EdgeInsets.all(8),
-          height: 40,
-          width: 40,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: TColor.lightGray,
-            borderRadius: BorderRadius.circular(10),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: TColor.lightGray,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: IconButton(
+              onPressed: () => _showComingSoon('More options'),
+              icon: Image.asset(
+                'assets/img/more_btn.png',
+                width: 15,
+                height: 15,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(30),
           child: Image.asset(
-            "assets/img/more_btn.png",
-            width: 15,
+            'assets/img/u2.png',
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          ),
+        ),
+        const SizedBox(width: 15),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Stefani Wong',
+                style: TextStyle(
+                  color: TColor.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                'Lose a Fat Program',
+                style: TextStyle(color: TColor.gray, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: 70,
+          height: 25,
+          child: RoundButton(
+            title: 'Edit',
+            type: RoundButtonType.bgGradient,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            onPressed: () => _onActionSelected(_ProfileAction.personalData),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSection({required String title, required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      decoration: BoxDecoration(
+        color: TColor.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 2)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: TColor.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuList(List<_ProfileAction> actions) {
+    return ListView.separated(
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        final action = actions[index];
+        return SettingRow(
+          icon: action.iconPath,
+          title: action.label,
+          onPressed: () => _onActionSelected(action),
+        );
+      },
+      separatorBuilder: (context, index) => const SizedBox(height: 6),
+      itemCount: actions.length,
+    );
+  }
+
+  Widget _buildNotificationToggle() {
+    return SizedBox(
+      height: 30,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/img/p_notification.png',
             height: 15,
+            width: 15,
             fit: BoxFit.contain,
           ),
-        ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Text(
+              'Pop-up Notification',
+              style: TextStyle(color: TColor.black, fontSize: 12),
+            ),
+          ),
+          _buildToggle(),
+        ],
       ),
-    ],
-  );
+    );
+  }
 
-  Widget _buildHeader() => Row(
-    children: [
-      ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: Image.asset(
-          "assets/img/u2.png",
-          width: 50,
-          height: 50,
-          fit: BoxFit.cover,
-        ),
-      ),
-      const SizedBox(width: 15),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Stefani Wong",
-              style: TextStyle(
-                color: TColor.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Text(
-              "Lose a Fat Program",
-              style: TextStyle(color: TColor.gray, fontSize: 12),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: 70,
-        height: 25,
-        child: RoundButton(
-          title: "Edit",
-          type: RoundButtonType.bgGradient,
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          onPressed: () {},
-        ),
-      ),
-    ],
-  );
-
-  Widget _buildSection({required String title, required Widget child}) =>
-      Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        decoration: BoxDecoration(
-          color: TColor.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 2)],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: TColor.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 8),
-            child,
-          ],
-        ),
-      );
   Widget _buildToggle() {
     return CustomAnimatedToggleSwitch<bool>(
-      current: _notificationEnabled,
+      current: _isNotificationEnabled,
       values: const [false, true],
       spacing: 0.0,
       indicatorSize: const Size.square(30.0),
       animationDuration: const Duration(milliseconds: 200),
       animationCurve: Curves.linear,
-      onChanged: (val) => setState(() => _notificationEnabled = val),
-      iconBuilder: (context, local, global) => const SizedBox(),
-      onTap: (val) =>
-          setState(() => _notificationEnabled = !_notificationEnabled),
+      onChanged: (value) => setState(() => _isNotificationEnabled = value),
+      iconBuilder: (context, local, global) => const SizedBox.shrink(),
+      onTap: (value) => setState(() => _isNotificationEnabled = !_isNotificationEnabled),
       iconsTappable: false,
       wrapperBuilder: (context, global, child) {
         return Stack(
@@ -300,5 +335,24 @@ class _ProfileViewState extends State<ProfileView> {
         );
       },
     );
+  }
+
+  void _onActionSelected(_ProfileAction action) {
+    final route = action.route;
+    if (route != null) {
+      context.push(route);
+      return;
+    }
+
+    _showComingSoon(action.label);
+  }
+
+  void _showComingSoon(String featureName) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text('$featureName feature is coming soon.')),
+      );
   }
 }
