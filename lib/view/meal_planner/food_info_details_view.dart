@@ -94,7 +94,7 @@ class FoodInfoDetailsView extends StatelessWidget {
         gradient: LinearGradient(colors: TColor.primaryG),
       ),
       child: NestedScrollView(
-        headerSliverBuilder: (_, __) => [
+        headerSliverBuilder: (_, _) => [
           _buildTopAppBar(context),
           _buildHeroAppBar(media),
         ],

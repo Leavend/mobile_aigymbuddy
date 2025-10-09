@@ -150,7 +150,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           lineTouchData: LineTouchData(
             enabled: true,
             handleBuiltInTouches: false,
-            touchCallback: (_, __) {},
+            touchCallback: (_, _) {},
             mouseCursorResolver: (event, response) {
               final spots = response?.lineBarSpots;
               if (spots == null || spots.isEmpty) {
