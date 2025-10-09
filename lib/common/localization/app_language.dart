@@ -15,6 +15,9 @@ extension AppLanguageX on AppLanguage {
     AppLanguage.indonesian => 'ID',
   };
 
+  /// Convenience getter returning a [Locale] for the current language.
+  Locale get locale => Locale(code);
+
   /// Short-hand label alias kept for backward compatibility with older
   /// widgets that expected a `shortLabel` getter.
   String get shortLabel => buttonLabel;
@@ -41,3 +44,18 @@ class LocalizedText {
 
 /// Converts an [AppLanguage] code into a [Locale].
 Locale localeFromLanguage(AppLanguage language) => Locale(language.code);
+
+/// Returns the [AppLanguage] matching [code] (e.g. `en`, `id`).
+///
+/// When the [code] is unknown the [fallback] value is returned.
+AppLanguage languageFromCode(String code, {AppLanguage fallback = AppLanguage.english}) {
+  return AppLanguage.values.firstWhere(
+    (language) => language.code == code,
+    orElse: () => fallback,
+  );
+}
+
+/// Returns the [AppLanguage] that best matches the provided [locale].
+AppLanguage languageFromLocale(Locale locale, {AppLanguage fallback = AppLanguage.english}) {
+  return languageFromCode(locale.languageCode, fallback: fallback);
+}

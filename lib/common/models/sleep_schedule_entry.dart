@@ -39,14 +39,12 @@ class SleepScheduleEntry {
 
   /// Formats [timeUntilStart] into a localized friendly string.
   String get formattedCountdown {
-    if (timeUntilStart.isNegative) {
-      final elapsed = timeUntilStart.abs();
-      return 'started ${_formatDuration(elapsed)} ago';
+    final duration = timeUntilStart;
+    final formatted = duration.abs().toReadableString();
+    if (duration.isNegative) {
+      return 'started $formatted ago';
     }
-
-    final buffer = StringBuffer('in ');
-    buffer.write(_formatDuration(timeUntilStart));
-    return buffer.toString();
+    return 'in $formatted';
   }
 
   /// Builds an [ImageProvider] from [imageReference] that gracefully handles
@@ -76,24 +74,6 @@ class SleepScheduleEntry {
 
   static bool _looksLikeNetworkUrl(String value) {
     return value.startsWith('http://') || value.startsWith('https://');
-  }
-
-  static String _formatDuration(Duration duration) {
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes.remainder(60);
-    final segments = <String>[];
-
-    if (hours != 0) {
-      final label = hours == 1 ? 'hour' : 'hours';
-      segments.add('$hours $label');
-    }
-
-    if (minutes != 0 || segments.isEmpty) {
-      final label = minutes == 1 ? 'minute' : 'minutes';
-      segments.add('$minutes $label');
-    }
-
-    return segments.join(' ');
   }
 
   static String? _extractBase64Payload(String value) {

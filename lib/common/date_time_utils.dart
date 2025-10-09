@@ -90,6 +90,32 @@ class DateTimeUtils {
     final date = parseDate(value, pattern: pattern);
     return describeDay(date);
   }
+
+  /// Formats [duration] into a human friendly string containing hour/minute
+  /// segments. Examples: `1 hour 10 minutes`, `45 minutes`.
+  static String formatDuration(
+    Duration duration, {
+    String singularHourLabel = 'hour',
+    String pluralHourLabel = 'hours',
+    String singularMinuteLabel = 'minute',
+    String pluralMinuteLabel = 'minutes',
+  }) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final segments = <String>[];
+
+    if (hours != 0) {
+      final label = hours.abs() == 1 ? singularHourLabel : pluralHourLabel;
+      segments.add('${hours.abs()} $label');
+    }
+
+    if (minutes != 0 || segments.isEmpty) {
+      final label = minutes.abs() == 1 ? singularMinuteLabel : pluralMinuteLabel;
+      segments.add('${minutes.abs()} $label');
+    }
+
+    return segments.join(' ');
+  }
 }
 
 extension DateTimeRelativeX on DateTime {
@@ -98,4 +124,22 @@ extension DateTimeRelativeX on DateTime {
 
   /// Shortcut for [DateTimeUtils.describeDay].
   String get relativeDayLabel => DateTimeUtils.describeDay(this);
+}
+
+extension DurationFormattingX on Duration {
+  /// Formats this [Duration] using [DateTimeUtils.formatDuration].
+  String toReadableString({
+    String singularHourLabel = 'hour',
+    String pluralHourLabel = 'hours',
+    String singularMinuteLabel = 'minute',
+    String pluralMinuteLabel = 'minutes',
+  }) {
+    return DateTimeUtils.formatDuration(
+      this,
+      singularHourLabel: singularHourLabel,
+      pluralHourLabel: pluralHourLabel,
+      singularMinuteLabel: singularMinuteLabel,
+      pluralMinuteLabel: pluralMinuteLabel,
+    );
+  }
 }

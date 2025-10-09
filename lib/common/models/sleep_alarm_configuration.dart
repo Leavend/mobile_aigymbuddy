@@ -3,12 +3,12 @@ import 'package:flutter/foundation.dart';
 /// Immutable data model representing the configuration of a sleep alarm.
 @immutable
 class SleepAlarmConfiguration {
-  const SleepAlarmConfiguration({
+  SleepAlarmConfiguration({
     required this.bedtime,
     required this.duration,
-    required this.repeatWeekdays, // <-- Removed the Set.unmodifiable call from here
+    Iterable<int> repeatWeekdays = const <int>[],
     required this.vibrate,
-  });
+  }) : repeatWeekdays = Set.unmodifiable(repeatWeekdays);
 
   /// Date and time when the user plans to go to bed.
   final DateTime bedtime;
@@ -28,7 +28,7 @@ class SleepAlarmConfiguration {
   SleepAlarmConfiguration copyWith({
     DateTime? bedtime,
     Duration? duration,
-    Set<int>? repeatWeekdays,
+    Iterable<int>? repeatWeekdays,
     bool? vibrate,
   }) {
     return SleepAlarmConfiguration(
