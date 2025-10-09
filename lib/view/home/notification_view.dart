@@ -48,10 +48,7 @@ class NotificationView extends StatelessWidget {
         english: 'Congratulations, You have finished A..',
         indonesian: 'Selamat, kamu telah menyelesaikan A..',
       ),
-      time: LocalizedText(
-        english: '29 May',
-        indonesian: '29 Mei',
-      ),
+      time: LocalizedText(english: '29 May', indonesian: '29 Mei'),
     ),
     _NotificationData(
       image: 'assets/img/Workout2.png',
@@ -59,10 +56,7 @@ class NotificationView extends StatelessWidget {
         english: 'Hey, it’s time for lunch',
         indonesian: 'Hai, saatnya makan siang',
       ),
-      time: LocalizedText(
-        english: '8 April',
-        indonesian: '8 April',
-      ),
+      time: LocalizedText(english: '8 April', indonesian: '8 April'),
     ),
     _NotificationData(
       image: 'assets/img/Workout3.png',
@@ -70,10 +64,7 @@ class NotificationView extends StatelessWidget {
         english: 'Ups, You have missed your Lowerbo...',
         indonesian: 'Ups, kamu melewatkan latihan tubuh bawah...',
       ),
-      time: LocalizedText(
-        english: '8 April',
-        indonesian: '8 April',
-      ),
+      time: LocalizedText(english: '8 April', indonesian: '8 April'),
     ),
   ];
 
@@ -104,9 +95,8 @@ class NotificationView extends StatelessWidget {
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
         itemCount: _notifications.length,
-        itemBuilder: (context, index) => NotificationRow.fromMap(
-          _notifications[index].toMap(language),
-        ),
+        itemBuilder: (context, index) =>
+            NotificationRow.fromMap(_notifications[index].toMap(language)),
         separatorBuilder: (_, index) =>
             Divider(color: TColor.gray.withValues(alpha: 0.5), height: 1),
       ),

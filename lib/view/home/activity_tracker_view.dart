@@ -352,11 +352,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
   }
 
-  Widget _buildBottomTitle(
-    double value,
-    TitleMeta meta,
-    AppLanguage language,
-  ) {
+  Widget _buildBottomTitle(double value, TitleMeta meta, AppLanguage language) {
     final style = TextStyle(
       color: TColor.gray,
       fontWeight: FontWeight.w500,

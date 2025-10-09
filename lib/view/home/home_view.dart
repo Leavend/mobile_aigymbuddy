@@ -52,10 +52,7 @@ class _HomeViewState extends State<HomeView> {
       progress: 0.4,
     ),
     _WorkoutConfig(
-      name: LocalizedText(
-        english: 'Ab Workout',
-        indonesian: 'Latihan Perut',
-      ),
+      name: LocalizedText(english: 'Ab Workout', indonesian: 'Latihan Perut'),
       image: 'assets/img/Workout3.png',
       calories: '300',
       minutes: '40',
@@ -580,7 +577,10 @@ class _HomeViewState extends State<HomeView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(localize(_HomeStrings.workoutProgress), style: _sectionTitleStyle),
+            Text(
+              localize(_HomeStrings.workoutProgress),
+              style: _sectionTitleStyle,
+            ),
             Container(
               height: 32,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -629,11 +629,11 @@ class _HomeViewState extends State<HomeView> {
                     ]),
                   )
                   .toList(),
-                lineTouchData: LineTouchData(
-                  enabled: true,
-                  handleBuiltInTouches: false,
-                  touchCallback: (event, response) {
-                    if (response?.lineBarSpots == null) {
+              lineTouchData: LineTouchData(
+                enabled: true,
+                handleBuiltInTouches: false,
+                touchCallback: (event, response) {
+                  if (response?.lineBarSpots == null) {
                     return;
                   }
                   if (event is FlTapUpEvent) {
@@ -643,58 +643,58 @@ class _HomeViewState extends State<HomeView> {
                         ..add(response!.lineBarSpots!.first.spotIndex);
                     });
                   }
-                  },
-                  getTouchedSpotIndicator: (_, indices) => indices
-                      .map(
-                        (index) => TouchedSpotIndicatorData(
-                          const FlLine(color: Colors.transparent),
-                          FlDotData(
-                            show: true,
-                            getDotPainter: (spot, percent, barData, spotIndex) =>
-                                _buildIndicatorPainter(
-                                  spot: spot,
-                                  percent: percent,
-                                  barData: barData,
-                                  spotIndex: spotIndex,
-                                  baseOpacity: 0.5,
-                                  opacityScale: 0.4,
-                                  maxSpotValue: 120,
-                                  oddStrokeWidth: 2.5,
-                                ),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (_) => TColor.secondaryColor1,
-                    getTooltipItems: (_) => [
-                      LineTooltipItem(
-                        localize(_HomeStrings.nowLabel),
-                        const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                },
+                getTouchedSpotIndicator: (_, indices) => indices
+                    .map(
+                      (index) => TouchedSpotIndicatorData(
+                        const FlLine(color: Colors.transparent),
+                        FlDotData(
+                          show: true,
+                          getDotPainter: (spot, percent, barData, spotIndex) =>
+                              _buildIndicatorPainter(
+                                spot: spot,
+                                percent: percent,
+                                barData: barData,
+                                spotIndex: spotIndex,
+                                baseOpacity: 0.5,
+                                opacityScale: 0.4,
+                                maxSpotValue: 120,
+                                oddStrokeWidth: 2.5,
+                              ),
                         ),
                       ),
-                    ],
-                  ),
+                    )
+                    .toList(),
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipColor: (_) => TColor.secondaryColor1,
+                  getTooltipItems: (_) => [
+                    LineTooltipItem(
+                      localize(_HomeStrings.nowLabel),
+                      const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                lineBarsData: [line1, line2],
-                minY: 0,
-                maxY: 100,
-                titlesData: FlTitlesData(
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 28,
-                      interval: 1,
-                      getTitlesWidget: (value, meta) {
+              ),
+              lineBarsData: [line1, line2],
+              minY: 0,
+              maxY: 100,
+              titlesData: FlTitlesData(
+                topTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 28,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
                       final labels = _HomeStrings.weekdayAbbreviations;
                       final index = value.toInt() - 1;
                       final text = (index >= 0 && index < labels.length)
@@ -756,7 +756,10 @@ class _HomeViewState extends State<HomeView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(localize(_HomeStrings.latestWorkout), style: _sectionTitleStyle),
+            Text(
+              localize(_HomeStrings.latestWorkout),
+              style: _sectionTitleStyle,
+            ),
             TextButton(
               onPressed: () {},
               child: Text(
@@ -1062,10 +1065,7 @@ class _HomeStrings {
     indonesian: 'Target Hari Ini',
   );
 
-  static const check = LocalizedText(
-    english: 'Check',
-    indonesian: 'Periksa',
-  );
+  static const check = LocalizedText(english: 'Check', indonesian: 'Periksa');
 
   static const activityStatus = LocalizedText(
     english: 'Activity Status',
@@ -1077,10 +1077,7 @@ class _HomeStrings {
     indonesian: 'Detak Jantung',
   );
 
-  static const nowLabel = LocalizedText(
-    english: 'now',
-    indonesian: 'sekarang',
-  );
+  static const nowLabel = LocalizedText(english: 'now', indonesian: 'sekarang');
 
   static const waterIntake = LocalizedText(
     english: 'Water Intake',
@@ -1092,10 +1089,7 @@ class _HomeStrings {
     indonesian: 'Pembaruan waktu nyata',
   );
 
-  static const sleep = LocalizedText(
-    english: 'Sleep',
-    indonesian: 'Tidur',
-  );
+  static const sleep = LocalizedText(english: 'Sleep', indonesian: 'Tidur');
 
   static const calories = LocalizedText(
     english: 'Calories',
