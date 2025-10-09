@@ -1,18 +1,32 @@
 import 'calendar.dart';
 
-// CalendarController
+/// Controller that enables imperative interactions with [CalendarAgenda].
 class CalendarAgendaController {
-  CalendarAgendaState? state;
+  CalendarAgendaState? _state;
 
+  /// Whether the controller is currently attached to a [CalendarAgenda].
+  bool get isAttached => _state != null;
+
+  /// Binds the controller to the given [CalendarAgendaState].
   void bindState(CalendarAgendaState state) {
-    this.state = state;
+    _state = state;
   }
 
-  void goToDay(DateTime date) {
-    state!.getDate(date);
+  /// Jumps the calendar to the provided [date].
+  void goToDay(
+    DateTime date, {
+    bool animate = true,
+    bool notifyListeners = true,
+  }) {
+    _state?.selectDate(
+      date,
+      animate: animate,
+      notifyListeners: notifyListeners,
+    );
   }
 
+  /// Clears the state reference to avoid memory leaks.
   void dispose() {
-    state = null;
+    _state = null;
   }
 }
