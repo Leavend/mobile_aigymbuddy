@@ -240,12 +240,13 @@ class WorkoutTrackerView extends StatelessWidget {
           shrinkWrap: true,
           itemCount: _upcomingWorkouts.length,
           itemBuilder: (context, index) {
-            final workout = Map<String, String>.from(_upcomingWorkouts[index]);
+            final workout = Map<String, dynamic>.from(_upcomingWorkouts[index]);
             return InkWell(
-              onTap: () => _openWorkoutDetail(context, workout),
-              child: UpcomingWorkoutRow(
-                wObj: Map<String, dynamic>.from(workout),
+              onTap: () => _openWorkoutDetail(
+                context,
+                Map<String, String>.from(workout),
               ),
+              child: UpcomingWorkoutRow.fromMap(workout),
             );
           },
         ),
@@ -275,10 +276,18 @@ class WorkoutTrackerView extends StatelessWidget {
           shrinkWrap: true,
           itemCount: _trainingOptions.length,
           itemBuilder: (context, index) {
-            final option = Map<String, String>.from(_trainingOptions[index]);
+            final option = Map<String, dynamic>.from(_trainingOptions[index]);
             return InkWell(
-              onTap: () => _openWorkoutDetail(context, option),
-              child: WhatTrainRow(wObj: Map<String, dynamic>.from(option)),
+              onTap: () => _openWorkoutDetail(
+                context,
+                Map<String, String>.from(option),
+              ),
+              child: WhatTrainRow.fromMap(option, onViewMore: () {
+                _openWorkoutDetail(
+                  context,
+                  Map<String, String>.from(option),
+                );
+              }),
             );
           },
         ),

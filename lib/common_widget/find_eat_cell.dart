@@ -12,14 +12,20 @@ class FindEatCell extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.imageAsset,
+    this.onSelect,
   });
 
-  factory FindEatCell.fromMap(Map<String, String> data, {required int index}) {
+  factory FindEatCell.fromMap(
+    Map<String, String> data, {
+    required int index,
+    VoidCallback? onSelect,
+  }) {
     return FindEatCell(
       index: index,
       title: data['name'] ?? 'Meal',
       subtitle: data['number'] ?? '0 Item',
       imageAsset: data['image'] ?? 'assets/img/m_3.png',
+      onSelect: onSelect,
     );
   }
 
@@ -27,6 +33,7 @@ class FindEatCell extends StatelessWidget {
   final String title;
   final String subtitle;
   final String imageAsset;
+  final VoidCallback? onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +110,7 @@ class FindEatCell extends StatelessWidget {
                     ? RoundButtonType.bgGradient
                     : RoundButtonType.bgSGradient,
                 title: 'Select',
-                onPressed: () {},
+                onPressed: onSelect ?? () {},
               ),
             ),
           ),

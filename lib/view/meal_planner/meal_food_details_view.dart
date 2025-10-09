@@ -206,8 +206,10 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             scrollDirection: Axis.horizontal,
             itemCount: _categoryItems.length,
-            itemBuilder: (context, index) =>
-                MealCategoryCell(cObj: _categoryItems[index], index: index),
+            itemBuilder: (context, index) => MealCategoryCell.fromMap(
+              Map<String, dynamic>.from(_categoryItems[index]),
+              index: index,
+            ),
           ),
         ),
       ],
@@ -225,8 +227,21 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             scrollDirection: Axis.horizontal,
             itemCount: _recommendations.length,
-            itemBuilder: (context, index) =>
-                MealRecommendCell(fObj: _recommendations[index], index: index),
+            itemBuilder: (context, index) {
+              final recommendation =
+                  Map<String, dynamic>.from(_recommendations[index]);
+              return MealRecommendCell.fromMap(
+                recommendation,
+                index: index,
+                onViewPressed: () => context.push(
+                  AppRoute.foodInfo,
+                  extra: FoodInfoArgs(
+                    food: Map<String, dynamic>.from(recommendation),
+                    meal: Map<String, dynamic>.from(widget.eObj),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -244,8 +259,9 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
           shrinkWrap: true,
           itemCount: _popularItems.length,
           itemBuilder: (context, index) {
-            final food = _popularItems[index];
-            return InkWell(
+            final food = Map<String, dynamic>.from(_popularItems[index]);
+            return PopularMealRow.fromMap(
+              food,
               onTap: () => context.push(
                 AppRoute.foodInfo,
                 extra: FoodInfoArgs(
@@ -253,7 +269,6 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                   meal: Map<String, dynamic>.from(widget.eObj),
                 ),
               ),
-              child: PopularMealRow(mObj: food),
             );
           },
         ),

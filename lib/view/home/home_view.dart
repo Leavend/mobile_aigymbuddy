@@ -746,10 +746,14 @@ class _HomeViewState extends State<HomeView> {
           shrinkWrap: true,
           itemCount: _lastWorkoutList.length,
           separatorBuilder: (_, index) => const SizedBox(height: 12),
-          itemBuilder: (context, index) => InkWell(
-            onTap: () => context.push(AppRoute.finishedWorkout),
-            child: WorkoutRow(wObj: _lastWorkoutList[index]),
-          ),
+          itemBuilder: (context, index) {
+            final workout =
+                Map<String, dynamic>.from(_lastWorkoutList[index]);
+            return WorkoutRow.fromMap(
+              workout,
+              onTap: () => context.push(AppRoute.finishedWorkout),
+            );
+          },
         ),
       ],
     );

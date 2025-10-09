@@ -1,9 +1,47 @@
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+@immutable
+class NotificationItem {
+  const NotificationItem({
+    required this.imageAsset,
+    required this.title,
+    required this.timestampLabel,
+  });
+
+  factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    return NotificationItem(
+      imageAsset: json['image']?.toString() ?? 'assets/img/placeholder.png',
+      title: json['title']?.toString() ?? 'Notification',
+      timestampLabel: json['time']?.toString() ?? '',
+    );
+  }
+
+  final String imageAsset;
+  final String title;
+  final String timestampLabel;
+}
+
 class NotificationRow extends StatelessWidget {
-  final Map nObj;
-  const NotificationRow({super.key, required this.nObj});
+  const NotificationRow({
+    super.key,
+    required this.notification,
+    this.onMenuTap,
+  });
+
+  factory NotificationRow.fromMap(
+    Map<String, dynamic> data, {
+    VoidCallback? onMenuTap,
+  }) {
+    return NotificationRow(
+      notification: NotificationItem.fromJson(data),
+      onMenuTap: onMenuTap,
+    );
+  }
+
+  final NotificationItem notification;
+  final VoidCallback? onMenuTap;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +52,7 @@ class NotificationRow extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: Image.asset(
-              nObj["image"].toString(),
+              notification.imageAsset,
               width: 40,
               height: 40,
               fit: BoxFit.cover,
@@ -26,7 +64,7 @@ class NotificationRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  nObj["title"].toString(),
+                  notification.title,
                   style: TextStyle(
                     color: TColor.black,
                     fontWeight: FontWeight.w500,
@@ -34,16 +72,16 @@ class NotificationRow extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  nObj["time"].toString(),
+                  notification.timestampLabel,
                   style: TextStyle(color: TColor.gray, fontSize: 10),
                 ),
               ],
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: onMenuTap,
             icon: Image.asset(
-              "assets/img/sub_menu.png",
+              'assets/img/sub_menu.png',
               width: 15,
               height: 15,
               fit: BoxFit.contain,

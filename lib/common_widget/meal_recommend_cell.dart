@@ -1,15 +1,61 @@
 // lib/common_widget/meal_recommend_cell.dart
 
 import 'package:aigymbuddy/common_widget/round_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
 
-class MealRecommendCell extends StatelessWidget {
-  final Map<String, dynamic> fObj;
-  final int index;
+@immutable
+class MealRecommendationItem {
+  const MealRecommendationItem({
+    required this.name,
+    required this.size,
+    required this.time,
+    required this.kcal,
+    required this.imageAsset,
+  });
 
-  const MealRecommendCell({super.key, required this.index, required this.fObj});
+  factory MealRecommendationItem.fromJson(Map<String, dynamic> json) {
+    return MealRecommendationItem(
+      name: json['name']?.toString() ?? 'Meal',
+      size: json['size']?.toString() ?? '',
+      time: json['time']?.toString() ?? '',
+      kcal: json['kcal']?.toString() ?? '',
+      imageAsset: json['image']?.toString() ?? 'assets/img/m_1.png',
+    );
+  }
+
+  final String name;
+  final String size;
+  final String time;
+  final String kcal;
+  final String imageAsset;
+}
+
+class MealRecommendCell extends StatelessWidget {
+  const MealRecommendCell({
+    super.key,
+    required this.index,
+    required this.meal,
+    this.onViewPressed,
+  });
+
+  factory MealRecommendCell.fromMap(
+    Map<String, dynamic> map, {
+    required int index,
+    VoidCallback? onViewPressed,
+  }) {
+    return MealRecommendCell(
+      index: index,
+      meal: MealRecommendationItem.fromJson(map),
+      onViewPressed: onViewPressed,
+    );
+  }
+
+  final int index;
+  final MealRecommendationItem meal;
+  final VoidCallback? onViewPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +83,7 @@ class MealRecommendCell extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            (fObj['image'] ?? '').toString(),
+            meal.imageAsset,
             width: media.width * 0.3,
             height: media.width * 0.25,
             fit: BoxFit.contain,
@@ -45,7 +91,7 @@ class MealRecommendCell extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              (fObj['name'] ?? '').toString(),
+              meal.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -58,7 +104,7 @@ class MealRecommendCell extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              '${(fObj['size'] ?? '').toString()} | ${(fObj['time'] ?? '').toString()} | ${(fObj['kcal'] ?? '').toString()}',
+              '${meal.size} | ${meal.time} | ${meal.kcal}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: TColor.gray, fontSize: 12),
@@ -76,7 +122,7 @@ class MealRecommendCell extends StatelessWidget {
                     ? RoundButtonType.bgGradient
                     : RoundButtonType.bgSGradient,
                 title: 'View',
-                onPressed: () {},
+                onPressed: onViewPressed ?? () {},
               ),
             ),
           ),

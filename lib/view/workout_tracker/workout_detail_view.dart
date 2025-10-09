@@ -6,6 +6,7 @@ import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../common_widget/exercises_row.dart';
 import '../../common_widget/exercises_set_section.dart';
 
 class WorkoutDetailView extends StatefulWidget {
@@ -24,8 +25,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     {'image': 'assets/img/bottle.png', 'title': 'Bottle 1 Liters'},
   ];
 
-  static const List<Map<String, dynamic>> _workoutSets = [
-    {
+  static final List<ExerciseSet> _workoutSets = List.unmodifiable([
+    ExerciseSet.fromJson({
       'name': 'Set 1',
       'set': [
         {'image': 'assets/img/img_1.png', 'title': 'Warm Up', 'value': '05:00'},
@@ -47,8 +48,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           'value': '02:00',
         },
       ],
-    },
-    {
+    }),
+    ExerciseSet.fromJson({
       'name': 'Set 2',
       'set': [
         {'image': 'assets/img/img_1.png', 'title': 'Warm Up', 'value': '05:00'},
@@ -70,8 +71,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           'value': '02:00',
         },
       ],
-    },
-  ];
+    }),
+  ]);
 
   bool _isFavorite = false;
 
@@ -373,12 +374,12 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           itemBuilder: (context, index) {
             final set = _workoutSets[index];
             return ExercisesSetSection(
-              sObj: set,
+              set: set,
               onPressed: (exercise) {
                 context.pushNamed(
                   AppRoute.exerciseStepsName,
                   extra: ExerciseStepsArgs(
-                    exercise: Map<String, dynamic>.from(exercise),
+                    exercise: Map<String, dynamic>.from(exercise.toJson()),
                   ),
                 );
               },
@@ -526,11 +527,10 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 ),
                 const SizedBox(height: 12),
                 ..._workoutSets.map((set) {
-                  final exercises =
-                      (set['set'] as List<dynamic>? ?? const []).length;
+                  final exercises = set.exercises.length;
                   return ListTile(
                     title: Text(
-                      set['name'].toString(),
+                      set.name,
                       style: TextStyle(color: TColor.black),
                     ),
                     subtitle: Text(
@@ -548,22 +548,23 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   }
 
   void _startWorkout() {
-    final firstSet = _workoutSets.isNotEmpty ? _workoutSets.first : null;
-    final setItems = firstSet != null
-        ? (firstSet['set'] as List<dynamic>? ?? const [])
-        : const [];
-    if (setItems.isEmpty) {
+    final firstExercise =
+        _workoutSets.isNotEmpty && _workoutSets.first.exercises.isNotEmpty
+            ? _workoutSets.first.exercises.first
+            : null;
+
+    if (firstExercise == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No exercises available yet.')),
       );
       return;
     }
 
-    final firstExercise = Map<String, dynamic>.from(setItems.first as Map);
-
     context.pushNamed(
       AppRoute.exerciseStepsName,
-      extra: ExerciseStepsArgs(exercise: firstExercise),
+      extra: ExerciseStepsArgs(
+        exercise: Map<String, dynamic>.from(firstExercise.toJson()),
+      ),
     );
   }
 }

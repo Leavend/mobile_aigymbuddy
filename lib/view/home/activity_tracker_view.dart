@@ -323,8 +323,8 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
       shrinkWrap: true,
       itemCount: _latestActivities.length,
       itemBuilder: (context, index) {
-        final data = _latestActivities[index];
-        return LatestActivityRow(wObj: data);
+        final data = Map<String, dynamic>.from(_latestActivities[index]);
+        return LatestActivityRow.fromMap(data);
       },
     );
   }
