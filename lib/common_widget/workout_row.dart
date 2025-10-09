@@ -12,6 +12,7 @@ class WorkoutSummaryItem {
     required this.calories,
     required this.durationMinutes,
     required this.progress,
+    this.subtitle,
   });
 
   factory WorkoutSummaryItem.fromJson(Map<String, dynamic> json) {
@@ -24,6 +25,7 @@ class WorkoutSummaryItem {
       calories: json['kcal']?.toString() ?? '0',
       durationMinutes: json['time']?.toString() ?? '0',
       progress: progressValue.clamp(0, 1).toDouble(),
+      subtitle: json['subtitle']?.toString(),
     );
   }
 
@@ -32,6 +34,7 @@ class WorkoutSummaryItem {
   final String calories;
   final String durationMinutes;
   final double progress;
+  final String? subtitle;
 }
 
 class WorkoutRow extends StatelessWidget {
@@ -76,7 +79,8 @@ class WorkoutRow extends StatelessWidget {
                   style: TextStyle(color: TColor.black, fontSize: 12),
                 ),
                 Text(
-                  '${workout.calories} Calories Burn | ${workout.durationMinutes} minutes',
+                  workout.subtitle ??
+                      '${workout.calories} Calories Burned | ${workout.durationMinutes} minutes',
                   style: TextStyle(color: TColor.gray, fontSize: 10),
                 ),
                 const SizedBox(height: 4),

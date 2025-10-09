@@ -1,10 +1,11 @@
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common_widget/latest_activity_row.dart';
+import 'package:aigymbuddy/common_widget/today_target_cell.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../common/color_extension.dart';
-import '../../common_widget/latest_activity_row.dart';
-import '../../common_widget/today_target_cell.dart';
 
 class ActivityTrackerView extends StatefulWidget {
   const ActivityTrackerView({super.key});
@@ -14,22 +15,43 @@ class ActivityTrackerView extends StatefulWidget {
 }
 
 class _ActivityTrackerViewState extends State<ActivityTrackerView> {
-  static const _periodOptions = ['Weekly', 'Monthly'];
+  static const List<_TrackerPeriodOption> _periodOptions = [
+    _TrackerPeriodOption(
+      value: 'weekly',
+      label: LocalizedText(english: 'Weekly', indonesian: 'Mingguan'),
+    ),
+    _TrackerPeriodOption(
+      value: 'monthly',
+      label: LocalizedText(english: 'Monthly', indonesian: 'Bulanan'),
+    ),
+  ];
 
   int _touchedBarIndex = -1;
-  String _selectedPeriod = _periodOptions.first;
+  _TrackerPeriodOption _selectedPeriod = _periodOptions.first;
 
-  final List<Map<String, String>> _latestActivities = const [
-    {
-      'image': 'assets/img/pic_4.png',
-      'title': 'Drinking 300ml Water',
-      'time': 'About 1 minutes ago',
-    },
-    {
-      'image': 'assets/img/pic_5.png',
-      'title': 'Eat Snack (Fitbar)',
-      'time': 'About 3 hours ago',
-    },
+  final List<_ActivityLog> _latestActivities = const [
+    _ActivityLog(
+      image: 'assets/img/pic_4.png',
+      title: LocalizedText(
+        english: 'Drinking 300ml Water',
+        indonesian: 'Minum 300ml Air',
+      ),
+      time: LocalizedText(
+        english: 'About 1 minute ago',
+        indonesian: 'Sekitar 1 menit lalu',
+      ),
+    ),
+    _ActivityLog(
+      image: 'assets/img/pic_5.png',
+      title: LocalizedText(
+        english: 'Eat Snack (Fitbar)',
+        indonesian: 'Makan Camilan (Fitbar)',
+      ),
+      time: LocalizedText(
+        english: 'About 3 hours ago',
+        indonesian: 'Sekitar 3 jam lalu',
+      ),
+    ),
   ];
 
   @override
@@ -44,14 +66,14 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
         padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
         child: Column(
           children: [
-            _buildTodayTarget(),
+            _buildTodayTarget(context),
             SizedBox(height: media.width * 0.1),
-            _buildProgressHeader(),
+            _buildProgressHeader(context),
             SizedBox(height: spacing),
-            _buildBarChart(media),
+            _buildBarChart(context, media),
             SizedBox(height: spacing),
-            _buildLatestWorkoutHeader(),
-            _buildLatestActivityList(),
+            _buildLatestWorkoutHeader(context),
+            _buildLatestActivityList(context),
             SizedBox(height: media.width * 0.1),
           ],
         ),
@@ -60,6 +82,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
+    final localize = context.localize;
     return AppBar(
       backgroundColor: TColor.white,
       centerTitle: true,
@@ -69,7 +92,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
         onTap: () => context.pop(),
       ),
       title: Text(
-        'Activity Tracker',
+        localize(_TrackerStrings.activityTracker),
         style: TextStyle(
           color: TColor.black,
           fontSize: 16,
@@ -80,7 +103,8 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
   }
 
-  Widget _buildTodayTarget() {
+  Widget _buildTodayTarget(BuildContext context) {
+    final localize = context.localize;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       decoration: BoxDecoration(
@@ -98,7 +122,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Today Target',
+                localize(_TrackerStrings.todayTarget),
                 style: TextStyle(
                   color: TColor.black,
                   fontSize: 14,
@@ -128,21 +152,21 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             ],
           ),
           const SizedBox(height: 15),
-          const Row(
+          Row(
             children: [
               Expanded(
                 child: TodayTargetCell(
                   icon: 'assets/img/water.png',
                   value: '8L',
-                  title: 'Water Intake',
+                  title: localize(_TrackerStrings.waterIntake),
                 ),
               ),
-              SizedBox(width: 15),
+              const SizedBox(width: 15),
               Expanded(
                 child: TodayTargetCell(
                   icon: 'assets/img/foot.png',
                   value: '2400',
-                  title: 'Foot Steps',
+                  title: localize(_TrackerStrings.footSteps),
                 ),
               ),
             ],
@@ -152,12 +176,14 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
   }
 
-  Widget _buildProgressHeader() {
+  Widget _buildProgressHeader(BuildContext context) {
+    final localize = context.localize;
+    final language = context.appLanguage;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Activity  Progress',
+          localize(_TrackerStrings.activityProgress),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -172,14 +198,14 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             borderRadius: BorderRadius.circular(15),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton<_TrackerPeriodOption>(
               value: _selectedPeriod,
               items: _periodOptions
                   .map(
-                    (name) => DropdownMenuItem<String>(
-                      value: name,
+                    (option) => DropdownMenuItem<_TrackerPeriodOption>(
+                      value: option,
                       child: Text(
-                        name,
+                        option.label.resolve(language),
                         style: TextStyle(color: TColor.gray, fontSize: 14),
                       ),
                     ),
@@ -200,7 +226,8 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
   }
 
-  Widget _buildBarChart(Size media) {
+  Widget _buildBarChart(BuildContext context, Size media) {
+    final language = context.appLanguage;
     return Container(
       height: media.width * 0.5,
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -218,17 +245,10 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
               tooltipHorizontalAlignment: FLHorizontalAlignment.right,
               tooltipMargin: 10,
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                final labels = const [
-                  'Monday',
-                  'Tuesday',
-                  'Wednesday',
-                  'Thursday',
-                  'Friday',
-                  'Saturday',
-                  'Sunday',
-                ];
-                final weekDay = (group.x >= 0 && group.x < labels.length)
-                    ? labels[group.x]
+                final labels = _TrackerStrings.weekdayFull;
+                final index = group.x.toInt();
+                final weekDay = (index >= 0 && index < labels.length)
+                    ? labels[index].resolve(language)
                     : '';
 
                 return BarTooltipItem(
@@ -273,7 +293,8 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                getTitlesWidget: _buildBottomTitle,
+                getTitlesWidget: (value, meta) =>
+                    _buildBottomTitle(value, meta, language),
                 reservedSize: 38,
               ),
             ),
@@ -289,12 +310,13 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
   }
 
-  Widget _buildLatestWorkoutHeader() {
+  Widget _buildLatestWorkoutHeader(BuildContext context) {
+    final localize = context.localize;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Latest Workout',
+          localize(_TrackerStrings.latestWorkout),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -304,7 +326,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
         TextButton(
           onPressed: () {},
           child: Text(
-            'See More',
+            localize(_TrackerStrings.seeMore),
             style: TextStyle(
               color: TColor.gray,
               fontSize: 14,
@@ -316,28 +338,35 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
   }
 
-  Widget _buildLatestActivityList() {
+  Widget _buildLatestActivityList(BuildContext context) {
+    final language = context.appLanguage;
     return ListView.builder(
       padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _latestActivities.length,
       itemBuilder: (context, index) {
-        final data = Map<String, dynamic>.from(_latestActivities[index]);
-        return LatestActivityRow.fromMap(data);
+        final activity = _latestActivities[index].toItem(language);
+        return LatestActivityRow(activity: activity);
       },
     );
   }
 
-  Widget _buildBottomTitle(double value, TitleMeta meta) {
+  Widget _buildBottomTitle(
+    double value,
+    TitleMeta meta,
+    AppLanguage language,
+  ) {
     final style = TextStyle(
       color: TColor.gray,
       fontWeight: FontWeight.w500,
       fontSize: 12,
     );
-    const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    final labels = _TrackerStrings.weekdayShort;
     final idx = value.toInt();
-    final text = (idx >= 0 && idx < labels.length) ? labels[idx] : '';
+    final text = (idx >= 0 && idx < labels.length)
+        ? labels[idx].resolve(language)
+        : '';
     return SideTitleWidget(
       meta: meta,
       space: 16,
@@ -433,6 +462,90 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
       showingTooltipIndicators: showTooltips,
     );
   }
+}
+
+class _TrackerPeriodOption {
+  const _TrackerPeriodOption({required this.value, required this.label});
+
+  final String value;
+  final LocalizedText label;
+}
+
+class _ActivityLog {
+  const _ActivityLog({
+    required this.image,
+    required this.title,
+    required this.time,
+  });
+
+  final String image;
+  final LocalizedText title;
+  final LocalizedText time;
+
+  LatestActivityItem toItem(AppLanguage language) {
+    return LatestActivityItem(
+      imageAsset: image,
+      title: title.resolve(language),
+      timeLabel: time.resolve(language),
+    );
+  }
+}
+
+class _TrackerStrings {
+  static const activityTracker = LocalizedText(
+    english: 'Activity Tracker',
+    indonesian: 'Pelacak Aktivitas',
+  );
+
+  static const todayTarget = LocalizedText(
+    english: 'Today Target',
+    indonesian: 'Target Hari Ini',
+  );
+
+  static const waterIntake = LocalizedText(
+    english: 'Water Intake',
+    indonesian: 'Asupan Air',
+  );
+
+  static const footSteps = LocalizedText(
+    english: 'Foot Steps',
+    indonesian: 'Langkah Kaki',
+  );
+
+  static const activityProgress = LocalizedText(
+    english: 'Activity Progress',
+    indonesian: 'Progres Aktivitas',
+  );
+
+  static const latestWorkout = LocalizedText(
+    english: 'Latest Workout',
+    indonesian: 'Latihan Terbaru',
+  );
+
+  static const seeMore = LocalizedText(
+    english: 'See More',
+    indonesian: 'Lihat Semua',
+  );
+
+  static const List<LocalizedText> weekdayFull = [
+    LocalizedText(english: 'Monday', indonesian: 'Senin'),
+    LocalizedText(english: 'Tuesday', indonesian: 'Selasa'),
+    LocalizedText(english: 'Wednesday', indonesian: 'Rabu'),
+    LocalizedText(english: 'Thursday', indonesian: 'Kamis'),
+    LocalizedText(english: 'Friday', indonesian: 'Jumat'),
+    LocalizedText(english: 'Saturday', indonesian: 'Sabtu'),
+    LocalizedText(english: 'Sunday', indonesian: 'Minggu'),
+  ];
+
+  static const List<LocalizedText> weekdayShort = [
+    LocalizedText(english: 'Sun', indonesian: 'Min'),
+    LocalizedText(english: 'Mon', indonesian: 'Sen'),
+    LocalizedText(english: 'Tue', indonesian: 'Sel'),
+    LocalizedText(english: 'Wed', indonesian: 'Rab'),
+    LocalizedText(english: 'Thu', indonesian: 'Kam'),
+    LocalizedText(english: 'Fri', indonesian: 'Jum'),
+    LocalizedText(english: 'Sat', indonesian: 'Sab'),
+  ];
 }
 
 class _CircleIconButton extends StatelessWidget {

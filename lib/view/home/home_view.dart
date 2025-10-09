@@ -1,5 +1,7 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/workout_row.dart';
 import 'package:dotted_dashed_line/dotted_dashed_line.dart';
@@ -17,30 +19,48 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  static const _periodOptions = ['Weekly', 'Monthly'];
+  static const List<_PeriodOption> _periodOptions = [
+    _PeriodOption(
+      key: 'weekly',
+      label: LocalizedText(english: 'Weekly', indonesian: 'Mingguan'),
+    ),
+    _PeriodOption(
+      key: 'monthly',
+      label: LocalizedText(english: 'Monthly', indonesian: 'Bulanan'),
+    ),
+  ];
 
-  static const List<Map<String, Object>> _lastWorkoutList = [
-    {
-      'name': 'Full Body Workout',
-      'image': 'assets/img/Workout1.png',
-      'kcal': '180',
-      'time': '20',
-      'progress': 0.3,
-    },
-    {
-      'name': 'Lower Body Workout',
-      'image': 'assets/img/Workout2.png',
-      'kcal': '200',
-      'time': '30',
-      'progress': 0.4,
-    },
-    {
-      'name': 'Ab Workout',
-      'image': 'assets/img/Workout3.png',
-      'kcal': '300',
-      'time': '40',
-      'progress': 0.7,
-    },
+  static const List<_WorkoutConfig> _lastWorkoutList = [
+    _WorkoutConfig(
+      name: LocalizedText(
+        english: 'Full Body Workout',
+        indonesian: 'Latihan Seluruh Tubuh',
+      ),
+      image: 'assets/img/Workout1.png',
+      calories: '180',
+      minutes: '20',
+      progress: 0.3,
+    ),
+    _WorkoutConfig(
+      name: LocalizedText(
+        english: 'Lower Body Workout',
+        indonesian: 'Latihan Tubuh Bagian Bawah',
+      ),
+      image: 'assets/img/Workout2.png',
+      calories: '200',
+      minutes: '30',
+      progress: 0.4,
+    ),
+    _WorkoutConfig(
+      name: LocalizedText(
+        english: 'Ab Workout',
+        indonesian: 'Latihan Perut',
+      ),
+      image: 'assets/img/Workout3.png',
+      calories: '300',
+      minutes: '40',
+      progress: 0.7,
+    ),
   ];
 
   static const List<_WaterIntakeEntry> _waterSchedule = [
@@ -89,7 +109,7 @@ class _HomeViewState extends State<HomeView> {
   final List<int> _workoutTooltipSpots = [];
 
   late final ValueNotifier<double> _calorieProgressNotifier;
-  String _workoutPeriod = _periodOptions.first;
+  _PeriodOption _selectedWorkoutPeriod = _periodOptions.first;
 
   @override
   void initState() {
@@ -191,17 +211,25 @@ class _HomeViewState extends State<HomeView> {
                 children: [
                   _buildHeader(context),
                   const SizedBox(height: 16),
-                  _BmiCard(showingSections: _buildBmiSections()),
+                  _BmiCard(
+                    showingSections: _buildBmiSections(),
+                    title: _HomeStrings.bmiTitle,
+                    subtitle: _HomeStrings.bmiSubtitle,
+                    buttonText: _HomeStrings.viewMore,
+                  ),
                   const SizedBox(height: 16),
                   _buildTodayTarget(context),
                   const SizedBox(height: 16),
-                  Text('Activity Status', style: _sectionTitleStyle),
+                  Text(
+                    context.localize(_HomeStrings.activityStatus),
+                    style: _sectionTitleStyle,
+                  ),
                   const SizedBox(height: 8),
-                  _buildHeartRateCard(),
+                  _buildHeartRateCard(context),
                   const SizedBox(height: 16),
-                  _buildHydrationAndRest(),
+                  _buildHydrationAndRest(context),
                   const SizedBox(height: 24),
-                  _buildWorkoutProgress(),
+                  _buildWorkoutProgress(context),
                   const SizedBox(height: 16),
                   _buildLatestWorkout(context),
                   const SizedBox(height: 32),
@@ -215,6 +243,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final localize = context.localize;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -222,11 +251,11 @@ class _HomeViewState extends State<HomeView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Welcome Back,',
+              localize(_HomeStrings.welcomeBack),
               style: TextStyle(color: TColor.gray, fontSize: 12),
             ),
             Text(
-              'GYM Buddy',
+              localize(_HomeStrings.userName),
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 22,
@@ -248,6 +277,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildTodayTarget(BuildContext context) {
+    final localize = context.localize;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       decoration: BoxDecoration(
@@ -259,7 +289,7 @@ class _HomeViewState extends State<HomeView> {
         children: [
           Expanded(
             child: Text(
-              'Today Target',
+              localize(_HomeStrings.todayTarget),
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 14,
@@ -271,7 +301,7 @@ class _HomeViewState extends State<HomeView> {
             width: 95,
             height: 36,
             child: RoundButton(
-              title: 'Check',
+              title: localize(_HomeStrings.check),
               type: RoundButtonType.bgGradient,
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -283,8 +313,9 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildHeartRateCard() {
+  Widget _buildHeartRateCard(BuildContext context) {
     final heartRateLine = _heartRateLine;
+    final localize = context.localize;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       decoration: BoxDecoration(
@@ -295,7 +326,7 @@ class _HomeViewState extends State<HomeView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Heart Rate',
+            localize(_HomeStrings.heartRate),
             style: TextStyle(
               color: TColor.black,
               fontSize: 14,
@@ -356,10 +387,10 @@ class _HomeViewState extends State<HomeView> {
                       .toList(),
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipColor: (_) => TColor.secondaryColor1,
-                    getTooltipItems: (_) => const [
+                    getTooltipItems: (_) => [
                       LineTooltipItem(
-                        'now',
-                        TextStyle(
+                        localize(_HomeStrings.nowLabel),
+                        const TextStyle(
                           color: Colors.white,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -382,7 +413,8 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildHydrationAndRest() {
+  Widget _buildHydrationAndRest(BuildContext context) {
+    final localize = context.localize;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -410,7 +442,7 @@ class _HomeViewState extends State<HomeView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Water Intake',
+                        localize(_HomeStrings.waterIntake),
                         style: TextStyle(
                           color: TColor.black,
                           fontSize: 12,
@@ -419,7 +451,7 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Real time updates',
+                        localize(_HomeStrings.realTimeUpdates),
                         style: TextStyle(color: TColor.gray, fontSize: 12),
                       ),
                       const SizedBox(height: 8),
@@ -450,7 +482,7 @@ class _HomeViewState extends State<HomeView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Sleep',
+                      localize(_HomeStrings.sleep),
                       style: TextStyle(
                         color: TColor.black,
                         fontSize: 12,
@@ -479,7 +511,7 @@ class _HomeViewState extends State<HomeView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Calories',
+                      localize(_HomeStrings.calories),
                       style: TextStyle(
                         color: TColor.black,
                         fontSize: 12,
@@ -506,10 +538,10 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                                 borderRadius: BorderRadius.circular(45),
                               ),
-                              child: const Text(
-                                '230kCal\nleft',
+                              child: Text(
+                                localize(_HomeStrings.caloriesLeft),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
                                 ),
@@ -537,16 +569,18 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildWorkoutProgress() {
+  Widget _buildWorkoutProgress(BuildContext context) {
     final line1 = _workoutLine1;
     final line2 = _workoutLine2;
+    final localize = context.localize;
+    final language = context.appLanguage;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Workout Progress', style: _sectionTitleStyle),
+            Text(localize(_HomeStrings.workoutProgress), style: _sectionTitleStyle),
             Container(
               height: 32,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -555,25 +589,25 @@ class _HomeViewState extends State<HomeView> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _workoutPeriod,
+                child: DropdownButton<_PeriodOption>(
+                  value: _selectedWorkoutPeriod,
                   icon: Icon(Icons.expand_more, color: TColor.white),
                   items: _periodOptions
                       .map(
-                        (value) => DropdownMenuItem(
-                          value: value,
+                        (option) => DropdownMenuItem<_PeriodOption>(
+                          value: option,
                           child: Text(
-                            value,
+                            option.label.resolve(language),
                             style: TextStyle(color: TColor.gray),
                           ),
                         ),
                       )
                       .toList(),
                   onChanged: (value) {
-                    if (value == null || value == _workoutPeriod) {
+                    if (value == null || value == _selectedWorkoutPeriod) {
                       return;
                     }
-                    setState(() => _workoutPeriod = value);
+                    setState(() => _selectedWorkoutPeriod = value);
                   },
                   dropdownColor: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -595,11 +629,11 @@ class _HomeViewState extends State<HomeView> {
                     ]),
                   )
                   .toList(),
-              lineTouchData: LineTouchData(
-                enabled: true,
-                handleBuiltInTouches: false,
-                touchCallback: (event, response) {
-                  if (response?.lineBarSpots == null) {
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  handleBuiltInTouches: false,
+                  touchCallback: (event, response) {
+                    if (response?.lineBarSpots == null) {
                     return;
                   }
                   if (event is FlTapUpEvent) {
@@ -609,70 +643,62 @@ class _HomeViewState extends State<HomeView> {
                         ..add(response!.lineBarSpots!.first.spotIndex);
                     });
                   }
-                },
-                getTouchedSpotIndicator: (_, indices) => indices
-                    .map(
-                      (index) => TouchedSpotIndicatorData(
-                        const FlLine(color: Colors.transparent),
-                        FlDotData(
-                          show: true,
-                          getDotPainter: (spot, percent, barData, spotIndex) =>
-                              _buildIndicatorPainter(
-                                spot: spot,
-                                percent: percent,
-                                barData: barData,
-                                spotIndex: spotIndex,
-                                baseOpacity: 0.5,
-                                opacityScale: 0.4,
-                                maxSpotValue: 120,
-                                oddStrokeWidth: 2.5,
-                              ),
+                  },
+                  getTouchedSpotIndicator: (_, indices) => indices
+                      .map(
+                        (index) => TouchedSpotIndicatorData(
+                          const FlLine(color: Colors.transparent),
+                          FlDotData(
+                            show: true,
+                            getDotPainter: (spot, percent, barData, spotIndex) =>
+                                _buildIndicatorPainter(
+                                  spot: spot,
+                                  percent: percent,
+                                  barData: barData,
+                                  spotIndex: spotIndex,
+                                  baseOpacity: 0.5,
+                                  opacityScale: 0.4,
+                                  maxSpotValue: 120,
+                                  oddStrokeWidth: 2.5,
+                                ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (_) => TColor.secondaryColor1,
+                    getTooltipItems: (_) => [
+                      LineTooltipItem(
+                        localize(_HomeStrings.nowLabel),
+                        const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    )
-                    .toList(),
-                touchTooltipData: LineTouchTooltipData(
-                  getTooltipColor: (_) => TColor.secondaryColor1,
-                  getTooltipItems: (_) => const [
-                    LineTooltipItem(
-                      'now',
-                      TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              lineBarsData: [line1, line2],
-              minY: 0,
-              maxY: 100,
-              titlesData: FlTitlesData(
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 28,
-                    interval: 1,
-                    getTitlesWidget: (value, meta) {
-                      const labels = [
-                        'Sun',
-                        'Mon',
-                        'Tue',
-                        'Wed',
-                        'Thu',
-                        'Fri',
-                        'Sat',
-                      ];
+                lineBarsData: [line1, line2],
+                minY: 0,
+                maxY: 100,
+                titlesData: FlTitlesData(
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 28,
+                      interval: 1,
+                      getTitlesWidget: (value, meta) {
+                      final labels = _HomeStrings.weekdayAbbreviations;
                       final index = value.toInt() - 1;
                       final text = (index >= 0 && index < labels.length)
-                          ? labels[index]
+                          ? labels[index].resolve(language)
                           : '';
                       return SideTitleWidget(
                         meta: meta,
@@ -722,17 +748,19 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildLatestWorkout(BuildContext context) {
+    final localize = context.localize;
+    final language = context.appLanguage;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Latest Workout', style: _sectionTitleStyle),
+            Text(localize(_HomeStrings.latestWorkout), style: _sectionTitleStyle),
             TextButton(
               onPressed: () {},
               child: Text(
-                'See More',
+                localize(_HomeStrings.seeMore),
                 style: TextStyle(
                   color: TColor.gray,
                   fontWeight: FontWeight.w700,
@@ -747,9 +775,10 @@ class _HomeViewState extends State<HomeView> {
           itemCount: _lastWorkoutList.length,
           separatorBuilder: (_, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            final workout = Map<String, dynamic>.from(_lastWorkoutList[index]);
-            return WorkoutRow.fromMap(
-              workout,
+            final config = _lastWorkoutList[index];
+            final workout = config.toSummaryItem(language);
+            return WorkoutRow(
+              workout: workout,
               onTap: () => context.push(AppRoute.finishedWorkout),
             );
           },
@@ -828,7 +857,16 @@ class _HomeViewState extends State<HomeView> {
 
 class _BmiCard extends StatelessWidget {
   final List<PieChartSectionData> showingSections;
-  const _BmiCard({required this.showingSections});
+  final LocalizedText title;
+  final LocalizedText subtitle;
+  final LocalizedText buttonText;
+
+  const _BmiCard({
+    required this.showingSections,
+    required this.title,
+    required this.subtitle,
+    required this.buttonText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -855,7 +893,7 @@ class _BmiCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'BMI (Body Mass Index)',
+                        context.localize(title),
                         style: TextStyle(
                           color: TColor.white,
                           fontSize: 14,
@@ -864,7 +902,7 @@ class _BmiCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'You have a normal weight',
+                        context.localize(subtitle),
                         style: TextStyle(
                           color: TColor.white.withValues(alpha: .8),
                           fontSize: 12,
@@ -875,7 +913,7 @@ class _BmiCard extends StatelessWidget {
                         width: 120,
                         height: 36,
                         child: RoundButton(
-                          title: 'View More',
+                          title: context.localize(buttonText),
                           type: RoundButtonType.bgSGradient,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -972,4 +1010,151 @@ class _WaterIntakeEntry {
   final String timeRange;
   final String amount;
   const _WaterIntakeEntry(this.timeRange, this.amount);
+}
+
+class _PeriodOption {
+  const _PeriodOption({required this.key, required this.label});
+
+  final String key;
+  final LocalizedText label;
+}
+
+class _WorkoutConfig {
+  const _WorkoutConfig({
+    required this.name,
+    required this.image,
+    required this.calories,
+    required this.minutes,
+    required this.progress,
+  });
+
+  final LocalizedText name;
+  final String image;
+  final String calories;
+  final String minutes;
+  final double progress;
+
+  WorkoutSummaryItem toSummaryItem(AppLanguage language) {
+    return WorkoutSummaryItem(
+      imageAsset: image,
+      name: name.resolve(language),
+      calories: calories,
+      durationMinutes: minutes,
+      progress: progress,
+      subtitle: _HomeStrings.workoutDetail(language, calories, minutes),
+    );
+  }
+}
+
+class _HomeStrings {
+  static const welcomeBack = LocalizedText(
+    english: 'Welcome Back,',
+    indonesian: 'Selamat Datang Kembali,',
+  );
+
+  static const userName = LocalizedText(
+    english: 'GYM Buddy',
+    indonesian: 'GYM Buddy',
+  );
+
+  static const todayTarget = LocalizedText(
+    english: 'Today Target',
+    indonesian: 'Target Hari Ini',
+  );
+
+  static const check = LocalizedText(
+    english: 'Check',
+    indonesian: 'Periksa',
+  );
+
+  static const activityStatus = LocalizedText(
+    english: 'Activity Status',
+    indonesian: 'Status Aktivitas',
+  );
+
+  static const heartRate = LocalizedText(
+    english: 'Heart Rate',
+    indonesian: 'Detak Jantung',
+  );
+
+  static const nowLabel = LocalizedText(
+    english: 'now',
+    indonesian: 'sekarang',
+  );
+
+  static const waterIntake = LocalizedText(
+    english: 'Water Intake',
+    indonesian: 'Asupan Air',
+  );
+
+  static const realTimeUpdates = LocalizedText(
+    english: 'Real time updates',
+    indonesian: 'Pembaruan waktu nyata',
+  );
+
+  static const sleep = LocalizedText(
+    english: 'Sleep',
+    indonesian: 'Tidur',
+  );
+
+  static const calories = LocalizedText(
+    english: 'Calories',
+    indonesian: 'Kalori',
+  );
+
+  static const caloriesLeft = LocalizedText(
+    english: '230kCal\nleft',
+    indonesian: '230kKal\ntersisa',
+  );
+
+  static const latestWorkout = LocalizedText(
+    english: 'Latest Workout',
+    indonesian: 'Latihan Terbaru',
+  );
+
+  static const seeMore = LocalizedText(
+    english: 'See More',
+    indonesian: 'Lihat Semua',
+  );
+
+  static const workoutProgress = LocalizedText(
+    english: 'Workout Progress',
+    indonesian: 'Progres Latihan',
+  );
+
+  static const bmiTitle = LocalizedText(
+    english: 'BMI (Body Mass Index)',
+    indonesian: 'BMI (Indeks Massa Tubuh)',
+  );
+
+  static const bmiSubtitle = LocalizedText(
+    english: 'You have a normal weight',
+    indonesian: 'Berat badanmu normal',
+  );
+
+  static const viewMore = LocalizedText(
+    english: 'View More',
+    indonesian: 'Lihat Detail',
+  );
+
+  static const List<LocalizedText> weekdayAbbreviations = [
+    LocalizedText(english: 'Sun', indonesian: 'Min'),
+    LocalizedText(english: 'Mon', indonesian: 'Sen'),
+    LocalizedText(english: 'Tue', indonesian: 'Sel'),
+    LocalizedText(english: 'Wed', indonesian: 'Rab'),
+    LocalizedText(english: 'Thu', indonesian: 'Kam'),
+    LocalizedText(english: 'Fri', indonesian: 'Jum'),
+    LocalizedText(english: 'Sat', indonesian: 'Sab'),
+  ];
+
+  static String workoutDetail(
+    AppLanguage language,
+    String calories,
+    String minutes,
+  ) {
+    return switch (language) {
+      AppLanguage.english => '$calories Calories Burned | $minutes minutes',
+      AppLanguage.indonesian => '$calories Kalori Terbakar | $minutes menit',
+    };
+  }
 }
