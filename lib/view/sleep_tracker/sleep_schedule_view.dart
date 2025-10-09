@@ -8,8 +8,10 @@ import 'package:go_router/go_router.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 
 import '../../common/color_extension.dart';
+import '../../common/models/sleep_schedule_entry.dart';
 import '../../common_widget/round_button.dart';
 import '../../common_widget/today_sleep_schedule_row.dart';
+import 'data/mock_sleep_schedule.dart';
 
 class SleepScheduleView extends StatefulWidget {
   const SleepScheduleView({super.key});
@@ -24,25 +26,13 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
 
   late DateTime _selectedDate;
 
-  static const List<Map<String, String>> _todaySchedule = [
-    {
-      "name": "Bedtime",
-      "image": "assets/img/bed.png",
-      "time": "01/06/2023 09:00 PM",
-      "duration": "in 6hours 22minutes",
-    },
-    {
-      "name": "Alarm",
-      "image": "assets/img/alaarm.png",
-      "time": "02/06/2023 05:10 AM",
-      "duration": "in 14hours 30minutes",
-    },
-  ];
+  late final List<SleepScheduleEntry> _todaySchedule;
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
+    _todaySchedule = mockTodaySleepSchedule;
   }
 
   @override
@@ -50,210 +40,43 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
     final media = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: TColor.white,
-        centerTitle: true,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          padding: EdgeInsets.zero,
-          icon: Container(
-            height: 40,
-            width: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: TColor.lightGray,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Image.asset(
-              "assets/img/black_btn.png",
-              width: 15,
-              height: 15,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-        title: Text(
-          "Sleep Schedule",
-          style: TextStyle(
-            color: TColor.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            padding: EdgeInsets.zero,
-            icon: Container(
-              height: 40,
-              width: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Image.asset(
-                "assets/img/more_btn.png",
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(context),
       backgroundColor: TColor.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Container(
-                width: double.maxFinite,
-                padding: const EdgeInsets.all(20),
-                height: media.width * 0.4,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      TColor.primaryColor2.withValues(alpha: 0.4),
-                      TColor.primaryColor1.withValues(alpha: 0.4),
-                    ],
+      body: SafeArea(
+        bottom: false,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: media.width * 0.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: _buildIdealSleepCard(media),
+              ),
+              SizedBox(height: media.width * 0.05),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Text(
+                  'Your Schedule',
+                  style: TextStyle(
+                    color: TColor.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 15),
-                        Text(
-                          "Ideal Hours for Sleep",
-                          style: TextStyle(color: TColor.black, fontSize: 14),
-                        ),
-                        Text(
-                          "8hours 30minutes",
-                          style: TextStyle(
-                            color: TColor.primaryColor2,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const Spacer(),
-                        SizedBox(
-                          width: 110,
-                          height: 35,
-                          child: RoundButton(
-                            title: "Learn More",
-                            fontSize: 12,
-                            onPressed: () {},
-                          ),
-                        ),
-                      ],
-                    ),
-                    Image.asset(
-                      "assets/img/sleep_schedule.png",
-                      width: media.width * 0.35,
-                    ),
-                  ],
                 ),
               ),
-            ),
-            SizedBox(height: media.width * 0.05),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Text(
-                "Your Schedule",
-                style: TextStyle(
-                  color: TColor.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+              _buildCalendar(),
+              SizedBox(height: media.width * 0.03),
+              _buildScheduleList(),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: _buildSleepSummary(media),
               ),
-            ),
-            CalendarAgenda(
-              controller: _calendarController,
-              appbar: false,
-              selectedDayPosition: SelectedDayPosition.center,
-              weekDay: WeekDay.short,
-              backgroundColor: Colors.transparent,
-              fullCalendarScroll: FullCalendarScroll.horizontal,
-              fullCalendarDay: WeekDay.short,
-              selectedDateColor: Colors.white,
-              dateColor: Colors.black,
-              locale: 'en',
-              initialDate: DateTime.now(),
-              calendarEventColor: TColor.primaryColor2,
-              firstDate: DateTime.now().subtract(const Duration(days: 140)),
-              lastDate: DateTime.now().add(const Duration(days: 60)),
-              onDateSelected: (date) {
-                setState(() => _selectedDate = date);
-              },
-            ),
-            SizedBox(height: media.width * 0.03),
-            ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: _todaySchedule.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemBuilder: (context, index) =>
-                  TodaySleepScheduleRow(sObj: _todaySchedule[index]),
-            ),
-            Container(
-              width: double.maxFinite,
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    TColor.secondaryColor2.withValues(alpha: 0.4),
-                    TColor.secondaryColor1.withValues(alpha: 0.4),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "You will get 8hours 10minutes\nfor tonight",
-                    style: TextStyle(color: TColor.black, fontSize: 12),
-                  ),
-                  const SizedBox(height: 15),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SimpleAnimationProgressBar(
-                        height: 15,
-                        width: media.width - 80,
-                        backgroundColor: Colors.grey.shade100,
-                        foregroundColor: Colors.purple,
-                        ratio: 0.96,
-                        direction: Axis.horizontal,
-                        curve: Curves.fastLinearToSlowEaseIn,
-                        duration: const Duration(seconds: 3),
-                        borderRadius: BorderRadius.circular(7.5),
-                        gradientColor: LinearGradient(
-                          colors: TColor.secondaryG,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                      ),
-                      Text(
-                        "96%",
-                        style: TextStyle(color: TColor.black, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: media.width * 0.05),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -266,6 +89,202 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
         backgroundColor: TColor.secondaryColor2,
         foregroundColor: TColor.white,
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: TColor.white,
+      centerTitle: true,
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () => context.pop(),
+        padding: EdgeInsets.zero,
+        icon: Container(
+          height: 40,
+          width: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: TColor.lightGray,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Image.asset(
+            'assets/img/black_btn.png',
+            width: 15,
+            height: 15,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+      title: Text(
+        'Sleep Schedule',
+        style: TextStyle(
+          color: TColor.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          padding: EdgeInsets.zero,
+          icon: Container(
+            height: 40,
+            width: 40,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: TColor.lightGray,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Image.asset(
+              'assets/img/more_btn.png',
+              width: 15,
+              height: 15,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIdealSleepCard(Size media) {
+    return Container(
+      width: double.maxFinite,
+      padding: const EdgeInsets.all(20),
+      height: media.width * 0.4,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            TColor.primaryColor2.withValues(alpha: 0.4),
+            TColor.primaryColor1.withValues(alpha: 0.4),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 15),
+              Text(
+                'Ideal Hours for Sleep',
+                style: TextStyle(color: TColor.black, fontSize: 14),
+              ),
+              Text(
+                '8hours 30minutes',
+                style: TextStyle(
+                  color: TColor.primaryColor2,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const Spacer(),
+              SizedBox(
+                width: 110,
+                height: 35,
+                child: RoundButton(
+                  title: 'Learn More',
+                  fontSize: 12,
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
+          Image.asset(
+            'assets/img/sleep_schedule.png',
+            width: media.width * 0.35,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCalendar() {
+    return CalendarAgenda(
+      controller: _calendarController,
+      appbar: false,
+      selectedDayPosition: SelectedDayPosition.center,
+      weekDay: WeekDay.short,
+      backgroundColor: Colors.transparent,
+      fullCalendarScroll: FullCalendarScroll.horizontal,
+      fullCalendarDay: WeekDay.short,
+      selectedDateColor: Colors.white,
+      dateColor: Colors.black,
+      locale: 'en',
+      initialDate: DateTime.now(),
+      calendarEventColor: TColor.primaryColor2,
+      firstDate: DateTime.now().subtract(const Duration(days: 140)),
+      lastDate: DateTime.now().add(const Duration(days: 60)),
+      onDateSelected: (date) {
+        setState(() => _selectedDate = date);
+      },
+    );
+  }
+
+  Widget _buildScheduleList() {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _todaySchedule.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) => TodaySleepScheduleRow(
+        schedule: _todaySchedule[index],
+      ),
+    );
+  }
+
+  Widget _buildSleepSummary(Size media) {
+    return Container(
+      width: double.maxFinite,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            TColor.secondaryColor2.withValues(alpha: 0.4),
+            TColor.secondaryColor1.withValues(alpha: 0.4),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'You will get 8hours 10minutes\nfor tonight',
+            style: TextStyle(color: TColor.black, fontSize: 12),
+          ),
+          const SizedBox(height: 15),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SimpleAnimationProgressBar(
+                height: 15,
+                width: media.width - 80,
+                backgroundColor: Colors.grey.shade100,
+                foregroundColor: Colors.purple,
+                ratio: 0.96,
+                direction: Axis.horizontal,
+                curve: Curves.fastLinearToSlowEaseIn,
+                duration: const Duration(seconds: 3),
+                borderRadius: BorderRadius.circular(7.5),
+                gradientColor: LinearGradient(
+                  colors: TColor.secondaryG,
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+              Text(
+                '96%',
+                style: TextStyle(color: TColor.black, fontSize: 12),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

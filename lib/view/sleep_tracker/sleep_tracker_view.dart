@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../common/color_extension.dart';
+import '../../common/models/sleep_schedule_entry.dart';
 import '../../common_widget/round_button.dart';
 import '../../common_widget/today_sleep_schedule_row.dart';
+import 'data/mock_sleep_schedule.dart';
 
 class SleepTrackerView extends StatefulWidget {
   const SleepTrackerView({super.key});
@@ -17,22 +19,15 @@ class SleepTrackerView extends StatefulWidget {
 }
 
 class _SleepTrackerViewState extends State<SleepTrackerView> {
-  static const List<Map<String, String>> _todaySchedule = [
-    {
-      "name": "Bedtime",
-      "image": "assets/img/bed.png",
-      "time": "01/06/2023 09:00 PM",
-      "duration": "in 6hours 22minutes",
-    },
-    {
-      "name": "Alarm",
-      "image": "assets/img/alaarm.png",
-      "time": "02/06/2023 05:10 AM",
-      "duration": "in 14hours 30minutes",
-    },
-  ];
+  late final List<SleepScheduleEntry> _todaySchedule;
 
   final List<int> _highlightedTooltipIndices = [4];
+
+  @override
+  void initState() {
+    super.initState();
+    _todaySchedule = mockTodaySleepSchedule;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -281,8 +276,9 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                     itemCount: _todaySchedule.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 12),
-                    itemBuilder: (context, index) =>
-                        TodaySleepScheduleRow(sObj: _todaySchedule[index]),
+                    itemBuilder: (context, index) => TodaySleepScheduleRow(
+                      schedule: _todaySchedule[index],
+                    ),
                   ),
 
                   const SizedBox(height: 16),
