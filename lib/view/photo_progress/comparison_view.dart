@@ -1,12 +1,13 @@
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/date_time_utils.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../common/color_extension.dart';
-import '../../common/date_time_utils.dart';
 
 class ComparisonView extends StatefulWidget {
   const ComparisonView({super.key});
@@ -29,6 +30,8 @@ class _ComparisonViewState extends State<ComparisonView> {
 
   @override
   Widget build(BuildContext context) {
+    final localize = context.localize;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: TColor.white,
@@ -48,7 +51,7 @@ class _ComparisonViewState extends State<ComparisonView> {
           ),
         ),
         title: Text(
-          'Comparison',
+          localize(_ComparisonTexts.title),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -81,7 +84,7 @@ class _ComparisonViewState extends State<ComparisonView> {
           children: [
             IconTitleNextRow(
               icon: 'assets/img/date.png',
-              title: 'Select month 1',
+              title: localize(_ComparisonTexts.selectMonth1),
               time: DateTimeUtils.formatDate(_firstMonth, pattern: 'MMMM yyyy'),
               onPressed: () => _pickMonth(isFirst: true),
               color: TColor.lightGray,
@@ -89,7 +92,7 @@ class _ComparisonViewState extends State<ComparisonView> {
             const SizedBox(height: 15),
             IconTitleNextRow(
               icon: 'assets/img/date.png',
-              title: 'Select month 2',
+              title: localize(_ComparisonTexts.selectMonth2),
               time: DateTimeUtils.formatDate(
                 _secondMonth,
                 pattern: 'MMMM yyyy',
@@ -98,7 +101,10 @@ class _ComparisonViewState extends State<ComparisonView> {
               color: TColor.lightGray,
             ),
             const Spacer(),
-            RoundButton(title: 'Compare', onPressed: _onCompare),
+            RoundButton(
+              title: localize(_ComparisonTexts.compareButton),
+              onPressed: _onCompare,
+            ),
             const SizedBox(height: 15),
           ],
         ),
@@ -108,12 +114,13 @@ class _ComparisonViewState extends State<ComparisonView> {
 
   Future<void> _pickMonth({required bool isFirst}) async {
     final initialDate = isFirst ? _firstMonth : _secondMonth;
+    final helpText = context.localize(_ComparisonTexts.selectMonthHelp);
     final selectedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: DateTime(2020, 1),
       lastDate: DateTime.now(),
-      helpText: 'Select month',
+      helpText: helpText,
       initialDatePickerMode: DatePickerMode.year,
       selectableDayPredicate: (day) => day.day == 1,
     );
@@ -133,9 +140,7 @@ class _ComparisonViewState extends State<ComparisonView> {
 
   void _onCompare() {
     if (!_isSelectionValid()) {
-      _showSnackBar(
-        'Please ensure the months are different and the first month is earlier.',
-      );
+      _showSnackBar(context.localize(_ComparisonTexts.invalidSelection));
       return;
     }
 
@@ -159,22 +164,23 @@ class _ComparisonViewState extends State<ComparisonView> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) {
+      builder: (sheetContext) {
+        final localize = sheetContext.localize;
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: const Icon(Icons.share),
-                title: const Text('Share progress'),
+                title: Text(localize(_ComparisonTexts.shareProgress)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _showSnackBar('Share functionality coming soon.');
+                  _showSnackBar(localize(_ComparisonTexts.shareInfo));
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline),
-                title: const Text('Reset selection'),
+                title: Text(localize(_ComparisonTexts.resetSelection)),
                 onTap: () {
                   Navigator.of(context).pop();
                   setState(() {
@@ -196,4 +202,53 @@ class _ComparisonViewState extends State<ComparisonView> {
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
   }
+}
+
+final class _ComparisonTexts {
+  static const title = LocalizedText(
+    english: 'Comparison',
+    indonesian: 'Perbandingan',
+  );
+
+  static const selectMonth1 = LocalizedText(
+    english: 'Select month 1',
+    indonesian: 'Pilih bulan 1',
+  );
+
+  static const selectMonth2 = LocalizedText(
+    english: 'Select month 2',
+    indonesian: 'Pilih bulan 2',
+  );
+
+  static const selectMonthHelp = LocalizedText(
+    english: 'Select month',
+    indonesian: 'Pilih bulan',
+  );
+
+  static const compareButton = LocalizedText(
+    english: 'Compare',
+    indonesian: 'Bandingkan',
+  );
+
+  static const invalidSelection = LocalizedText(
+    english:
+        'Please ensure the months are different and the first month is earlier.',
+    indonesian:
+        'Pastikan kedua bulan berbeda dan bulan pertama lebih awal.',
+  );
+
+  static const shareProgress = LocalizedText(
+    english: 'Share progress',
+    indonesian: 'Bagikan progres',
+  );
+
+  static const shareInfo = LocalizedText(
+    english: 'Share functionality coming soon.',
+    indonesian: 'Fitur bagikan segera hadir.',
+  );
+
+  static const resetSelection = LocalizedText(
+    english: 'Reset selection',
+    indonesian: 'Atur ulang pilihan',
+  );
 }

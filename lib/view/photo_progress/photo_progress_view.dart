@@ -1,10 +1,12 @@
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/date_time_utils.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
+import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../common/color_extension.dart';
-import '../../common/date_time_utils.dart';
-import '../../common_widget/round_button.dart';
 
 class PhotoProgressView extends StatefulWidget {
   const PhotoProgressView({super.key});
@@ -14,7 +16,7 @@ class PhotoProgressView extends StatefulWidget {
 }
 
 class _PhotoProgressViewState extends State<PhotoProgressView> {
-  final List<_PhotoProgressGroup> _photoGroups = [
+  final List<_PhotoProgressGroup> _photoGroups = const [
     _PhotoProgressGroup(
       date: DateTime(2023, 6, 2),
       photos: [
@@ -40,6 +42,9 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final localize = context.localize;
+    final language = context.appLanguage;
+    final languageController = AppLanguageScope.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +54,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         leadingWidth: 0,
         leading: const SizedBox.shrink(),
         title: Text(
-          'Progress Photo',
+          localize(_PhotoProgressTexts.title),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -57,6 +62,15 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
           ),
         ),
         actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: SafeArea(
+              child: AppLanguageToggle(
+                selectedLanguage: language,
+                onSelected: languageController.select,
+              ),
+            ),
+          ),
           IconButton(
             onPressed: _showMoreOptions,
             padding: EdgeInsets.zero,
@@ -84,9 +98,9 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (_isReminderVisible) _buildReminderCard(),
-            _buildEducationCard(media),
-            _buildCompareCard(),
-            _buildGalleryHeader(),
+            _buildEducationCard(media, localize),
+            _buildCompareCard(localize),
+            _buildGalleryHeader(localize),
             ..._photoGroups.map(_buildPhotoGroup),
           ],
         ),
@@ -115,6 +129,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
   }
 
   Widget _buildReminderCard() {
+    final localize = context.localize;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Container(
@@ -145,16 +160,16 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Reminder!',
-                    style: TextStyle(
+                  Text(
+                    localize(_PhotoProgressTexts.reminderTitle),
+                    style: const TextStyle(
                       color: Colors.red,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
-                    'Next photos fall on July 08',
+                    localize(_PhotoProgressTexts.reminderSubtitle),
                     style: TextStyle(
                       color: TColor.black,
                       fontSize: 14,
@@ -174,7 +189,10 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
     );
   }
 
-  Widget _buildEducationCard(Size media) {
+  Widget _buildEducationCard(
+    Size media,
+    String Function(LocalizedText) localize,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Container(
@@ -198,7 +216,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
               children: [
                 const SizedBox(height: 8),
                 Text(
-                  'Track your progress each\nmonth with photos',
+                  localize(_PhotoProgressTexts.educationDescription),
                   style: TextStyle(color: TColor.black, fontSize: 12),
                 ),
                 const Spacer(),
@@ -206,9 +224,10 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                   width: 120,
                   height: 36,
                   child: RoundButton(
-                    title: 'Learn More',
+                    title: localize(_PhotoProgressTexts.learnMoreButton),
                     fontSize: 12,
-                    onPressed: () => _showSnackBar('Tutorial coming soon.'),
+                    onPressed: () =>
+                        _showSnackBar(localize(_PhotoProgressTexts.learnMoreInfo)),
                   ),
                 ),
               ],
@@ -223,7 +242,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
     );
   }
 
-  Widget _buildCompareCard() {
+  Widget _buildCompareCard(String Function(LocalizedText) localize) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -235,7 +254,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Compare my photo',
+            localize(_PhotoProgressTexts.compareTitle),
             style: TextStyle(
               color: TColor.black,
               fontSize: 14,
@@ -246,7 +265,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             width: 110,
             height: 32,
             child: RoundButton(
-              title: 'Compare',
+              title: localize(_PhotoProgressTexts.compareButton),
               type: RoundButtonType.bgGradient,
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -258,14 +277,14 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
     );
   }
 
-  Widget _buildGalleryHeader() {
+  Widget _buildGalleryHeader(String Function(LocalizedText) localize) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Gallery',
+            localize(_PhotoProgressTexts.galleryTitle),
             style: TextStyle(
               color: TColor.black,
               fontSize: 16,
@@ -273,8 +292,12 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             ),
           ),
           TextButton(
-            onPressed: () => _showSnackBar('Opening full gallery soon.'),
-            child: Text('See more', style: TextStyle(color: TColor.gray)),
+            onPressed: () =>
+                _showSnackBar(localize(_PhotoProgressTexts.galleryInfo)),
+            child: Text(
+              localize(_PhotoProgressTexts.seeMoreButton),
+              style: TextStyle(color: TColor.gray),
+            ),
           ),
         ],
       ),
@@ -326,24 +349,25 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
+        final localize = context.localize;
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: const Icon(Icons.edit),
-                title: const Text('Manage reminders'),
+                title: Text(localize(_PhotoProgressTexts.manageReminders)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _showSnackBar('Reminder settings coming soon.');
+                  _showSnackBar(localize(_PhotoProgressTexts.reminderSettings));
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline),
-                title: const Text('Clear gallery'),
+                title: Text(localize(_PhotoProgressTexts.clearGallery)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _showSnackBar('Gallery cleared (demo).');
+                  _showSnackBar(localize(_PhotoProgressTexts.galleryCleared));
                 },
               ),
             ],
@@ -354,7 +378,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
   }
 
   void _onCapturePhoto() {
-    _showSnackBar('Launching camera...');
+    _showSnackBar(context.localize(_PhotoProgressTexts.launchingCamera));
   }
 
   void _showSnackBar(String message) {
@@ -369,4 +393,86 @@ class _PhotoProgressGroup {
 
   final DateTime date;
   final List<String> photos;
+}
+
+final class _PhotoProgressTexts {
+  static const title = LocalizedText(
+    english: 'Progress Photo',
+    indonesian: 'Foto Progres',
+  );
+
+  static const reminderTitle = LocalizedText(
+    english: 'Reminder!',
+    indonesian: 'Pengingat!',
+  );
+
+  static const reminderSubtitle = LocalizedText(
+    english: 'Next photos fall on July 08',
+    indonesian: 'Foto berikutnya pada 8 Juli',
+  );
+
+  static const educationDescription = LocalizedText(
+    english: 'Track your progress each\nmonth with photos',
+    indonesian: 'Lacak progresmu setiap\nbulan dengan foto',
+  );
+
+  static const learnMoreButton = LocalizedText(
+    english: 'Learn More',
+    indonesian: 'Pelajari',
+  );
+
+  static const learnMoreInfo = LocalizedText(
+    english: 'Tutorial coming soon.',
+    indonesian: 'Panduan segera hadir.',
+  );
+
+  static const compareTitle = LocalizedText(
+    english: 'Compare my photo',
+    indonesian: 'Bandingkan foto saya',
+  );
+
+  static const compareButton = LocalizedText(
+    english: 'Compare',
+    indonesian: 'Bandingkan',
+  );
+
+  static const galleryTitle = LocalizedText(
+    english: 'Gallery',
+    indonesian: 'Galeri',
+  );
+
+  static const seeMoreButton = LocalizedText(
+    english: 'See more',
+    indonesian: 'Lihat semua',
+  );
+
+  static const galleryInfo = LocalizedText(
+    english: 'Opening full gallery soon.',
+    indonesian: 'Galeri lengkap segera tersedia.',
+  );
+
+  static const manageReminders = LocalizedText(
+    english: 'Manage reminders',
+    indonesian: 'Kelola pengingat',
+  );
+
+  static const reminderSettings = LocalizedText(
+    english: 'Reminder settings coming soon.',
+    indonesian: 'Pengaturan pengingat segera hadir.',
+  );
+
+  static const clearGallery = LocalizedText(
+    english: 'Clear gallery',
+    indonesian: 'Hapus galeri',
+  );
+
+  static const galleryCleared = LocalizedText(
+    english: 'Gallery cleared (demo).',
+    indonesian: 'Galeri dibersihkan (demo).',
+  );
+
+  static const launchingCamera = LocalizedText(
+    english: 'Launching camera...',
+    indonesian: 'Membuka kamera...',
+  );
 }
