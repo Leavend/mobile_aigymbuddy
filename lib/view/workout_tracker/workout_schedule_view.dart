@@ -1,12 +1,12 @@
 // lib/view/workout_tracker/workout_schedule_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../common/color_extension.dart';
 import '../../common/date_time_utils.dart';
 import '../../common_widget/round_button.dart';
 
@@ -18,67 +18,40 @@ class WorkoutScheduleView extends StatefulWidget {
 }
 
 class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
-  final CalendarAgendaController _calendarAgendaControllerAppBar =
-      CalendarAgendaController();
-  late DateTime _selectedDateAppBBar;
-  late final DateTime _firstAvailableDate;
-  late final DateTime _lastAvailableDate;
-
-  final List<Map<String, String>> eventArr = [
-    {"name": "Ab Workout", "start_time": "25/05/2023 07:30 AM"},
-    {"name": "Upperbody Workout", "start_time": "25/05/2023 09:00 AM"},
-    {"name": "Lowerbody Workout", "start_time": "25/05/2023 03:00 PM"},
-    {"name": "Ab Workout", "start_time": "26/05/2023 07:30 AM"},
-    {"name": "Upperbody Workout", "start_time": "26/05/2023 09:00 AM"},
-    {"name": "Lowerbody Workout", "start_time": "26/05/2023 03:00 PM"},
-    {"name": "Ab Workout", "start_time": "27/05/2023 07:30 AM"},
-    {"name": "Upperbody Workout", "start_time": "27/05/2023 09:00 AM"},
-    {"name": "Lowerbody Workout", "start_time": "27/05/2023 03:00 PM"},
+  static const List<Map<String, String>> _rawEvents = [
+    {'name': 'Ab Workout', 'start_time': '25/05/2023 07:30 AM'},
+    {'name': 'Upperbody Workout', 'start_time': '25/05/2023 09:00 AM'},
+    {'name': 'Lowerbody Workout', 'start_time': '25/05/2023 03:00 PM'},
+    {'name': 'Ab Workout', 'start_time': '26/05/2023 07:30 AM'},
+    {'name': 'Upperbody Workout', 'start_time': '26/05/2023 09:00 AM'},
+    {'name': 'Lowerbody Workout', 'start_time': '26/05/2023 03:00 PM'},
+    {'name': 'Ab Workout', 'start_time': '27/05/2023 07:30 AM'},
+    {'name': 'Upperbody Workout', 'start_time': '27/05/2023 09:00 AM'},
+    {'name': 'Lowerbody Workout', 'start_time': '27/05/2023 03:00 PM'},
   ];
 
-  List<Map<String, dynamic>> selectDayEventArr = [];
+  final CalendarAgendaController _calendarController =
+      CalendarAgendaController();
+
+  late DateTime _selectedDate;
+  late final DateTime _firstAvailableDate;
+  late final DateTime _lastAvailableDate;
+  late final List<WorkoutEvent> _allEvents;
+
+  List<WorkoutEvent> _eventsForSelectedDay = const [];
 
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
-    _selectedDateAppBBar = now;
+    _selectedDate = now;
     _firstAvailableDate = now.subtract(const Duration(days: 140));
     _lastAvailableDate = now.add(const Duration(days: 60));
-    setDayEventWorkoutList();
-  }
-
-  void setDayEventWorkoutList() {
-    final date = DateTimeUtils.startOfDay(_selectedDateAppBBar);
-    selectDayEventArr = eventArr
-        .map((wObj) {
-          try {
-            // Try to parse the date
-            return {
-              "name": wObj["name"],
-              "start_time": wObj["start_time"],
-              "date": DateTimeUtils.parseDate(
-                wObj["start_time"]!,
-                pattern: "dd/MM/yyyy hh:mm aa",
-              ),
-            };
-          } catch (e) {
-            // If parsing fails, print an error and return null
-            debugPrint(
-              'Failed to parse date for event: ${wObj["name"]}, value: ${wObj["start_time"]}. Error: $e',
-            );
-            return null;
-          }
-        })
-        // Filter out any items that failed to parse
-        .where((item) => item != null)
-        .where(
-          (wObj) => DateTimeUtils.startOfDay(wObj!["date"] as DateTime) == date,
-        )
-        .cast<Map<String, dynamic>>() // Ensure the list type is correct
-        .toList();
-
-    if (mounted) setState(() {});
+    _allEvents = _rawEvents
+        .map(WorkoutEvent.fromJson)
+        .whereType<WorkoutEvent>()
+        .toList(growable: false);
+    _updateEventsForSelectedDay();
   }
 
   @override
@@ -102,7 +75,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(
-              "assets/img/black_btn.png",
+              'assets/img/black_btn.png',
               width: 15,
               height: 15,
               fit: BoxFit.contain,
@@ -110,7 +83,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
           ),
         ),
         title: Text(
-          "Workout Schedule",
+          'Workout Schedule',
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -130,7 +103,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Image.asset(
-                "assets/img/more_btn.png",
+                'assets/img/more_btn.png',
                 width: 15,
                 height: 15,
                 fit: BoxFit.contain,
@@ -143,9 +116,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Calendar (bersih dari parameter yang tak dikenal)
           CalendarAgenda(
-            controller: _calendarAgendaControllerAppBar,
+            controller: _calendarController,
             appbar: false,
             selectedDayPosition: SelectedDayPosition.center,
             leading: Row(
@@ -154,7 +126,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 IconButton(
                   onPressed: () => _changeSelectedDay(-1),
                   icon: Image.asset(
-                    "assets/img/ArrowLeft.png",
+                    'assets/img/ArrowLeft.png',
                     width: 15,
                     height: 15,
                   ),
@@ -164,7 +136,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                   icon: Transform.flip(
                     flipX: true,
                     child: Image.asset(
-                      "assets/img/ArrowLeft.png",
+                      'assets/img/ArrowLeft.png',
                       width: 15,
                       height: 15,
                     ),
@@ -172,7 +144,6 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 ),
               ],
             ),
-            // NOTE: 'training' parameter tidak ada di paket → dihapus
             weekDay: WeekDay.short,
             backgroundColor: Colors.transparent,
             fullCalendarScroll: FullCalendarScroll.horizontal,
@@ -180,17 +151,15 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
             selectedDateColor: Colors.white,
             dateColor: Colors.black,
             locale: 'en',
-            initialDate: _selectedDateAppBBar,
+            initialDate: _selectedDate,
             calendarEventColor: TColor.primaryColor2,
             firstDate: _firstAvailableDate,
             lastDate: _lastAvailableDate,
             onDateSelected: (date) {
-              _selectedDateAppBBar = date;
-              setDayEventWorkoutList();
+              _selectedDate = date;
+              _updateEventsForSelectedDay();
             },
           ),
-
-          // Timeline
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -205,9 +174,9 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                   ),
                   itemBuilder: (context, index) {
                     final availWidth = (media.width * 1.2) - (80 + 40);
-                    final slotArr = selectDayEventArr.where((wObj) {
-                      return (wObj["date"] as DateTime).hour == index;
-                    }).toList();
+                    final slotEvents = _eventsForSelectedDay
+                        .where((event) => event.startTime.hour == index)
+                        .toList();
 
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -225,22 +194,18 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                               ),
                             ),
                           ),
-                          if (slotArr.isNotEmpty)
+                          if (slotEvents.isNotEmpty)
                             Expanded(
                               child: Stack(
                                 alignment: Alignment.centerLeft,
-                                children: slotArr.map((raw) {
-                                  final schedule = Map<String, dynamic>.from(
-                                    raw,
-                                  );
-                                  final date = schedule["date"] as DateTime;
-                                  final min = date.minute;
-                                  final pos = (min / 60) * 2 - 1;
+                                children: slotEvents.map((event) {
+                                  final minutes = event.startTime.minute;
+                                  final pos = (minutes / 60) * 2 - 1;
 
                                   return Align(
                                     alignment: Alignment(pos, 0),
                                     child: InkWell(
-                                      onTap: () => _showWorkoutDialog(schedule),
+                                      onTap: () => _showWorkoutDialog(event),
                                       child: Container(
                                         height: 35,
                                         width: availWidth * 0.5,
@@ -252,12 +217,11 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                           gradient: LinearGradient(
                                             colors: TColor.secondaryG,
                                           ),
-                                          borderRadius: BorderRadius.circular(
-                                            17.5,
-                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(17.5),
                                         ),
                                         child: Text(
-                                          "${schedule["name"]}, ${DateTimeUtils.reformatDateString(schedule["start_time"].toString(), outputPattern: "h:mm aa")}",
+                                          "${event.name}, ${DateTimeUtils.formatDate(event.startTime, pattern: 'h:mm aa')}",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -305,25 +269,25 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
   }
 
   void _changeSelectedDay(int offsetDays) {
-    final target = _selectedDateAppBBar.add(Duration(days: offsetDays));
+    final target = _selectedDate.add(Duration(days: offsetDays));
     final clamped = target.isBefore(_firstAvailableDate)
         ? _firstAvailableDate
         : target.isAfter(_lastAvailableDate)
-        ? _lastAvailableDate
-        : target;
-    _selectedDateAppBBar = clamped;
-    _calendarAgendaControllerAppBar.goToDay(clamped);
-    setDayEventWorkoutList();
+            ? _lastAvailableDate
+            : target;
+    _selectedDate = clamped;
+    _calendarController.goToDay(clamped);
+    _updateEventsForSelectedDay();
   }
 
   void _navigateToAddSchedule() {
-    context.push(
-      AppRoute.addWorkoutSchedule,
-      extra: AddScheduleArgs(date: _selectedDateAppBBar),
+    context.pushNamed(
+      AppRoute.addWorkoutScheduleName,
+      extra: AddScheduleArgs(date: _selectedDate),
     );
   }
 
-  Future<void> _showWorkoutDialog(Map<String, dynamic> schedule) async {
+  Future<void> _showWorkoutDialog(WorkoutEvent event) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -355,7 +319,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Image.asset(
-                          "assets/img/closed_btn.png",
+                          'assets/img/closed_btn.png',
                           width: 15,
                           height: 15,
                           fit: BoxFit.contain,
@@ -363,7 +327,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                       ),
                     ),
                     Text(
-                      "Workout Schedule",
+                      'Workout Schedule',
                       style: TextStyle(
                         color: TColor.black,
                         fontSize: 16,
@@ -385,7 +349,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Image.asset(
-                          "assets/img/more_btn.png",
+                          'assets/img/more_btn.png',
                           width: 15,
                           height: 15,
                           fit: BoxFit.contain,
@@ -396,7 +360,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 ),
                 const SizedBox(height: 15),
                 Text(
-                  schedule["name"].toString(),
+                  event.name,
                   style: TextStyle(
                     color: TColor.black,
                     fontSize: 14,
@@ -407,20 +371,20 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 Row(
                   children: [
                     Image.asset(
-                      "assets/img/time_workout.png",
+                      'assets/img/time_workout.png',
                       height: 20,
                       width: 20,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      "${DateTimeUtils.describeDayFromString(schedule["start_time"].toString())} | ${DateTimeUtils.reformatDateString(schedule["start_time"].toString(), outputPattern: "h:mm aa")}",
+                      "${event.startTime.relativeDayLabel} | ${DateTimeUtils.formatDate(event.startTime, pattern: 'h:mm aa')}",
                       style: TextStyle(color: TColor.gray, fontSize: 12),
                     ),
                   ],
                 ),
                 const SizedBox(height: 15),
                 RoundButton(
-                  title: "Mark Done",
+                  title: 'Mark Done',
                   onPressed: () => Navigator.of(dialogContext).pop(true),
                 ),
               ],
@@ -432,8 +396,46 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
 
     if (result == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Marked ${schedule["name"]} as done')),
+        SnackBar(content: Text('Marked ${event.name} as done')),
       );
+    }
+  }
+
+  void _updateEventsForSelectedDay() {
+    final targetDate = _selectedDate.startOfDay;
+    _eventsForSelectedDay = _allEvents
+        .where((event) => event.startTime.startOfDay == targetDate)
+        .toList(growable: false);
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+}
+
+class WorkoutEvent {
+  const WorkoutEvent({required this.name, required this.startTime});
+
+  final String name;
+  final DateTime startTime;
+
+  static WorkoutEvent? fromJson(Map<String, String> json) {
+    final name = json['name'];
+    final rawStartTime = json['start_time'];
+    if (name == null || rawStartTime == null) {
+      debugPrint('Invalid workout event payload: $json');
+      return null;
+    }
+
+    try {
+      final startTime = DateTimeUtils.parseDate(
+        rawStartTime,
+        pattern: 'dd/MM/yyyy hh:mm aa',
+      );
+      return WorkoutEvent(name: name, startTime: startTime);
+    } on FormatException catch (error) {
+      debugPrint('Failed to parse date for "$name": $error');
+      return null;
     }
   }
 }

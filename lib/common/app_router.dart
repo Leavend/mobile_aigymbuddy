@@ -24,9 +24,9 @@ import 'package:aigymbuddy/view/sleep_tracker/sleep_tracker_view.dart';
 import 'package:aigymbuddy/view/splash/launch_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/add_schedule_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/exercises_step_details.dart';
+import 'package:aigymbuddy/view/workout_tracker/workout_detail_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_schedule_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_tracker_view.dart';
-import 'package:aigymbuddy/view/workout_tracker/workour_detail_view.dart';
 import 'package:go_router/go_router.dart';
 
 import 'models/navigation_args.dart';
@@ -48,6 +48,11 @@ class AppRoute {
   static const String addWorkoutSchedule = '/workout-schedule/add';
   static const String workoutDetail = '/workout-detail';
   static const String exerciseSteps = '/exercise-steps';
+  static const String workoutTrackerName = 'workout-tracker';
+  static const String workoutScheduleName = 'workout-schedule';
+  static const String addWorkoutScheduleName = 'add-workout-schedule';
+  static const String workoutDetailName = 'workout-detail';
+  static const String exerciseStepsName = 'exercise-steps';
   static const String mealPlanner = '/meal-planner';
   static const String mealSchedule = '/meal-planner/schedule';
   static const String mealFoodDetails = '/meal-planner/food-details';
@@ -165,14 +170,17 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.workoutTracker,
+        name: AppRoute.workoutTrackerName,
         builder: (context, state) => const WorkoutTrackerView(),
       ),
       GoRoute(
         path: AppRoute.workoutSchedule,
+        name: AppRoute.workoutScheduleName,
         builder: (context, state) => const WorkoutScheduleView(),
       ),
       GoRoute(
         path: AppRoute.addWorkoutSchedule,
+        name: AppRoute.addWorkoutScheduleName,
         builder: (context, state) {
           final args = _requireExtra<AddScheduleArgs>(
             state,
@@ -183,16 +191,18 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.workoutDetail,
+        name: AppRoute.workoutDetailName,
         builder: (context, state) {
           final args = _requireExtra<WorkoutDetailArgs>(
             state,
             'WorkoutDetailView requires WorkoutDetailArgs as extra.',
           );
-          return WorkoutDetailView(dObj: args.workout);
+          return WorkoutDetailView(workout: args.workout);
         },
       ),
       GoRoute(
         path: AppRoute.exerciseSteps,
+        name: AppRoute.exerciseStepsName,
         builder: (context, state) {
           final args = _requireExtra<ExerciseStepsArgs>(
             state,
