@@ -1,5 +1,6 @@
 // lib/view/main_tab/main_tab_view.dart
 
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:aigymbuddy/common/color_extension.dart';
@@ -23,7 +24,7 @@ class MainTabView extends StatefulWidget {
 class _MainTabViewState extends State<MainTabView> {
   static const double _fabDiameter = 64;
 
-  int _selected = 0;
+  int _selectedIndex = 0;
 
   late final List<_NavigationItem> _items;
   late final List<Widget> _tabs;
@@ -61,10 +62,10 @@ class _MainTabViewState extends State<MainTabView> {
   }
 
   void _handleTabSelected(int index) {
-    if (_selected == index) {
+    if (_selectedIndex == index) {
       return;
     }
-    setState(() => _selected = index);
+    setState(() => _selectedIndex = index);
   }
 
   void _handleAssistantTap() {
@@ -129,7 +130,7 @@ class _MainTabViewState extends State<MainTabView> {
             icon: items[i].icon,
             selectIcon: items[i].selectedIcon,
             semanticsLabel: items[i].semanticsLabel,
-            isActive: _selected == startIndex + i,
+            isActive: _selectedIndex == startIndex + i,
             width: metrics.buttonWidth,
             onTap: () => _handleTabSelected(startIndex + i),
           ),
@@ -232,7 +233,7 @@ class _MainTabViewState extends State<MainTabView> {
       backgroundColor: TColor.white,
 
       // Simpan state per tab
-      body: IndexedStack(index: _selected, children: _tabs),
+      body: IndexedStack(index: _selectedIndex, children: _tabs),
 
       // FAB tengah: bulat, gradient, shadow
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -278,105 +279,148 @@ class _NavigationMetrics {
     required int trailingCount,
   }) {
     final clampedWidth = availableWidth.clamp(_minWidth, _maxWidth);
-    final t = (clampedWidth - _minWidth) / (_maxWidth - _minWidth);
+    final interpolationFactor =
+        (clampedWidth - _minWidth) / (_maxWidth - _minWidth);
 
-    var buttonWidth = lerpDouble(48, 64, t)!;
-    var tabSpacing = lerpDouble(12, 28, t)!;
-    final gapOffset = lerpDouble(12, 28, t)!;
-    var centerGap = fabDiameter + gapOffset;
-    final baseHeight = lerpDouble(56, 72, t)!;
+    final baseHeight = lerpDouble(56, 72, interpolationFactor)!;
     final textScale = textScaleFactor.clamp(1.0, 1.3);
     final heightBoost = (textScale - 1.0) * 12;
 
-    final outerPadding = lerpDouble(16, 32, t)!;
-    final innerPadding = lerpDouble(16, 28, t)!;
+    final metrics = _DimensionSnapshot(
+      buttonWidth: lerpDouble(48, 64, interpolationFactor)!,
+      tabSpacing: lerpDouble(12, 28, interpolationFactor)!,
+      centerGap: fabDiameter + lerpDouble(12, 28, interpolationFactor)!,
+      outerPadding: lerpDouble(16, 32, interpolationFactor)!,
+      innerPadding: lerpDouble(16, 28, interpolationFactor)!,
+    );
+
     final totalButtons = leadingCount + trailingCount;
     final totalSpacing =
         _spacingCount(leadingCount) + _spacingCount(trailingCount);
-    final minCenterGap = fabDiameter + 8;
+
+    final constraints = _DimensionConstraints(
+      availableWidth: availableWidth,
+      fabDiameter: fabDiameter,
+      totalButtons: totalButtons,
+      totalSpacing: totalSpacing,
+      leadingCount: leadingCount,
+      trailingCount: trailingCount,
+    );
+
+    final resolved = _shrinkToFit(metrics, constraints);
+
+    return _NavigationMetrics(
+      buttonWidth: resolved.buttonWidth,
+      tabSpacing: resolved.tabSpacing,
+      centerGap: resolved.centerGap,
+      containerHeight: baseHeight + heightBoost,
+      containerRadius: lerpDouble(22, 30, interpolationFactor)!,
+      horizontalPadding: resolved.innerPadding,
+      outerHorizontalPadding: resolved.outerPadding,
+      bottomMargin: lerpDouble(8, 16, interpolationFactor)!,
+      safeAreaPadding: lerpDouble(8, 14, interpolationFactor)!,
+    );
+  }
+
+  static _DimensionSnapshot _shrinkToFit(
+    _DimensionSnapshot snapshot,
+    _DimensionConstraints constraints,
+  ) {
+    if (snapshot.innerPadding <= 0 ||
+        constraints.totalButtons <= 0 ||
+        constraints.availableWidth <= 0) {
+      return snapshot;
+    }
+
+    final availableContentWidth = math.max(
+      constraints.availableWidth - (snapshot.outerPadding * 2),
+      0,
+    );
+    final availableInnerWidth = math.max(
+      availableContentWidth - (snapshot.innerPadding * 2),
+      0,
+    );
+
+    if (availableInnerWidth == 0) {
+      return snapshot;
+    }
+
+    var buttonWidth = snapshot.buttonWidth;
+    var tabSpacing = snapshot.tabSpacing;
+    var centerGap = snapshot.centerGap;
+    final requiredWidth =
+        _clusterWidth(constraints.leadingCount, buttonWidth, tabSpacing) +
+            centerGap +
+            _clusterWidth(constraints.trailingCount, buttonWidth, tabSpacing);
+
+    var overflow = requiredWidth - availableInnerWidth;
+    if (overflow <= 0) {
+      return snapshot;
+    }
+
     const minTabSpacing = 8.0;
     const minButtonWidth = 36.0;
+    final minCenterGap = constraints.fabDiameter + 8;
 
-    var availableContentWidth = availableWidth - (outerPadding * 2);
-    if (availableContentWidth < 0) {
-      availableContentWidth = 0;
+    void reduceGap(double amount) {
+      if (amount <= 0) return;
+      centerGap -= amount;
+      overflow -= amount;
     }
 
-    var availableInnerWidth = availableContentWidth - (innerPadding * 2);
-    if (availableInnerWidth < 0) {
-      availableInnerWidth = 0;
+    void reduceSpacing(double amountPerSpacing) {
+      if (amountPerSpacing <= 0) return;
+      tabSpacing -= amountPerSpacing;
+      overflow -= amountPerSpacing * constraints.totalSpacing;
     }
 
-    if (availableInnerWidth > 0 && totalButtons > 0) {
-      final initialRequiredWidth =
-          _clusterWidth(leadingCount, buttonWidth, tabSpacing) +
-          centerGap +
-          _clusterWidth(trailingCount, buttonWidth, tabSpacing);
+    void reduceButtonWidth(double amountPerButton) {
+      if (amountPerButton <= 0) return;
+      buttonWidth -= amountPerButton;
+      overflow -= amountPerButton * constraints.totalButtons;
+    }
 
-      var overflow = initialRequiredWidth - availableInnerWidth;
+    final maxGapReduction = centerGap - minCenterGap;
+    if (maxGapReduction > 0) {
+      reduceGap(math.min(overflow, maxGapReduction));
+    }
 
-      if (overflow > 0) {
-        final maxGapReduction = centerGap - minCenterGap;
-        if (maxGapReduction > 0) {
-          final reduction = overflow < maxGapReduction
-              ? overflow
-              : maxGapReduction;
-          centerGap -= reduction;
-          overflow -= reduction;
-        }
-
-        if (overflow > 0 && totalSpacing > 0) {
-          final maxSpacingReduction =
-              (tabSpacing - minTabSpacing) * totalSpacing;
-          if (maxSpacingReduction > 0) {
-            final reduction = overflow < maxSpacingReduction
-                ? overflow
-                : maxSpacingReduction;
-            tabSpacing -= reduction / totalSpacing;
-            overflow -= reduction;
-          }
-        }
-
-        if (overflow > 0) {
-          final maxButtonReduction =
-              (buttonWidth - minButtonWidth) * totalButtons;
-          if (maxButtonReduction > 0) {
-            final reduction = overflow < maxButtonReduction
-                ? overflow
-                : maxButtonReduction;
-            buttonWidth -= reduction / totalButtons;
-            overflow -= reduction;
-          }
-        }
-
-        if (overflow > 0) {
-          final shrinkDenominator = totalButtons + totalSpacing + 1;
-          if (shrinkDenominator > 0) {
-            final shrinkStep = overflow / shrinkDenominator;
-            final nextButtonWidth = buttonWidth - shrinkStep;
-            buttonWidth = nextButtonWidth < 28.0 ? 28.0 : nextButtonWidth;
-            if (totalSpacing > 0) {
-              final nextSpacing = tabSpacing - shrinkStep;
-              tabSpacing = nextSpacing < 4.0 ? 4.0 : nextSpacing;
-            }
-            final nextGap = centerGap - shrinkStep;
-            final minGap = fabDiameter + 4;
-            centerGap = nextGap < minGap ? minGap : nextGap;
-          }
-        }
+    if (overflow > 0 && constraints.totalSpacing > 0) {
+      final maxSpacingReduction =
+          (tabSpacing - minTabSpacing) * constraints.totalSpacing;
+      if (maxSpacingReduction > 0) {
+        final reduction = math.min(overflow, maxSpacingReduction);
+        reduceSpacing(reduction / constraints.totalSpacing);
       }
     }
 
-    return _NavigationMetrics(
+    if (overflow > 0) {
+      final maxButtonReduction =
+          (buttonWidth - minButtonWidth) * constraints.totalButtons;
+      if (maxButtonReduction > 0) {
+        final reduction = math.min(overflow, maxButtonReduction);
+        reduceButtonWidth(reduction / constraints.totalButtons);
+      }
+    }
+
+    if (overflow > 0) {
+      final shrinkDenominator =
+          constraints.totalButtons + constraints.totalSpacing + 1;
+      if (shrinkDenominator > 0) {
+        final shrinkStep = overflow / shrinkDenominator;
+        buttonWidth = math.max(buttonWidth - shrinkStep, 28.0);
+        if (constraints.totalSpacing > 0) {
+          tabSpacing = math.max(tabSpacing - shrinkStep, 4.0);
+        }
+        final minGap = constraints.fabDiameter + 4;
+        centerGap = math.max(centerGap - shrinkStep, minGap);
+      }
+    }
+
+    return snapshot.copyWith(
       buttonWidth: buttonWidth,
       tabSpacing: tabSpacing,
       centerGap: centerGap,
-      containerHeight: baseHeight + heightBoost,
-      containerRadius: lerpDouble(22, 30, t)!,
-      horizontalPadding: innerPadding,
-      outerHorizontalPadding: outerPadding,
-      bottomMargin: lerpDouble(8, 16, t)!,
-      safeAreaPadding: lerpDouble(8, 14, t)!,
     );
   }
 
@@ -411,27 +455,50 @@ class _NavigationItem {
   final Widget child;
 }
 
-// ignore: unused_element
-class _TabCluster extends StatelessWidget {
-  const _TabCluster({required this.children, required this.spacing});
+class _DimensionSnapshot {
+  const _DimensionSnapshot({
+    required this.buttonWidth,
+    required this.tabSpacing,
+    required this.centerGap,
+    required this.outerPadding,
+    required this.innerPadding,
+  });
 
-  final List<Widget> children;
-  final double spacing;
+  final double buttonWidth;
+  final double tabSpacing;
+  final double centerGap;
+  final double outerPadding;
+  final double innerPadding;
 
-  @override
-  Widget build(BuildContext context) {
-    if (children.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < children.length; i++) ...[
-          if (i > 0) SizedBox(width: spacing),
-          children[i],
-        ],
-      ],
+  _DimensionSnapshot copyWith({
+    double? buttonWidth,
+    double? tabSpacing,
+    double? centerGap,
+  }) {
+    return _DimensionSnapshot(
+      buttonWidth: buttonWidth ?? this.buttonWidth,
+      tabSpacing: tabSpacing ?? this.tabSpacing,
+      centerGap: centerGap ?? this.centerGap,
+      outerPadding: outerPadding,
+      innerPadding: innerPadding,
     );
   }
+}
+
+class _DimensionConstraints {
+  const _DimensionConstraints({
+    required this.availableWidth,
+    required this.fabDiameter,
+    required this.totalButtons,
+    required this.totalSpacing,
+    required this.leadingCount,
+    required this.trailingCount,
+  });
+
+  final double availableWidth;
+  final double fabDiameter;
+  final int totalButtons;
+  final int totalSpacing;
+  final int leadingCount;
+  final int trailingCount;
 }
