@@ -1,3 +1,5 @@
+// lib/common_widget/today_sleep_schedule_row.dart
+
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +71,6 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 8),
                 Text(
                   widget.schedule.formattedCountdown,
@@ -104,7 +105,6 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                   child: CustomAnimatedToggleSwitch<bool>(
                     current: positive,
                     values: const [false, true],
-                    // ganti 'dif' -> 'spacing'
                     spacing: 0.0,
                     indicatorSize: const Size.square(30.0),
                     animationDuration: const Duration(milliseconds: 200),
@@ -113,12 +113,12 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                     iconBuilder: (context, local, global) {
                       return const SizedBox();
                     },
-                    // ganti 'defaultCursor' -> 'cursors'
                     cursors: const ToggleCursors(
                       defaultCursor: SystemMouseCursors.click,
                     ),
-                    // TapCallback<bool> -> terima props
-                    onTap: (props) => setState(() => positive = !positive),
+                    onTap: (_) => setState(
+                      () => positive = !positive,
+                    ), // Using _ for unused prop
                     iconsTappable: false,
                     wrapperBuilder: (context, global, child) {
                       return Stack(
