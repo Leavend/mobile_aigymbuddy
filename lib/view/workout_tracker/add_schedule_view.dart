@@ -88,7 +88,13 @@ class _AddScheduleViewState extends State<AddScheduleView> {
         ),
         actions: [
           InkWell(
-            onTap: () {},
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Templates for schedules coming soon.'),
+                ),
+              );
+            },
             child: Container(
               margin: const EdgeInsets.all(8),
               height: 40,
