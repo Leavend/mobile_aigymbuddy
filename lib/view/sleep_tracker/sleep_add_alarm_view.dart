@@ -216,7 +216,13 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
 
   DateTime get _bedtimeAsDateTime {
     final date = widget.date;
-    return DateTime(date.year, date.month, date.day, _bedTime.hour, _bedTime.minute);
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+      _bedTime.hour,
+      _bedTime.minute,
+    );
   }
 
   Future<void> _handleBedtimeTap() async {
@@ -284,7 +290,8 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(pendingDuration),
+                      onPressed: () =>
+                          Navigator.of(context).pop(pendingDuration),
                       child: const Text('Save'),
                     ),
                   ],
@@ -306,8 +313,10 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
           builder: (context, setModalState) {
             return SafeArea(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -351,8 +360,9 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
-                          onPressed: () => Navigator.of(context)
-                              .pop(pendingSelection.toSet()),
+                          onPressed: () => Navigator.of(
+                            context,
+                          ).pop(pendingSelection.toSet()),
                           child: const Text('Save'),
                         ),
                       ],

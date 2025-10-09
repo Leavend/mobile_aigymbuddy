@@ -50,14 +50,18 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 20,
+                ),
                 child: _buildIdealSleepCard(media),
               ),
               SizedBox(height: media.width * 0.05),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 20,
+                ),
                 child: Text(
                   'Your Schedule',
                   style: TextStyle(
@@ -71,8 +75,10 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
               SizedBox(height: media.width * 0.03),
               _buildScheduleList(),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 20,
+                ),
                 child: _buildSleepSummary(media),
               ),
             ],
@@ -231,10 +237,9 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _todaySchedule.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) => TodaySleepScheduleRow(
-        schedule: _todaySchedule[index],
-      ),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) =>
+          TodaySleepScheduleRow(schedule: _todaySchedule[index]),
     );
   }
 
@@ -278,10 +283,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                   end: Alignment.centerRight,
                 ),
               ),
-              Text(
-                '96%',
-                style: TextStyle(color: TColor.black, fontSize: 12),
-              ),
+              Text('96%', style: TextStyle(color: TColor.black, fontSize: 12)),
             ],
           ),
         ],
