@@ -189,10 +189,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
         ),
       ),
       actions: const [
-        Padding(
-          padding: EdgeInsets.only(right: 8),
-          child: _MoreActionButton(),
-        ),
+        Padding(padding: EdgeInsets.only(right: 8), child: _MoreActionButton()),
       ],
     );
   }
@@ -204,7 +201,11 @@ class _MealScheduleViewState extends State<MealScheduleView> {
         children: [
           IconButton(
             onPressed: _goPrevDay,
-            icon: Image.asset('assets/img/ArrowLeft.png', width: 18, height: 18),
+            icon: Image.asset(
+              'assets/img/ArrowLeft.png',
+              width: 18,
+              height: 18,
+            ),
             tooltip: 'Previous day',
           ),
           const SizedBox(width: 6),
@@ -222,8 +223,11 @@ class _MealScheduleViewState extends State<MealScheduleView> {
           const SizedBox(width: 6),
           IconButton(
             onPressed: _goNextDay,
-            icon:
-                Image.asset('assets/img/ArrowRight.png', width: 18, height: 18),
+            icon: Image.asset(
+              'assets/img/ArrowRight.png',
+              width: 18,
+              height: 18,
+            ),
             tooltip: 'Next day',
           ),
         ],
@@ -320,7 +324,8 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _nutritionItems.length,
-      itemBuilder: (context, index) => NutritionRow(nObj: _nutritionItems[index]),
+      itemBuilder: (context, index) =>
+          NutritionRow(nObj: _nutritionItems[index]),
     );
   }
 }

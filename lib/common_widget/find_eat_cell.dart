@@ -14,10 +14,7 @@ class FindEatCell extends StatelessWidget {
     required this.imageAsset,
   });
 
-  factory FindEatCell.fromMap(
-    Map<String, String> data, {
-    required int index,
-  }) {
+  factory FindEatCell.fromMap(Map<String, String> data, {required int index}) {
     return FindEatCell(
       index: index,
       title: data['name'] ?? 'Meal',
@@ -102,8 +99,9 @@ class FindEatCell extends StatelessWidget {
               height: 25,
               child: RoundButton(
                 fontSize: 12,
-                type:
-                    isEven ? RoundButtonType.bgGradient : RoundButtonType.bgSGradient,
+                type: isEven
+                    ? RoundButtonType.bgGradient
+                    : RoundButtonType.bgSGradient,
                 title: 'Select',
                 onPressed: () {},
               ),

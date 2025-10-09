@@ -89,10 +89,7 @@ DateTime _tryParseScheduledAt(String? rawTime) {
   }
 
   try {
-    return DateTimeUtils.parseDate(
-      rawTime,
-      pattern: 'dd/MM/yyyy hh:mm aa',
-    );
+    return DateTimeUtils.parseDate(rawTime, pattern: 'dd/MM/yyyy hh:mm aa');
   } on FormatException {
     return DateTime.now();
   }

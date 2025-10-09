@@ -133,10 +133,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
         ),
       ),
       actions: const [
-        Padding(
-          padding: EdgeInsets.only(right: 8),
-          child: _AppBarAction(),
-        ),
+        Padding(padding: EdgeInsets.only(right: 8), child: _AppBarAction()),
       ],
     );
   }
@@ -149,11 +146,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
         color: TColor.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 2,
-            offset: Offset(0, 1),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
         ],
       ),
       child: Row(
@@ -181,11 +174,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
           ),
           InkWell(
             onTap: () {},
-            child: Image.asset(
-              'assets/img/Filter.png',
-              width: 25,
-              height: 25,
-            ),
+            child: Image.asset('assets/img/Filter.png', width: 25, height: 25),
           ),
         ],
       ),
@@ -217,10 +206,8 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             scrollDirection: Axis.horizontal,
             itemCount: _categoryItems.length,
-            itemBuilder: (context, index) => MealCategoryCell(
-              cObj: _categoryItems[index],
-              index: index,
-            ),
+            itemBuilder: (context, index) =>
+                MealCategoryCell(cObj: _categoryItems[index], index: index),
           ),
         ),
       ],
@@ -238,10 +225,8 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             scrollDirection: Axis.horizontal,
             itemCount: _recommendations.length,
-            itemBuilder: (context, index) => MealRecommendCell(
-              fObj: _recommendations[index],
-              index: index,
-            ),
+            itemBuilder: (context, index) =>
+                MealRecommendCell(fObj: _recommendations[index], index: index),
           ),
         ),
       ],

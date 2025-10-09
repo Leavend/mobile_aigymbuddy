@@ -90,7 +90,9 @@ class FoodInfoDetailsView extends StatelessWidget {
     final media = MediaQuery.of(context).size;
 
     return Container(
-      decoration: BoxDecoration(gradient: LinearGradient(colors: TColor.primaryG)),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: TColor.primaryG),
+      ),
       child: NestedScrollView(
         headerSliverBuilder: (_, __) => [
           _buildTopAppBar(context),
@@ -106,12 +108,7 @@ class FoodInfoDetailsView extends StatelessWidget {
           ),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            body: Stack(
-              children: [
-                _buildContent(media),
-                _buildBottomAction(),
-              ],
-            ),
+            body: Stack(children: [_buildContent(media), _buildBottomAction()]),
           ),
         ),
       ),
@@ -143,10 +140,7 @@ class FoodInfoDetailsView extends StatelessWidget {
         ),
       ),
       actions: const [
-        Padding(
-          padding: EdgeInsets.only(right: 8),
-          child: _MoreButton(),
-        ),
+        Padding(padding: EdgeInsets.only(right: 8), child: _MoreButton()),
       ],
     );
   }
@@ -359,7 +353,10 @@ class FoodInfoDetailsView extends StatelessWidget {
             trimCollapsedText: ' Read More ...',
             trimExpandedText: ' Read Less',
             style: TextStyle(color: TColor.gray, fontSize: 12),
-            moreStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            moreStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ],
