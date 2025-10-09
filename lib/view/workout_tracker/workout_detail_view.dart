@@ -29,22 +29,46 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
       'name': 'Set 1',
       'set': [
         {'image': 'assets/img/img_1.png', 'title': 'Warm Up', 'value': '05:00'},
-        {'image': 'assets/img/img_2.png', 'title': 'Jumping Jack', 'value': '12x'},
+        {
+          'image': 'assets/img/img_2.png',
+          'title': 'Jumping Jack',
+          'value': '12x',
+        },
         {'image': 'assets/img/img_1.png', 'title': 'Skipping', 'value': '15x'},
         {'image': 'assets/img/img_2.png', 'title': 'Squats', 'value': '20x'},
-        {'image': 'assets/img/img_1.png', 'title': 'Arm Raises', 'value': '00:53'},
-        {'image': 'assets/img/img_2.png', 'title': 'Rest and Drink', 'value': '02:00'},
+        {
+          'image': 'assets/img/img_1.png',
+          'title': 'Arm Raises',
+          'value': '00:53',
+        },
+        {
+          'image': 'assets/img/img_2.png',
+          'title': 'Rest and Drink',
+          'value': '02:00',
+        },
       ],
     },
     {
       'name': 'Set 2',
       'set': [
         {'image': 'assets/img/img_1.png', 'title': 'Warm Up', 'value': '05:00'},
-        {'image': 'assets/img/img_2.png', 'title': 'Jumping Jack', 'value': '12x'},
+        {
+          'image': 'assets/img/img_2.png',
+          'title': 'Jumping Jack',
+          'value': '12x',
+        },
         {'image': 'assets/img/img_1.png', 'title': 'Skipping', 'value': '15x'},
         {'image': 'assets/img/img_2.png', 'title': 'Squats', 'value': '20x'},
-        {'image': 'assets/img/img_1.png', 'title': 'Arm Raises', 'value': '00:53'},
-        {'image': 'assets/img/img_2.png', 'title': 'Rest and Drink', 'value': '02:00'},
+        {
+          'image': 'assets/img/img_1.png',
+          'title': 'Arm Raises',
+          'value': '00:53',
+        },
+        {
+          'image': 'assets/img/img_2.png',
+          'title': 'Rest and Drink',
+          'value': '02:00',
+        },
       ],
     },
   ];
@@ -231,10 +255,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               ),
               Text(
                 '$exercises | $time | 320 Calories Burn',
-                style: TextStyle(
-                  color: TColor.gray,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ],
           ),
@@ -271,10 +292,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               onPressed: _showEquipmentSheet,
               child: Text(
                 '${_equipmentItems.length} Items',
-                style: TextStyle(
-                  color: TColor.gray,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ),
           ],
@@ -311,10 +329,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         item['title']!,
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: TColor.black, fontSize: 12),
                       ),
                     ),
                   ],
@@ -345,10 +360,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               onPressed: _showExerciseSummary,
               child: Text(
                 '${_workoutSets.length} Sets',
-                style: TextStyle(
-                  color: TColor.gray,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ),
           ],
@@ -514,7 +526,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 ),
                 const SizedBox(height: 12),
                 ..._workoutSets.map((set) {
-                  final exercises = (set['set'] as List<dynamic>? ?? const []).length;
+                  final exercises =
+                      (set['set'] as List<dynamic>? ?? const []).length;
                   return ListTile(
                     title: Text(
                       set['name'].toString(),

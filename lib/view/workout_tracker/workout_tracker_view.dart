@@ -278,9 +278,7 @@ class WorkoutTrackerView extends StatelessWidget {
             final option = Map<String, String>.from(_trainingOptions[index]);
             return InkWell(
               onTap: () => _openWorkoutDetail(context, option),
-              child: WhatTrainRow(
-                wObj: Map<String, dynamic>.from(option),
-              ),
+              child: WhatTrainRow(wObj: Map<String, dynamic>.from(option)),
             );
           },
         ),
@@ -323,10 +321,8 @@ class WorkoutTrackerView extends StatelessWidget {
         drawHorizontalLine: true,
         horizontalInterval: 25,
         drawVerticalLine: false,
-        getDrawingHorizontalLine: (value) => FlLine(
-          color: TColor.white.withValues(alpha: 0.15),
-          strokeWidth: 2,
-        ),
+        getDrawingHorizontalLine: (value) =>
+            FlLine(color: TColor.white.withValues(alpha: 0.15), strokeWidth: 2),
       ),
       borderData: FlBorderData(
         show: true,
@@ -418,10 +414,7 @@ class WorkoutTrackerView extends StatelessWidget {
       getTitlesWidget: (value, _) {
         final text = labels[value.toInt()];
         if (text == null) return const SizedBox.shrink();
-        return Text(
-          text,
-          style: TextStyle(color: TColor.white, fontSize: 12),
-        );
+        return Text(text, style: TextStyle(color: TColor.white, fontSize: 12));
       },
     );
   }
@@ -430,10 +423,7 @@ class WorkoutTrackerView extends StatelessWidget {
     context.pushNamed(AppRoute.workoutScheduleName);
   }
 
-  void _openWorkoutDetail(
-    BuildContext context,
-    Map<String, String> workout,
-  ) {
+  void _openWorkoutDetail(BuildContext context, Map<String, String> workout) {
     final detailData = <String, dynamic>{
       'title': workout['title'] ?? 'Workout',
       'time': workout['time'] ?? 'Today, 03:00pm',

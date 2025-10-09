@@ -217,8 +217,9 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                           gradient: LinearGradient(
                                             colors: TColor.secondaryG,
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(17.5),
+                                          borderRadius: BorderRadius.circular(
+                                            17.5,
+                                          ),
                                         ),
                                         child: Text(
                                           "${event.name}, ${DateTimeUtils.formatDate(event.startTime, pattern: 'h:mm aa')}",
@@ -273,8 +274,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     final clamped = target.isBefore(_firstAvailableDate)
         ? _firstAvailableDate
         : target.isAfter(_lastAvailableDate)
-            ? _lastAvailableDate
-            : target;
+        ? _lastAvailableDate
+        : target;
     _selectedDate = clamped;
     _calendarController.goToDay(clamped);
     _updateEventsForSelectedDay();
@@ -395,9 +396,9 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     );
 
     if (result == true && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Marked ${event.name} as done')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Marked ${event.name} as done')));
     }
   }
 

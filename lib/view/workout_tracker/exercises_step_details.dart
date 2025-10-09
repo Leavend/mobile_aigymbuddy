@@ -256,11 +256,7 @@ class ExercisesStepDetails extends StatelessWidget {
               ),
             );
           },
-          icon: Image.asset(
-            'assets/img/Play.png',
-            width: 30,
-            height: 30,
-          ),
+          icon: Image.asset('assets/img/Play.png', width: 30, height: 30),
         ),
       ],
     );
