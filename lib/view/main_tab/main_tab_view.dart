@@ -5,75 +5,58 @@ import 'dart:ui';
 
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/tab_button.dart';
-import 'package:aigymbuddy/view/main_tab/select_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
-import '../home/home_view.dart';
-import '../photo_progress/photo_progress_view.dart';
-import '../profile/profile_view.dart';
+class MainTabView extends StatelessWidget {
+  const MainTabView({
+    super.key,
+    required this.navigationShell,
+  });
 
-class MainTabView extends StatefulWidget {
-  const MainTabView({super.key});
+  final StatefulNavigationShell navigationShell;
 
-  @override
-  State<MainTabView> createState() => _MainTabViewState();
-}
-
-class _MainTabViewState extends State<MainTabView> {
   static const double _fabDiameter = 64;
 
-  int _selectedIndex = 0;
-
-  late final List<_NavigationItem> _items;
-  late final List<Widget> _tabs;
-
-  @override
-  void initState() {
-    super.initState();
-    _items = const [
-      _NavigationItem(
-        icon: 'assets/img/home_tab.png',
-        selectedIcon: 'assets/img/home_tab_select.png',
-        semanticsLabel: 'Home',
-        child: HomeView(),
-      ),
-      _NavigationItem(
-        icon: 'assets/img/activity_tab.png',
-        selectedIcon: 'assets/img/activity_tab_select.png',
-        semanticsLabel: 'Activities',
-        child: SelectView(),
-      ),
-      _NavigationItem(
-        icon: 'assets/img/camera_tab.png',
-        selectedIcon: 'assets/img/camera_tab_select.png',
-        semanticsLabel: 'Progress',
-        child: PhotoProgressView(),
-      ),
-      _NavigationItem(
-        icon: 'assets/img/profile_tab.png',
-        selectedIcon: 'assets/img/profile_tab_select.png',
-        semanticsLabel: 'Profile',
-        child: ProfileView(),
-      ),
-    ];
-    _tabs = _items.map((item) => item.child).toList(growable: false);
-  }
+  static const List<_NavigationItem> _items = [
+    _NavigationItem(
+      icon: 'assets/img/home_tab.png',
+      selectedIcon: 'assets/img/home_tab_select.png',
+      semanticsLabel: 'Home',
+    ),
+    _NavigationItem(
+      icon: 'assets/img/activity_tab.png',
+      selectedIcon: 'assets/img/activity_tab_select.png',
+      semanticsLabel: 'Activities',
+    ),
+    _NavigationItem(
+      icon: 'assets/img/camera_tab.png',
+      selectedIcon: 'assets/img/camera_tab_select.png',
+      semanticsLabel: 'Progress',
+    ),
+    _NavigationItem(
+      icon: 'assets/img/profile_tab.png',
+      selectedIcon: 'assets/img/profile_tab_select.png',
+      semanticsLabel: 'Profile',
+    ),
+  ];
 
   void _handleTabSelected(int index) {
-    if (_selectedIndex == index) {
+    if (index == navigationShell.currentIndex) {
+      navigationShell.goBranch(index, initialLocation: true);
       return;
     }
-    setState(() => _selectedIndex = index);
+    navigationShell.goBranch(index);
   }
 
-  void _handleAssistantTap() {
+  void _handleAssistantTap(BuildContext context) {
     Feedback.forTap(context);
     HapticFeedback.mediumImpact();
   }
 
-  Widget _buildAssistantButton() {
+  Widget _buildAssistantButton(BuildContext context) {
     return Semantics(
       button: true,
       label: 'AI Assistant',
@@ -100,7 +83,7 @@ class _MainTabViewState extends State<MainTabView> {
                 gradient: LinearGradient(colors: TColor.primaryG),
               ),
               child: InkWell(
-                onTap: _handleAssistantTap,
+                onTap: () => _handleAssistantTap(context),
                 child: const Center(
                   child: Icon(
                     CupertinoIcons.chat_bubble_text_fill,
@@ -130,7 +113,7 @@ class _MainTabViewState extends State<MainTabView> {
             icon: items[i].icon,
             selectIcon: items[i].selectedIcon,
             semanticsLabel: items[i].semanticsLabel,
-            isActive: _selectedIndex == startIndex + i,
+            isActive: navigationShell.currentIndex == startIndex + i,
             width: metrics.buttonWidth,
             onTap: () => _handleTabSelected(startIndex + i),
           ),
@@ -140,6 +123,12 @@ class _MainTabViewState extends State<MainTabView> {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
+    assert(
+      navigationShell.branchCount == _items.length,
+      'Navigation branches (${navigationShell.branchCount}) must match tab '
+      'configuration (${_items.length}).',
+    );
+
     final midpoint = (_items.length / 2).ceil();
     final leadingItems = _items.sublist(0, midpoint);
     final trailingItems = _items.sublist(midpoint);
@@ -232,12 +221,12 @@ class _MainTabViewState extends State<MainTabView> {
     return Scaffold(
       backgroundColor: TColor.white,
 
-      // Simpan state per tab
-      body: IndexedStack(index: _selectedIndex, children: _tabs),
+      // The navigation shell preserves each branch's state internally.
+      body: navigationShell,
 
       // FAB tengah: bulat, gradient, shadow
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: _buildAssistantButton(),
+      floatingActionButton: _buildAssistantButton(context),
 
       // Bottom bar: pill + blur + dua cluster tab dengan gap tetap di tengah
       bottomNavigationBar: _buildBottomNavigationBar(context),
@@ -446,13 +435,11 @@ class _NavigationItem {
     required this.icon,
     required this.selectedIcon,
     required this.semanticsLabel,
-    required this.child,
   });
 
   final String icon;
   final String selectedIcon;
   final String semanticsLabel;
-  final Widget child;
 }
 
 class _DimensionSnapshot {

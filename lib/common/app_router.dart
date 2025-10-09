@@ -1,6 +1,7 @@
 import 'package:aigymbuddy/view/home/activity_tracker_view.dart';
 import 'package:aigymbuddy/view/home/finished_workout_view.dart';
 import 'package:aigymbuddy/view/home/notification_view.dart';
+import 'package:aigymbuddy/view/home/home_view.dart';
 import 'package:aigymbuddy/view/login/complete_profile_view.dart';
 import 'package:aigymbuddy/view/login/login_view.dart';
 import 'package:aigymbuddy/view/login/signup_view.dart';
@@ -70,10 +71,6 @@ class AppRouter {
         builder: (context, state) => const LaunchView(),
       ),
       GoRoute(
-        path: AppRoute.main,
-        builder: (context, state) => const MainTabView(),
-      ),
-      GoRoute(
         path: AppRoute.onboarding,
         builder: (context, state) => const OnBoardingView(),
       ),
@@ -96,6 +93,55 @@ class AppRouter {
       GoRoute(
         path: AppRoute.welcome,
         builder: (context, state) => const WelcomeView(),
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => MainTabView(
+          navigationShell: navigationShell,
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.main,
+                builder: (context, state) => const HomeView(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.select,
+                builder: (context, state) => const SelectView(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.photoProgress,
+                builder: (context, state) => const PhotoProgressView(),
+                routes: [
+                  GoRoute(
+                    path: 'comparison',
+                    builder: (context, state) => const ComparisonView(),
+                  ),
+                  GoRoute(
+                    path: 'result',
+                    builder: (context, state) => _buildPhotoResultView(state),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.profile,
+                builder: (context, state) => const ProfileView(),
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoute.activityTracker,
@@ -164,18 +210,6 @@ class AppRouter {
         builder: (context, state) => _buildFoodInfoDetailsView(state),
       ),
       GoRoute(
-        path: AppRoute.photoProgress,
-        builder: (context, state) => const PhotoProgressView(),
-      ),
-      GoRoute(
-        path: AppRoute.photoComparison,
-        builder: (context, state) => const ComparisonView(),
-      ),
-      GoRoute(
-        path: AppRoute.photoResult,
-        builder: (context, state) => _buildPhotoResultView(state),
-      ),
-      GoRoute(
         path: AppRoute.sleepTracker,
         builder: (context, state) => const SleepTrackerView(),
       ),
@@ -186,14 +220,6 @@ class AppRouter {
       GoRoute(
         path: AppRoute.sleepAddAlarm,
         builder: (context, state) => _buildSleepAddAlarmView(state),
-      ),
-      GoRoute(
-        path: AppRoute.profile,
-        builder: (context, state) => const ProfileView(),
-      ),
-      GoRoute(
-        path: AppRoute.select,
-        builder: (context, state) => const SelectView(),
       ),
     ],
   );
