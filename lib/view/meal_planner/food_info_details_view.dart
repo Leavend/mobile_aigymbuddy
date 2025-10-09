@@ -1,4 +1,6 @@
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/ingredient.dart';
 import 'package:aigymbuddy/common/models/instruction_step.dart';
 import 'package:aigymbuddy/common/models/nutrition_info.dart';
@@ -19,84 +21,25 @@ class FoodInfoDetailsView extends StatelessWidget {
   final Map<String, dynamic> meal;
   final Map<String, dynamic> detail;
 
-  static const String _description =
-      "Pancakes are some people's favorite breakfast, who doesn't like pancakes? "
-      "Especially with the real honey splash on top of the pancakes, of course everyone loves that! "
-      "besides being Pancakes are some people's favorite breakfast, who doesn't like pancakes? "
-      "Especially with the real honey splash on top of the pancakes, of course everyone loves that! besides being";
-
-  static const List<NutritionInfo> _nutritionItems = [
-    NutritionInfo(
-      image: 'assets/img/burn.png',
-      title: 'Calories',
-      value: '180 kCal',
-    ),
-    NutritionInfo(image: 'assets/img/egg.png', title: 'Fats', value: '30 g'),
-    NutritionInfo(
-      image: 'assets/img/proteins.png',
-      title: 'Proteins',
-      value: '20 g',
-    ),
-    NutritionInfo(image: 'assets/img/carbo.png', title: 'Carbo', value: '50 g'),
-  ];
-
-  static const List<Ingredient> _ingredients = [
-    Ingredient(
-      image: 'assets/img/flour.png',
-      name: 'Wheat Flour',
-      amount: '100 gr',
-    ),
-    Ingredient(image: 'assets/img/sugar.png', name: 'Sugar', amount: '3 tbsp'),
-    Ingredient(
-      image: 'assets/img/baking_soda.png',
-      name: 'Baking Soda',
-      amount: '2 tsp',
-    ),
-    Ingredient(image: 'assets/img/eggs.png', name: 'Eggs', amount: '2 items'),
-  ];
-
-  static const List<InstructionStep> _steps = [
-    InstructionStep(
-      number: '1',
-      title: 'Step 1',
-      description: 'Prepare all of the ingredients that are needed.',
-    ),
-    InstructionStep(
-      number: '2',
-      title: 'Step 2',
-      description: 'Mix flour, sugar, salt, and baking powder.',
-    ),
-    InstructionStep(
-      number: '3',
-      title: 'Step 3',
-      description:
-          'In a separate place, mix the eggs and liquid milk until blended.',
-    ),
-    InstructionStep(
-      number: '4',
-      title: 'Step 4',
-      description:
-          'Put the egg and milk mixture into the dry ingredients. Stir until smooth.',
-    ),
-    InstructionStep(
-      number: '5',
-      title: 'Step 5',
-      description: 'Cook until golden brown and serve while warm.',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final language = context.appLanguage;
+    final localize = context.localize;
+
+    final nutritionItems = _FoodInfoContent.nutrition(language);
+    final ingredients = _FoodInfoContent.ingredients(language);
+    final steps = _FoodInfoContent.steps(language);
+    final description = localize(_FoodInfoStrings.description);
 
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: TColor.primaryG),
       ),
       child: NestedScrollView(
-        headerSliverBuilder: (_, _) => [
+        headerSliverBuilder: (_, __) => [
           _buildTopAppBar(context),
-          _buildHeroAppBar(media),
+          _buildHeroAppBar(media, language),
         ],
         body: Container(
           decoration: BoxDecoration(
@@ -108,7 +51,20 @@ class FoodInfoDetailsView extends StatelessWidget {
           ),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            body: Stack(children: [_buildContent(media), _buildBottomAction()]),
+            body: Stack(
+              children: [
+                _buildContent(
+                  context,
+                  media,
+                  language,
+                  nutritionItems,
+                  ingredients,
+                  steps,
+                  description,
+                ),
+                _buildBottomAction(context, language),
+              ],
+            ),
           ),
         ),
       ),
@@ -145,7 +101,10 @@ class FoodInfoDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroAppBar(Size media) {
+  Widget _buildHeroAppBar(Size media, AppLanguage language) {
+    final heroImage = _resolveLocalized(detail['b_image'], language,
+        fallback: detail['image']?.toString());
+
     return SliverAppBar(
       backgroundColor: Colors.transparent,
       centerTitle: true,
@@ -173,7 +132,7 @@ class FoodInfoDetailsView extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Image.asset(
-                  detail['b_image'].toString(),
+                  heroImage,
                   width: media.width * 0.5,
                   height: media.width * 0.5,
                   fit: BoxFit.contain,
@@ -186,7 +145,15 @@ class FoodInfoDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(Size media) {
+  Widget _buildContent(
+    BuildContext context,
+    Size media,
+    AppLanguage language,
+    List<NutritionInfo> nutritionItems,
+    List<Ingredient> ingredients,
+    List<InstructionStep> steps,
+    String description,
+  ) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,21 +170,24 @@ class FoodInfoDetailsView extends StatelessWidget {
             ),
           ),
           SizedBox(height: media.width * 0.05),
-          _buildTitleSection(),
+          _buildTitleSection(context, language),
           SizedBox(height: media.width * 0.05),
-          _buildNutritionSection(),
+          _buildNutritionSection(context, nutritionItems),
           SizedBox(height: media.width * 0.05),
-          _buildDescriptionSection(),
+          _buildDescriptionSection(context, description),
           const SizedBox(height: 15),
-          _buildIngredientSection(media),
-          _buildStepsSection(),
+          _buildIngredientSection(context, media, ingredients, language),
+          _buildStepsSection(context, steps, language),
           SizedBox(height: media.width * 0.25),
         ],
       ),
     );
   }
 
-  Widget _buildTitleSection() {
+  Widget _buildTitleSection(BuildContext context, AppLanguage language) {
+    final title = _resolveLocalized(detail['name'], language);
+    final author = context.localize(_FoodInfoStrings.byAuthor);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
@@ -228,7 +198,7 @@ class FoodInfoDetailsView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  detail['name'].toString(),
+                  title,
                   style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
@@ -236,7 +206,7 @@ class FoodInfoDetailsView extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'by James Ruth',
+                  author,
                   style: TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ],
@@ -256,14 +226,17 @@ class FoodInfoDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildNutritionSection() {
+  Widget _buildNutritionSection(
+    BuildContext context,
+    List<NutritionInfo> nutritionItems,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
-            'Nutrition',
+            context.localize(_FoodInfoStrings.nutritionTitle),
             style: TextStyle(
               color: TColor.black,
               fontSize: 16,
@@ -276,9 +249,9 @@ class FoodInfoDetailsView extends StatelessWidget {
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             scrollDirection: Axis.horizontal,
-            itemCount: _nutritionItems.length,
+            itemCount: nutritionItems.length,
             itemBuilder: (_, index) {
-              final nutrition = _nutritionItems[index];
+              final nutrition = nutritionItems[index];
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -327,14 +300,17 @@ class FoodInfoDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildDescriptionSection() {
+  Widget _buildDescriptionSection(BuildContext context, String description) {
+    final moreLabel = context.localize(_FoodInfoStrings.readMoreLabel);
+    final lessLabel = context.localize(_FoodInfoStrings.readLessLabel);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
-            'Descriptions',
+            context.localize(_FoodInfoStrings.descriptionTitle),
             style: TextStyle(
               color: TColor.black,
               fontSize: 16,
@@ -346,12 +322,12 @@ class FoodInfoDetailsView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: ReadMoreText(
-            _description,
+            description,
             trimLines: 4,
             colorClickableText: TColor.black,
             trimMode: TrimMode.Line,
-            trimCollapsedText: ' Read More ...',
-            trimExpandedText: ' Read Less',
+            trimCollapsedText: ' $moreLabel',
+            trimExpandedText: ' $lessLabel',
             style: TextStyle(color: TColor.gray, fontSize: 12),
             moreStyle: const TextStyle(
               fontSize: 12,
@@ -363,7 +339,15 @@ class FoodInfoDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildIngredientSection(Size media) {
+  Widget _buildIngredientSection(
+    BuildContext context,
+    Size media,
+    List<Ingredient> ingredients,
+    AppLanguage language,
+  ) {
+    final totalLabel =
+        _FoodInfoStrings.ingredientsCount(language, ingredients.length);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -373,7 +357,7 @@ class FoodInfoDetailsView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Ingredients That You\nWill Need',
+                context.localize(_FoodInfoStrings.ingredientsTitle),
                 style: TextStyle(
                   color: TColor.black,
                   fontSize: 16,
@@ -383,7 +367,7 @@ class FoodInfoDetailsView extends StatelessWidget {
               TextButton(
                 onPressed: () {},
                 child: Text(
-                  '${_ingredients.length} Items',
+                  totalLabel,
                   style: TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ),
@@ -395,9 +379,9 @@ class FoodInfoDetailsView extends StatelessWidget {
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             scrollDirection: Axis.horizontal,
-            itemCount: _ingredients.length,
+            itemCount: ingredients.length,
             itemBuilder: (_, index) {
-              final ingredient = _ingredients[index];
+              final ingredient = ingredients[index];
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 width: media.width * 0.23,
@@ -439,7 +423,13 @@ class FoodInfoDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildStepsSection() {
+  Widget _buildStepsSection(
+    BuildContext context,
+    List<InstructionStep> steps,
+    AppLanguage language,
+  ) {
+    final totalLabel = _FoodInfoStrings.stepsCount(language, steps.length);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -449,7 +439,7 @@ class FoodInfoDetailsView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Step by Step',
+                context.localize(_FoodInfoStrings.stepsTitle),
                 style: TextStyle(
                   color: TColor.black,
                   fontSize: 16,
@@ -459,7 +449,7 @@ class FoodInfoDetailsView extends StatelessWidget {
               TextButton(
                 onPressed: () {},
                 child: Text(
-                  '${_steps.length} Steps',
+                  totalLabel,
                   style: TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ),
@@ -470,17 +460,20 @@ class FoodInfoDetailsView extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 15),
           shrinkWrap: true,
-          itemCount: _steps.length,
+          itemCount: steps.length,
           itemBuilder: (_, index) => FoodStepDetailRow(
-            step: _steps[index],
-            isLast: index == _steps.length - 1,
+            step: steps[index],
+            isLast: index == steps.length - 1,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildBottomAction() {
+  Widget _buildBottomAction(BuildContext context, AppLanguage language) {
+    final mealName = _resolveLocalized(meal['name'], language);
+    final buttonLabel = _FoodInfoStrings.addToMeal(language, mealName);
+
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -489,7 +482,7 @@ class FoodInfoDetailsView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: RoundButton(
-              title: 'Add to ${meal['name']} Meal',
+              title: buttonLabel,
               onPressed: () {},
             ),
           ),
@@ -525,4 +518,244 @@ class _MoreButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class _FoodInfoContent {
+  static List<NutritionInfo> nutrition(AppLanguage language) {
+    final calorieUnit = language == AppLanguage.indonesian ? 'kKal' : 'kCal';
+
+    return [
+      NutritionInfo(
+        image: 'assets/img/burn.png',
+        title: _FoodInfoStrings.caloriesTitle.resolve(language),
+        value: '180 $calorieUnit',
+      ),
+      NutritionInfo(
+        image: 'assets/img/egg.png',
+        title: _FoodInfoStrings.fatsTitle.resolve(language),
+        value: '30 g',
+      ),
+      NutritionInfo(
+        image: 'assets/img/proteins.png',
+        title: _FoodInfoStrings.proteinsTitle.resolve(language),
+        value: '20 g',
+      ),
+      NutritionInfo(
+        image: 'assets/img/carbo.png',
+        title: _FoodInfoStrings.carboTitle.resolve(language),
+        value: '50 g',
+      ),
+    ];
+  }
+
+  static List<Ingredient> ingredients(AppLanguage language) {
+    return [
+      Ingredient(
+        image: 'assets/img/flour.png',
+        name: _FoodInfoStrings.flourName.resolve(language),
+        amount: '100 gr',
+      ),
+      Ingredient(
+        image: 'assets/img/sugar.png',
+        name: _FoodInfoStrings.sugarName.resolve(language),
+        amount: language == AppLanguage.indonesian ? '3 sdm' : '3 tbsp',
+      ),
+      Ingredient(
+        image: 'assets/img/baking_soda.png',
+        name: _FoodInfoStrings.bakingSodaName.resolve(language),
+        amount: language == AppLanguage.indonesian ? '2 sdt' : '2 tsp',
+      ),
+      Ingredient(
+        image: 'assets/img/eggs.png',
+        name: _FoodInfoStrings.eggsName.resolve(language),
+        amount: language == AppLanguage.indonesian ? '2 butir' : '2 items',
+      ),
+    ];
+  }
+
+  static List<InstructionStep> steps(AppLanguage language) {
+    return [
+      InstructionStep(
+        number: '1',
+        title: _FoodInfoStrings.stepTitle(1).resolve(language),
+        description: _FoodInfoStrings.stepDescription1.resolve(language),
+      ),
+      InstructionStep(
+        number: '2',
+        title: _FoodInfoStrings.stepTitle(2).resolve(language),
+        description: _FoodInfoStrings.stepDescription2.resolve(language),
+      ),
+      InstructionStep(
+        number: '3',
+        title: _FoodInfoStrings.stepTitle(3).resolve(language),
+        description: _FoodInfoStrings.stepDescription3.resolve(language),
+      ),
+      InstructionStep(
+        number: '4',
+        title: _FoodInfoStrings.stepTitle(4).resolve(language),
+        description: _FoodInfoStrings.stepDescription4.resolve(language),
+      ),
+      InstructionStep(
+        number: '5',
+        title: _FoodInfoStrings.stepTitle(5).resolve(language),
+        description: _FoodInfoStrings.stepDescription5.resolve(language),
+      ),
+    ];
+  }
+}
+
+class _FoodInfoStrings {
+  static const description = LocalizedText(
+    english:
+        "Pancakes are some people's favorite breakfast, who doesn't like pancakes? "
+        "Especially with the real honey splash on top of the pancakes, of course everyone loves that! "
+        "Besides being delicious, pancakes can be a quick treat for a busy morning.",
+    indonesian:
+        'Pancake adalah sarapan favorit banyak orang. Siapa sih yang tidak suka? '
+        'Apalagi dengan siraman madu asli di atasnya, pasti semua orang suka! '
+        'Selain lezat, pancake juga bisa menjadi hidangan cepat di pagi hari yang sibuk.'
+        ,
+  );
+
+  static const byAuthor = LocalizedText(
+    english: 'by James Ruth',
+    indonesian: 'oleh James Ruth',
+  );
+
+  static const nutritionTitle = LocalizedText(
+    english: 'Nutrition',
+    indonesian: 'Nutrisi',
+  );
+
+  static const descriptionTitle = LocalizedText(
+    english: 'Descriptions',
+    indonesian: 'Deskripsi',
+  );
+
+  static const readMoreLabel = LocalizedText(
+    english: 'Read More ...',
+    indonesian: 'Baca Selengkapnya ...',
+  );
+
+  static const readLessLabel = LocalizedText(
+    english: 'Read Less',
+    indonesian: 'Sembunyikan',
+  );
+
+  static const ingredientsTitle = LocalizedText(
+    english: 'Ingredients That You\nWill Need',
+    indonesian: 'Bahan yang Kamu\nButuhkan',
+  );
+
+  static const stepsTitle = LocalizedText(
+    english: 'Step by Step',
+    indonesian: 'Langkah demi Langkah',
+  );
+
+  static const caloriesTitle = LocalizedText(
+    english: 'Calories',
+    indonesian: 'Kalori',
+  );
+
+  static const fatsTitle = LocalizedText(
+    english: 'Fats',
+    indonesian: 'Lemak',
+  );
+
+  static const proteinsTitle = LocalizedText(
+    english: 'Proteins',
+    indonesian: 'Protein',
+  );
+
+  static const carboTitle = LocalizedText(
+    english: 'Carbo',
+    indonesian: 'Karbo',
+  );
+
+  static const flourName = LocalizedText(
+    english: 'Wheat Flour',
+    indonesian: 'Tepung Terigu',
+  );
+
+  static const sugarName = LocalizedText(
+    english: 'Sugar',
+    indonesian: 'Gula',
+  );
+
+  static const bakingSodaName = LocalizedText(
+    english: 'Baking Soda',
+    indonesian: 'Soda Kue',
+  );
+
+  static const eggsName = LocalizedText(
+    english: 'Eggs',
+    indonesian: 'Telur',
+  );
+
+  static LocalizedText stepTitle(int number) {
+    return LocalizedText(
+      english: 'Step $number',
+      indonesian: 'Langkah $number',
+    );
+  }
+
+  static const stepDescription1 = LocalizedText(
+    english: 'Prepare all of the ingredients that are needed.',
+    indonesian: 'Siapkan semua bahan yang diperlukan.',
+  );
+
+  static const stepDescription2 = LocalizedText(
+    english: 'Mix flour, sugar, salt, and baking powder.',
+    indonesian: 'Campurkan tepung, gula, garam, dan baking powder.',
+  );
+
+  static const stepDescription3 = LocalizedText(
+    english: 'Mix the eggs and milk until blended in a separate bowl.',
+    indonesian: 'Kocok telur dan susu hingga tercampur rata dalam wadah lain.',
+  );
+
+  static const stepDescription4 = LocalizedText(
+    english: 'Combine the wet mixture with the dry ingredients and stir well.',
+    indonesian: 'Masukkan campuran telur dan susu ke bahan kering lalu aduk rata.',
+  );
+
+  static const stepDescription5 = LocalizedText(
+    english: 'Cook until golden brown and serve while warm.',
+    indonesian: 'Masak hingga berwarna keemasan dan sajikan selagi hangat.',
+  );
+
+  static String ingredientsCount(AppLanguage language, int count) {
+    if (language == AppLanguage.indonesian) {
+      return '$count Bahan';
+    }
+    return '$count Items';
+  }
+
+  static String stepsCount(AppLanguage language, int count) {
+    if (language == AppLanguage.indonesian) {
+      return '$count Langkah';
+    }
+    return '$count Steps';
+  }
+
+  static String addToMeal(AppLanguage language, String mealName) {
+    if (language == AppLanguage.indonesian) {
+      return 'Tambahkan ke Menu $mealName';
+    }
+    return 'Add to $mealName Meal';
+  }
+}
+
+String _resolveLocalized(
+  Object? value,
+  AppLanguage language, {
+  String? fallback,
+}) {
+  if (value is LocalizedText) {
+    return value.resolve(language);
+  }
+  if (value == null) {
+    return fallback ?? '';
+  }
+  return value.toString();
 }

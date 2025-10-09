@@ -37,23 +37,27 @@ class MealRecommendCell extends StatelessWidget {
     super.key,
     required this.index,
     required this.meal,
+    this.buttonLabel,
     this.onViewPressed,
   });
 
   factory MealRecommendCell.fromMap(
     Map<String, dynamic> map, {
     required int index,
+    String? buttonLabel,
     VoidCallback? onViewPressed,
   }) {
     return MealRecommendCell(
       index: index,
       meal: MealRecommendationItem.fromJson(map),
+      buttonLabel: buttonLabel,
       onViewPressed: onViewPressed,
     );
   }
 
   final int index;
   final MealRecommendationItem meal;
+  final String? buttonLabel;
   final VoidCallback? onViewPressed;
 
   @override
@@ -120,7 +124,7 @@ class MealRecommendCell extends StatelessWidget {
                 type: isEven
                     ? RoundButtonType.bgGradient
                     : RoundButtonType.bgSGradient,
-                title: 'View',
+                title: buttonLabel ?? 'View',
                 onPressed: onViewPressed ?? () {},
               ),
             ),

@@ -1,13 +1,12 @@
-// lib/view/meal_planner/meal_schedule_view.dart
-
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common_widget/meal_food_schedule_row.dart';
+import 'package:aigymbuddy/common_widget/nutritions_row.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
-import '../../common/color_extension.dart';
-import '../../common_widget/meal_food_schedule_row.dart';
-import '../../common_widget/nutritions_row.dart';
 
 class MealScheduleView extends StatefulWidget {
   const MealScheduleView({super.key});
@@ -17,71 +16,111 @@ class MealScheduleView extends StatefulWidget {
 }
 
 class _MealScheduleViewState extends State<MealScheduleView> {
-  static const List<Map<String, String>> _breakfastMeals = [
-    {
-      'name': 'Honey Pancake',
-      'time': '07:00am',
-      'image': 'assets/img/honey_pan.png',
-    },
-    {'name': 'Coffee', 'time': '07:30am', 'image': 'assets/img/coffee.png'},
+  static const List<_ScheduledMeal> _breakfastMeals = [
+    _ScheduledMeal(
+      name: LocalizedText(
+        english: 'Honey Pancake',
+        indonesian: 'Pancake Madu',
+      ),
+      timeLabel: '07:00am',
+      image: 'assets/img/honey_pan.png',
+    ),
+    _ScheduledMeal(
+      name: LocalizedText(
+        english: 'Coffee',
+        indonesian: 'Kopi',
+      ),
+      timeLabel: '07:30am',
+      image: 'assets/img/coffee.png',
+    ),
   ];
 
-  static const List<Map<String, String>> _lunchMeals = [
-    {
-      'name': 'Chicken Steak',
-      'time': '01:00pm',
-      'image': 'assets/img/chicken.png',
-    },
-    {
-      'name': 'Milk',
-      'time': '01:20pm',
-      'image': 'assets/img/glass-of-milk 1.png',
-    },
+  static const List<_ScheduledMeal> _lunchMeals = [
+    _ScheduledMeal(
+      name: LocalizedText(
+        english: 'Chicken Steak',
+        indonesian: 'Steak Ayam',
+      ),
+      timeLabel: '01:00pm',
+      image: 'assets/img/chicken.png',
+    ),
+    _ScheduledMeal(
+      name: LocalizedText(
+        english: 'Milk',
+        indonesian: 'Susu',
+      ),
+      timeLabel: '01:20pm',
+      image: 'assets/img/glass-of-milk 1.png',
+    ),
   ];
 
-  static const List<Map<String, String>> _snackMeals = [
-    {'name': 'Orange', 'time': '04:30pm', 'image': 'assets/img/orange.png'},
-    {
-      'name': 'Apple Pie',
-      'time': '04:40pm',
-      'image': 'assets/img/apple_pie.png',
-    },
+  static const List<_ScheduledMeal> _snackMeals = [
+    _ScheduledMeal(
+      name: LocalizedText(
+        english: 'Orange',
+        indonesian: 'Jeruk',
+      ),
+      timeLabel: '04:30pm',
+      image: 'assets/img/orange.png',
+    ),
+    _ScheduledMeal(
+      name: LocalizedText(
+        english: 'Apple Pie',
+        indonesian: 'Pai Apel',
+      ),
+      timeLabel: '04:40pm',
+      image: 'assets/img/apple_pie.png',
+    ),
   ];
 
-  static const List<Map<String, String>> _dinnerMeals = [
-    {'name': 'Salad', 'time': '07:10pm', 'image': 'assets/img/salad.png'},
-    {'name': 'Oatmeal', 'time': '08:10pm', 'image': 'assets/img/oatmeal.png'},
+  static const List<_ScheduledMeal> _dinnerMeals = [
+    _ScheduledMeal(
+      name: LocalizedText(
+        english: 'Salad',
+        indonesian: 'Salad',
+      ),
+      timeLabel: '07:10pm',
+      image: 'assets/img/salad.png',
+    ),
+    _ScheduledMeal(
+      name: LocalizedText(
+        english: 'Oatmeal',
+        indonesian: 'Oatmeal',
+      ),
+      timeLabel: '08:10pm',
+      image: 'assets/img/oatmeal.png',
+    ),
   ];
 
-  static const List<Map<String, String>> _nutritionItems = [
-    {
-      'title': 'Calories',
-      'image': 'assets/img/burn.png',
-      'unit_name': 'kCal',
-      'value': '350',
-      'max_value': '500',
-    },
-    {
-      'title': 'Proteins',
-      'image': 'assets/img/proteins.png',
-      'unit_name': 'g',
-      'value': '300',
-      'max_value': '1000',
-    },
-    {
-      'title': 'Fats',
-      'image': 'assets/img/egg.png',
-      'unit_name': 'g',
-      'value': '140',
-      'max_value': '1000',
-    },
-    {
-      'title': 'Carbo',
-      'image': 'assets/img/carbo.png',
-      'unit_name': 'g',
-      'value': '140',
-      'max_value': '1000',
-    },
+  static const List<_NutritionItemData> _nutritionItems = [
+    _NutritionItemData(
+      title: LocalizedText(english: 'Calories', indonesian: 'Kalori'),
+      image: 'assets/img/burn.png',
+      unitName: 'kCal',
+      value: 350,
+      maxValue: 500,
+    ),
+    _NutritionItemData(
+      title: LocalizedText(english: 'Proteins', indonesian: 'Protein'),
+      image: 'assets/img/proteins.png',
+      unitName: 'g',
+      value: 300,
+      maxValue: 1000,
+    ),
+    _NutritionItemData(
+      title: LocalizedText(english: 'Fats', indonesian: 'Lemak'),
+      image: 'assets/img/egg.png',
+      unitName: 'g',
+      value: 140,
+      maxValue: 1000,
+    ),
+    _NutritionItemData(
+      title: LocalizedText(english: 'Carbo', indonesian: 'Karbo'),
+      image: 'assets/img/carbo.png',
+      unitName: 'g',
+      value: 140,
+      maxValue: 1000,
+    ),
   ];
 
   final CalendarAgendaController _calendarCtrl = CalendarAgendaController();
@@ -110,7 +149,9 @@ class _MealScheduleViewState extends State<MealScheduleView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-    final dateLabel = DateFormat('EEE, d MMM yyyy').format(_selectedDate);
+    final language = context.appLanguage;
+    final dateLabel =
+        DateFormat('EEE, d MMM yyyy', language.code).format(_selectedDate);
 
     return Scaffold(
       appBar: _buildAppBar(context),
@@ -118,36 +159,44 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDateSelector(dateLabel),
-          _buildCalendar(),
+          _buildDateSelector(context, language, dateLabel),
+          _buildCalendar(context, language),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildMealSection(
-                    title: 'Breakfast',
-                    subtitle: '${_breakfastMeals.length} Items | 230 calories',
-                    data: _breakfastMeals,
+                    context: context,
+                    language: language,
+                    title: _MealScheduleStrings.breakfastTitle,
+                    meals: _breakfastMeals,
+                    calories: 230,
                   ),
                   _buildMealSection(
-                    title: 'Lunch',
-                    subtitle: '${_lunchMeals.length} Items | 500 calories',
-                    data: _lunchMeals,
+                    context: context,
+                    language: language,
+                    title: _MealScheduleStrings.lunchTitle,
+                    meals: _lunchMeals,
+                    calories: 500,
                   ),
                   _buildMealSection(
-                    title: 'Snacks',
-                    subtitle: '${_snackMeals.length} Items | 140 calories',
-                    data: _snackMeals,
+                    context: context,
+                    language: language,
+                    title: _MealScheduleStrings.snackTitle,
+                    meals: _snackMeals,
+                    calories: 140,
                   ),
                   _buildMealSection(
-                    title: 'Dinner',
-                    subtitle: '${_dinnerMeals.length} Items | 120 calories',
-                    data: _dinnerMeals,
+                    context: context,
+                    language: language,
+                    title: _MealScheduleStrings.dinnerTitle,
+                    meals: _dinnerMeals,
+                    calories: 120,
                   ),
                   SizedBox(height: media.width * 0.05),
-                  _buildNutritionHeader(),
-                  _buildNutritionList(),
+                  _buildNutritionHeader(context),
+                  _buildNutritionList(language),
                   SizedBox(height: media.width * 0.05),
                 ],
               ),
@@ -181,7 +230,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
         ),
       ),
       title: Text(
-        'Meal  Schedule',
+        context.localize(_MealScheduleStrings.mealScheduleTitle),
         style: TextStyle(
           color: TColor.black,
           fontSize: 16,
@@ -194,7 +243,15 @@ class _MealScheduleViewState extends State<MealScheduleView> {
     );
   }
 
-  Widget _buildDateSelector(String dateLabel) {
+  Widget _buildDateSelector(
+    BuildContext context,
+    AppLanguage language,
+    String dateLabel,
+  ) {
+    final previousTooltip =
+        context.localize(_MealScheduleStrings.previousDayTooltip);
+    final nextTooltip = context.localize(_MealScheduleStrings.nextDayTooltip);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
       child: Row(
@@ -206,7 +263,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
               width: 18,
               height: 18,
             ),
-            tooltip: 'Previous day',
+            tooltip: previousTooltip,
           ),
           const SizedBox(width: 6),
           Expanded(
@@ -228,28 +285,28 @@ class _MealScheduleViewState extends State<MealScheduleView> {
               width: 18,
               height: 18,
             ),
-            tooltip: 'Next day',
+            tooltip: nextTooltip,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCalendar() {
+  Widget _buildCalendar(BuildContext context, AppLanguage language) {
     return CalendarAgenda(
       controller: _calendarCtrl,
       appbar: false,
       leading: IconButton(
         onPressed: _goPrevDay,
         icon: const Icon(Icons.chevron_left),
-        tooltip: 'Previous day',
+        tooltip: context.localize(_MealScheduleStrings.previousDayTooltip),
       ),
       weekDay: WeekDay.short,
       backgroundColor: Colors.transparent,
       calendarBackground: Colors.white,
       selectedDateColor: Colors.white,
       dateColor: Colors.black,
-      locale: 'en',
+      locale: language.code,
       fullCalendar: true,
       fullCalendarScroll: FullCalendarScroll.horizontal,
       fullCalendarDay: WeekDay.short,
@@ -262,10 +319,15 @@ class _MealScheduleViewState extends State<MealScheduleView> {
   }
 
   Widget _buildMealSection({
-    required String title,
-    required String subtitle,
-    required List<Map<String, String>> data,
+    required BuildContext context,
+    required AppLanguage language,
+    required LocalizedText title,
+    required List<_ScheduledMeal> meals,
+    required int calories,
   }) {
+    final subtitle =
+        _MealScheduleStrings.mealSummary(language, meals.length, calories);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -275,7 +337,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                context.localize(title),
                 style: TextStyle(
                   color: TColor.black,
                   fontSize: 16,
@@ -296,9 +358,9 @@ class _MealScheduleViewState extends State<MealScheduleView> {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: data.length,
+          itemCount: meals.length,
           itemBuilder: (context, index) => MealFoodScheduleRow.fromMap(
-            Map<String, dynamic>.from(data[index]),
+            meals[index].toMap(language),
             index: index,
           ),
         ),
@@ -306,11 +368,11 @@ class _MealScheduleViewState extends State<MealScheduleView> {
     );
   }
 
-  Widget _buildNutritionHeader() {
+  Widget _buildNutritionHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Text(
-        'Today Meal Nutritions',
+        context.localize(_MealScheduleStrings.todayNutritionTitle),
         style: TextStyle(
           color: TColor.black,
           fontSize: 16,
@@ -320,14 +382,14 @@ class _MealScheduleViewState extends State<MealScheduleView> {
     );
   }
 
-  Widget _buildNutritionList() {
+  Widget _buildNutritionList(AppLanguage language) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _nutritionItems.length,
       itemBuilder: (context, index) => NutritionRow.fromMap(
-        Map<String, dynamic>.from(_nutritionItems[index]),
+        _nutritionItems[index].toMap(language),
       ),
     );
   }
@@ -356,5 +418,104 @@ class _MoreActionButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _ScheduledMeal {
+  const _ScheduledMeal({
+    required this.name,
+    required this.timeLabel,
+    required this.image,
+  });
+
+  final LocalizedText name;
+  final String timeLabel;
+  final String image;
+
+  Map<String, dynamic> toMap(AppLanguage language) {
+    return {
+      'name': name.resolve(language),
+      'time': timeLabel,
+      'image': image,
+    };
+  }
+}
+
+class _NutritionItemData {
+  const _NutritionItemData({
+    required this.title,
+    required this.image,
+    required this.unitName,
+    required this.value,
+    required this.maxValue,
+  });
+
+  final LocalizedText title;
+  final String image;
+  final String unitName;
+  final double value;
+  final double maxValue;
+
+  Map<String, dynamic> toMap(AppLanguage language) {
+    return {
+      'title': title.resolve(language),
+      'image': image,
+      'unit_name': unitName,
+      'value': value.toString(),
+      'max_value': maxValue.toString(),
+    };
+  }
+}
+
+class _MealScheduleStrings {
+  static const mealScheduleTitle = LocalizedText(
+    english: 'Meal Schedule',
+    indonesian: 'Jadwal Makan',
+  );
+
+  static const previousDayTooltip = LocalizedText(
+    english: 'Previous day',
+    indonesian: 'Hari sebelumnya',
+  );
+
+  static const nextDayTooltip = LocalizedText(
+    english: 'Next day',
+    indonesian: 'Hari berikutnya',
+  );
+
+  static const breakfastTitle = LocalizedText(
+    english: 'Breakfast',
+    indonesian: 'Sarapan',
+  );
+
+  static const lunchTitle = LocalizedText(
+    english: 'Lunch',
+    indonesian: 'Makan Siang',
+  );
+
+  static const snackTitle = LocalizedText(
+    english: 'Snacks',
+    indonesian: 'Camilan',
+  );
+
+  static const dinnerTitle = LocalizedText(
+    english: 'Dinner',
+    indonesian: 'Makan Malam',
+  );
+
+  static const todayNutritionTitle = LocalizedText(
+    english: 'Today Meal Nutritions',
+    indonesian: 'Nutrisi Makan Hari Ini',
+  );
+
+  static String mealSummary(AppLanguage language, int itemCount, int calories) {
+    final itemLabel = language == AppLanguage.indonesian
+        ? 'Menu'
+        : itemCount == 1
+            ? 'Item'
+            : 'Items';
+    final calorieLabel =
+        language == AppLanguage.indonesian ? 'kalori' : 'calories';
+    return '$itemCount $itemLabel | $calories $calorieLabel';
   }
 }
