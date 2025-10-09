@@ -1,47 +1,86 @@
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common_widget/notification_row.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../common/color_extension.dart';
-import '../../common_widget/notification_row.dart';
 
 class NotificationView extends StatelessWidget {
   const NotificationView({super.key});
 
-  static const List<Map<String, String>> _notifications = [
-    {
-      'image': 'assets/img/Workout1.png',
-      'title': 'Hey, it’s time for lunch',
-      'time': 'About 1 minutes ago',
-    },
-    {
-      'image': 'assets/img/Workout2.png',
-      'title': 'Don’t miss your lowerbody workout',
-      'time': 'About 3 hours ago',
-    },
-    {
-      'image': 'assets/img/Workout3.png',
-      'title': 'Hey, let’s add some meals for your b',
-      'time': 'About 3 hours ago',
-    },
-    {
-      'image': 'assets/img/Workout1.png',
-      'title': 'Congratulations, You have finished A..',
-      'time': '29 May',
-    },
-    {
-      'image': 'assets/img/Workout2.png',
-      'title': 'Hey, it’s time for lunch',
-      'time': '8 April',
-    },
-    {
-      'image': 'assets/img/Workout3.png',
-      'title': 'Ups, You have missed your Lowerbo...',
-      'time': '8 April',
-    },
+  static const List<_NotificationData> _notifications = [
+    _NotificationData(
+      image: 'assets/img/Workout1.png',
+      title: LocalizedText(
+        english: 'Hey, it’s time for lunch',
+        indonesian: 'Hai, saatnya makan siang',
+      ),
+      time: LocalizedText(
+        english: 'About 1 minute ago',
+        indonesian: 'Sekitar 1 menit lalu',
+      ),
+    ),
+    _NotificationData(
+      image: 'assets/img/Workout2.png',
+      title: LocalizedText(
+        english: 'Don’t miss your lowerbody workout',
+        indonesian: 'Jangan lewatkan latihan tubuh bagian bawahmu',
+      ),
+      time: LocalizedText(
+        english: 'About 3 hours ago',
+        indonesian: 'Sekitar 3 jam lalu',
+      ),
+    ),
+    _NotificationData(
+      image: 'assets/img/Workout3.png',
+      title: LocalizedText(
+        english: 'Hey, let’s add some meals for your body',
+        indonesian: 'Hai, ayo tambahkan beberapa makanan untuk tubuhmu',
+      ),
+      time: LocalizedText(
+        english: 'About 3 hours ago',
+        indonesian: 'Sekitar 3 jam lalu',
+      ),
+    ),
+    _NotificationData(
+      image: 'assets/img/Workout1.png',
+      title: LocalizedText(
+        english: 'Congratulations, You have finished A..',
+        indonesian: 'Selamat, kamu telah menyelesaikan A..',
+      ),
+      time: LocalizedText(
+        english: '29 May',
+        indonesian: '29 Mei',
+      ),
+    ),
+    _NotificationData(
+      image: 'assets/img/Workout2.png',
+      title: LocalizedText(
+        english: 'Hey, it’s time for lunch',
+        indonesian: 'Hai, saatnya makan siang',
+      ),
+      time: LocalizedText(
+        english: '8 April',
+        indonesian: '8 April',
+      ),
+    ),
+    _NotificationData(
+      image: 'assets/img/Workout3.png',
+      title: LocalizedText(
+        english: 'Ups, You have missed your Lowerbo...',
+        indonesian: 'Ups, kamu melewatkan latihan tubuh bawah...',
+      ),
+      time: LocalizedText(
+        english: '8 April',
+        indonesian: '8 April',
+      ),
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final localize = context.localize;
+    final language = context.appLanguage;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: TColor.white,
@@ -52,7 +91,7 @@ class NotificationView extends StatelessWidget {
           onTap: () => context.pop(),
         ),
         title: Text(
-          'Notification',
+          localize(_NotificationStrings.title),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -66,13 +105,40 @@ class NotificationView extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
         itemCount: _notifications.length,
         itemBuilder: (context, index) => NotificationRow.fromMap(
-          Map<String, dynamic>.from(_notifications[index]),
+          _notifications[index].toMap(language),
         ),
         separatorBuilder: (_, index) =>
             Divider(color: TColor.gray.withValues(alpha: 0.5), height: 1),
       ),
     );
   }
+}
+
+class _NotificationData {
+  const _NotificationData({
+    required this.image,
+    required this.title,
+    required this.time,
+  });
+
+  final String image;
+  final LocalizedText title;
+  final LocalizedText time;
+
+  Map<String, dynamic> toMap(AppLanguage language) {
+    return {
+      'image': image,
+      'title': title.resolve(language),
+      'time': time.resolve(language),
+    };
+  }
+}
+
+class _NotificationStrings {
+  static const title = LocalizedText(
+    english: 'Notification',
+    indonesian: 'Notifikasi',
+  );
 }
 
 class _SquareIconButton extends StatelessWidget {
