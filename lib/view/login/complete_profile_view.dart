@@ -93,9 +93,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   _Gender? _selectedGender;
   bool _autoValidate = false;
 
-  static const _decimalKeyboard = TextInputType.numberWithOptions(
-    decimal: true,
-  );
+  static const _decimalKeyboard = TextInputType.numberWithOptions(decimal: true);
   static const double _minWeightKg = 20;
   static const double _maxWeightKg = 500;
   static const double _minHeightCm = 50;
@@ -158,8 +156,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     );
 
     if (picked != null) {
-      final formatted =
-          '${picked.year.toString().padLeft(4, '0')}-'
+      final formatted = '${picked.year.toString().padLeft(4, '0')}-'
           '${picked.month.toString().padLeft(2, '0')}-'
           '${picked.day.toString().padLeft(2, '0')}';
       _dobController.text = formatted;
@@ -325,10 +322,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                         value: state.value,
                         hint: Text(
                           context.localize(_CompleteProfileTexts.genderHint),
-                          style: const TextStyle(
-                            color: TColor.gray,
-                            fontSize: 12,
-                          ),
+                          style: const TextStyle(color: TColor.gray, fontSize: 12),
                         ),
                         icon: const Icon(
                           Icons.keyboard_arrow_down_rounded,
@@ -523,10 +517,11 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
-    _Gender.female => const LocalizedText(
-      english: 'Female',
-      indonesian: 'Wanita',
-    ),
-  };
+        _Gender.male =>
+          const LocalizedText(english: 'Male', indonesian: 'Pria'),
+        _Gender.female => const LocalizedText(
+            english: 'Female',
+            indonesian: 'Wanita',
+          ),
+      };
 }

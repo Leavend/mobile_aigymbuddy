@@ -17,15 +17,14 @@ abstract final class _LoginTexts {
     'assets/img/facebook.png',
   ];
 
-  static const greeting = LocalizedText(
-    english: 'Hey there,',
-    indonesian: 'Hai,',
-  );
+  static const greeting =
+      LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
   static const welcomeBack = LocalizedText(
     english: 'Welcome Back',
     indonesian: 'Selamat Datang Kembali',
   );
-  static const emailHint = LocalizedText(english: 'Email', indonesian: 'Email');
+  static const emailHint =
+      LocalizedText(english: 'Email', indonesian: 'Email');
   static const passwordHint = LocalizedText(
     english: 'Password',
     indonesian: 'Kata Sandi',
@@ -34,19 +33,15 @@ abstract final class _LoginTexts {
     english: 'Forgot your password?',
     indonesian: 'Lupa kata sandi?',
   );
-  static const loginButton = LocalizedText(
-    english: 'Login',
-    indonesian: 'Masuk',
-  );
+  static const loginButton =
+      LocalizedText(english: 'Login', indonesian: 'Masuk');
   static const divider = LocalizedText(english: 'Or', indonesian: 'Atau');
   static const noAccount = LocalizedText(
     english: 'Don’t have an account yet? ',
     indonesian: 'Belum punya akun? ',
   );
-  static const register = LocalizedText(
-    english: 'Register',
-    indonesian: 'Daftar',
-  );
+  static const register =
+      LocalizedText(english: 'Register', indonesian: 'Daftar');
 
   static const emailRequired = LocalizedText(
     english: 'Email is required',
@@ -115,6 +110,11 @@ class _LoginViewState extends State<LoginView> {
     if (_formKey.currentState?.validate() ?? false) {
       context.push(AppRoute.completeProfile);
     }
+  }
+
+  void _onForgotPasswordPressed() {
+    FocusScope.of(context).unfocus();
+    context.go(AppRoute.main);
   }
 
   String? _validateEmail(String? value) {
@@ -249,7 +249,7 @@ class _LoginViewState extends State<LoginView> {
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: () {},
+        onPressed: _onForgotPasswordPressed,
         style: TextButton.styleFrom(
           padding: EdgeInsets.zero,
           minimumSize: const Size(0, 0),
