@@ -1,5 +1,6 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

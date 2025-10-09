@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/tab_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -78,17 +79,14 @@ class _AssistantButton extends StatelessWidget {
   const _AssistantButton({
     required this.diameter,
     required this.label,
-    this.onPressed,
   });
 
   final double diameter;
   final LocalizedText label;
-  final VoidCallback? onPressed;
 
   void _handleTap(BuildContext context) {
     Feedback.forTap(context);
     HapticFeedback.mediumImpact();
-    onPressed?.call();
   }
 
   @override
@@ -192,7 +190,9 @@ class _NavigationBar extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(metrics.containerRadius),
+                    borderRadius: BorderRadius.circular(
+                      metrics.containerRadius,
+                    ),
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
