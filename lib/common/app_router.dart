@@ -55,6 +55,9 @@ class AppRoute {
   static const String photoProgress = '/photo-progress';
   static const String photoComparison = '/photo-progress/comparison';
   static const String photoResult = '/photo-progress/result';
+  static const String photoProgressName = 'photo-progress';
+  static const String photoComparisonName = 'photo-comparison';
+  static const String photoResultName = 'photo-result';
   static const String sleepTracker = '/sleep-tracker';
   static const String sleepSchedule = '/sleep-tracker/schedule';
   static const String sleepAddAlarm = '/sleep-tracker/add-alarm';
@@ -118,14 +121,17 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoute.photoProgress,
+                name: AppRoute.photoProgressName,
                 builder: (context, state) => const PhotoProgressView(),
                 routes: [
                   GoRoute(
                     path: 'comparison',
+                    name: AppRoute.photoComparisonName,
                     builder: (context, state) => const ComparisonView(),
                   ),
                   GoRoute(
                     path: 'result',
+                    name: AppRoute.photoResultName,
                     builder: (context, state) => _buildPhotoResultView(state),
                   ),
                 ],
