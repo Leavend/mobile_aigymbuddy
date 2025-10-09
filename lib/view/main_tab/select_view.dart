@@ -11,14 +11,8 @@ class SelectView extends StatelessWidget {
       label: 'Workout Tracker',
       route: AppRoute.workoutTracker,
     ),
-    _FeatureDestination(
-      label: 'Meal Planner',
-      route: AppRoute.mealPlanner,
-    ),
-    _FeatureDestination(
-      label: 'Sleep Tracker',
-      route: AppRoute.sleepTracker,
-    ),
+    _FeatureDestination(label: 'Meal Planner', route: AppRoute.mealPlanner),
+    _FeatureDestination(label: 'Sleep Tracker', route: AppRoute.sleepTracker),
   ];
 
   @override

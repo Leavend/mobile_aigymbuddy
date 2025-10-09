@@ -95,9 +95,8 @@ class AppRouter {
         builder: (context, state) => const WelcomeView(),
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => MainTabView(
-          navigationShell: navigationShell,
-        ),
+        builder: (context, state, navigationShell) =>
+            MainTabView(navigationShell: navigationShell),
         branches: [
           StatefulShellBranch(
             routes: [

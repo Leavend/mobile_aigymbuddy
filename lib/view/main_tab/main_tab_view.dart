@@ -11,10 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class MainTabView extends StatelessWidget {
-  const MainTabView({
-    super.key,
-    required this.navigationShell,
-  });
+  const MainTabView({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
@@ -124,8 +121,8 @@ class MainTabView extends StatelessWidget {
 
   Widget _buildBottomNavigationBar(BuildContext context) {
     assert(
-      navigationShell.branchCount == _items.length,
-      'Navigation branches (${navigationShell.branchCount}) must match tab '
+      navigationShell.route.branches.length == _items.length,
+      'Navigation branches (${navigationShell.route.branches.length}) must match tab '
       'configuration (${_items.length}).',
     );
 
@@ -339,8 +336,8 @@ class _NavigationMetrics {
     var centerGap = snapshot.centerGap;
     final requiredWidth =
         _clusterWidth(constraints.leadingCount, buttonWidth, tabSpacing) +
-            centerGap +
-            _clusterWidth(constraints.trailingCount, buttonWidth, tabSpacing);
+        centerGap +
+        _clusterWidth(constraints.trailingCount, buttonWidth, tabSpacing);
 
     var overflow = requiredWidth - availableInnerWidth;
     if (overflow <= 0) {
