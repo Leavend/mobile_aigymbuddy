@@ -1,11 +1,12 @@
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/date_time_utils.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
-
-import '../../common/color_extension.dart';
-import '../../common/date_time_utils.dart';
-import '../../common_widget/round_button.dart';
 
 class ResultView extends StatefulWidget {
   const ResultView({super.key, required this.date1, required this.date2});
@@ -20,22 +21,34 @@ class ResultView extends StatefulWidget {
 class _ResultViewState extends State<ResultView> {
   static const _photoComparisons = [
     _PhotoComparison(
-      title: 'Front Facing',
+      title: LocalizedText(
+        english: 'Front Facing',
+        indonesian: 'Tampak Depan',
+      ),
       firstImagePath: 'assets/img/pp_1.png',
       secondImagePath: 'assets/img/pp_2.png',
     ),
     _PhotoComparison(
-      title: 'Back Facing',
+      title: LocalizedText(
+        english: 'Back Facing',
+        indonesian: 'Tampak Belakang',
+      ),
       firstImagePath: 'assets/img/pp_3.png',
       secondImagePath: 'assets/img/pp_4.png',
     ),
     _PhotoComparison(
-      title: 'Left Facing',
+      title: LocalizedText(
+        english: 'Left Facing',
+        indonesian: 'Tampak Kiri',
+      ),
       firstImagePath: 'assets/img/pp_5.png',
       secondImagePath: 'assets/img/pp_6.png',
     ),
     _PhotoComparison(
-      title: 'Right Facing',
+      title: LocalizedText(
+        english: 'Right Facing',
+        indonesian: 'Tampak Kanan',
+      ),
       firstImagePath: 'assets/img/pp_7.png',
       secondImagePath: 'assets/img/pp_8.png',
     ),
@@ -43,21 +56,34 @@ class _ResultViewState extends State<ResultView> {
 
   static const _statistics = [
     _ProgressStatistic(
-      title: 'Lose Weight',
+      title: LocalizedText(
+        english: 'Lose Weight',
+        indonesian: 'Turun Berat Badan',
+      ),
       firstPercent: 33,
       secondPercent: 67,
     ),
     _ProgressStatistic(
-      title: 'Height Increase',
+      title: LocalizedText(
+        english: 'Height Increase',
+        indonesian: 'Tinggi Bertambah',
+      ),
       firstPercent: 88,
       secondPercent: 12,
     ),
     _ProgressStatistic(
-      title: 'Muscle Mass Increase',
+      title: LocalizedText(
+        english: 'Muscle Mass Increase',
+        indonesian: 'Peningkatan Massa Otot',
+      ),
       firstPercent: 57,
       secondPercent: 43,
     ),
-    _ProgressStatistic(title: 'Abs', firstPercent: 89, secondPercent: 11),
+    _ProgressStatistic(
+      title: LocalizedText(english: 'Abs', indonesian: 'Otot Perut'),
+      firstPercent: 89,
+      secondPercent: 11,
+    ),
   ];
 
   _ResultTab _selectedTab = _ResultTab.photo;
@@ -65,6 +91,8 @@ class _ResultViewState extends State<ResultView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final localize = context.localize;
+    final language = context.appLanguage;
 
     return Scaffold(
       appBar: AppBar(
@@ -85,7 +113,7 @@ class _ResultViewState extends State<ResultView> {
           ),
         ),
         title: Text(
-          'Result',
+          localize(_ResultTexts.title),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -126,17 +154,22 @@ class _ResultViewState extends State<ResultView> {
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: Column(
           children: [
-            _buildTabSwitcher(media),
+            _buildTabSwitcher(media, localize),
             const SizedBox(height: 20),
-            if (_selectedTab == _ResultTab.photo) _buildPhotoTab(media),
-            if (_selectedTab == _ResultTab.statistic) _buildStatisticTab(media),
+            if (_selectedTab == _ResultTab.photo)
+              _buildPhotoTab(media, localize),
+            if (_selectedTab == _ResultTab.statistic)
+              _buildStatisticTab(media, localize, language),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTabSwitcher(Size media) {
+  Widget _buildTabSwitcher(
+    Size media,
+    String Function(LocalizedText) localize,
+  ) {
     return Container(
       height: 55,
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -170,7 +203,7 @@ class _ResultViewState extends State<ResultView> {
                   child: TextButton(
                     onPressed: () => _selectTab(_ResultTab.photo),
                     child: Text(
-                      'Photo',
+                      localize(_ResultTexts.photoTab),
                       style: TextStyle(
                         color: _selectedTab == _ResultTab.photo
                             ? TColor.white
@@ -185,7 +218,7 @@ class _ResultViewState extends State<ResultView> {
                   child: TextButton(
                     onPressed: () => _selectTab(_ResultTab.statistic),
                     child: Text(
-                      'Statistic',
+                      localize(_ResultTexts.statisticTab),
                       style: TextStyle(
                         color: _selectedTab == _ResultTab.statistic
                             ? TColor.white
@@ -204,7 +237,10 @@ class _ResultViewState extends State<ResultView> {
     );
   }
 
-  Widget _buildPhotoTab(Size media) {
+  Widget _buildPhotoTab(
+    Size media,
+    String Function(LocalizedText) localize,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -212,16 +248,16 @@ class _ResultViewState extends State<ResultView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Average Progress',
+              localize(_ResultTexts.averageProgress),
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const Text(
-              'Good',
-              style: TextStyle(
+            Text(
+              localize(_ResultTexts.progressStatusGood),
+              style: const TextStyle(
                 color: Color(0xFF6DD570),
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -285,7 +321,7 @@ class _ResultViewState extends State<ResultView> {
             return Column(
               children: [
                 Text(
-                  comparison.title,
+                  localize(comparison.title),
                   style: TextStyle(
                     color: TColor.gray,
                     fontSize: 14,
@@ -315,7 +351,7 @@ class _ResultViewState extends State<ResultView> {
           },
         ),
         RoundButton(
-          title: 'Back to Comparison',
+          title: localize(_ResultTexts.backToComparison),
           onPressed: () => context.pop(),
         ),
         const SizedBox(height: 15),
@@ -323,7 +359,11 @@ class _ResultViewState extends State<ResultView> {
     );
   }
 
-  Widget _buildStatisticTab(Size media) {
+  Widget _buildStatisticTab(
+    Size media,
+    String Function(LocalizedText) localize,
+    AppLanguage language,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -332,7 +372,7 @@ class _ResultViewState extends State<ResultView> {
           width: double.infinity,
           child: LineChart(
             LineChartData(
-              lineTouchData: _lineTouchData,
+              lineTouchData: _lineTouchData(language),
               lineBarsData: _lineBarsData,
               minY: -0.5,
               maxY: 110,
@@ -340,7 +380,9 @@ class _ResultViewState extends State<ResultView> {
                 show: true,
                 leftTitles: const AxisTitles(),
                 topTitles: const AxisTitles(),
-                bottomTitles: AxisTitles(sideTitles: _bottomTitles),
+                bottomTitles: AxisTitles(
+                  sideTitles: _bottomTitles(language),
+                ),
                 rightTitles: AxisTitles(sideTitles: _rightTitles),
               ),
               gridData: FlGridData(
@@ -391,7 +433,7 @@ class _ResultViewState extends State<ResultView> {
             return Column(
               children: [
                 Text(
-                  stat.title,
+                  localize(stat.title),
                   style: TextStyle(
                     color: TColor.gray,
                     fontSize: 14,
@@ -438,7 +480,7 @@ class _ResultViewState extends State<ResultView> {
           },
         ),
         RoundButton(
-          title: 'Back to Comparison',
+          title: localize(_ResultTexts.backToComparison),
           onPressed: () => context.pop(),
         ),
         const SizedBox(height: 15),
@@ -456,7 +498,9 @@ class _ResultViewState extends State<ResultView> {
   void _shareResult(BuildContext context) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(content: Text('Shared progress (demo).')));
+      ..showSnackBar(
+        SnackBar(content: Text(context.localize(_ResultTexts.shareInfo))),
+      );
   }
 
   void _showMoreOptions() {
@@ -465,26 +509,29 @@ class _ResultViewState extends State<ResultView> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
+        final localize = sheetContext.localize;
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: const Icon(Icons.save_alt),
-                title: const Text('Save report'),
+                title: Text(localize(_ResultTexts.saveReport)),
                 onTap: () {
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context)
                     ..hideCurrentSnackBar()
                     ..showSnackBar(
-                      const SnackBar(content: Text('Report saved (demo).')),
+                      SnackBar(
+                        content: Text(localize(_ResultTexts.saveReportInfo)),
+                      ),
                     );
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.refresh),
-                title: const Text('Reset chart'),
+                title: Text(localize(_ResultTexts.resetChart)),
                 onTap: () {
                   Navigator.of(context).pop();
                   setState(() => _selectedTab = _ResultTab.photo);
@@ -497,14 +544,14 @@ class _ResultViewState extends State<ResultView> {
     );
   }
 
-  LineTouchData get _lineTouchData => LineTouchData(
+  LineTouchData _lineTouchData(AppLanguage language) => LineTouchData(
     enabled: true,
     handleBuiltInTouches: true,
     touchTooltipData: LineTouchTooltipData(
       getTooltipItems: (spots) => spots
           .map(
             (spot) => LineTooltipItem(
-              '${spot.x.toInt()} mins ago',
+              _ResultTexts.minutesAgo(language, spot.x.toInt()),
               const TextStyle(
                 color: Colors.white,
                 fontSize: 10,
@@ -581,22 +628,13 @@ class _ResultViewState extends State<ResultView> {
     },
   );
 
-  SideTitles get _bottomTitles => SideTitles(
+  SideTitles _bottomTitles(AppLanguage language) => SideTitles(
     showTitles: true,
     reservedSize: 32,
     interval: 1,
     getTitlesWidget: (value, meta) {
       final style = TextStyle(color: TColor.gray, fontSize: 12);
-      const labels = {
-        1: 'Jan',
-        2: 'Feb',
-        3: 'Mar',
-        4: 'Apr',
-        5: 'May',
-        6: 'Jun',
-        7: 'Jul',
-      };
-      final label = labels[value.toInt()];
+      final label = _ResultTexts.monthShortLabel(language, value.toInt());
       if (label == null) {
         return const SizedBox.shrink();
       }
@@ -618,7 +656,7 @@ class _PhotoComparison {
     required this.secondImagePath,
   });
 
-  final String title;
+  final LocalizedText title;
   final String firstImagePath;
   final String secondImagePath;
 }
@@ -630,7 +668,7 @@ class _ProgressStatistic {
     required this.secondPercent,
   });
 
-  final String title;
+  final LocalizedText title;
   final int firstPercent;
   final int secondPercent;
 
@@ -640,6 +678,87 @@ class _ProgressStatistic {
       return 0;
     }
     return firstPercent / total;
+  }
+}
+
+final class _ResultTexts {
+  static const title = LocalizedText(
+    english: 'Result',
+    indonesian: 'Hasil',
+  );
+
+  static const photoTab = LocalizedText(
+    english: 'Photo',
+    indonesian: 'Foto',
+  );
+
+  static const statisticTab = LocalizedText(
+    english: 'Statistic',
+    indonesian: 'Statistik',
+  );
+
+  static const averageProgress = LocalizedText(
+    english: 'Average Progress',
+    indonesian: 'Rata-rata Progres',
+  );
+
+  static const progressStatusGood = LocalizedText(
+    english: 'Good',
+    indonesian: 'Bagus',
+  );
+
+  static const backToComparison = LocalizedText(
+    english: 'Back to Comparison',
+    indonesian: 'Kembali ke Perbandingan',
+  );
+
+  static const shareInfo = LocalizedText(
+    english: 'Shared progress (demo).',
+    indonesian: 'Progres dibagikan (demo).',
+  );
+
+  static const saveReport = LocalizedText(
+    english: 'Save report',
+    indonesian: 'Simpan laporan',
+  );
+
+  static const saveReportInfo = LocalizedText(
+    english: 'Report saved (demo).',
+    indonesian: 'Laporan disimpan (demo).',
+  );
+
+  static const resetChart = LocalizedText(
+    english: 'Reset chart',
+    indonesian: 'Atur ulang grafik',
+  );
+
+  static String? monthShortLabel(AppLanguage language, int monthIndex) {
+    const english = {
+      1: 'Jan',
+      2: 'Feb',
+      3: 'Mar',
+      4: 'Apr',
+      5: 'May',
+      6: 'Jun',
+      7: 'Jul',
+    };
+    const indonesian = {
+      1: 'Jan',
+      2: 'Feb',
+      3: 'Mar',
+      4: 'Apr',
+      5: 'Mei',
+      6: 'Jun',
+      7: 'Jul',
+    };
+
+    final labels = language == AppLanguage.indonesian ? indonesian : english;
+    return labels[monthIndex];
+  }
+
+  static String minutesAgo(AppLanguage language, int minutes) {
+    final suffix = language == AppLanguage.indonesian ? 'menit lalu' : 'mins ago';
+    return '$minutes $suffix';
   }
 }
 
