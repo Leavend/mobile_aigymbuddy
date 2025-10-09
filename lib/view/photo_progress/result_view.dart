@@ -1,5 +1,3 @@
-// lib/view/photo_progress/result_view.dart
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,66 +8,55 @@ import '../../common/date_time_utils.dart';
 import '../../common_widget/round_button.dart';
 
 class ResultView extends StatefulWidget {
+  const ResultView({super.key, required this.date1, required this.date2});
+
   final DateTime date1;
   final DateTime date2;
-  const ResultView({super.key, required this.date1, required this.date2});
 
   @override
   State<ResultView> createState() => _ResultViewState();
 }
 
 class _ResultViewState extends State<ResultView> {
-  int selectButton = 0;
-
-  final List<Map<String, String>> imaArr = const [
-    {
-      "title": "Front Facing",
-      "month_1_image": "assets/img/pp_1.png",
-      "month_2_image": "assets/img/pp_2.png",
-    },
-    {
-      "title": "Back Facing",
-      "month_1_image": "assets/img/pp_3.png",
-      "month_2_image": "assets/img/pp_4.png",
-    },
-    {
-      "title": "Left Facing",
-      "month_1_image": "assets/img/pp_5.png",
-      "month_2_image": "assets/img/pp_6.png",
-    },
-    {
-      "title": "Right Facing",
-      "month_1_image": "assets/img/pp_7.png",
-      "month_2_image": "assets/img/pp_8.png",
-    },
+  static const _photoComparisons = [
+    _PhotoComparison(
+      title: 'Front Facing',
+      firstImagePath: 'assets/img/pp_1.png',
+      secondImagePath: 'assets/img/pp_2.png',
+    ),
+    _PhotoComparison(
+      title: 'Back Facing',
+      firstImagePath: 'assets/img/pp_3.png',
+      secondImagePath: 'assets/img/pp_4.png',
+    ),
+    _PhotoComparison(
+      title: 'Left Facing',
+      firstImagePath: 'assets/img/pp_5.png',
+      secondImagePath: 'assets/img/pp_6.png',
+    ),
+    _PhotoComparison(
+      title: 'Right Facing',
+      firstImagePath: 'assets/img/pp_7.png',
+      secondImagePath: 'assets/img/pp_8.png',
+    ),
   ];
 
-  final List<Map<String, String>> statArr = const [
-    {
-      "title": "Lose Weight",
-      "diff_per": "33",
-      "month_1_per": "33%",
-      "month_2_per": "67%",
-    },
-    {
-      "title": "Height Increase",
-      "diff_per": "88",
-      "month_1_per": "88%",
-      "month_2_per": "12%",
-    },
-    {
-      "title": "Muscle Mass Increase",
-      "diff_per": "57",
-      "month_1_per": "57%",
-      "month_2_per": "43%",
-    },
-    {
-      "title": "Abs",
-      "diff_per": "89",
-      "month_1_per": "89%",
-      "month_2_per": "11%",
-    },
+  static const _statistics = [
+    _ProgressStatistic(title: 'Lose Weight', firstPercent: 33, secondPercent: 67),
+    _ProgressStatistic(
+      title: 'Height Increase',
+      firstPercent: 88,
+      secondPercent: 12,
+    ),
+    _ProgressStatistic(
+      title: 'Muscle Mass Increase',
+      firstPercent: 57,
+      secondPercent: 43,
+    ),
+    _ProgressStatistic(title: 'Abs', firstPercent: 89, secondPercent: 11),
   ];
+
+  _ResultTab _selectedTab = _ResultTab.photo;
 
   @override
   Widget build(BuildContext context) {
@@ -80,25 +67,21 @@ class _ResultViewState extends State<ResultView> {
         backgroundColor: TColor.white,
         centerTitle: true,
         elevation: 0,
-        leading: InkWell(
-          onTap: () => context.pop(),
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            alignment: Alignment.center,
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          icon: Container(
             decoration: BoxDecoration(
               color: TColor.lightGray,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Image.asset(
-              "assets/img/black_btn.png",
-              width: 15,
-              height: 15,
-              fit: BoxFit.contain,
-            ),
+            padding: const EdgeInsets.all(10),
+            child: Image.asset('assets/img/black_btn.png'),
           ),
         ),
         title: Text(
-          "Result",
+          'Result',
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -106,38 +89,30 @@ class _ResultViewState extends State<ResultView> {
           ),
         ),
         actions: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              alignment: Alignment.center,
+          IconButton(
+            onPressed: () => _shareResult(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+            icon: Container(
               decoration: BoxDecoration(
                 color: TColor.lightGray,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Image.asset(
-                "assets/img/share.png",
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
-              ),
+              padding: const EdgeInsets.all(10),
+              child: Image.asset('assets/img/share.png'),
             ),
           ),
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              alignment: Alignment.center,
+          IconButton(
+            onPressed: _showMoreOptions,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+            icon: Container(
               decoration: BoxDecoration(
                 color: TColor.lightGray,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Image.asset(
-                "assets/img/more_btn.png",
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
-              ),
+              padding: const EdgeInsets.all(10),
+              child: Image.asset('assets/img/more_btn.png'),
             ),
           ),
         ],
@@ -147,99 +122,94 @@ class _ResultViewState extends State<ResultView> {
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: Column(
           children: [
-            // Toggle
-            Container(
-              height: 55,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  AnimatedAlign(
-                    alignment: selectButton == 0
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    child: Container(
-                      width: (media.width * 0.5) - 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: TColor.primaryG),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 40,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => setState(() => selectButton = 0),
-                            child: Text(
-                              "Photo",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: selectButton == 0
-                                    ? TColor.white
-                                    : TColor.gray,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => setState(() => selectButton = 1),
-                            child: Text(
-                              "Statistic",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: selectButton == 1
-                                    ? TColor.white
-                                    : TColor.gray,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
+            _buildTabSwitcher(media),
             const SizedBox(height: 20),
-
-            // ===== Photo Tab =====
-            if (selectButton == 0) _buildPhotoTab(context, media),
-
-            // ===== Statistic Tab =====
-            if (selectButton == 1) _buildStatisticTab(context, media),
+            if (_selectedTab == _ResultTab.photo) _buildPhotoTab(media),
+            if (_selectedTab == _ResultTab.statistic)
+              _buildStatisticTab(media),
           ],
         ),
       ),
     );
   }
 
-  // ---------------- Photo Tab ----------------
-  Widget _buildPhotoTab(BuildContext context, Size media) {
+  Widget _buildTabSwitcher(Size media) {
+    return Container(
+      height: 55,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: TColor.lightGray,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          AnimatedAlign(
+            alignment: _selectedTab == _ResultTab.photo
+                ? Alignment.centerLeft
+                : Alignment.centerRight,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            child: Container(
+              width: (media.width * 0.5) - 40,
+              height: 40,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: TColor.primaryG),
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 40,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => _selectTab(_ResultTab.photo),
+                    child: Text(
+                      'Photo',
+                      style: TextStyle(
+                        color: _selectedTab == _ResultTab.photo
+                            ? TColor.white
+                            : TColor.gray,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => _selectTab(_ResultTab.statistic),
+                    child: Text(
+                      'Statistic',
+                      style: TextStyle(
+                        color: _selectedTab == _ResultTab.statistic
+                            ? TColor.white
+                            : TColor.gray,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPhotoTab(Size media) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Average Progress",
+              'Average Progress',
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
@@ -247,30 +217,28 @@ class _ResultViewState extends State<ResultView> {
               ),
             ),
             const Text(
-              "Good",
+              'Good',
               style: TextStyle(
                 color: Color(0xFF6DD570),
                 fontSize: 12,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
         const SizedBox(height: 15),
-
-        // Progress Bar
         Stack(
           alignment: Alignment.center,
           children: [
             SimpleAnimationProgressBar(
               height: 20,
               width: media.width - 40,
-              backgroundColor: Colors.grey.shade100,
-              foregroundColor: Colors.purple,
+              backgroundColor: Colors.grey.shade200,
+              foregroundColor: Colors.transparent,
               ratio: 0.62,
               direction: Axis.horizontal,
               curve: Curves.fastLinearToSlowEaseIn,
-              duration: const Duration(seconds: 3),
+              duration: const Duration(seconds: 2),
               borderRadius: BorderRadius.circular(10),
               gradientColor: LinearGradient(
                 colors: TColor.primaryG,
@@ -278,18 +246,15 @@ class _ResultViewState extends State<ResultView> {
                 end: Alignment.centerRight,
               ),
             ),
-            Text("62%", style: TextStyle(color: TColor.white, fontSize: 12)),
+            Text('62%', style: TextStyle(color: TColor.white, fontSize: 12)),
           ],
         ),
-
         const SizedBox(height: 15),
-
-        // Month labels
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              DateTimeUtils.formatDate(widget.date1, pattern: "MMMM"),
+              DateTimeUtils.formatDate(widget.date1, pattern: 'MMMM'),
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
@@ -297,7 +262,7 @@ class _ResultViewState extends State<ResultView> {
               ),
             ),
             Text(
-              DateTimeUtils.formatDate(widget.date2, pattern: "MMMM"),
+              DateTimeUtils.formatDate(widget.date2, pattern: 'MMMM'),
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
@@ -306,64 +271,38 @@ class _ResultViewState extends State<ResultView> {
             ),
           ],
         ),
-
-        // Images list
-        ListView.builder(
+        ListView.separated(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: imaArr.length,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          itemCount: _photoComparisons.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
-            final iObj = imaArr[index];
+            final comparison = _photoComparisons[index];
             return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 8),
                 Text(
-                  iObj["title"]!,
+                  comparison.title,
                   style: TextStyle(
                     color: TColor.gray,
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
                       child: AspectRatio(
                         aspectRatio: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: TColor.lightGray,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.asset(
-                              iObj["month_1_image"]!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
+                        child: _ProgressImage(path: comparison.firstImagePath),
                       ),
                     ),
                     const SizedBox(width: 15),
                     Expanded(
                       child: AspectRatio(
                         aspectRatio: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: TColor.lightGray,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.asset(
-                              iObj["month_2_image"]!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
+                        child: _ProgressImage(path: comparison.secondImagePath),
                       ),
                     ),
                   ],
@@ -372,80 +311,31 @@ class _ResultViewState extends State<ResultView> {
             );
           },
         ),
-
-        // CTA
-        const SizedBox(height: 16),
-        RoundButton(title: "Back to Home", onPressed: () => context.pop()),
+        RoundButton(title: 'Back to Comparison', onPressed: () => context.pop()),
         const SizedBox(height: 15),
       ],
     );
   }
 
-  // ---------------- Statistic Tab ----------------
-  Widget _buildStatisticTab(BuildContext context, Size media) {
+  Widget _buildStatisticTab(Size media) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Line chart
-        Container(
-          padding: const EdgeInsets.only(left: 10),
+        SizedBox(
           height: media.width * 0.5,
-          width: double.maxFinite,
+          width: double.infinity,
           child: LineChart(
             LineChartData(
-              lineTouchData: LineTouchData(
-                enabled: true,
-                handleBuiltInTouches: false,
-                touchCallback:
-                    (event, response) {}, // keep default interactions
-                mouseCursorResolver: (event, response) =>
-                    (response == null || response.lineBarSpots == null)
-                    ? SystemMouseCursors.basic
-                    : SystemMouseCursors.click,
-                getTouchedSpotIndicator: (barData, spotIndexes) {
-                  return spotIndexes
-                      .map(
-                        (index) => TouchedSpotIndicatorData(
-                          const FlLine(color: Colors.transparent),
-                          FlDotData(
-                            show: true,
-                            getDotPainter: (spot, percent, bar, idx) =>
-                                FlDotCirclePainter(
-                                  radius: 3,
-                                  color: Colors.white,
-                                  strokeWidth: 3,
-                                  strokeColor: TColor.secondaryColor1,
-                                ),
-                          ),
-                        ),
-                      )
-                      .toList();
-                },
-                // fl_chart 1.1.x: tanpa tooltipBgColor/tooltipRoundedRadius
-                touchTooltipData: LineTouchTooltipData(
-                  getTooltipItems: (spots) => spots
-                      .map(
-                        (s) => LineTooltipItem(
-                          "${s.x.toInt()} mins ago",
-                          const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
-              lineBarsData: lineBarsData1,
+              lineTouchData: _lineTouchData,
+              lineBarsData: _lineBarsData,
               minY: -0.5,
               maxY: 110,
               titlesData: FlTitlesData(
                 show: true,
                 leftTitles: const AxisTitles(),
                 topTitles: const AxisTitles(),
-                bottomTitles: AxisTitles(sideTitles: bottomTitles),
-                rightTitles: AxisTitles(sideTitles: rightTitles),
+                bottomTitles: AxisTitles(sideTitles: _bottomTitles),
+                rightTitles: AxisTitles(sideTitles: _rightTitles),
               ),
               gridData: FlGridData(
                 show: true,
@@ -462,15 +352,12 @@ class _ResultViewState extends State<ResultView> {
             ),
           ),
         ),
-
         const SizedBox(height: 15),
-
-        // Month labels
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              DateTimeUtils.formatDate(widget.date1, pattern: "MMMM"),
+              DateTimeUtils.formatDate(widget.date1, pattern: 'MMMM'),
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
@@ -478,7 +365,7 @@ class _ResultViewState extends State<ResultView> {
               ),
             ),
             Text(
-              DateTimeUtils.formatDate(widget.date2, pattern: "MMMM"),
+              DateTimeUtils.formatDate(widget.date2, pattern: 'MMMM'),
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
@@ -487,27 +374,22 @@ class _ResultViewState extends State<ResultView> {
             ),
           ],
         ),
-
-        // Stats Bars
-        ListView.builder(
+        ListView.separated(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: statArr.length,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          itemCount: _statistics.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
-            final iObj = statArr[index];
-            final ratio =
-                (double.tryParse(iObj["diff_per"] ?? "0") ?? 0) / 100.0;
-
+            final stat = _statistics[index];
             return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 15),
                 Text(
-                  iObj["title"]!,
+                  stat.title,
                   style: TextStyle(
                     color: TColor.gray,
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -515,28 +397,30 @@ class _ResultViewState extends State<ResultView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: 25,
+                      width: 35,
                       child: Text(
-                        iObj["month_1_per"]!,
+                        '${stat.firstPercent}%',
                         textAlign: TextAlign.right,
                         style: TextStyle(color: TColor.gray, fontSize: 12),
                       ),
                     ),
-                    SimpleAnimationProgressBar(
-                      height: 10,
-                      width: media.width - 120,
-                      backgroundColor: TColor.primaryColor1,
-                      foregroundColor: const Color(0xffFFB2B1),
-                      ratio: ratio,
-                      direction: Axis.horizontal,
-                      curve: Curves.fastLinearToSlowEaseIn,
-                      duration: const Duration(seconds: 3),
-                      borderRadius: BorderRadius.circular(5),
+                    Expanded(
+                      child: SimpleAnimationProgressBar(
+                        height: 10,
+                        width: media.width - 140,
+                        backgroundColor: TColor.primaryColor1,
+                        foregroundColor: const Color(0xffFFB2B1),
+                        ratio: stat.firstRatio,
+                        direction: Axis.horizontal,
+                        curve: Curves.fastLinearToSlowEaseIn,
+                        duration: const Duration(seconds: 2),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
                     SizedBox(
-                      width: 25,
+                      width: 35,
                       child: Text(
-                        iObj["month_2_per"]!,
+                        '${stat.secondPercent}%',
                         textAlign: TextAlign.left,
                         style: TextStyle(color: TColor.gray, fontSize: 12),
                       ),
@@ -547,169 +431,227 @@ class _ResultViewState extends State<ResultView> {
             );
           },
         ),
-
-        // CTA
-        const SizedBox(height: 16),
-        RoundButton(title: "Back to Home", onPressed: () => context.pop()),
+        RoundButton(title: 'Back to Comparison', onPressed: () => context.pop()),
         const SizedBox(height: 15),
       ],
     );
   }
 
-  // ==== Chart Helpers ====
-
-  List<LineChartBarData> get lineBarsData1 => [
-    lineChartBarData1_1,
-    lineChartBarData1_2,
-  ];
-
-  LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(colors: TColor.primaryG),
-    barWidth: 3,
-    isStrokeCapRound: true,
-    dotData: const FlDotData(show: false),
-    belowBarData: BarAreaData(show: false),
-    spots: const [
-      FlSpot(1, 35),
-      FlSpot(2, 70),
-      FlSpot(3, 40),
-      FlSpot(4, 80),
-      FlSpot(5, 25),
-      FlSpot(6, 70),
-      FlSpot(7, 35),
-    ],
-  );
-
-  LineChartBarData get lineChartBarData1_2 => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(
-      colors: [
-        TColor.secondaryColor2.withValues(alpha: 0.5),
-        TColor.secondaryColor1.withValues(alpha: 0.5),
-      ],
-    ),
-    barWidth: 2,
-    isStrokeCapRound: true,
-    dotData: const FlDotData(show: false),
-    belowBarData: BarAreaData(show: false),
-    spots: const [
-      FlSpot(1, 80),
-      FlSpot(2, 50),
-      FlSpot(3, 90),
-      FlSpot(4, 40),
-      FlSpot(5, 80),
-      FlSpot(6, 35),
-      FlSpot(7, 60),
-    ],
-  );
-
-  // Right axis titles
-  SideTitles get rightTitles => SideTitles(
-    getTitlesWidget: rightTitleWidgets,
-    showTitles: true,
-    interval: 20,
-    reservedSize: 40,
-  );
-
-  Widget rightTitleWidgets(double value, TitleMeta meta) {
-    switch (value.toInt()) {
-      case 0:
-        return Text(
-          '0%',
-          style: TextStyle(color: TColor.gray, fontSize: 12),
-          textAlign: TextAlign.center,
-        );
-      case 20:
-        return Text(
-          '20%',
-          style: TextStyle(color: TColor.gray, fontSize: 12),
-          textAlign: TextAlign.center,
-        );
-      case 40:
-        return Text(
-          '40%',
-          style: TextStyle(color: TColor.gray, fontSize: 12),
-          textAlign: TextAlign.center,
-        );
-      case 60:
-        return Text(
-          '60%',
-          style: TextStyle(color: TColor.gray, fontSize: 12),
-          textAlign: TextAlign.center,
-        );
-      case 80:
-        return Text(
-          '80%',
-          style: TextStyle(color: TColor.gray, fontSize: 12),
-          textAlign: TextAlign.center,
-        );
-      case 100:
-        return Text(
-          '100%',
-          style: TextStyle(color: TColor.gray, fontSize: 12),
-          textAlign: TextAlign.center,
-        );
-      default:
-        return const SizedBox.shrink();
+  void _selectTab(_ResultTab tab) {
+    if (_selectedTab == tab) {
+      return;
     }
+    setState(() => _selectedTab = tab);
   }
 
-  // Bottom axis titles
-  SideTitles get bottomTitles => SideTitles(
-    showTitles: true,
-    reservedSize: 32,
-    interval: 1,
-    getTitlesWidget: bottomTitleWidgets,
-  );
+  void _shareResult(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text('Shared progress (demo).')),
+      );
+  }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(color: TColor.gray, fontSize: 12);
-    switch (value.toInt()) {
-      case 1:
-        return SideTitleWidget(
-          meta: meta,
-          space: 10,
-          child: Text('Jan', style: style),
+  void _showMoreOptions() {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.save_alt),
+                title: const Text('Save report'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(content: Text('Report saved (demo).')),
+                    );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.refresh),
+                title: const Text('Reset chart'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  setState(() => _selectedTab = _ResultTab.photo);
+                },
+              ),
+            ],
+          ),
         );
-      case 2:
-        return SideTitleWidget(
-          meta: meta,
-          space: 10,
-          child: Text('Feb', style: style),
-        );
-      case 3:
-        return SideTitleWidget(
-          meta: meta,
-          space: 10,
-          child: Text('Mar', style: style),
-        );
-      case 4:
-        return SideTitleWidget(
-          meta: meta,
-          space: 10,
-          child: Text('Apr', style: style),
-        );
-      case 5:
-        return SideTitleWidget(
-          meta: meta,
-          space: 10,
-          child: Text('May', style: style),
-        );
-      case 6:
-        return SideTitleWidget(
-          meta: meta,
-          space: 10,
-          child: Text('Jun', style: style),
-        );
-      case 7:
-        return SideTitleWidget(
-          meta: meta,
-          space: 10,
-          child: Text('Jul', style: style),
-        );
-      default:
-        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  LineTouchData get _lineTouchData => LineTouchData(
+        enabled: true,
+        handleBuiltInTouches: true,
+        touchTooltipData: LineTouchTooltipData(
+          getTooltipItems: (spots) => spots
+              .map(
+                (spot) => LineTooltipItem(
+                  '${spot.x.toInt()} mins ago',
+                  const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      );
+
+  List<LineChartBarData> get _lineBarsData => [
+        LineChartBarData(
+          isCurved: true,
+          gradient: LinearGradient(colors: TColor.primaryG),
+          barWidth: 3,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(show: false),
+          belowBarData: BarAreaData(show: false),
+          spots: const [
+            FlSpot(1, 35),
+            FlSpot(2, 70),
+            FlSpot(3, 40),
+            FlSpot(4, 80),
+            FlSpot(5, 25),
+            FlSpot(6, 70),
+            FlSpot(7, 35),
+          ],
+        ),
+        LineChartBarData(
+          isCurved: true,
+          gradient: LinearGradient(
+            colors: [
+              TColor.secondaryColor2.withValues(alpha: 0.5),
+              TColor.secondaryColor1.withValues(alpha: 0.5),
+            ],
+          ),
+          barWidth: 2,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(show: false),
+          belowBarData: BarAreaData(show: false),
+          spots: const [
+            FlSpot(1, 80),
+            FlSpot(2, 50),
+            FlSpot(3, 90),
+            FlSpot(4, 40),
+            FlSpot(5, 80),
+            FlSpot(6, 35),
+            FlSpot(7, 60),
+          ],
+        ),
+      ];
+
+  SideTitles get _rightTitles => SideTitles(
+        showTitles: true,
+        interval: 20,
+        reservedSize: 40,
+        getTitlesWidget: (value, _) {
+          switch (value.toInt()) {
+            case 0:
+            case 20:
+            case 40:
+            case 60:
+            case 80:
+            case 100:
+              return Text(
+                '${value.toInt()}%',
+                style: TextStyle(color: TColor.gray, fontSize: 12),
+                textAlign: TextAlign.center,
+              );
+            default:
+              return const SizedBox.shrink();
+          }
+        },
+      );
+
+  SideTitles get _bottomTitles => SideTitles(
+        showTitles: true,
+        reservedSize: 32,
+        interval: 1,
+        getTitlesWidget: (value, meta) {
+          final style = TextStyle(color: TColor.gray, fontSize: 12);
+          const labels = {
+            1: 'Jan',
+            2: 'Feb',
+            3: 'Mar',
+            4: 'Apr',
+            5: 'May',
+            6: 'Jun',
+            7: 'Jul',
+          };
+          final label = labels[value.toInt()];
+          if (label == null) {
+            return const SizedBox.shrink();
+          }
+          return SideTitleWidget(
+            meta: meta,
+            space: 10,
+            child: Text(label, style: style),
+          );
+        },
+      );
+}
+
+enum _ResultTab { photo, statistic }
+
+class _PhotoComparison {
+  const _PhotoComparison({
+    required this.title,
+    required this.firstImagePath,
+    required this.secondImagePath,
+  });
+
+  final String title;
+  final String firstImagePath;
+  final String secondImagePath;
+}
+
+class _ProgressStatistic {
+  const _ProgressStatistic({
+    required this.title,
+    required this.firstPercent,
+    required this.secondPercent,
+  });
+
+  final String title;
+  final int firstPercent;
+  final int secondPercent;
+
+  double get firstRatio {
+    final total = firstPercent + secondPercent;
+    if (total == 0) {
+      return 0;
     }
+    return firstPercent / total;
+  }
+}
+
+class _ProgressImage extends StatelessWidget {
+  const _ProgressImage({required this.path});
+
+  final String path;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: TColor.lightGray,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.asset(path, fit: BoxFit.cover),
+      ),
+    );
   }
 }
