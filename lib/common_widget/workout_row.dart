@@ -1,5 +1,6 @@
+// lib/common_widget/workout_row.dart
+
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 
@@ -14,7 +15,8 @@ class WorkoutSummaryItem {
   });
 
   factory WorkoutSummaryItem.fromJson(Map<String, dynamic> json) {
-    final progressValue = double.tryParse(json['progress']?.toString() ?? '') ??
+    final progressValue =
+        double.tryParse(json['progress']?.toString() ?? '') ??
         (json['progress'] is num ? (json['progress'] as num).toDouble() : 0);
     return WorkoutSummaryItem(
       imageAsset: json['image']?.toString() ?? 'assets/img/workout.png',
@@ -33,20 +35,10 @@ class WorkoutSummaryItem {
 }
 
 class WorkoutRow extends StatelessWidget {
-  const WorkoutRow({
-    super.key,
-    required this.workout,
-    this.onTap,
-  });
+  const WorkoutRow({super.key, required this.workout, this.onTap});
 
-  factory WorkoutRow.fromMap(
-    Map<String, dynamic> map, {
-    VoidCallback? onTap,
-  }) {
-    return WorkoutRow(
-      workout: WorkoutSummaryItem.fromJson(map),
-      onTap: onTap,
-    );
+  factory WorkoutRow.fromMap(Map<String, dynamic> map, {VoidCallback? onTap}) {
+    return WorkoutRow(workout: WorkoutSummaryItem.fromJson(map), onTap: onTap);
   }
 
   final WorkoutSummaryItem workout;

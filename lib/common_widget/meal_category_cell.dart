@@ -1,15 +1,11 @@
 // lib/common_widget/meal_category_cell.dart
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../common/color_extension.dart';
 
 @immutable
 class MealCategoryItem {
-  const MealCategoryItem({
-    required this.name,
-    required this.imageAsset,
-  });
+  const MealCategoryItem({required this.name, required this.imageAsset});
 
   factory MealCategoryItem.fromJson(Map<String, dynamic> json) {
     return MealCategoryItem(

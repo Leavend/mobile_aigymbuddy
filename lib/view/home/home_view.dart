@@ -747,8 +747,7 @@ class _HomeViewState extends State<HomeView> {
           itemCount: _lastWorkoutList.length,
           separatorBuilder: (_, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            final workout =
-                Map<String, dynamic>.from(_lastWorkoutList[index]);
+            final workout = Map<String, dynamic>.from(_lastWorkoutList[index]);
             return WorkoutRow.fromMap(
               workout,
               onTap: () => context.push(AppRoute.finishedWorkout),

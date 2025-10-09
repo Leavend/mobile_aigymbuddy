@@ -326,10 +326,9 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _nutritionItems.length,
-      itemBuilder: (context, index) =>
-          NutritionRow.fromMap(
-            Map<String, dynamic>.from(_nutritionItems[index]),
-          ),
+      itemBuilder: (context, index) => NutritionRow.fromMap(
+        Map<String, dynamic>.from(_nutritionItems[index]),
+      ),
     );
   }
 }

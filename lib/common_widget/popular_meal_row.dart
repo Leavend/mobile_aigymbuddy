@@ -1,5 +1,6 @@
+// lib/common_widget/popular_meal_row.dart
+
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -30,20 +31,13 @@ class PopularMealItem {
 }
 
 class PopularMealRow extends StatelessWidget {
-  const PopularMealRow({
-    super.key,
-    required this.meal,
-    this.onTap,
-  });
+  const PopularMealRow({super.key, required this.meal, this.onTap});
 
   factory PopularMealRow.fromMap(
     Map<String, dynamic> map, {
     VoidCallback? onTap,
   }) {
-    return PopularMealRow(
-      meal: PopularMealItem.fromJson(map),
-      onTap: onTap,
-    );
+    return PopularMealRow(meal: PopularMealItem.fromJson(map), onTap: onTap);
   }
 
   final PopularMealItem meal;

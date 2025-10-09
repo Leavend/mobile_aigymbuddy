@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+// lib/common_widget/nutritions_row.dart
+
 import 'package:flutter/material.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 
@@ -39,10 +40,7 @@ class NutritionProgress {
 }
 
 class NutritionRow extends StatelessWidget {
-  const NutritionRow({
-    super.key,
-    required this.progress,
-  });
+  const NutritionRow({super.key, required this.progress});
 
   factory NutritionRow.fromMap(Map<String, dynamic> map) {
     return NutritionRow(progress: NutritionProgress.fromJson(map));

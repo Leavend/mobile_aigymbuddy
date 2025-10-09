@@ -6,7 +6,6 @@ import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../common_widget/exercises_row.dart';
 import '../../common_widget/exercises_set_section.dart';
 
 class WorkoutDetailView extends StatefulWidget {
@@ -550,8 +549,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   void _startWorkout() {
     final firstExercise =
         _workoutSets.isNotEmpty && _workoutSets.first.exercises.isNotEmpty
-            ? _workoutSets.first.exercises.first
-            : null;
+        ? _workoutSets.first.exercises.first
+        : null;
 
     if (firstExercise == null) {
       ScaffoldMessenger.of(context).showSnackBar(

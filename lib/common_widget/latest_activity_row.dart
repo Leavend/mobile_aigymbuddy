@@ -1,5 +1,4 @@
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -24,11 +23,7 @@ class LatestActivityItem {
 }
 
 class LatestActivityRow extends StatelessWidget {
-  const LatestActivityRow({
-    super.key,
-    required this.activity,
-    this.onMenuTap,
-  });
+  const LatestActivityRow({super.key, required this.activity, this.onMenuTap});
 
   factory LatestActivityRow.fromMap(
     Map<String, dynamic> data, {

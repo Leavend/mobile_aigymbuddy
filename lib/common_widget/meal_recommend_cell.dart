@@ -1,7 +1,6 @@
 // lib/common_widget/meal_recommend_cell.dart
 
 import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';

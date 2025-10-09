@@ -2,7 +2,6 @@
 
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 @immutable

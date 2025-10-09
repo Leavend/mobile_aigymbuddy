@@ -228,8 +228,9 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             scrollDirection: Axis.horizontal,
             itemCount: _recommendations.length,
             itemBuilder: (context, index) {
-              final recommendation =
-                  Map<String, dynamic>.from(_recommendations[index]);
+              final recommendation = Map<String, dynamic>.from(
+                _recommendations[index],
+              );
               return MealRecommendCell.fromMap(
                 recommendation,
                 index: index,

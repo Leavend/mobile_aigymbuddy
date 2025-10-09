@@ -278,16 +278,14 @@ class WorkoutTrackerView extends StatelessWidget {
           itemBuilder: (context, index) {
             final option = Map<String, dynamic>.from(_trainingOptions[index]);
             return InkWell(
-              onTap: () => _openWorkoutDetail(
-                context,
-                Map<String, String>.from(option),
+              onTap: () =>
+                  _openWorkoutDetail(context, Map<String, String>.from(option)),
+              child: WhatTrainRow.fromMap(
+                option,
+                onViewMore: () {
+                  _openWorkoutDetail(context, Map<String, String>.from(option));
+                },
               ),
-              child: WhatTrainRow.fromMap(option, onViewMore: () {
-                _openWorkoutDetail(
-                  context,
-                  Map<String, String>.from(option),
-                );
-              }),
             );
           },
         ),

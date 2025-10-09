@@ -1,7 +1,6 @@
 // lib/common_widget/meal_food_schedule_row.dart
 
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -106,7 +105,11 @@ class MealFoodScheduleRow extends StatelessWidget {
             ),
             IconButton(
               onPressed: onTap,
-              icon: Image.asset('assets/img/next_go.png', width: 25, height: 25),
+              icon: Image.asset(
+                'assets/img/next_go.png',
+                width: 25,
+                height: 25,
+              ),
             ),
           ],
         ),

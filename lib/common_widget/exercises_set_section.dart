@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
@@ -6,10 +5,7 @@ import 'exercises_row.dart';
 
 @immutable
 class ExerciseSet {
-  const ExerciseSet({
-    required this.name,
-    required this.exercises,
-  });
+  const ExerciseSet({required this.name, required this.exercises});
 
   factory ExerciseSet.fromJson(Map<String, dynamic> json) {
     return ExerciseSet(
@@ -29,8 +25,7 @@ List<ExerciseListItem> _parseExercises(Object? raw) {
 
   return raw
       .whereType<Map<Object?, Object?>>()
-      .map((item) =>
-          ExerciseListItem.fromJson(Map<String, dynamic>.from(item)))
+      .map((item) => ExerciseListItem.fromJson(Map<String, dynamic>.from(item)))
       .toList(growable: false);
 }
 

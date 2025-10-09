@@ -1,5 +1,6 @@
+// lib/common_widget/what_train_row.dart
+
 import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
@@ -29,11 +30,7 @@ class TrainingOptionItem {
 }
 
 class WhatTrainRow extends StatelessWidget {
-  const WhatTrainRow({
-    super.key,
-    required this.option,
-    this.onViewMore,
-  });
+  const WhatTrainRow({super.key, required this.option, this.onViewMore});
 
   factory WhatTrainRow.fromMap(
     Map<String, dynamic> map, {
