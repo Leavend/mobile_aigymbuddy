@@ -61,6 +61,9 @@ class AppRoute {
   static const String sleepTracker = '/sleep-tracker';
   static const String sleepSchedule = '/sleep-tracker/schedule';
   static const String sleepAddAlarm = '/sleep-tracker/add-alarm';
+  static const String sleepTrackerName = 'sleep-tracker';
+  static const String sleepScheduleName = 'sleep-schedule';
+  static const String sleepAddAlarmName = 'sleep-add-alarm';
   static const String profile = '/profile';
   static const String select = '/select';
 }
@@ -216,14 +219,17 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoute.sleepTracker,
+        name: AppRoute.sleepTrackerName,
         builder: (context, state) => const SleepTrackerView(),
       ),
       GoRoute(
         path: AppRoute.sleepSchedule,
+        name: AppRoute.sleepScheduleName,
         builder: (context, state) => const SleepScheduleView(),
       ),
       GoRoute(
         path: AppRoute.sleepAddAlarm,
+        name: AppRoute.sleepAddAlarmName,
         builder: (context, state) => _buildSleepAddAlarmView(state),
       ),
     ],

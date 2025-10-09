@@ -3,14 +3,16 @@
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/icon_title_next_row.dart';
 import '../../common_widget/round_button.dart';
 
 class SleepAddAlarmView extends StatefulWidget {
-  final DateTime date;
   const SleepAddAlarmView({super.key, required this.date});
+
+  final DateTime date;
 
   @override
   State<SleepAddAlarmView> createState() => _SleepAddAlarmViewState();
@@ -21,17 +23,16 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
 
   @override
   Widget build(BuildContext context) {
-    // final media = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: TColor.white,
         centerTitle: true,
         elevation: 0,
-        leading: InkWell(
-          onTap: () => context.pop(),
-          child: Container(
-            margin: const EdgeInsets.all(8),
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          padding: EdgeInsets.zero,
+          icon: Container(
+            margin: const EdgeInsets.all(4),
             height: 40,
             width: 40,
             alignment: Alignment.center,
@@ -56,10 +57,11 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
           ),
         ),
         actions: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.all(8),
+          IconButton(
+            onPressed: () {},
+            padding: EdgeInsets.zero,
+            icon: Container(
+              margin: const EdgeInsets.all(4),
               height: 40,
               width: 40,
               alignment: Alignment.center,
@@ -83,7 +85,15 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
+            Text(
+              _formattedSelectedDate,
+              style: TextStyle(
+                color: TColor.gray,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 12),
             IconTitleNextRow(
               icon: "assets/img/Bed_Add.png",
               title: "Bedtime",
@@ -110,12 +120,19 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
             const SizedBox(height: 10),
             _buildVibrateTile(),
             const Spacer(),
-            RoundButton(title: "Add", onPressed: () {}),
+            RoundButton(
+              title: "Add",
+              onPressed: () => context.pop(true),
+            ),
             const SizedBox(height: 20),
           ],
         ),
       ),
     );
+  }
+
+  String get _formattedSelectedDate {
+    return DateFormat('EEEE, d MMMM yyyy').format(widget.date);
   }
 
   Widget _buildVibrateTile() {
@@ -154,13 +171,12 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
               child: CustomAnimatedToggleSwitch<bool>(
                 current: _vibrateEnabled,
                 values: const [false, true],
-                spacing: 0.0, // was: dif
+                spacing: 0.0,
                 indicatorSize: const Size.square(30.0),
                 animationDuration: const Duration(milliseconds: 200),
                 animationCurve: Curves.linear,
                 onChanged: (val) => setState(() => _vibrateEnabled = val),
                 iconBuilder: (context, local, global) => const SizedBox(),
-                // onTap signature pada ^0.8.5 menerima nilai yang diketuk
                 onTap: (val) =>
                     setState(() => _vibrateEnabled = !_vibrateEnabled),
                 iconsTappable: false,

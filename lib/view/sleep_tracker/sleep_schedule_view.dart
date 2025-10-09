@@ -19,12 +19,11 @@ class SleepScheduleView extends StatefulWidget {
 }
 
 class _SleepScheduleViewState extends State<SleepScheduleView> {
-  final CalendarAgendaController _calendarAgendaControllerAppBar =
-      CalendarAgendaController();
+  final CalendarAgendaController _calendarController = CalendarAgendaController();
 
-  late DateTime _selectedDateAppBBar;
+  late DateTime _selectedDate;
 
-  final List todaySleepArr = const [
+  static const List<Map<String, String>> _todaySchedule = [
     {
       "name": "Bedtime",
       "image": "assets/img/bed.png",
@@ -42,7 +41,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
   @override
   void initState() {
     super.initState();
-    _selectedDateAppBBar = DateTime.now();
+    _selectedDate = DateTime.now();
   }
 
   @override
@@ -54,10 +53,10 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
         backgroundColor: TColor.white,
         centerTitle: true,
         elevation: 0,
-        leading: InkWell(
-          onTap: () => context.pop(),
-          child: Container(
-            margin: const EdgeInsets.all(8),
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          padding: EdgeInsets.zero,
+          icon: Container(
             height: 40,
             width: 40,
             alignment: Alignment.center,
@@ -82,10 +81,10 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
           ),
         ),
         actions: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.all(8),
+          IconButton(
+            onPressed: () {},
+            padding: EdgeInsets.zero,
+            icon: Container(
               height: 40,
               width: 40,
               alignment: Alignment.center,
@@ -108,7 +107,6 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Card: Ideal Hours
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Container(
@@ -163,10 +161,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 ),
               ),
             ),
-
             SizedBox(height: media.width * 0.05),
-
-            // Header
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Text(
@@ -178,10 +173,8 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 ),
               ),
             ),
-
-            // CalendarAgenda — hanya properti yang valid
             CalendarAgenda(
-              controller: _calendarAgendaControllerAppBar,
+              controller: _calendarController,
               appbar: false,
               selectedDayPosition: SelectedDayPosition.center,
               weekDay: WeekDay.short,
@@ -196,28 +189,20 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
               firstDate: DateTime.now().subtract(const Duration(days: 140)),
               lastDate: DateTime.now().add(const Duration(days: 60)),
               onDateSelected: (date) {
-                _selectedDateAppBBar = date;
-                setState(() {});
+                setState(() => _selectedDate = date);
               },
-              // NOTE: Jika ingin latar custom untuk hari terpilih:
-              // selectedDayLogo: const AssetImage("assets/img/selected_day_bg.png"),
             ),
-
             SizedBox(height: media.width * 0.03),
-
-            // Today sleep items
-            ListView.builder(
+            ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: todaySleepArr.length,
-              itemBuilder: (context, index) {
-                final sObj = todaySleepArr[index] as Map? ?? {};
-                return TodaySleepScheduleRow(sObj: sObj);
-              },
+              itemCount: _todaySchedule.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemBuilder: (context, index) => TodaySleepScheduleRow(
+                sObj: _todaySchedule[index],
+              ),
             ),
-
-            // Progress card
             Container(
               width: double.maxFinite,
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -267,35 +252,20 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 ],
               ),
             ),
-
             SizedBox(height: media.width * 0.05),
           ],
         ),
       ),
-      floatingActionButton: InkWell(
-        onTap: () {
-          context.push(
-            AppRoute.sleepAddAlarm,
-            extra: SleepAddAlarmArgs(date: _selectedDateAppBBar),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.pushNamed(
+            AppRoute.sleepAddAlarmName,
+            extra: SleepAddAlarmArgs(date: _selectedDate),
           );
         },
-        child: Container(
-          width: 55,
-          height: 55,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: TColor.secondaryG),
-            borderRadius: BorderRadius.circular(27.5),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: Icon(Icons.add, size: 20, color: TColor.white),
-        ),
+        backgroundColor: TColor.secondaryColor2,
+        foregroundColor: TColor.white,
+        child: const Icon(Icons.add),
       ),
     );
   }
