@@ -238,8 +238,8 @@ class FullCalendarState extends State<FullCalendar> {
 
   List<DateTime> _generateCalendarDates() {
     final DateTime firstMonthDay = DateTime(_startDate.year, _startDate.month);
-    final DateTime lastMonthDay =
-        DateTime(_endDate.year, _endDate.month + 1).subtract(const Duration(days: 1));
+    final DateTime lastMonthDay = DateTime(_endDate.year, _endDate.month + 1)
+        .subtract(const Duration(days: 1));
     final int totalDays = lastMonthDay.difference(firstMonthDay).inDays + 1;
 
     return List<DateTime>.generate(
@@ -256,8 +256,8 @@ class FullCalendarState extends State<FullCalendar> {
     }
 
     final List<List<DateTime>> months = grouped.values.toList()
-      ..sort((List<DateTime> a, List<DateTime> b) =>
-          b.first.compareTo(a.first));
+      ..sort(
+          (List<DateTime> a, List<DateTime> b) => b.first.compareTo(a.first));
     return months;
   }
 
@@ -353,13 +353,13 @@ class FullCalendarState extends State<FullCalendar> {
     double width,
     bool hasEvent,
   ) {
-    final bool isSelected = widget.selectedDate != null &&
-        _isSameDay(widget.selectedDate!, date);
+    final bool isSelected =
+        widget.selectedDate != null && _isSameDay(widget.selectedDate!, date);
 
     final Color textColor = outOfRange
         ? (isSelected
-            ? widget.dateSelectedColor.withOpacity(0.9)
-            : widget.dateColor.withOpacity(0.4))
+            ? widget.dateSelectedColor.withValues(alpha: 0.9)
+            : widget.dateColor.withValues(alpha: 0.4))
         : (isSelected ? widget.dateSelectedColor : widget.dateColor);
 
     return GestureDetector(

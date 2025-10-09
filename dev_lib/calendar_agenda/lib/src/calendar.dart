@@ -14,7 +14,8 @@ import 'fullcalendar.dart';
 /// an optional full-screen calendar modal.
 class CalendarAgenda extends StatefulWidget implements PreferredSizeWidget {
   /// Creates a [CalendarAgenda] widget.
-  const CalendarAgenda({
+  // FIX: Removed 'const' to allow runtime checks in asserts.
+  CalendarAgenda({
     Key? key,
     required this.initialDate,
     required this.firstDate,
@@ -283,14 +284,14 @@ class CalendarAgendaState extends State<CalendarAgenda>
       child: ScrollablePositionedList.builder(
         padding: _dates.length < 5
             ? EdgeInsets.symmetric(
-                horizontal:
-                    width * (5 - _dates.length.clamp(0, 5)) / 10,
+                horizontal: width * (5 - _dates.length.clamp(0, 5)) / 10,
               )
             : const EdgeInsets.symmetric(horizontal: 10),
         initialScrollIndex: _daySelectedIndex ?? 0,
-        initialAlignment: widget.selectedDayPosition == SelectedDayPosition.center
-            ? 78 / 200
-            : _scrollAlignment,
+        initialAlignment:
+            widget.selectedDayPosition == SelectedDayPosition.center
+                ? 78 / 200
+                : _scrollAlignment,
         scrollDirection: Axis.horizontal,
         reverse: widget.selectedDayPosition != SelectedDayPosition.left,
         itemScrollController: _scrollController,
@@ -319,8 +320,9 @@ class CalendarAgendaState extends State<CalendarAgenda>
                     color: isSelected ? Colors.white : null,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black
-                            .withOpacity(isSelected ? 0.2 : 0.0),
+                        color: Colors.black.withAlpha(
+                          (255 * (isSelected ? 0.2 : 0.0)).round(),
+                        ),
                         spreadRadius: isSelected ? 1 : 5,
                         blurRadius: isSelected ? 10 : 20,
                         offset: const Offset(0, 3),
@@ -337,7 +339,7 @@ class CalendarAgendaState extends State<CalendarAgenda>
                           size: isSelected ? 16 : 8,
                           color: isSelected
                               ? widget.selectedDateColor
-                              : widget.dateColor.withOpacity(0.5),
+                              : widget.dateColor.withValues(alpha: 0.5),
                         )
                       else
                         const SizedBox(height: 5.0),
@@ -387,7 +389,7 @@ class CalendarAgendaState extends State<CalendarAgenda>
     return DecorationImage(
       image: imageProvider,
       colorFilter: ColorFilter.mode(
-        Colors.black.withOpacity(isSelected ? 0.8 : 0.9),
+        Colors.black.withAlpha((255 * (isSelected ? 0.8 : 0.9)).round()),
         isSelected ? BlendMode.dstOut : BlendMode.clear,
       ),
     );
