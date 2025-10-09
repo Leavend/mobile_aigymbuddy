@@ -12,8 +12,10 @@ import 'widgets/auth_page_layout.dart';
 import 'widgets/auth_validators.dart';
 
 abstract final class _SignUpTexts {
-  static const greeting =
-      LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
+  static const greeting = LocalizedText(
+    english: 'Hey there,',
+    indonesian: 'Hai,',
+  );
   static const createAccount = LocalizedText(
     english: 'Create an Account',
     indonesian: 'Buat Akun',
@@ -36,15 +38,19 @@ abstract final class _SignUpTexts {
     indonesian:
         'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
   );
-  static const registerButton =
-      LocalizedText(english: 'Register', indonesian: 'Daftar');
+  static const registerButton = LocalizedText(
+    english: 'Register',
+    indonesian: 'Daftar',
+  );
   static const divider = LocalizedText(english: 'Or', indonesian: 'Atau');
   static const footerQuestion = LocalizedText(
     english: 'Already have an account? ',
     indonesian: 'Sudah punya akun? ',
   );
-  static const footerAction =
-      LocalizedText(english: 'Login', indonesian: 'Masuk');
+  static const footerAction = LocalizedText(
+    english: 'Login',
+    indonesian: 'Masuk',
+  );
 
   static const socialProviders = [
     'assets/img/google.png',
@@ -260,10 +266,7 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 
-  Widget _buildForm(
-    BuildContext context,
-    AutovalidateMode autovalidateMode,
-  ) {
+  Widget _buildForm(BuildContext context, AutovalidateMode autovalidateMode) {
     return Form(
       key: _formKey,
       autovalidateMode: autovalidateMode,
