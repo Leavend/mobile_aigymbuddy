@@ -4,6 +4,8 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/tab_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,24 +23,41 @@ class MainTabView extends StatelessWidget {
     _NavigationItem(
       icon: 'assets/img/home_tab.png',
       selectedIcon: 'assets/img/home_tab_select.png',
-      semanticsLabel: 'Home',
+      label: LocalizedText(
+        english: 'Home',
+        indonesian: 'Beranda',
+      ),
     ),
     _NavigationItem(
       icon: 'assets/img/activity_tab.png',
       selectedIcon: 'assets/img/activity_tab_select.png',
-      semanticsLabel: 'Activities',
+      label: LocalizedText(
+        english: 'Activities',
+        indonesian: 'Aktivitas',
+      ),
     ),
     _NavigationItem(
       icon: 'assets/img/camera_tab.png',
       selectedIcon: 'assets/img/camera_tab_select.png',
-      semanticsLabel: 'Progress',
+      label: LocalizedText(
+        english: 'Progress',
+        indonesian: 'Progres',
+      ),
     ),
     _NavigationItem(
       icon: 'assets/img/profile_tab.png',
       selectedIcon: 'assets/img/profile_tab_select.png',
-      semanticsLabel: 'Profile',
+      label: LocalizedText(
+        english: 'Profile',
+        indonesian: 'Profil',
+      ),
     ),
   ];
+
+  static const LocalizedText _assistantLabel = LocalizedText(
+    english: 'AI Assistant',
+    indonesian: 'Asisten AI',
+  );
 
   void _handleTabSelected(int index) {
     if (index == navigationShell.currentIndex) {
@@ -54,9 +73,11 @@ class MainTabView extends StatelessWidget {
   }
 
   Widget _buildAssistantButton(BuildContext context) {
+    final semanticsLabel = context.localize(_assistantLabel);
+
     return Semantics(
       button: true,
-      label: 'AI Assistant',
+      label: semanticsLabel,
       child: SizedBox(
         width: _fabDiameter,
         height: _fabDiameter,
@@ -109,7 +130,7 @@ class MainTabView extends StatelessWidget {
           TabButton(
             icon: items[i].icon,
             selectIcon: items[i].selectedIcon,
-            semanticsLabel: items[i].semanticsLabel,
+            semanticsLabel: context.localize(items[i].label),
             isActive: navigationShell.currentIndex == startIndex + i,
             width: metrics.buttonWidth,
             onTap: () => _handleTabSelected(startIndex + i),
@@ -431,12 +452,12 @@ class _NavigationItem {
   const _NavigationItem({
     required this.icon,
     required this.selectedIcon,
-    required this.semanticsLabel,
+    required this.label,
   });
 
   final String icon;
   final String selectedIcon;
-  final String semanticsLabel;
+  final LocalizedText label;
 }
 
 class _DimensionSnapshot {

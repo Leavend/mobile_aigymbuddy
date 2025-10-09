@@ -1,4 +1,6 @@
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -8,11 +10,26 @@ class SelectView extends StatelessWidget {
 
   static const List<_FeatureDestination> _destinations = [
     _FeatureDestination(
-      label: 'Workout Tracker',
+      label: LocalizedText(
+        english: 'Workout Tracker',
+        indonesian: 'Pelacak Latihan',
+      ),
       route: AppRoute.workoutTracker,
     ),
-    _FeatureDestination(label: 'Meal Planner', route: AppRoute.mealPlanner),
-    _FeatureDestination(label: 'Sleep Tracker', route: AppRoute.sleepTracker),
+    _FeatureDestination(
+      label: LocalizedText(
+        english: 'Meal Planner',
+        indonesian: 'Perencana Makan',
+      ),
+      route: AppRoute.mealPlanner,
+    ),
+    _FeatureDestination(
+      label: LocalizedText(
+        english: 'Sleep Tracker',
+        indonesian: 'Pelacak Tidur',
+      ),
+      route: AppRoute.sleepTracker,
+    ),
   ];
 
   @override
@@ -42,7 +59,7 @@ class SelectView extends StatelessWidget {
 class _FeatureDestination {
   const _FeatureDestination({required this.label, required this.route});
 
-  final String label;
+  final LocalizedText label;
   final String route;
 }
 
@@ -53,11 +70,13 @@ class _FeatureButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final label = context.localize(destination.label);
+
     return Semantics(
       button: true,
-      label: destination.label,
+      label: label,
       child: RoundButton(
-        title: destination.label,
+        title: label,
         onPressed: () => context.push(destination.route),
       ),
     );
