@@ -65,8 +65,9 @@ class NotificationView extends StatelessWidget {
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
         itemCount: _notifications.length,
-        itemBuilder: (context, index) =>
-            NotificationRow(nObj: _notifications[index]),
+        itemBuilder: (context, index) => NotificationRow.fromMap(
+          Map<String, dynamic>.from(_notifications[index]),
+        ),
         separatorBuilder: (_, index) =>
             Divider(color: TColor.gray.withValues(alpha: 0.5), height: 1),
       ),

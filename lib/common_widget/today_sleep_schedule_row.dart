@@ -7,9 +7,16 @@ import 'package:flutter/material.dart';
 import '../common/models/sleep_schedule_entry.dart';
 
 class TodaySleepScheduleRow extends StatefulWidget {
-  const TodaySleepScheduleRow({super.key, required this.schedule});
+  const TodaySleepScheduleRow({
+    super.key,
+    required this.schedule,
+    this.onMenuTap,
+    this.onToggle,
+  });
 
   final SleepScheduleEntry schedule;
+  final VoidCallback? onMenuTap;
+  final ValueChanged<bool>? onToggle;
 
   @override
   State<TodaySleepScheduleRow> createState() => _TodaySleepScheduleRowState();
@@ -87,7 +94,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
               SizedBox(
                 height: 30,
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: widget.onMenuTap,
                   icon: Image.asset(
                     "assets/img/More_V.png",
                     width: 20,
@@ -106,7 +113,10 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                     indicatorSize: const Size.square(30.0),
                     animationDuration: const Duration(milliseconds: 200),
                     animationCurve: Curves.linear,
-                    onChanged: (b) => setState(() => positive = b),
+                    onChanged: (b) {
+                      setState(() => positive = b);
+                      widget.onToggle?.call(b);
+                    },
                     iconBuilder: (context, local, global) {
                       return const SizedBox();
                     },

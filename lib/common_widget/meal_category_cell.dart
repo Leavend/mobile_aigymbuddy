@@ -1,19 +1,56 @@
 // lib/common_widget/meal_category_cell.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../common/color_extension.dart';
 
-class MealCategoryCell extends StatelessWidget {
-  final Map<String, dynamic> cObj;
-  final int index;
+@immutable
+class MealCategoryItem {
+  const MealCategoryItem({
+    required this.name,
+    required this.imageAsset,
+  });
 
-  const MealCategoryCell({super.key, required this.index, required this.cObj});
+  factory MealCategoryItem.fromJson(Map<String, dynamic> json) {
+    return MealCategoryItem(
+      name: json['name']?.toString() ?? 'Category',
+      imageAsset: json['image']?.toString() ?? 'assets/img/m_1.png',
+    );
+  }
+
+  final String name;
+  final String imageAsset;
+}
+
+class MealCategoryCell extends StatelessWidget {
+  const MealCategoryCell({
+    super.key,
+    required this.index,
+    required this.category,
+    this.onTap,
+  });
+
+  factory MealCategoryCell.fromMap(
+    Map<String, dynamic> map, {
+    required int index,
+    VoidCallback? onTap,
+  }) {
+    return MealCategoryCell(
+      index: index,
+      category: MealCategoryItem.fromJson(map),
+      onTap: onTap,
+    );
+  }
+
+  final int index;
+  final MealCategoryItem category;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final isEven = index.isEven;
 
-    return Container(
+    final cell = Container(
       margin: const EdgeInsets.all(4),
       width: 80,
       decoration: BoxDecoration(
@@ -41,7 +78,7 @@ class MealCategoryCell extends StatelessWidget {
                 borderRadius: BorderRadius.circular(17.5),
               ),
               child: Image.asset(
-                cObj["image"].toString(),
+                category.imageAsset,
                 width: 35,
                 height: 35,
                 fit: BoxFit.contain,
@@ -51,7 +88,7 @@ class MealCategoryCell extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             child: Text(
-              cObj["name"].toString(),
+              category.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -63,6 +100,16 @@ class MealCategoryCell extends StatelessWidget {
           ),
         ],
       ),
+    );
+
+    if (onTap == null) {
+      return cell;
+    }
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(15),
+      onTap: onTap,
+      child: cell,
     );
   }
 }

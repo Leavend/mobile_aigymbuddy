@@ -1,11 +1,52 @@
 import 'package:aigymbuddy/common_widget/round_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
 
+@immutable
+class TrainingOptionItem {
+  const TrainingOptionItem({
+    required this.title,
+    required this.exercises,
+    required this.duration,
+    required this.imageAsset,
+  });
+
+  factory TrainingOptionItem.fromJson(Map<String, dynamic> json) {
+    return TrainingOptionItem(
+      title: json['title']?.toString() ?? 'Training',
+      exercises: json['exercises']?.toString() ?? '',
+      duration: json['time']?.toString() ?? '',
+      imageAsset: json['image']?.toString() ?? 'assets/img/img_1.png',
+    );
+  }
+
+  final String title;
+  final String exercises;
+  final String duration;
+  final String imageAsset;
+}
+
 class WhatTrainRow extends StatelessWidget {
-  final Map wObj;
-  const WhatTrainRow({super.key, required this.wObj});
+  const WhatTrainRow({
+    super.key,
+    required this.option,
+    this.onViewMore,
+  });
+
+  factory WhatTrainRow.fromMap(
+    Map<String, dynamic> map, {
+    VoidCallback? onViewMore,
+  }) {
+    return WhatTrainRow(
+      option: TrainingOptionItem.fromJson(map),
+      onViewMore: onViewMore,
+    );
+  }
+
+  final TrainingOptionItem option;
+  final VoidCallback? onViewMore;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +74,7 @@ class WhatTrainRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    wObj["title"].toString(),
+                    option.title,
                     style: TextStyle(
                       color: TColor.black,
                       fontSize: 14,
@@ -42,7 +83,7 @@ class WhatTrainRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "${wObj["exercises"].toString()} | ${wObj["time"].toString()}",
+                    '${option.exercises} | ${option.duration}',
                     style: TextStyle(color: TColor.gray, fontSize: 12),
                   ),
                   const SizedBox(height: 15),
@@ -50,12 +91,12 @@ class WhatTrainRow extends StatelessWidget {
                     width: 100,
                     height: 30,
                     child: RoundButton(
-                      title: "View More",
+                      title: 'View More',
                       fontSize: 10,
                       type: RoundButtonType.textGradient,
                       elevation: 0.05,
                       fontWeight: FontWeight.w400,
-                      onPressed: () {},
+                      onPressed: onViewMore ?? () {},
                     ),
                   ),
                 ],
@@ -76,7 +117,7 @@ class WhatTrainRow extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: Image.asset(
-                    wObj["image"].toString(),
+                    option.imageAsset,
                     width: 90,
                     height: 90,
                     fit: BoxFit.contain,

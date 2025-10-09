@@ -320,7 +320,15 @@ class _MealPlannerViewState extends State<MealPlannerView> {
               AppRoute.mealFoodDetails,
               extra: MealFoodDetailsArgs(food: Map<String, dynamic>.from(food)),
             ),
-            child: FindEatCell.fromMap(food, index: index),
+            child: FindEatCell.fromMap(
+              food,
+              index: index,
+              onSelect: () => context.push(
+                AppRoute.mealFoodDetails,
+                extra:
+                    MealFoodDetailsArgs(food: Map<String, dynamic>.from(food)),
+              ),
+            ),
           );
         },
       ),

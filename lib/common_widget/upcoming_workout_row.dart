@@ -2,22 +2,52 @@
 
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+@immutable
+class UpcomingWorkoutItem {
+  const UpcomingWorkoutItem({
+    required this.title,
+    required this.timeLabel,
+    required this.imageAsset,
+  });
+
+  factory UpcomingWorkoutItem.fromJson(Map<String, dynamic> json) {
+    return UpcomingWorkoutItem(
+      title: json['title']?.toString() ?? 'Workout',
+      timeLabel: json['time']?.toString() ?? '',
+      imageAsset: json['image']?.toString() ?? 'assets/img/placeholder.png',
+    );
+  }
+
+  final String title;
+  final String timeLabel;
+  final String imageAsset;
+}
 
 class UpcomingWorkoutRow extends StatefulWidget {
   const UpcomingWorkoutRow({
     super.key,
-    required this.wObj,
+    required this.workout,
     this.initialActive = false,
     this.onToggle,
   });
 
-  final Map<String, dynamic> wObj;
+  factory UpcomingWorkoutRow.fromMap(
+    Map<String, dynamic> map, {
+    bool initialActive = false,
+    ValueChanged<bool>? onToggle,
+  }) {
+    return UpcomingWorkoutRow(
+      workout: UpcomingWorkoutItem.fromJson(map),
+      initialActive: initialActive,
+      onToggle: onToggle,
+    );
+  }
 
-  /// Initial toggle value.
+  final UpcomingWorkoutItem workout;
   final bool initialActive;
-
-  /// Callback when toggle changes.
   final ValueChanged<bool>? onToggle;
 
   @override
@@ -41,10 +71,6 @@ class _UpcomingWorkoutRowState extends State<UpcomingWorkoutRow> {
 
   @override
   Widget build(BuildContext context) {
-    final String title = (widget.wObj['title'] ?? '').toString();
-    final String time = (widget.wObj['time'] ?? '').toString();
-    final String imagePath = (widget.wObj['image'] ?? '').toString();
-
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
       padding: const EdgeInsets.all(10),
@@ -58,7 +84,7 @@ class _UpcomingWorkoutRowState extends State<UpcomingWorkoutRow> {
           ClipRRect(
             borderRadius: BorderRadius.circular(_avatarSize / 2),
             child: Image.asset(
-              imagePath.isNotEmpty ? imagePath : 'assets/img/placeholder.png',
+              widget.workout.imageAsset,
               width: _avatarSize,
               height: _avatarSize,
               fit: BoxFit.cover,
@@ -69,9 +95,8 @@ class _UpcomingWorkoutRowState extends State<UpcomingWorkoutRow> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
                 Text(
-                  title,
+                  widget.workout.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -80,9 +105,8 @@ class _UpcomingWorkoutRowState extends State<UpcomingWorkoutRow> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                // Time
                 Text(
-                  time,
+                  widget.workout.timeLabel,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: TColor.gray, fontSize: 10),
@@ -102,7 +126,6 @@ class _UpcomingWorkoutRowState extends State<UpcomingWorkoutRow> {
     );
   }
 
-  /// Extracted toggle builder (DRY & reusable).
   Widget _buildGymBuddyToggle({
     required bool current,
     required ValueChanged<bool> onChanged,
@@ -110,22 +133,19 @@ class _UpcomingWorkoutRowState extends State<UpcomingWorkoutRow> {
     return CustomAnimatedToggleSwitch<bool>(
       current: current,
       values: const [false, true],
-      spacing: 0.0, // (was 'dif' in older versions)
+      spacing: 0.0,
       indicatorSize: const Size.square(_toggleIndicator),
       animationDuration: const Duration(milliseconds: 200),
       animationCurve: Curves.linear,
       onChanged: onChanged,
       iconBuilder: (context, local, global) => const SizedBox(),
-      // (was 'defaultCursor' param) now provided via cursors:
       cursors: const ToggleCursors(defaultCursor: SystemMouseCursors.click),
-      // TapCallback<bool> requires props arg:
       onTap: (props) => onChanged(!current),
       iconsTappable: false,
       wrapperBuilder: (context, global, child) {
         return Stack(
           alignment: Alignment.center,
           children: [
-            // Gradient track
             Positioned(
               left: 10.0,
               right: 10.0,

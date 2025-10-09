@@ -9,6 +9,7 @@ class TodayMealRow extends StatelessWidget {
     required this.name,
     required this.imageAsset,
     required this.scheduledAt,
+    this.onReminderTap,
   });
 
   factory TodayMealRow.fromMap(Map<String, String> data) {
@@ -25,6 +26,7 @@ class TodayMealRow extends StatelessWidget {
   final String name;
   final String imageAsset;
   final DateTime scheduledAt;
+  final VoidCallback? onReminderTap;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +76,7 @@ class TodayMealRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: onReminderTap,
             icon: Image.asset('assets/img/bell.png', width: 25, height: 25),
           ),
         ],
