@@ -48,7 +48,10 @@ Locale localeFromLanguage(AppLanguage language) => Locale(language.code);
 /// Returns the [AppLanguage] matching [code] (e.g. `en`, `id`).
 ///
 /// When the [code] is unknown the [fallback] value is returned.
-AppLanguage languageFromCode(String code, {AppLanguage fallback = AppLanguage.english}) {
+AppLanguage languageFromCode(
+  String code, {
+  AppLanguage fallback = AppLanguage.english,
+}) {
   return AppLanguage.values.firstWhere(
     (language) => language.code == code,
     orElse: () => fallback,
@@ -56,6 +59,9 @@ AppLanguage languageFromCode(String code, {AppLanguage fallback = AppLanguage.en
 }
 
 /// Returns the [AppLanguage] that best matches the provided [locale].
-AppLanguage languageFromLocale(Locale locale, {AppLanguage fallback = AppLanguage.english}) {
+AppLanguage languageFromLocale(
+  Locale locale, {
+  AppLanguage fallback = AppLanguage.english,
+}) {
   return languageFromCode(locale.languageCode, fallback: fallback);
 }

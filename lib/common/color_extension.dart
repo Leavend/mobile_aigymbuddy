@@ -16,9 +16,12 @@ abstract final class TColor {
   // Gradients
   static const List<Color> primaryG = [primaryColor1, primaryColor2];
   static const List<Color> secondaryG = [secondaryColor1, secondaryColor2];
-  static const LinearGradient primaryGradient = LinearGradient(colors: primaryG);
-  static const LinearGradient secondaryGradient =
-      LinearGradient(colors: secondaryG);
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: primaryG,
+  );
+  static const LinearGradient secondaryGradient = LinearGradient(
+    colors: secondaryG,
+  );
 
   // Supporting Colors
   static const Color black = Color(0xff1D1617);
@@ -31,9 +34,6 @@ abstract final class TColor {
   /// Material 3 styling across the app.
   static ColorScheme colorScheme(Brightness brightness) {
     final seed = brightness == Brightness.dark ? primaryColor2 : primaryColor1;
-    return ColorScheme.fromSeed(
-      seedColor: seed,
-      brightness: brightness,
-    );
+    return ColorScheme.fromSeed(seedColor: seed, brightness: brightness);
   }
 }

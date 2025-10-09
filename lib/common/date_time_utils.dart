@@ -110,7 +110,9 @@ class DateTimeUtils {
     }
 
     if (minutes != 0 || segments.isEmpty) {
-      final label = minutes.abs() == 1 ? singularMinuteLabel : pluralMinuteLabel;
+      final label = minutes.abs() == 1
+          ? singularMinuteLabel
+          : pluralMinuteLabel;
       segments.add('${minutes.abs()} $label');
     }
 

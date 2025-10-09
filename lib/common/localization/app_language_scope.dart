@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 /// Controller that stores the currently selected [AppLanguage].
 class AppLanguageController extends ChangeNotifier {
   AppLanguageController({AppLanguage initialLanguage = AppLanguage.english})
-      : _language = initialLanguage;
+    : _language = initialLanguage;
 
   AppLanguage _language;
 

@@ -25,5 +25,6 @@ class Ingredient {
   int get hashCode => Object.hash(image, name, amount);
 
   @override
-  String toString() => 'Ingredient(image: $image, name: $name, amount: $amount)';
+  String toString() =>
+      'Ingredient(image: $image, name: $name, amount: $amount)';
 }
