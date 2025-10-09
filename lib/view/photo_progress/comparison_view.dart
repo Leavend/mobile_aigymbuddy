@@ -233,8 +233,7 @@ final class _ComparisonTexts {
   static const invalidSelection = LocalizedText(
     english:
         'Please ensure the months are different and the first month is earlier.',
-    indonesian:
-        'Pastikan kedua bulan berbeda dan bulan pertama lebih awal.',
+    indonesian: 'Pastikan kedua bulan berbeda dan bulan pertama lebih awal.',
   );
 
   static const shareProgress = LocalizedText(

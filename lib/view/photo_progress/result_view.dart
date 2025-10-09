@@ -21,10 +21,7 @@ class ResultView extends StatefulWidget {
 class _ResultViewState extends State<ResultView> {
   static const _photoComparisons = [
     _PhotoComparison(
-      title: LocalizedText(
-        english: 'Front Facing',
-        indonesian: 'Tampak Depan',
-      ),
+      title: LocalizedText(english: 'Front Facing', indonesian: 'Tampak Depan'),
       firstImagePath: 'assets/img/pp_1.png',
       secondImagePath: 'assets/img/pp_2.png',
     ),
@@ -37,18 +34,12 @@ class _ResultViewState extends State<ResultView> {
       secondImagePath: 'assets/img/pp_4.png',
     ),
     _PhotoComparison(
-      title: LocalizedText(
-        english: 'Left Facing',
-        indonesian: 'Tampak Kiri',
-      ),
+      title: LocalizedText(english: 'Left Facing', indonesian: 'Tampak Kiri'),
       firstImagePath: 'assets/img/pp_5.png',
       secondImagePath: 'assets/img/pp_6.png',
     ),
     _PhotoComparison(
-      title: LocalizedText(
-        english: 'Right Facing',
-        indonesian: 'Tampak Kanan',
-      ),
+      title: LocalizedText(english: 'Right Facing', indonesian: 'Tampak Kanan'),
       firstImagePath: 'assets/img/pp_7.png',
       secondImagePath: 'assets/img/pp_8.png',
     ),
@@ -237,10 +228,7 @@ class _ResultViewState extends State<ResultView> {
     );
   }
 
-  Widget _buildPhotoTab(
-    Size media,
-    String Function(LocalizedText) localize,
-  ) {
+  Widget _buildPhotoTab(Size media, String Function(LocalizedText) localize) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -380,9 +368,7 @@ class _ResultViewState extends State<ResultView> {
                 show: true,
                 leftTitles: const AxisTitles(),
                 topTitles: const AxisTitles(),
-                bottomTitles: AxisTitles(
-                  sideTitles: _bottomTitles(language),
-                ),
+                bottomTitles: AxisTitles(sideTitles: _bottomTitles(language)),
                 rightTitles: AxisTitles(sideTitles: _rightTitles),
               ),
               gridData: FlGridData(
@@ -682,15 +668,9 @@ class _ProgressStatistic {
 }
 
 final class _ResultTexts {
-  static const title = LocalizedText(
-    english: 'Result',
-    indonesian: 'Hasil',
-  );
+  static const title = LocalizedText(english: 'Result', indonesian: 'Hasil');
 
-  static const photoTab = LocalizedText(
-    english: 'Photo',
-    indonesian: 'Foto',
-  );
+  static const photoTab = LocalizedText(english: 'Photo', indonesian: 'Foto');
 
   static const statisticTab = LocalizedText(
     english: 'Statistic',
@@ -757,7 +737,9 @@ final class _ResultTexts {
   }
 
   static String minutesAgo(AppLanguage language, int minutes) {
-    final suffix = language == AppLanguage.indonesian ? 'menit lalu' : 'mins ago';
+    final suffix = language == AppLanguage.indonesian
+        ? 'menit lalu'
+        : 'mins ago';
     return '$minutes $suffix';
   }
 }

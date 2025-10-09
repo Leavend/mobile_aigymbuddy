@@ -16,7 +16,7 @@ class PhotoProgressView extends StatefulWidget {
 }
 
 class _PhotoProgressViewState extends State<PhotoProgressView> {
-  final List<_PhotoProgressGroup> _photoGroups = const [
+  final List<_PhotoProgressGroup> _photoGroups = [
     _PhotoProgressGroup(
       date: DateTime(2023, 6, 2),
       photos: [
@@ -226,8 +226,9 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                   child: RoundButton(
                     title: localize(_PhotoProgressTexts.learnMoreButton),
                     fontSize: 12,
-                    onPressed: () =>
-                        _showSnackBar(localize(_PhotoProgressTexts.learnMoreInfo)),
+                    onPressed: () => _showSnackBar(
+                      localize(_PhotoProgressTexts.learnMoreInfo),
+                    ),
                   ),
                 ),
               ],
