@@ -8,72 +8,78 @@ import 'package:aigymbuddy/common_widget/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-// --- Constants moved outside the class for better separation of concerns ---
+import 'widgets/auth_page_layout.dart';
+import 'widgets/auth_validators.dart';
 
-const _greetingText = LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
-const _createAccountText = LocalizedText(
-  english: 'Create an Account',
-  indonesian: 'Buat Akun',
-);
-const _firstNameHint = LocalizedText(
-  english: 'First Name',
-  indonesian: 'Nama Depan',
-);
-const _lastNameHint = LocalizedText(
-  english: 'Last Name',
-  indonesian: 'Nama Belakang',
-);
-const _emailHint = LocalizedText(english: 'Email', indonesian: 'Email');
-const _passwordHint = LocalizedText(
-  english: 'Password',
-  indonesian: 'Kata Sandi',
-);
-const _termsText = LocalizedText(
-  english: 'By continuing you accept our Privacy Policy and\nTerm of Use',
-  indonesian:
-      'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
-);
-const _registerText = LocalizedText(english: 'Register', indonesian: 'Daftar');
-const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
-const _footerQuestionText = LocalizedText(
-  english: 'Already have an account? ',
-  indonesian: 'Sudah punya akun? ',
-);
-const _footerActionText = LocalizedText(english: 'Login', indonesian: 'Masuk');
+abstract final class _SignUpTexts {
+  static const greeting =
+      LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
+  static const createAccount = LocalizedText(
+    english: 'Create an Account',
+    indonesian: 'Buat Akun',
+  );
+  static const firstNameHint = LocalizedText(
+    english: 'First Name',
+    indonesian: 'Nama Depan',
+  );
+  static const lastNameHint = LocalizedText(
+    english: 'Last Name',
+    indonesian: 'Nama Belakang',
+  );
+  static const emailHint = LocalizedText(english: 'Email', indonesian: 'Email');
+  static const passwordHint = LocalizedText(
+    english: 'Password',
+    indonesian: 'Kata Sandi',
+  );
+  static const termsText = LocalizedText(
+    english: 'By continuing you accept our Privacy Policy and\nTerm of Use',
+    indonesian:
+        'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
+  );
+  static const registerButton =
+      LocalizedText(english: 'Register', indonesian: 'Daftar');
+  static const divider = LocalizedText(english: 'Or', indonesian: 'Atau');
+  static const footerQuestion = LocalizedText(
+    english: 'Already have an account? ',
+    indonesian: 'Sudah punya akun? ',
+  );
+  static const footerAction =
+      LocalizedText(english: 'Login', indonesian: 'Masuk');
 
-const _firstNameRequiredError = LocalizedText(
-  english: 'First name is required',
-  indonesian: 'Nama depan wajib diisi',
-);
-const _lastNameRequiredError = LocalizedText(
-  english: 'Last name is required',
-  indonesian: 'Nama belakang wajib diisi',
-);
-const _emailRequiredError = LocalizedText(
-  english: 'Email is required',
-  indonesian: 'Email wajib diisi',
-);
-const _emailInvalidError = LocalizedText(
-  english: 'Enter a valid email address',
-  indonesian: 'Masukkan alamat email yang valid',
-);
-const _passwordRequiredError = LocalizedText(
-  english: 'Password is required',
-  indonesian: 'Kata sandi wajib diisi',
-);
-const _passwordLengthError = LocalizedText(
-  english: 'Password must be at least 8 characters',
-  indonesian: 'Kata sandi minimal 8 karakter',
-);
-const _termsRequiredError = LocalizedText(
-  english: 'Please accept the terms to continue',
-  indonesian: 'Silakan setujui syarat dan ketentuan terlebih dahulu',
-);
+  static const socialProviders = [
+    'assets/img/google.png',
+    'assets/img/facebook.png',
+  ];
 
-final _emailRegExp = RegExp(
-  r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$',
-  caseSensitive: false,
-);
+  static const firstNameRequired = LocalizedText(
+    english: 'First name is required',
+    indonesian: 'Nama depan wajib diisi',
+  );
+  static const lastNameRequired = LocalizedText(
+    english: 'Last name is required',
+    indonesian: 'Nama belakang wajib diisi',
+  );
+  static const emailRequired = LocalizedText(
+    english: 'Email is required',
+    indonesian: 'Email wajib diisi',
+  );
+  static const emailInvalid = LocalizedText(
+    english: 'Enter a valid email address',
+    indonesian: 'Masukkan alamat email yang valid',
+  );
+  static const passwordRequired = LocalizedText(
+    english: 'Password is required',
+    indonesian: 'Kata sandi wajib diisi',
+  );
+  static const passwordLength = LocalizedText(
+    english: 'Password must be at least 8 characters',
+    indonesian: 'Kata sandi minimal 8 karakter',
+  );
+  static const termsRequired = LocalizedText(
+    english: 'Please accept the terms to continue',
+    indonesian: 'Silakan setujui syarat dan ketentuan terlebih dahulu',
+  );
+}
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
@@ -125,10 +131,16 @@ class _SignUpViewState extends State<SignUpView> {
   void _validateForm() {
     final isValid = _canSubmitForm();
     if (isValid != _isRegisterEnabled) {
-      setState(() {
-        _isRegisterEnabled = isValid;
-      });
+      setState(() => _isRegisterEnabled = isValid);
     }
+  }
+
+  bool _canSubmitForm() {
+    return _firstNameController.text.trim().isNotEmpty &&
+        _lastNameController.text.trim().isNotEmpty &&
+        AuthValidators.isValidEmail(_emailController.text) &&
+        _passwordController.text.length >= 8 &&
+        _isTermsAccepted;
   }
 
   void _onRegisterPressed() {
@@ -145,116 +157,83 @@ class _SignUpViewState extends State<SignUpView> {
   }
 
   String? _validateFirstName(String? value) {
-    final text = value?.trim() ?? '';
-    if (text.isEmpty) {
-      return context.localize(_firstNameRequiredError);
-    }
-    return null;
+    return AuthValidators.validateRequired(
+      context: context,
+      value: value,
+      emptyMessage: _SignUpTexts.firstNameRequired,
+    );
   }
 
   String? _validateLastName(String? value) {
-    final text = value?.trim() ?? '';
-    if (text.isEmpty) {
-      return context.localize(_lastNameRequiredError);
-    }
-    return null;
+    return AuthValidators.validateRequired(
+      context: context,
+      value: value,
+      emptyMessage: _SignUpTexts.lastNameRequired,
+    );
   }
 
   String? _validateEmail(String? value) {
-    final text = value?.trim() ?? '';
-    if (text.isEmpty) {
-      return context.localize(_emailRequiredError);
-    }
-    if (!_emailRegExp.hasMatch(text)) {
-      return context.localize(_emailInvalidError);
-    }
-    return null;
+    return AuthValidators.validateEmail(
+      context: context,
+      value: value,
+      emptyMessage: _SignUpTexts.emailRequired,
+      invalidMessage: _SignUpTexts.emailInvalid,
+    );
   }
 
   String? _validatePassword(String? value) {
-    final text = value ?? '';
-    if (text.isEmpty) {
-      return context.localize(_passwordRequiredError);
-    }
-    if (text.length < 8) {
-      return context.localize(_passwordLengthError);
-    }
-    return null;
-  }
-
-  bool _canSubmitForm() {
-    return _validateFirstName(_firstNameController.text) == null &&
-        _validateLastName(_lastNameController.text) == null &&
-        _validateEmail(_emailController.text) == null &&
-        _validatePassword(_passwordController.text) == null;
+    return AuthValidators.validatePassword(
+      context: context,
+      value: value,
+      emptyMessage: _SignUpTexts.passwordRequired,
+      lengthMessage: _SignUpTexts.passwordLength,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: TColor.white,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: 420,
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: _buildContent(context),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContent(BuildContext context) {
     final autovalidateMode = _autoValidate
         ? AutovalidateMode.onUserInteraction
         : AutovalidateMode.disabled;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildHeader(context),
-        const SizedBox(height: 28),
-        _buildForm(context, autovalidateMode),
-        const SizedBox(height: 12),
-        _buildTermsRow(context),
-        if (_showTermsError && !_isTermsAccepted) ...[
-          const SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.only(left: 12.0),
-            child: Text(
-              context.localize(_termsRequiredError),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-                fontSize: 12,
+    return AuthPageLayout(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildHeader(context),
+          const SizedBox(height: 28),
+          _buildForm(context, autovalidateMode),
+          const SizedBox(height: 12),
+          _buildTermsRow(context),
+          if (_showTermsError && !_isTermsAccepted) ...[
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: Text(
+                context.localize(_SignUpTexts.termsRequired),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                  fontSize: 12,
+                ),
               ),
             ),
+          ],
+          const SizedBox(height: 24),
+          RoundButton(
+            title: context.localize(_SignUpTexts.registerButton),
+            onPressed: _onRegisterPressed,
+            isEnabled: _isRegisterEnabled,
           ),
+          const SizedBox(height: 16),
+          _buildDivider(context),
+          const SizedBox(height: 16),
+          _buildSocialRow(),
+          const SizedBox(height: 20),
+          _buildLoginPrompt(context),
+          const SizedBox(height: 24),
         ],
-        const SizedBox(height: 24),
-        RoundButton(
-          title: context.localize(_registerText),
-          onPressed: _onRegisterPressed,
-          isEnabled: _isRegisterEnabled && _isTermsAccepted,
-        ),
-        const SizedBox(height: 16),
-        _buildDivider(context),
-        const SizedBox(height: 16),
-        _buildSocialRow(),
-        const SizedBox(height: 20),
-        _buildLoginPrompt(context),
-        const SizedBox(height: 24),
-      ],
+      ),
     );
   }
 
@@ -263,15 +242,15 @@ class _SignUpViewState extends State<SignUpView> {
       children: [
         const SizedBox(height: 24),
         Text(
-          context.localize(_greetingText),
+          context.localize(_SignUpTexts.greeting),
           textAlign: TextAlign.center,
-          style: TextStyle(color: TColor.gray, fontSize: 16),
+          style: const TextStyle(color: TColor.gray, fontSize: 16),
         ),
         const SizedBox(height: 4),
         Text(
-          context.localize(_createAccountText),
+          context.localize(_SignUpTexts.createAccount),
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: TColor.black,
             fontSize: 24,
             fontWeight: FontWeight.w700,
@@ -281,7 +260,10 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 
-  Widget _buildForm(BuildContext context, AutovalidateMode autovalidateMode) {
+  Widget _buildForm(
+    BuildContext context,
+    AutovalidateMode autovalidateMode,
+  ) {
     return Form(
       key: _formKey,
       autovalidateMode: autovalidateMode,
@@ -291,7 +273,7 @@ class _SignUpViewState extends State<SignUpView> {
           RoundTextField(
             controller: _firstNameController,
             focusNode: _firstNameFocusNode,
-            hintText: context.localize(_firstNameHint),
+            hintText: context.localize(_SignUpTexts.firstNameHint),
             icon: 'assets/img/user_text.png',
             textCapitalization: TextCapitalization.words,
             textInputAction: TextInputAction.next,
@@ -302,7 +284,7 @@ class _SignUpViewState extends State<SignUpView> {
           RoundTextField(
             controller: _lastNameController,
             focusNode: _lastNameFocusNode,
-            hintText: context.localize(_lastNameHint),
+            hintText: context.localize(_SignUpTexts.lastNameHint),
             icon: 'assets/img/user_text.png',
             textCapitalization: TextCapitalization.words,
             textInputAction: TextInputAction.next,
@@ -313,7 +295,7 @@ class _SignUpViewState extends State<SignUpView> {
           RoundTextField(
             controller: _emailController,
             focusNode: _emailFocusNode,
-            hintText: context.localize(_emailHint),
+            hintText: context.localize(_SignUpTexts.emailHint),
             icon: 'assets/img/email.png',
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
@@ -324,7 +306,7 @@ class _SignUpViewState extends State<SignUpView> {
           RoundTextField(
             controller: _passwordController,
             focusNode: _passwordFocusNode,
-            hintText: context.localize(_passwordHint),
+            hintText: context.localize(_SignUpTexts.passwordHint),
             icon: 'assets/img/lock.png',
             obscureText: !_isPasswordVisible,
             textInputAction: TextInputAction.done,
@@ -334,9 +316,7 @@ class _SignUpViewState extends State<SignUpView> {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               onPressed: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
+                setState(() => _isPasswordVisible = !_isPasswordVisible);
               },
               icon: Image.asset(
                 _isPasswordVisible
@@ -374,8 +354,8 @@ class _SignUpViewState extends State<SignUpView> {
         const SizedBox(width: 4),
         Expanded(
           child: Text(
-            context.localize(_termsText),
-            style: TextStyle(color: TColor.gray, fontSize: 12),
+            context.localize(_SignUpTexts.termsText),
+            style: const TextStyle(color: TColor.gray, fontSize: 12),
           ),
         ),
       ],
@@ -394,8 +374,8 @@ class _SignUpViewState extends State<SignUpView> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            context.localize(_dividerText),
-            style: TextStyle(color: TColor.black, fontSize: 12),
+            context.localize(_SignUpTexts.divider),
+            style: const TextStyle(color: TColor.black, fontSize: 12),
           ),
         ),
         Expanded(
@@ -411,30 +391,30 @@ class _SignUpViewState extends State<SignUpView> {
   Widget _buildSocialRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
-        SocialAuthButton(assetPath: 'assets/img/google.png'),
-        SizedBox(width: 16),
-        SocialAuthButton(assetPath: 'assets/img/facebook.png'),
+      children: [
+        for (var i = 0; i < _SignUpTexts.socialProviders.length; i++) ...[
+          SocialAuthButton(assetPath: _SignUpTexts.socialProviders[i]),
+          if (i < _SignUpTexts.socialProviders.length - 1)
+            const SizedBox(width: 16),
+        ],
       ],
     );
   }
 
   Widget _buildLoginPrompt(BuildContext context) {
     return TextButton(
-      onPressed: () {
-        context.push(AppRoute.login);
-      },
+      onPressed: () => context.go(AppRoute.login),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            context.localize(_footerQuestionText),
-            style: TextStyle(color: TColor.black, fontSize: 14),
+            context.localize(_SignUpTexts.footerQuestion),
+            style: const TextStyle(color: TColor.black, fontSize: 14),
           ),
           Text(
-            context.localize(_footerActionText),
-            style: TextStyle(
+            context.localize(_SignUpTexts.footerAction),
+            style: const TextStyle(
               color: TColor.black,
               fontSize: 14,
               fontWeight: FontWeight.w700,
