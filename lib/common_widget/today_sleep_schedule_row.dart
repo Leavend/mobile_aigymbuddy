@@ -2,11 +2,15 @@ import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../common/date_time_utils.dart';
+import '../common/models/sleep_schedule_entry.dart';
 
 class TodaySleepScheduleRow extends StatefulWidget {
-  final Map sObj;
-  const TodaySleepScheduleRow({super.key, required this.sObj});
+  const TodaySleepScheduleRow({
+    super.key,
+    required this.schedule,
+  });
+
+  final SleepScheduleEntry schedule;
 
   @override
   State<TodaySleepScheduleRow> createState() => _TodaySleepScheduleRowState();
@@ -30,11 +34,18 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
           const SizedBox(width: 15),
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
-            child: Image.asset(
-              widget.sObj["image"].toString(),
+            child: Image(
+              image: widget.schedule.imageProvider,
               width: 40,
               height: 40,
               fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                width: 40,
+                height: 40,
+                color: TColor.lightGray,
+                alignment: Alignment.center,
+                child: const Icon(Icons.bedtime, size: 20),
+              ),
             ),
           ),
           const SizedBox(width: 15),
@@ -45,7 +56,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                 Row(
                   children: [
                     Text(
-                      widget.sObj["name"].toString(),
+                      widget.schedule.title,
                       style: TextStyle(
                         color: TColor.black,
                         fontSize: 14,
@@ -53,7 +64,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                       ),
                     ),
                     Text(
-                      ", ${DateTimeUtils.reformatDateString(widget.sObj["time"].toString())}",
+                      ', ${widget.schedule.formattedTime}',
                       style: TextStyle(color: TColor.black, fontSize: 12),
                     ),
                   ],
@@ -61,7 +72,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
 
                 const SizedBox(height: 8),
                 Text(
-                  widget.sObj["duration"].toString(),
+                  widget.schedule.formattedCountdown,
                   style: TextStyle(
                     color: TColor.gray,
                     fontSize: 14,
