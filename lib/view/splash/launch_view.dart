@@ -11,25 +11,27 @@ class LaunchView extends StatefulWidget {
 }
 
 class _LaunchViewState extends State<LaunchView> {
+  late final AuthService _authService;
+
   @override
   void initState() {
     super.initState();
-    _bootstrap();
+    _authService = AuthService.instance;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _handleBootstrap());
   }
 
-  Future<void> _bootstrap() async {
-    final hasCredentials = await AuthService.instance.hasSavedCredentials();
+  Future<void> _handleBootstrap() async {
+    final hasCredentials = await _authService.hasSavedCredentials();
     if (!mounted) return;
 
-    if (hasCredentials) {
-      context.go(AppRoute.main);
-    } else {
-      context.go(AppRoute.onboarding);
-    }
+    final destination = hasCredentials ? AppRoute.main : AppRoute.onboarding;
+    context.go(destination);
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
   }
 }
