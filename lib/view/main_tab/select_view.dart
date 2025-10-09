@@ -1,6 +1,5 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -39,19 +38,36 @@ class SelectView extends StatelessWidget {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                for (var i = 0; i < _destinations.length; i++) ...[
-                  if (i > 0) const SizedBox(height: 16),
-                  _FeatureButton(destination: _destinations[i]),
-                ],
-              ],
-            ),
+            child: _FeatureList(destinations: _destinations),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _FeatureList extends StatelessWidget {
+  const _FeatureList({required this.destinations});
+
+  final List<_FeatureDestination> destinations;
+
+  @override
+  Widget build(BuildContext context) {
+    final localize = context.localize;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < destinations.length; i++)
+          Padding(
+            padding: EdgeInsets.only(top: i == 0 ? 0 : 16),
+            child: _FeatureButton(
+              destination: destinations[i],
+              label: localize(destinations[i].label),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -64,14 +80,13 @@ class _FeatureDestination {
 }
 
 class _FeatureButton extends StatelessWidget {
-  const _FeatureButton({required this.destination});
+  const _FeatureButton({required this.destination, required this.label});
 
   final _FeatureDestination destination;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
-    final label = context.localize(destination.label);
-
     return Semantics(
       button: true,
       label: label,
