@@ -6,31 +6,51 @@ import 'package:flutter/material.dart';
 import '../common/color_extension.dart';
 
 class FindEatCell extends StatelessWidget {
-  final Map<String, dynamic> fObj;
-  final int index;
+  const FindEatCell({
+    super.key,
+    required this.index,
+    required this.title,
+    required this.subtitle,
+    required this.imageAsset,
+  });
 
-  const FindEatCell({super.key, required this.index, required this.fObj});
+  factory FindEatCell.fromMap(
+    Map<String, String> data, {
+    required int index,
+  }) {
+    return FindEatCell(
+      index: index,
+      title: data['name'] ?? 'Meal',
+      subtitle: data['number'] ?? '0 Item',
+      imageAsset: data['image'] ?? 'assets/img/m_3.png',
+    );
+  }
+
+  final int index;
+  final String title;
+  final String subtitle;
+  final String imageAsset;
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-    final bool isEven = index.isEven;
+    final isEven = index.isEven;
+
+    final gradientColors = isEven
+        ? [
+            TColor.primaryColor2.withValues(alpha: 0.5),
+            TColor.primaryColor1.withValues(alpha: 0.5),
+          ]
+        : [
+            TColor.secondaryColor2.withValues(alpha: 0.5),
+            TColor.secondaryColor1.withValues(alpha: 0.5),
+          ];
 
     return Container(
       margin: const EdgeInsets.all(8),
       width: media.width * 0.5,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isEven
-              ? [
-                  TColor.primaryColor2.withValues(alpha: 0.5),
-                  TColor.primaryColor1.withValues(alpha: 0.5),
-                ]
-              : [
-                  TColor.secondaryColor2.withValues(alpha: 0.5),
-                  TColor.secondaryColor1.withValues(alpha: 0.5),
-                ],
-        ),
+        gradient: LinearGradient(colors: gradientColors),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(25),
           topRight: Radius.circular(75),
@@ -41,24 +61,21 @@ class FindEatCell extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Gambar di kanan atas
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Image.asset(
-                (fObj['image'] ?? '').toString(),
+                imageAsset,
                 width: media.width * 0.3,
                 height: media.width * 0.25,
                 fit: BoxFit.contain,
               ),
             ],
           ),
-
-          // Nama
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              (fObj['name'] ?? '').toString(),
+              title,
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 14,
@@ -68,21 +85,16 @@ class FindEatCell extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-
-          // Jumlah item
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              (fObj['number'] ?? '').toString(),
+              subtitle,
               style: TextStyle(color: TColor.gray, fontSize: 12),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-
           const SizedBox(height: 15),
-
-          // Tombol
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: SizedBox(
@@ -90,9 +102,8 @@ class FindEatCell extends StatelessWidget {
               height: 25,
               child: RoundButton(
                 fontSize: 12,
-                type: isEven
-                    ? RoundButtonType.bgGradient
-                    : RoundButtonType.bgSGradient,
+                type:
+                    isEven ? RoundButtonType.bgGradient : RoundButtonType.bgSGradient,
                 title: 'Select',
                 onPressed: () {},
               ),

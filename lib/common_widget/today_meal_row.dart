@@ -4,11 +4,36 @@ import 'package:flutter/material.dart';
 import '../common/date_time_utils.dart';
 
 class TodayMealRow extends StatelessWidget {
-  final Map mObj;
-  const TodayMealRow({super.key, required this.mObj});
+  const TodayMealRow({
+    super.key,
+    required this.name,
+    required this.imageAsset,
+    required this.scheduledAt,
+  });
+
+  factory TodayMealRow.fromMap(Map<String, String> data) {
+    final rawTime = data['time'];
+    final parsedTime = _tryParseScheduledAt(rawTime);
+
+    return TodayMealRow(
+      name: data['name'] ?? 'Unknown Meal',
+      imageAsset: data['image'] ?? 'assets/img/m_1.png',
+      scheduledAt: parsedTime,
+    );
+  }
+
+  final String name;
+  final String imageAsset;
+  final DateTime scheduledAt;
 
   @override
   Widget build(BuildContext context) {
+    final relativeDay = scheduledAt.relativeDayLabel;
+    final formattedTime = DateTimeUtils.formatDate(
+      scheduledAt,
+      pattern: 'h:mm aa',
+    );
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
       padding: const EdgeInsets.all(10),
@@ -22,7 +47,7 @@ class TodayMealRow extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: Image.asset(
-              mObj["image"].toString(),
+              imageAsset,
               width: 40,
               height: 40,
               fit: BoxFit.cover,
@@ -34,7 +59,7 @@ class TodayMealRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  mObj["name"].toString(),
+                  name,
                   style: TextStyle(
                     color: TColor.black,
                     fontSize: 12,
@@ -42,7 +67,7 @@ class TodayMealRow extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "${DateTimeUtils.describeDayFromString(mObj["time"].toString())} | ${DateTimeUtils.reformatDateString(mObj["time"].toString(), outputPattern: "h:mm aa")}",
+                  '$relativeDay | $formattedTime',
                   style: TextStyle(color: TColor.gray, fontSize: 10),
                 ),
               ],
@@ -50,10 +75,25 @@ class TodayMealRow extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {},
-            icon: Image.asset("assets/img/bell.png", width: 25, height: 25),
+            icon: Image.asset('assets/img/bell.png', width: 25, height: 25),
           ),
         ],
       ),
     );
+  }
+}
+
+DateTime _tryParseScheduledAt(String? rawTime) {
+  if (rawTime == null || rawTime.isEmpty) {
+    return DateTime.now();
+  }
+
+  try {
+    return DateTimeUtils.parseDate(
+      rawTime,
+      pattern: 'dd/MM/yyyy hh:mm aa',
+    );
+  } on FormatException {
+    return DateTime.now();
   }
 }
