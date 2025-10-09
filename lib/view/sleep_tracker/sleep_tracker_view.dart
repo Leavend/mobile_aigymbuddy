@@ -17,7 +17,7 @@ class SleepTrackerView extends StatefulWidget {
 }
 
 class _SleepTrackerViewState extends State<SleepTrackerView> {
-  final List<Map<String, String>> todaySleepArr = const [
+  static const List<Map<String, String>> _todaySchedule = [
     {
       "name": "Bedtime",
       "image": "assets/img/bed.png",
@@ -32,13 +32,12 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
     },
   ];
 
-  // titik tooltip default pada chart
-  final List<int> showingTooltipOnSpots = [4];
+  final List<int> _highlightedTooltipIndices = [4];
 
   @override
   Widget build(BuildContext context) {
-    final toolbars = lineBarsData1;
-    final tooltipsOnBar = toolbars[0];
+    final lineBars = _lineBarsData;
+    final focusedBar = lineBars.first;
 
     return Scaffold(
       backgroundColor: TColor.white,
@@ -46,17 +45,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
         backgroundColor: TColor.white,
         elevation: 0,
         centerTitle: true,
-        leading: InkWell(
-          onTap: () => context.pop(),
-          child: Container(
-            decoration: BoxDecoration(
-              color: TColor.lightGray,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            padding: const EdgeInsets.all(8),
-            child: Image.asset("assets/img/black_btn.png"),
-          ),
-        ),
+        leading: _buildBackButton(context),
         title: Text(
           "Sleep Tracker",
           style: TextStyle(
@@ -68,6 +57,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
         actions: [
           IconButton(
             onPressed: () {},
+            padding: EdgeInsets.zero,
             icon: Container(
               decoration: BoxDecoration(
                 color: TColor.lightGray,
@@ -95,63 +85,63 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                     width: double.infinity,
                     child: LineChart(
                       LineChartData(
-                        showingTooltipIndicators: showingTooltipOnSpots.map((
-                          index,
-                        ) {
-                          return ShowingTooltipIndicators([
-                            LineBarSpot(
-                              tooltipsOnBar,
-                              lineBarsData1.indexOf(tooltipsOnBar),
-                              tooltipsOnBar.spots[index],
-                            ),
-                          ]);
-                        }).toList(),
+                        showingTooltipIndicators: _highlightedTooltipIndices
+                            .map(
+                              (index) => ShowingTooltipIndicators([
+                                LineBarSpot(
+                                  focusedBar,
+                                  lineBars.indexOf(focusedBar),
+                                  focusedBar.spots[index],
+                                ),
+                              ]),
+                            )
+                            .toList(),
                         lineTouchData: LineTouchData(
                           enabled: true,
                           handleBuiltInTouches: false,
                           touchCallback: (event, response) {
-                            if (response == null ||
-                                response.lineBarSpots == null) {
-                              return;
-                            }
-                            if (event is FlTapUpEvent) {
-                              final idx =
-                                  response.lineBarSpots!.first.spotIndex;
-                              setState(() {
-                                showingTooltipOnSpots
-                                  ..clear()
-                                  ..add(idx);
-                              });
-                            }
+                            if (event is! FlTapUpEvent) return;
+                            final spots = response?.lineBarSpots;
+                            if (spots == null || spots.isEmpty) return;
+
+                            final selectedIndex = spots.first.spotIndex;
+                            setState(() {
+                              _highlightedTooltipIndices
+                                ..clear()
+                                ..add(selectedIndex);
+                            });
                           },
                           mouseCursorResolver: (event, response) =>
-                              (response == null ||
-                                  response.lineBarSpots == null)
-                              ? SystemMouseCursors.basic
-                              : SystemMouseCursors.click,
-                          getTouchedSpotIndicator: (barData, spotIndexes) {
-                            return spotIndexes.map((index) {
-                              return TouchedSpotIndicatorData(
-                                const FlLine(color: Colors.transparent),
-                                FlDotData(
-                                  show: true,
-                                  getDotPainter: (spot, percent, bar, i) =>
-                                      FlDotCirclePainter(
-                                        radius: 3,
-                                        color: Colors.white,
-                                        strokeWidth: 1.5,
-                                        strokeColor: TColor.primaryColor2,
+                              (response?.lineBarSpots?.isNotEmpty ?? false)
+                                  ? SystemMouseCursors.click
+                                  : SystemMouseCursors.basic,
+                          getTouchedSpotIndicator: (barData, spotIndexes) =>
+                              spotIndexes
+                                  .map(
+                                    (index) => TouchedSpotIndicatorData(
+                                      const FlLine(color: Colors.transparent),
+                                      FlDotData(
+                                        show: true,
+                                        getDotPainter: (
+                                          spot,
+                                          percent,
+                                          bar,
+                                          i,
+                                        ) => FlDotCirclePainter(
+                                          radius: 3,
+                                          color: Colors.white,
+                                          strokeWidth: 1.5,
+                                          strokeColor: TColor.primaryColor2,
+                                        ),
                                       ),
-                                ),
-                              );
-                            }).toList();
-                          },
+                                    ),
+                                  )
+                                  .toList(),
                           touchTooltipData: LineTouchTooltipData(
-                            // warna tooltip auto (pakai theme) – jika ingin, set getTooltipColor
                             getTooltipItems: (spots) => spots
                                 .map(
-                                  (s) => LineTooltipItem(
-                                    "${s.y.toInt()} hours",
+                                  (spot) => LineTooltipItem(
+                                    "${spot.y.toInt()} hours",
                                     const TextStyle(
                                       color: Colors.white,
                                       fontSize: 10,
@@ -162,15 +152,15 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                                 .toList(),
                           ),
                         ),
-                        lineBarsData: lineBarsData1,
+                        lineBarsData: lineBars,
                         minY: -0.01,
                         maxY: 10.01,
                         titlesData: FlTitlesData(
                           show: true,
                           leftTitles: const AxisTitles(),
                           topTitles: const AxisTitles(),
-                          bottomTitles: AxisTitles(sideTitles: bottomTitles),
-                          rightTitles: AxisTitles(sideTitles: rightTitles),
+                          bottomTitles: AxisTitles(sideTitles: _bottomTitles),
+                          rightTitles: AxisTitles(sideTitles: _rightTitles),
                         ),
                         gridData: FlGridData(
                           show: true,
@@ -265,9 +255,9 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                             type: RoundButtonType.bgGradient,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            onPressed: () {
-                              context.push(AppRoute.sleepSchedule);
-                            },
+                            onPressed: () => context.pushNamed(
+                              AppRoute.sleepScheduleName,
+                            ),
                           ),
                         ),
                       ],
@@ -291,13 +281,12 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                     padding: EdgeInsets.zero,
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: todaySleepArr.length,
+                    itemCount: _todaySchedule.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final sObj = todaySleepArr[index];
-                      return TodaySleepScheduleRow(sObj: sObj);
-                    },
+                    itemBuilder: (context, index) => TodaySleepScheduleRow(
+                      sObj: _todaySchedule[index],
+                    ),
                   ),
 
                   const SizedBox(height: 16),
@@ -312,79 +301,99 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
 
   // --------- Chart config ---------
 
-  List<LineChartBarData> get lineBarsData1 => [lineChartBarData1_1];
-
-  LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(
-      colors: [TColor.primaryColor2, TColor.primaryColor1],
-    ),
-    barWidth: 2,
-    isStrokeCapRound: true,
-    dotData: const FlDotData(show: false),
-    belowBarData: BarAreaData(
-      show: true,
-      gradient: LinearGradient(
-        colors: [TColor.primaryColor2.withValues(alpha: .35), TColor.white],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
+  Widget _buildBackButton(BuildContext context) {
+    return InkWell(
+      onTap: () => context.pop(),
+      child: Container(
+        decoration: BoxDecoration(
+          color: TColor.lightGray,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.all(8),
+        child: Image.asset("assets/img/black_btn.png"),
       ),
-    ),
-    spots: const [
-      FlSpot(1, 3),
-      FlSpot(2, 5),
-      FlSpot(3, 4),
-      FlSpot(4, 7),
-      FlSpot(5, 4),
-      FlSpot(6, 8),
-      FlSpot(7, 5),
-    ],
-  );
+    );
+  }
 
-  SideTitles get rightTitles => SideTitles(
-    showTitles: true,
-    interval: 2,
-    reservedSize: 42,
-    getTitlesWidget: (value, meta) {
-      final labels = <int, String>{
-        0: '0h',
-        2: '2h',
-        4: '4h',
-        6: '6h',
-        8: '8h',
-        10: '10h',
-      };
-      final text = labels[value.toInt()];
-      if (text == null) return const SizedBox.shrink();
-      return SideTitleWidget(
-        meta: meta,
-        space: 8,
-        child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
-      );
-    },
-  );
+  List<LineChartBarData> get _lineBarsData => [_primaryLineBarData];
 
-  SideTitles get bottomTitles => SideTitles(
-    showTitles: true,
-    reservedSize: 28,
-    interval: 1,
-    getTitlesWidget: (value, meta) {
-      final labels = <int, String>{
-        1: 'Sun',
-        2: 'Mon',
-        3: 'Tue',
-        4: 'Wed',
-        5: 'Thu',
-        6: 'Fri',
-        7: 'Sat',
-      };
-      final text = labels[value.toInt()];
-      if (text == null) return const SizedBox.shrink();
-      return SideTitleWidget(
-        meta: meta,
-        space: 6,
-        child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
+  LineChartBarData get _primaryLineBarData => LineChartBarData(
+        isCurved: true,
+        gradient: LinearGradient(
+          colors: [TColor.primaryColor2, TColor.primaryColor1],
+        ),
+        barWidth: 2,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        belowBarData: BarAreaData(
+          show: true,
+          gradient: LinearGradient(
+            colors: [TColor.primaryColor2.withValues(alpha: .35), TColor.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        spots: const [
+          FlSpot(1, 3),
+          FlSpot(2, 5),
+          FlSpot(3, 4),
+          FlSpot(4, 7),
+          FlSpot(5, 4),
+          FlSpot(6, 8),
+          FlSpot(7, 5),
+        ],
       );
-    },
-  );
+
+  static SideTitles get _rightTitles => SideTitles(
+        showTitles: true,
+        interval: 2,
+        reservedSize: 42,
+        getTitlesWidget: (value, meta) {
+          final labels = <int, String>{
+            0: '0h',
+            2: '2h',
+            4: '4h',
+            6: '6h',
+            8: '8h',
+            10: '10h',
+          };
+          final text = labels[value.toInt()];
+          if (text == null) return const SizedBox.shrink();
+          return SideTitleWidget(
+            meta: meta,
+            space: 8,
+            child: Text(
+              text,
+              style: TextStyle(color: TColor.gray, fontSize: 12),
+            ),
+          );
+        },
+      );
+
+  static SideTitles get _bottomTitles => SideTitles(
+        showTitles: true,
+        reservedSize: 28,
+        interval: 1,
+        getTitlesWidget: (value, meta) {
+          final labels = <int, String>{
+            1: 'Sun',
+            2: 'Mon',
+            3: 'Tue',
+            4: 'Wed',
+            5: 'Thu',
+            6: 'Fri',
+            7: 'Sat',
+          };
+          final text = labels[value.toInt()];
+          if (text == null) return const SizedBox.shrink();
+          return SideTitleWidget(
+            meta: meta,
+            space: 6,
+            child: Text(
+              text,
+              style: TextStyle(color: TColor.gray, fontSize: 12),
+            ),
+          );
+        },
+      );
 }
