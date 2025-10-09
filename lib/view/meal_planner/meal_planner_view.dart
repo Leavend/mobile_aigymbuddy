@@ -165,7 +165,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           lineTouchData: LineTouchData(
             enabled: true,
             handleBuiltInTouches: false,
-            touchCallback: (_, __) {},
+            touchCallback: (_, _) {},
             mouseCursorResolver: (event, response) {
               final spots = response?.lineBarSpots;
               if (spots == null || spots.isEmpty) {
@@ -220,9 +220,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
             show: true,
             leftTitles: const AxisTitles(),
             topTitles: const AxisTitles(),
-            bottomTitles: AxisTitles(
-              sideTitles: _buildBottomTitles(language),
-            ),
+            bottomTitles: AxisTitles(sideTitles: _buildBottomTitles(language)),
             rightTitles: AxisTitles(sideTitles: _rightTitles),
           ),
           gridData: FlGridData(
@@ -370,52 +368,52 @@ class _MealPlannerViewState extends State<MealPlannerView> {
   }
 
   List<LineChartBarData> get _lineBars => [
-        LineChartBarData(
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [TColor.primaryColor2, TColor.primaryColor1],
-          ),
-          barWidth: 2,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: true,
-            getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-              radius: 3,
-              color: Colors.white,
-              strokeWidth: 1,
-              strokeColor: TColor.primaryColor2,
-            ),
-          ),
-          belowBarData: BarAreaData(show: false),
-          spots: const [
-            FlSpot(1, 35),
-            FlSpot(2, 70),
-            FlSpot(3, 40),
-            FlSpot(4, 80),
-            FlSpot(5, 25),
-            FlSpot(6, 70),
-            FlSpot(7, 35),
-          ],
+    LineChartBarData(
+      isCurved: true,
+      gradient: LinearGradient(
+        colors: [TColor.primaryColor2, TColor.primaryColor1],
+      ),
+      barWidth: 2,
+      isStrokeCapRound: true,
+      dotData: FlDotData(
+        show: true,
+        getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+          radius: 3,
+          color: Colors.white,
+          strokeWidth: 1,
+          strokeColor: TColor.primaryColor2,
         ),
-      ];
+      ),
+      belowBarData: BarAreaData(show: false),
+      spots: const [
+        FlSpot(1, 35),
+        FlSpot(2, 70),
+        FlSpot(3, 40),
+        FlSpot(4, 80),
+        FlSpot(5, 25),
+        FlSpot(6, 70),
+        FlSpot(7, 35),
+      ],
+    ),
+  ];
 
   SideTitles get _rightTitles => SideTitles(
-        showTitles: true,
-        interval: 20,
-        reservedSize: 40,
-        getTitlesWidget: (value, meta) {
-          const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
-          final index = value ~/ 20;
-          if (index < 0 || index >= labels.length) {
-            return const SizedBox.shrink();
-          }
-          return Text(
-            labels[index],
-            style: TextStyle(color: TColor.gray, fontSize: 12),
-            textAlign: TextAlign.center,
-          );
-        },
+    showTitles: true,
+    interval: 20,
+    reservedSize: 40,
+    getTitlesWidget: (value, meta) {
+      const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
+      final index = value ~/ 20;
+      if (index < 0 || index >= labels.length) {
+        return const SizedBox.shrink();
+      }
+      return Text(
+        labels[index],
+        style: TextStyle(color: TColor.gray, fontSize: 12),
+        textAlign: TextAlign.center,
       );
+    },
+  );
 
   SideTitles _buildBottomTitles(AppLanguage language) {
     return SideTitles(
@@ -424,18 +422,22 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       interval: 1,
       getTitlesWidget: (value, meta) {
         final index = value.toInt() - 1;
-        final label = (index >= 0 && index < _MealPlannerStrings.weekdayAbbreviations.length)
+        final label =
+            (index >= 0 &&
+                index < _MealPlannerStrings.weekdayAbbreviations.length)
             ? _MealPlannerStrings.weekdayAbbreviations[index].resolve(language)
             : '';
         return SideTitleWidget(
           meta: meta,
           space: 10,
-          child: Text(label, style: TextStyle(color: TColor.gray, fontSize: 12)),
+          child: Text(
+            label,
+            style: TextStyle(color: TColor.gray, fontSize: 12),
+          ),
         );
       },
     );
   }
-
 }
 
 class _GradientDropdown extends StatelessWidget {
@@ -532,11 +534,7 @@ class _TodayMealData {
   final String timeLabel;
 
   Map<String, String> toLocalizedMap(AppLanguage language) {
-    return {
-      'name': name.resolve(language),
-      'image': image,
-      'time': timeLabel,
-    };
+    return {'name': name.resolve(language), 'image': image, 'time': timeLabel};
   }
 }
 
@@ -559,11 +557,7 @@ class _FoodCategoryData {
   }
 
   Map<String, dynamic> toArgsMap() {
-    return {
-      'name': title,
-      'number': subtitle,
-      'image': image,
-    };
+    return {'name': title, 'number': subtitle, 'image': image};
   }
 }
 

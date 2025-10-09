@@ -81,10 +81,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
 
   static const List<_RecommendationData> _recommendations = [
     _RecommendationData(
-      name: LocalizedText(
-        english: 'Honey Pancake',
-        indonesian: 'Pancake Madu',
-      ),
+      name: LocalizedText(english: 'Honey Pancake', indonesian: 'Pancake Madu'),
       image: 'assets/img/rd_1.png',
       heroImage: 'assets/img/pancake_1.png',
       size: LocalizedText(english: 'Easy', indonesian: 'Mudah'),
@@ -92,10 +89,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       kcal: LocalizedText(english: '180 kCal', indonesian: '180 kKal'),
     ),
     _RecommendationData(
-      name: LocalizedText(
-        english: 'Canai Bread',
-        indonesian: 'Roti Canai',
-      ),
+      name: LocalizedText(english: 'Canai Bread', indonesian: 'Roti Canai'),
       image: 'assets/img/m_4.png',
       heroImage: 'assets/img/m_4.png',
       size: LocalizedText(english: 'Easy', indonesian: 'Mudah'),
@@ -124,7 +118,9 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSearchBar(context.localize(_MealFoodDetailsStrings.searchHint)),
+            _buildSearchBar(
+              context.localize(_MealFoodDetailsStrings.searchHint),
+            ),
             SizedBox(height: media.width * 0.05),
             _buildCategorySection(context, language),
             SizedBox(height: media.width * 0.05),
@@ -267,7 +263,10 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle(context, _MealFoodDetailsStrings.recommendationTitle),
+        _buildSectionTitle(
+          context,
+          _MealFoodDetailsStrings.recommendationTitle,
+        ),
         SizedBox(
           height: media.width * 0.6,
           child: ListView.builder(
@@ -359,10 +358,7 @@ class _MealCategoryData {
   final String image;
 
   Map<String, dynamic> toLocalizedMap(AppLanguage language) {
-    return {
-      'name': name.resolve(language),
-      'image': image,
-    };
+    return {'name': name.resolve(language), 'image': image};
   }
 }
 
@@ -460,10 +456,7 @@ class _MealFoodDetailsStrings {
     indonesian: 'Populer',
   );
 
-  static const viewButton = LocalizedText(
-    english: 'View',
-    indonesian: 'Lihat',
-  );
+  static const viewButton = LocalizedText(english: 'View', indonesian: 'Lihat');
 
   static const searchHint = LocalizedText(
     english: 'Search Pancake',

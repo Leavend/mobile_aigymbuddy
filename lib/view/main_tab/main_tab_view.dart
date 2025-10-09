@@ -76,10 +76,7 @@ class MainTabView extends StatelessWidget {
 }
 
 class _AssistantButton extends StatelessWidget {
-  const _AssistantButton({
-    required this.diameter,
-    required this.label,
-  });
+  const _AssistantButton({required this.diameter, required this.label});
 
   final double diameter;
   final LocalizedText label;

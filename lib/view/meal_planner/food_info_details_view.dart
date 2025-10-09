@@ -37,7 +37,7 @@ class FoodInfoDetailsView extends StatelessWidget {
         gradient: LinearGradient(colors: TColor.primaryG),
       ),
       child: NestedScrollView(
-        headerSliverBuilder: (_, __) => [
+        headerSliverBuilder: (_, _) => [
           _buildTopAppBar(context),
           _buildHeroAppBar(media, language),
         ],
@@ -102,8 +102,11 @@ class FoodInfoDetailsView extends StatelessWidget {
   }
 
   Widget _buildHeroAppBar(Size media, AppLanguage language) {
-    final heroImage = _resolveLocalized(detail['b_image'], language,
-        fallback: detail['image']?.toString());
+    final heroImage = _resolveLocalized(
+      detail['b_image'],
+      language,
+      fallback: detail['image']?.toString(),
+    );
 
     return SliverAppBar(
       backgroundColor: Colors.transparent,
@@ -345,8 +348,10 @@ class FoodInfoDetailsView extends StatelessWidget {
     List<Ingredient> ingredients,
     AppLanguage language,
   ) {
-    final totalLabel =
-        _FoodInfoStrings.ingredientsCount(language, ingredients.length);
+    final totalLabel = _FoodInfoStrings.ingredientsCount(
+      language,
+      ingredients.length,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,10 +486,7 @@ class FoodInfoDetailsView extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: RoundButton(
-              title: buttonLabel,
-              onPressed: () {},
-            ),
+            child: RoundButton(title: buttonLabel, onPressed: () {}),
           ),
         ],
       ),
@@ -613,8 +615,7 @@ class _FoodInfoStrings {
     indonesian:
         'Pancake adalah sarapan favorit banyak orang. Siapa sih yang tidak suka? '
         'Apalagi dengan siraman madu asli di atasnya, pasti semua orang suka! '
-        'Selain lezat, pancake juga bisa menjadi hidangan cepat di pagi hari yang sibuk.'
-        ,
+        'Selain lezat, pancake juga bisa menjadi hidangan cepat di pagi hari yang sibuk.',
   );
 
   static const byAuthor = LocalizedText(
@@ -657,10 +658,7 @@ class _FoodInfoStrings {
     indonesian: 'Kalori',
   );
 
-  static const fatsTitle = LocalizedText(
-    english: 'Fats',
-    indonesian: 'Lemak',
-  );
+  static const fatsTitle = LocalizedText(english: 'Fats', indonesian: 'Lemak');
 
   static const proteinsTitle = LocalizedText(
     english: 'Proteins',
@@ -677,20 +675,14 @@ class _FoodInfoStrings {
     indonesian: 'Tepung Terigu',
   );
 
-  static const sugarName = LocalizedText(
-    english: 'Sugar',
-    indonesian: 'Gula',
-  );
+  static const sugarName = LocalizedText(english: 'Sugar', indonesian: 'Gula');
 
   static const bakingSodaName = LocalizedText(
     english: 'Baking Soda',
     indonesian: 'Soda Kue',
   );
 
-  static const eggsName = LocalizedText(
-    english: 'Eggs',
-    indonesian: 'Telur',
-  );
+  static const eggsName = LocalizedText(english: 'Eggs', indonesian: 'Telur');
 
   static LocalizedText stepTitle(int number) {
     return LocalizedText(
@@ -716,7 +708,8 @@ class _FoodInfoStrings {
 
   static const stepDescription4 = LocalizedText(
     english: 'Combine the wet mixture with the dry ingredients and stir well.',
-    indonesian: 'Masukkan campuran telur dan susu ke bahan kering lalu aduk rata.',
+    indonesian:
+        'Masukkan campuran telur dan susu ke bahan kering lalu aduk rata.',
   );
 
   static const stepDescription5 = LocalizedText(

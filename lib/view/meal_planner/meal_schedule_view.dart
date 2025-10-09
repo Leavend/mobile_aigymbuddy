@@ -18,18 +18,12 @@ class MealScheduleView extends StatefulWidget {
 class _MealScheduleViewState extends State<MealScheduleView> {
   static const List<_ScheduledMeal> _breakfastMeals = [
     _ScheduledMeal(
-      name: LocalizedText(
-        english: 'Honey Pancake',
-        indonesian: 'Pancake Madu',
-      ),
+      name: LocalizedText(english: 'Honey Pancake', indonesian: 'Pancake Madu'),
       timeLabel: '07:00am',
       image: 'assets/img/honey_pan.png',
     ),
     _ScheduledMeal(
-      name: LocalizedText(
-        english: 'Coffee',
-        indonesian: 'Kopi',
-      ),
+      name: LocalizedText(english: 'Coffee', indonesian: 'Kopi'),
       timeLabel: '07:30am',
       image: 'assets/img/coffee.png',
     ),
@@ -37,18 +31,12 @@ class _MealScheduleViewState extends State<MealScheduleView> {
 
   static const List<_ScheduledMeal> _lunchMeals = [
     _ScheduledMeal(
-      name: LocalizedText(
-        english: 'Chicken Steak',
-        indonesian: 'Steak Ayam',
-      ),
+      name: LocalizedText(english: 'Chicken Steak', indonesian: 'Steak Ayam'),
       timeLabel: '01:00pm',
       image: 'assets/img/chicken.png',
     ),
     _ScheduledMeal(
-      name: LocalizedText(
-        english: 'Milk',
-        indonesian: 'Susu',
-      ),
+      name: LocalizedText(english: 'Milk', indonesian: 'Susu'),
       timeLabel: '01:20pm',
       image: 'assets/img/glass-of-milk 1.png',
     ),
@@ -56,18 +44,12 @@ class _MealScheduleViewState extends State<MealScheduleView> {
 
   static const List<_ScheduledMeal> _snackMeals = [
     _ScheduledMeal(
-      name: LocalizedText(
-        english: 'Orange',
-        indonesian: 'Jeruk',
-      ),
+      name: LocalizedText(english: 'Orange', indonesian: 'Jeruk'),
       timeLabel: '04:30pm',
       image: 'assets/img/orange.png',
     ),
     _ScheduledMeal(
-      name: LocalizedText(
-        english: 'Apple Pie',
-        indonesian: 'Pai Apel',
-      ),
+      name: LocalizedText(english: 'Apple Pie', indonesian: 'Pai Apel'),
       timeLabel: '04:40pm',
       image: 'assets/img/apple_pie.png',
     ),
@@ -75,18 +57,12 @@ class _MealScheduleViewState extends State<MealScheduleView> {
 
   static const List<_ScheduledMeal> _dinnerMeals = [
     _ScheduledMeal(
-      name: LocalizedText(
-        english: 'Salad',
-        indonesian: 'Salad',
-      ),
+      name: LocalizedText(english: 'Salad', indonesian: 'Salad'),
       timeLabel: '07:10pm',
       image: 'assets/img/salad.png',
     ),
     _ScheduledMeal(
-      name: LocalizedText(
-        english: 'Oatmeal',
-        indonesian: 'Oatmeal',
-      ),
+      name: LocalizedText(english: 'Oatmeal', indonesian: 'Oatmeal'),
       timeLabel: '08:10pm',
       image: 'assets/img/oatmeal.png',
     ),
@@ -150,8 +126,10 @@ class _MealScheduleViewState extends State<MealScheduleView> {
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
     final language = context.appLanguage;
-    final dateLabel =
-        DateFormat('EEE, d MMM yyyy', language.code).format(_selectedDate);
+    final dateLabel = DateFormat(
+      'EEE, d MMM yyyy',
+      language.code,
+    ).format(_selectedDate);
 
     return Scaffold(
       appBar: _buildAppBar(context),
@@ -248,8 +226,9 @@ class _MealScheduleViewState extends State<MealScheduleView> {
     AppLanguage language,
     String dateLabel,
   ) {
-    final previousTooltip =
-        context.localize(_MealScheduleStrings.previousDayTooltip);
+    final previousTooltip = context.localize(
+      _MealScheduleStrings.previousDayTooltip,
+    );
     final nextTooltip = context.localize(_MealScheduleStrings.nextDayTooltip);
 
     return Padding(
@@ -325,8 +304,11 @@ class _MealScheduleViewState extends State<MealScheduleView> {
     required List<_ScheduledMeal> meals,
     required int calories,
   }) {
-    final subtitle =
-        _MealScheduleStrings.mealSummary(language, meals.length, calories);
+    final subtitle = _MealScheduleStrings.mealSummary(
+      language,
+      meals.length,
+      calories,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,9 +370,8 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _nutritionItems.length,
-      itemBuilder: (context, index) => NutritionRow.fromMap(
-        _nutritionItems[index].toMap(language),
-      ),
+      itemBuilder: (context, index) =>
+          NutritionRow.fromMap(_nutritionItems[index].toMap(language)),
     );
   }
 }
@@ -433,11 +414,7 @@ class _ScheduledMeal {
   final String image;
 
   Map<String, dynamic> toMap(AppLanguage language) {
-    return {
-      'name': name.resolve(language),
-      'time': timeLabel,
-      'image': image,
-    };
+    return {'name': name.resolve(language), 'time': timeLabel, 'image': image};
   }
 }
 
@@ -512,10 +489,11 @@ class _MealScheduleStrings {
     final itemLabel = language == AppLanguage.indonesian
         ? 'Menu'
         : itemCount == 1
-            ? 'Item'
-            : 'Items';
-    final calorieLabel =
-        language == AppLanguage.indonesian ? 'kalori' : 'calories';
+        ? 'Item'
+        : 'Items';
+    final calorieLabel = language == AppLanguage.indonesian
+        ? 'kalori'
+        : 'calories';
     return '$itemCount $itemLabel | $calories $calorieLabel';
   }
 }
