@@ -153,11 +153,7 @@ class _GoalCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            goal.image,
-            width: imageWidth,
-            fit: BoxFit.contain,
-          ),
+          Image.asset(goal.image, width: imageWidth, fit: BoxFit.contain),
           const SizedBox(height: 24),
           Text(
             context.localize(goal.title),
