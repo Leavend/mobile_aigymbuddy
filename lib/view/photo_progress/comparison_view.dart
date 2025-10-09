@@ -44,10 +44,7 @@ class _ComparisonViewState extends State<ComparisonView> {
               borderRadius: BorderRadius.circular(10),
             ),
             padding: const EdgeInsets.all(10),
-            child: Image.asset(
-              'assets/img/black_btn.png',
-              fit: BoxFit.contain,
-            ),
+            child: Image.asset('assets/img/black_btn.png', fit: BoxFit.contain),
           ),
         ),
         title: Text(
@@ -93,16 +90,15 @@ class _ComparisonViewState extends State<ComparisonView> {
             IconTitleNextRow(
               icon: 'assets/img/date.png',
               title: 'Select month 2',
-              time:
-                  DateTimeUtils.formatDate(_secondMonth, pattern: 'MMMM yyyy'),
+              time: DateTimeUtils.formatDate(
+                _secondMonth,
+                pattern: 'MMMM yyyy',
+              ),
               onPressed: () => _pickMonth(isFirst: false),
               color: TColor.lightGray,
             ),
             const Spacer(),
-            RoundButton(
-              title: 'Compare',
-              onPressed: _onCompare,
-            ),
+            RoundButton(title: 'Compare', onPressed: _onCompare),
             const SizedBox(height: 15),
           ],
         ),
@@ -145,10 +141,7 @@ class _ComparisonViewState extends State<ComparisonView> {
 
     context.pushNamed(
       AppRoute.photoResultName,
-      extra: PhotoResultArgs(
-        firstDate: _firstMonth,
-        secondDate: _secondMonth,
-      ),
+      extra: PhotoResultArgs(firstDate: _firstMonth, secondDate: _secondMonth),
     );
   }
 
@@ -201,8 +194,6 @@ class _ComparisonViewState extends State<ComparisonView> {
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }

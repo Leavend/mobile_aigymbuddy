@@ -14,7 +14,7 @@ class PhotoProgressView extends StatefulWidget {
 }
 
 class _PhotoProgressViewState extends State<PhotoProgressView> {
-  final List<_PhotoProgressGroup> _photoGroups = const [
+  final List<_PhotoProgressGroup> _photoGroups = [
     _PhotoProgressGroup(
       date: DateTime(2023, 6, 2),
       photos: [
@@ -199,10 +199,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                 const SizedBox(height: 8),
                 Text(
                   'Track your progress each\nmonth with photos',
-                  style: TextStyle(
-                    color: TColor.black,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: TColor.black, fontSize: 12),
                 ),
                 const Spacer(),
                 SizedBox(
@@ -253,8 +250,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
               type: RoundButtonType.bgGradient,
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              onPressed: () =>
-                  context.pushNamed(AppRoute.photoComparisonName),
+              onPressed: () => context.pushNamed(AppRoute.photoComparisonName),
             ),
           ),
         ],
@@ -303,7 +299,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: group.photos.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
                 final photo = group.photos[index];
                 return ClipRRect(
@@ -364,9 +360,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }
 
