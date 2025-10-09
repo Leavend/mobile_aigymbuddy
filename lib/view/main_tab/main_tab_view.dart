@@ -23,34 +23,22 @@ class MainTabView extends StatelessWidget {
     _NavigationItem(
       icon: 'assets/img/home_tab.png',
       selectedIcon: 'assets/img/home_tab_select.png',
-      label: LocalizedText(
-        english: 'Home',
-        indonesian: 'Beranda',
-      ),
+      label: LocalizedText(english: 'Home', indonesian: 'Beranda'),
     ),
     _NavigationItem(
       icon: 'assets/img/activity_tab.png',
       selectedIcon: 'assets/img/activity_tab_select.png',
-      label: LocalizedText(
-        english: 'Activities',
-        indonesian: 'Aktivitas',
-      ),
+      label: LocalizedText(english: 'Activities', indonesian: 'Aktivitas'),
     ),
     _NavigationItem(
       icon: 'assets/img/camera_tab.png',
       selectedIcon: 'assets/img/camera_tab_select.png',
-      label: LocalizedText(
-        english: 'Progress',
-        indonesian: 'Progres',
-      ),
+      label: LocalizedText(english: 'Progress', indonesian: 'Progres'),
     ),
     _NavigationItem(
       icon: 'assets/img/profile_tab.png',
       selectedIcon: 'assets/img/profile_tab_select.png',
-      label: LocalizedText(
-        english: 'Profile',
-        indonesian: 'Profil',
-      ),
+      label: LocalizedText(english: 'Profile', indonesian: 'Profil'),
     ),
   ];
 
@@ -118,6 +106,7 @@ class MainTabView extends StatelessWidget {
   }
 
   Widget _buildTabCluster({
+    required BuildContext context,
     required List<_NavigationItem> items,
     required int startIndex,
     required _NavigationMetrics metrics,
@@ -204,6 +193,7 @@ class MainTabView extends StatelessWidget {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: _buildTabCluster(
+                                context: context,
                                 items: leadingItems,
                                 startIndex: 0,
                                 metrics: metrics,
@@ -215,6 +205,7 @@ class MainTabView extends StatelessWidget {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: _buildTabCluster(
+                                context: context,
                                 items: trailingItems,
                                 startIndex: leadingItems.length,
                                 metrics: metrics,
