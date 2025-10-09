@@ -1,7 +1,7 @@
 import 'package:aigymbuddy/view/home/activity_tracker_view.dart';
 import 'package:aigymbuddy/view/home/finished_workout_view.dart';
-import 'package:aigymbuddy/view/home/notification_view.dart';
 import 'package:aigymbuddy/view/home/home_view.dart';
+import 'package:aigymbuddy/view/home/notification_view.dart';
 import 'package:aigymbuddy/view/login/complete_profile_view.dart';
 import 'package:aigymbuddy/view/login/login_view.dart';
 import 'package:aigymbuddy/view/login/signup_view.dart';
@@ -27,6 +27,7 @@ import 'package:aigymbuddy/view/workout_tracker/exercises_step_details.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_detail_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_schedule_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_tracker_view.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'models/navigation_args.dart';
@@ -74,176 +75,250 @@ class AppRoute {
 }
 
 class AppRouter {
+  AppRouter._();
+
+  static final GlobalKey<NavigatorState> rootNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'rootNavigator');
+  static final GlobalKey<NavigatorState> _homeNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'homeBranch');
+  static final GlobalKey<NavigatorState> _selectNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'selectBranch');
+  static final GlobalKey<NavigatorState> _photoNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'photoBranch');
+  static final GlobalKey<NavigatorState> _profileNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'profileBranch');
+
   static final GoRouter router = GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: AppRoute.launch,
     routes: [
-      GoRoute(
+      _simpleRoute(
         path: AppRoute.launch,
-        builder: (context, state) => const LaunchView(),
+        builder: (context) => const LaunchView(),
       ),
-      GoRoute(
+      _simpleRoute(
         path: AppRoute.onboarding,
-        builder: (context, state) => const OnBoardingView(),
+        builder: (context) => const OnBoardingView(),
       ),
-      GoRoute(
+      _simpleRoute(
         path: AppRoute.login,
-        builder: (context, state) => const LoginView(),
+        builder: (context) => const LoginView(),
       ),
-      GoRoute(
+      _simpleRoute(
         path: AppRoute.signUp,
-        builder: (context, state) => const SignUpView(),
+        builder: (context) => const SignUpView(),
       ),
-      GoRoute(
+      _simpleRoute(
         path: AppRoute.completeProfile,
-        builder: (context, state) => const CompleteProfileView(),
+        builder: (context) => const CompleteProfileView(),
       ),
-      GoRoute(
+      _simpleRoute(
         path: AppRoute.goal,
-        builder: (context, state) => const WhatYourGoalView(),
+        builder: (context) => const WhatYourGoalView(),
       ),
-      GoRoute(
+      _simpleRoute(
         path: AppRoute.welcome,
-        builder: (context, state) => const WelcomeView(),
+        builder: (context) => const WelcomeView(),
       ),
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            MainTabView(navigationShell: navigationShell),
-        branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoute.main,
-                builder: (context, state) => const HomeView(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoute.select,
-                builder: (context, state) => const SelectView(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoute.photoProgress,
-                name: AppRoute.photoProgressName,
-                builder: (context, state) => const PhotoProgressView(),
-                routes: [
-                  GoRoute(
-                    path: 'comparison',
-                    name: AppRoute.photoComparisonName,
-                    builder: (context, state) => const ComparisonView(),
-                  ),
-                  GoRoute(
-                    path: 'result',
-                    name: AppRoute.photoResultName,
-                    builder: (context, state) => _buildPhotoResultView(state),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoute.profile,
-                builder: (context, state) => const ProfileView(),
-              ),
-            ],
-          ),
-        ],
-      ),
-      GoRoute(
-        path: AppRoute.activityTracker,
-        builder: (context, state) => const ActivityTrackerView(),
-      ),
-      GoRoute(
-        path: AppRoute.notification,
-        builder: (context, state) => const NotificationView(),
-      ),
-      GoRoute(
-        path: AppRoute.finishedWorkout,
-        builder: (context, state) => const FinishedWorkoutView(),
-      ),
-      GoRoute(
-        path: AppRoute.workoutTracker,
-        name: AppRoute.workoutTrackerName,
-        builder: (context, state) => const WorkoutTrackerView(),
-      ),
-      GoRoute(
-        path: AppRoute.workoutSchedule,
-        name: AppRoute.workoutScheduleName,
-        builder: (context, state) => const WorkoutScheduleView(),
-      ),
-      GoRoute(
-        path: AppRoute.addWorkoutSchedule,
-        name: AppRoute.addWorkoutScheduleName,
-        builder: (context, state) {
-          final args = _requireExtra<AddScheduleArgs>(
-            state,
-            'AddScheduleView requires AddScheduleArgs as extra.',
-          );
-          return AddScheduleView(date: args.date);
-        },
-      ),
-      GoRoute(
-        path: AppRoute.workoutDetail,
-        name: AppRoute.workoutDetailName,
-        builder: (context, state) {
-          final args = _requireExtra<WorkoutDetailArgs>(
-            state,
-            'WorkoutDetailView requires WorkoutDetailArgs as extra.',
-          );
-          return WorkoutDetailView(workout: args.workout);
-        },
-      ),
-      GoRoute(
-        path: AppRoute.exerciseSteps,
-        name: AppRoute.exerciseStepsName,
-        builder: (context, state) {
-          final args = _requireExtra<ExerciseStepsArgs>(
-            state,
-            'ExercisesStepDetails requires ExerciseStepsArgs as extra.',
-          );
-          return ExercisesStepDetails(exercise: args.exercise);
-        },
-      ),
-      GoRoute(
-        path: AppRoute.mealPlanner,
-        builder: (context, state) => const MealPlannerView(),
-      ),
-      GoRoute(
-        path: AppRoute.mealSchedule,
-        builder: (context, state) => const MealScheduleView(),
-      ),
-      GoRoute(
-        path: AppRoute.mealFoodDetails,
-        builder: (context, state) => _buildMealFoodDetailsView(state),
-      ),
-      GoRoute(
-        path: AppRoute.foodInfo,
-        builder: (context, state) => _buildFoodInfoDetailsView(state),
-      ),
-      GoRoute(
-        path: AppRoute.sleepTracker,
-        name: AppRoute.sleepTrackerName,
-        builder: (context, state) => const SleepTrackerView(),
-      ),
-      GoRoute(
-        path: AppRoute.sleepSchedule,
-        name: AppRoute.sleepScheduleName,
-        builder: (context, state) => const SleepScheduleView(),
-      ),
-      GoRoute(
-        path: AppRoute.sleepAddAlarm,
-        name: AppRoute.sleepAddAlarmName,
-        builder: (context, state) => _buildSleepAddAlarmView(state),
-      ),
+      _buildMainShell(),
+      ..._standaloneRoutes,
     ],
   );
+
+  static RouteBase _buildMainShell() {
+    return StatefulShellRoute.indexedStack(
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state, navigationShell) =>
+          MainTabView(navigationShell: navigationShell),
+      branches: [
+        StatefulShellBranch(
+          navigatorKey: _homeNavigatorKey,
+          routes: [
+            _simpleRoute(
+              path: AppRoute.main,
+              builder: (context) => const HomeView(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _selectNavigatorKey,
+          routes: [
+            _simpleRoute(
+              path: AppRoute.select,
+              builder: (context) => const SelectView(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _photoNavigatorKey,
+          routes: [
+            GoRoute(
+              path: AppRoute.photoProgress,
+              name: AppRoute.photoProgressName,
+              builder: (context, state) => const PhotoProgressView(),
+              routes: [
+                _simpleRoute(
+                  path: 'comparison',
+                  name: AppRoute.photoComparisonName,
+                  builder: (context) => const ComparisonView(),
+                ),
+                _extraRoute<PhotoResultArgs>(
+                  path: 'result',
+                  name: AppRoute.photoResultName,
+                  missingExtraMessage:
+                      'ResultView requires PhotoResultArgs as extra.',
+                  builder: (context, args) =>
+                      ResultView(date1: args.firstDate, date2: args.secondDate),
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _profileNavigatorKey,
+          routes: [
+            _simpleRoute(
+              path: AppRoute.profile,
+              builder: (context) => const ProfileView(),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  static List<RouteBase> get _standaloneRoutes => [
+        _simpleRoute(
+          path: AppRoute.activityTracker,
+          builder: (context) => const ActivityTrackerView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _simpleRoute(
+          path: AppRoute.notification,
+          builder: (context) => const NotificationView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _simpleRoute(
+          path: AppRoute.finishedWorkout,
+          builder: (context) => const FinishedWorkoutView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _simpleRoute(
+          path: AppRoute.workoutTracker,
+          name: AppRoute.workoutTrackerName,
+          builder: (context) => const WorkoutTrackerView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _simpleRoute(
+          path: AppRoute.workoutSchedule,
+          name: AppRoute.workoutScheduleName,
+          builder: (context) => const WorkoutScheduleView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _extraRoute<AddScheduleArgs>(
+          path: AppRoute.addWorkoutSchedule,
+          name: AppRoute.addWorkoutScheduleName,
+          parentNavigatorKey: rootNavigatorKey,
+          missingExtraMessage:
+              'AddScheduleView requires AddScheduleArgs as extra.',
+          builder: (context, args) => AddScheduleView(date: args.date),
+        ),
+        _extraRoute<WorkoutDetailArgs>(
+          path: AppRoute.workoutDetail,
+          name: AppRoute.workoutDetailName,
+          parentNavigatorKey: rootNavigatorKey,
+          missingExtraMessage:
+              'WorkoutDetailView requires WorkoutDetailArgs as extra.',
+          builder: (context, args) =>
+              WorkoutDetailView(workout: args.workout),
+        ),
+        _extraRoute<ExerciseStepsArgs>(
+          path: AppRoute.exerciseSteps,
+          name: AppRoute.exerciseStepsName,
+          parentNavigatorKey: rootNavigatorKey,
+          missingExtraMessage:
+              'ExercisesStepDetails requires ExerciseStepsArgs as extra.',
+          builder: (context, args) =>
+              ExercisesStepDetails(exercise: args.exercise),
+        ),
+        _simpleRoute(
+          path: AppRoute.mealPlanner,
+          builder: (context) => const MealPlannerView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _simpleRoute(
+          path: AppRoute.mealSchedule,
+          builder: (context) => const MealScheduleView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _extraRoute<MealFoodDetailsArgs>(
+          path: AppRoute.mealFoodDetails,
+          parentNavigatorKey: rootNavigatorKey,
+          missingExtraMessage:
+              'MealFoodDetailsView requires MealFoodDetailsArgs as extra.',
+          builder: (context, args) => MealFoodDetailsView(eObj: args.food),
+        ),
+        _extraRoute<FoodInfoArgs>(
+          path: AppRoute.foodInfo,
+          parentNavigatorKey: rootNavigatorKey,
+          missingExtraMessage:
+              'FoodInfoDetailsView requires FoodInfoArgs as extra.',
+          builder: (context, args) =>
+              FoodInfoDetailsView(meal: args.meal, detail: args.food),
+        ),
+        _simpleRoute(
+          path: AppRoute.sleepTracker,
+          name: AppRoute.sleepTrackerName,
+          builder: (context) => const SleepTrackerView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _simpleRoute(
+          path: AppRoute.sleepSchedule,
+          name: AppRoute.sleepScheduleName,
+          builder: (context) => const SleepScheduleView(),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        _extraRoute<SleepAddAlarmArgs>(
+          path: AppRoute.sleepAddAlarm,
+          name: AppRoute.sleepAddAlarmName,
+          parentNavigatorKey: rootNavigatorKey,
+          missingExtraMessage:
+              'SleepAddAlarmView requires SleepAddAlarmArgs as extra.',
+          builder: (context, args) => SleepAddAlarmView(date: args.date),
+        ),
+      ];
+
+  static GoRoute _simpleRoute({
+    required String path,
+    String? name,
+    GlobalKey<NavigatorState>? parentNavigatorKey,
+    required WidgetBuilder builder,
+  }) {
+    return GoRoute(
+      path: path,
+      name: name,
+      parentNavigatorKey: parentNavigatorKey,
+      builder: (context, state) => builder(context),
+    );
+  }
+
+  static GoRoute _extraRoute<T extends Object>({
+    required String path,
+    String? name,
+    GlobalKey<NavigatorState>? parentNavigatorKey,
+    required String missingExtraMessage,
+    required Widget Function(BuildContext context, T args) builder,
+  }) {
+    return GoRoute(
+      path: path,
+      name: name,
+      parentNavigatorKey: parentNavigatorKey,
+      builder: (context, state) {
+        final args = _requireExtra<T>(state, missingExtraMessage);
+        return builder(context, args);
+      },
+    );
+  }
 }
 
 T _requireExtra<T extends Object>(GoRouterState state, String message) {
@@ -254,34 +329,3 @@ T _requireExtra<T extends Object>(GoRouterState state, String message) {
   return extra;
 }
 
-MealFoodDetailsView _buildMealFoodDetailsView(GoRouterState state) {
-  final args = _requireExtra<MealFoodDetailsArgs>(
-    state,
-    'MealFoodDetailsView requires MealFoodDetailsArgs as extra.',
-  );
-  return MealFoodDetailsView(eObj: args.food);
-}
-
-FoodInfoDetailsView _buildFoodInfoDetailsView(GoRouterState state) {
-  final args = _requireExtra<FoodInfoArgs>(
-    state,
-    'FoodInfoDetailsView requires FoodInfoArgs as extra.',
-  );
-  return FoodInfoDetailsView(meal: args.meal, detail: args.food);
-}
-
-ResultView _buildPhotoResultView(GoRouterState state) {
-  final args = _requireExtra<PhotoResultArgs>(
-    state,
-    'ResultView requires PhotoResultArgs as extra.',
-  );
-  return ResultView(date1: args.firstDate, date2: args.secondDate);
-}
-
-SleepAddAlarmView _buildSleepAddAlarmView(GoRouterState state) {
-  final args = _requireExtra<SleepAddAlarmArgs>(
-    state,
-    'SleepAddAlarmView requires SleepAddAlarmArgs as extra.',
-  );
-  return SleepAddAlarmView(date: args.date);
-}
