@@ -31,18 +31,9 @@ enum _ProfileAction {
     iconPath: 'assets/img/p_workout.png',
     route: AppRoute.workoutTracker,
   ),
-  contactUs(
-    label: 'Contact Us',
-    iconPath: 'assets/img/p_contact.png',
-  ),
-  privacyPolicy(
-    label: 'Privacy Policy',
-    iconPath: 'assets/img/p_privacy.png',
-  ),
-  settings(
-    label: 'Settings',
-    iconPath: 'assets/img/p_setting.png',
-  );
+  contactUs(label: 'Contact Us', iconPath: 'assets/img/p_contact.png'),
+  privacyPolicy(label: 'Privacy Policy', iconPath: 'assets/img/p_privacy.png'),
+  settings(label: 'Settings', iconPath: 'assets/img/p_setting.png');
 
   const _ProfileAction({
     required this.label,
@@ -294,7 +285,8 @@ class _ProfileViewState extends State<ProfileView> {
       animationCurve: Curves.linear,
       onChanged: (value) => setState(() => _isNotificationEnabled = value),
       iconBuilder: (context, local, global) => const SizedBox.shrink(),
-      onTap: (value) => setState(() => _isNotificationEnabled = !_isNotificationEnabled),
+      onTap: (value) =>
+          setState(() => _isNotificationEnabled = !_isNotificationEnabled),
       iconsTappable: false,
       wrapperBuilder: (context, global, child) {
         return Stack(
