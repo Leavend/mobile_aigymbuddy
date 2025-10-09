@@ -5,7 +5,6 @@ import 'dart:ui';
 
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/tab_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,20 +54,53 @@ class MainTabView extends StatelessWidget {
     navigationShell.goBranch(index);
   }
 
-  void _handleAssistantTap(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: TColor.white,
+      body: navigationShell,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: const _AssistantButton(
+        diameter: _fabDiameter,
+        label: _assistantLabel,
+      ),
+      bottomNavigationBar: _NavigationBar(
+        navigationShell: navigationShell,
+        items: _items,
+        fabDiameter: _fabDiameter,
+        onItemSelected: _handleTabSelected,
+      ),
+    );
+  }
+}
+
+class _AssistantButton extends StatelessWidget {
+  const _AssistantButton({
+    required this.diameter,
+    required this.label,
+    this.onPressed,
+  });
+
+  final double diameter;
+  final LocalizedText label;
+  final VoidCallback? onPressed;
+
+  void _handleTap(BuildContext context) {
     Feedback.forTap(context);
     HapticFeedback.mediumImpact();
+    onPressed?.call();
   }
 
-  Widget _buildAssistantButton(BuildContext context) {
-    final semanticsLabel = context.localize(_assistantLabel);
+  @override
+  Widget build(BuildContext context) {
+    final semanticsLabel = context.localize(label);
 
     return Semantics(
       button: true,
       label: semanticsLabel,
       child: SizedBox(
-        width: _fabDiameter,
-        height: _fabDiameter,
+        width: diameter,
+        height: diameter,
         child: DecoratedBox(
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
@@ -89,7 +121,7 @@ class MainTabView extends StatelessWidget {
                 gradient: LinearGradient(colors: TColor.primaryG),
               ),
               child: InkWell(
-                onTap: () => _handleAssistantTap(context),
+                onTap: () => _handleTap(context),
                 child: const Center(
                   child: Icon(
                     CupertinoIcons.chat_bubble_text_fill,
@@ -104,41 +136,32 @@ class MainTabView extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildTabCluster({
-    required BuildContext context,
-    required List<_NavigationItem> items,
-    required int startIndex,
-    required _NavigationMetrics metrics,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < items.length; i++) ...[
-          if (i > 0) SizedBox(width: metrics.tabSpacing),
-          TabButton(
-            icon: items[i].icon,
-            selectIcon: items[i].selectedIcon,
-            semanticsLabel: context.localize(items[i].label),
-            isActive: navigationShell.currentIndex == startIndex + i,
-            width: metrics.buttonWidth,
-            onTap: () => _handleTabSelected(startIndex + i),
-          ),
-        ],
-      ],
-    );
-  }
+class _NavigationBar extends StatelessWidget {
+  const _NavigationBar({
+    required this.navigationShell,
+    required this.items,
+    required this.fabDiameter,
+    required this.onItemSelected,
+  });
 
-  Widget _buildBottomNavigationBar(BuildContext context) {
+  final StatefulNavigationShell navigationShell;
+  final List<_NavigationItem> items;
+  final double fabDiameter;
+  final ValueChanged<int> onItemSelected;
+
+  @override
+  Widget build(BuildContext context) {
     assert(
-      navigationShell.route.branches.length == _items.length,
+      navigationShell.route.branches.length == items.length,
       'Navigation branches (${navigationShell.route.branches.length}) must match tab '
-      'configuration (${_items.length}).',
+      'configuration (${items.length}).',
     );
 
-    final midpoint = (_items.length / 2).ceil();
-    final leadingItems = _items.sublist(0, midpoint);
-    final trailingItems = _items.sublist(midpoint);
+    final midpoint = (items.length / 2).ceil();
+    final leadingItems = items.sublist(0, midpoint);
+    final trailingItems = items.sublist(midpoint);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -146,7 +169,7 @@ class MainTabView extends StatelessWidget {
         final textScale = scaler.scale(1.0);
         final metrics = _NavigationMetrics.resolve(
           availableWidth: constraints.maxWidth,
-          fabDiameter: _fabDiameter,
+          fabDiameter: fabDiameter,
           textScaleFactor: textScale,
           leadingCount: leadingItems.length,
           trailingCount: trailingItems.length,
@@ -169,9 +192,7 @@ class MainTabView extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(
-                      metrics.containerRadius,
-                    ),
+                    borderRadius: BorderRadius.circular(metrics.containerRadius),
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
@@ -192,11 +213,12 @@ class MainTabView extends StatelessWidget {
                           Flexible(
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: _buildTabCluster(
-                                context: context,
+                              child: _TabCluster(
                                 items: leadingItems,
                                 startIndex: 0,
                                 metrics: metrics,
+                                navigationShell: navigationShell,
+                                onItemSelected: onItemSelected,
                               ),
                             ),
                           ),
@@ -204,11 +226,12 @@ class MainTabView extends StatelessWidget {
                           Flexible(
                             child: Align(
                               alignment: Alignment.centerLeft,
-                              child: _buildTabCluster(
-                                context: context,
+                              child: _TabCluster(
                                 items: trailingItems,
                                 startIndex: leadingItems.length,
                                 metrics: metrics,
+                                navigationShell: navigationShell,
+                                onItemSelected: onItemSelected,
                               ),
                             ),
                           ),
@@ -224,21 +247,42 @@ class MainTabView extends StatelessWidget {
       },
     );
   }
+}
+
+class _TabCluster extends StatelessWidget {
+  const _TabCluster({
+    required this.items,
+    required this.startIndex,
+    required this.metrics,
+    required this.navigationShell,
+    required this.onItemSelected,
+  });
+
+  final List<_NavigationItem> items;
+  final int startIndex;
+  final _NavigationMetrics metrics;
+  final StatefulNavigationShell navigationShell;
+  final ValueChanged<int> onItemSelected;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: TColor.white,
+    final localize = context.localize;
 
-      // The navigation shell preserves each branch's state internally.
-      body: navigationShell,
-
-      // FAB tengah: bulat, gradient, shadow
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: _buildAssistantButton(context),
-
-      // Bottom bar: pill + blur + dua cluster tab dengan gap tetap di tengah
-      bottomNavigationBar: _buildBottomNavigationBar(context),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < items.length; i++) ...[
+          if (i > 0) SizedBox(width: metrics.tabSpacing),
+          TabButton(
+            icon: items[i].icon,
+            selectIcon: items[i].selectedIcon,
+            semanticsLabel: localize(items[i].label),
+            isActive: navigationShell.currentIndex == startIndex + i,
+            width: metrics.buttonWidth,
+            onTap: () => onItemSelected(startIndex + i),
+          ),
+        ],
+      ],
     );
   }
 }
