@@ -120,10 +120,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
             const SizedBox(height: 10),
             _buildVibrateTile(),
             const Spacer(),
-            RoundButton(
-              title: "Add",
-              onPressed: () => context.pop(true),
-            ),
+            RoundButton(title: "Add", onPressed: () => context.pop(true)),
             const SizedBox(height: 20),
           ],
         ),

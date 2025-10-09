@@ -19,7 +19,8 @@ class SleepScheduleView extends StatefulWidget {
 }
 
 class _SleepScheduleViewState extends State<SleepScheduleView> {
-  final CalendarAgendaController _calendarController = CalendarAgendaController();
+  final CalendarAgendaController _calendarController =
+      CalendarAgendaController();
 
   late DateTime _selectedDate;
 
@@ -199,9 +200,8 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
               shrinkWrap: true,
               itemCount: _todaySchedule.length,
               separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemBuilder: (context, index) => TodaySleepScheduleRow(
-                sObj: _todaySchedule[index],
-              ),
+              itemBuilder: (context, index) =>
+                  TodaySleepScheduleRow(sObj: _todaySchedule[index]),
             ),
             Container(
               width: double.maxFinite,

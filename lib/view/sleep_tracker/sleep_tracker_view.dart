@@ -113,8 +113,8 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                           },
                           mouseCursorResolver: (event, response) =>
                               (response?.lineBarSpots?.isNotEmpty ?? false)
-                                  ? SystemMouseCursors.click
-                                  : SystemMouseCursors.basic,
+                              ? SystemMouseCursors.click
+                              : SystemMouseCursors.basic,
                           getTouchedSpotIndicator: (barData, spotIndexes) =>
                               spotIndexes
                                   .map(
@@ -122,17 +122,15 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                                       const FlLine(color: Colors.transparent),
                                       FlDotData(
                                         show: true,
-                                        getDotPainter: (
-                                          spot,
-                                          percent,
-                                          bar,
-                                          i,
-                                        ) => FlDotCirclePainter(
-                                          radius: 3,
-                                          color: Colors.white,
-                                          strokeWidth: 1.5,
-                                          strokeColor: TColor.primaryColor2,
-                                        ),
+                                        getDotPainter:
+                                            (spot, percent, bar, i) =>
+                                                FlDotCirclePainter(
+                                                  radius: 3,
+                                                  color: Colors.white,
+                                                  strokeWidth: 1.5,
+                                                  strokeColor:
+                                                      TColor.primaryColor2,
+                                                ),
                                       ),
                                     ),
                                   )
@@ -255,9 +253,8 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                             type: RoundButtonType.bgGradient,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            onPressed: () => context.pushNamed(
-                              AppRoute.sleepScheduleName,
-                            ),
+                            onPressed: () =>
+                                context.pushNamed(AppRoute.sleepScheduleName),
                           ),
                         ),
                       ],
@@ -284,9 +281,8 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                     itemCount: _todaySchedule.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 12),
-                    itemBuilder: (context, index) => TodaySleepScheduleRow(
-                      sObj: _todaySchedule[index],
-                    ),
+                    itemBuilder: (context, index) =>
+                        TodaySleepScheduleRow(sObj: _todaySchedule[index]),
                   ),
 
                   const SizedBox(height: 16),
@@ -318,82 +314,76 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
   List<LineChartBarData> get _lineBarsData => [_primaryLineBarData];
 
   LineChartBarData get _primaryLineBarData => LineChartBarData(
-        isCurved: true,
-        gradient: LinearGradient(
-          colors: [TColor.primaryColor2, TColor.primaryColor1],
-        ),
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(
-          show: true,
-          gradient: LinearGradient(
-            colors: [TColor.primaryColor2.withValues(alpha: .35), TColor.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        spots: const [
-          FlSpot(1, 3),
-          FlSpot(2, 5),
-          FlSpot(3, 4),
-          FlSpot(4, 7),
-          FlSpot(5, 4),
-          FlSpot(6, 8),
-          FlSpot(7, 5),
-        ],
-      );
+    isCurved: true,
+    gradient: LinearGradient(
+      colors: [TColor.primaryColor2, TColor.primaryColor1],
+    ),
+    barWidth: 2,
+    isStrokeCapRound: true,
+    dotData: const FlDotData(show: false),
+    belowBarData: BarAreaData(
+      show: true,
+      gradient: LinearGradient(
+        colors: [TColor.primaryColor2.withValues(alpha: .35), TColor.white],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+    ),
+    spots: const [
+      FlSpot(1, 3),
+      FlSpot(2, 5),
+      FlSpot(3, 4),
+      FlSpot(4, 7),
+      FlSpot(5, 4),
+      FlSpot(6, 8),
+      FlSpot(7, 5),
+    ],
+  );
 
   static SideTitles get _rightTitles => SideTitles(
-        showTitles: true,
-        interval: 2,
-        reservedSize: 42,
-        getTitlesWidget: (value, meta) {
-          final labels = <int, String>{
-            0: '0h',
-            2: '2h',
-            4: '4h',
-            6: '6h',
-            8: '8h',
-            10: '10h',
-          };
-          final text = labels[value.toInt()];
-          if (text == null) return const SizedBox.shrink();
-          return SideTitleWidget(
-            meta: meta,
-            space: 8,
-            child: Text(
-              text,
-              style: TextStyle(color: TColor.gray, fontSize: 12),
-            ),
-          );
-        },
+    showTitles: true,
+    interval: 2,
+    reservedSize: 42,
+    getTitlesWidget: (value, meta) {
+      final labels = <int, String>{
+        0: '0h',
+        2: '2h',
+        4: '4h',
+        6: '6h',
+        8: '8h',
+        10: '10h',
+      };
+      final text = labels[value.toInt()];
+      if (text == null) return const SizedBox.shrink();
+      return SideTitleWidget(
+        meta: meta,
+        space: 8,
+        child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
       );
+    },
+  );
 
   static SideTitles get _bottomTitles => SideTitles(
-        showTitles: true,
-        reservedSize: 28,
-        interval: 1,
-        getTitlesWidget: (value, meta) {
-          final labels = <int, String>{
-            1: 'Sun',
-            2: 'Mon',
-            3: 'Tue',
-            4: 'Wed',
-            5: 'Thu',
-            6: 'Fri',
-            7: 'Sat',
-          };
-          final text = labels[value.toInt()];
-          if (text == null) return const SizedBox.shrink();
-          return SideTitleWidget(
-            meta: meta,
-            space: 6,
-            child: Text(
-              text,
-              style: TextStyle(color: TColor.gray, fontSize: 12),
-            ),
-          );
-        },
+    showTitles: true,
+    reservedSize: 28,
+    interval: 1,
+    getTitlesWidget: (value, meta) {
+      final labels = <int, String>{
+        1: 'Sun',
+        2: 'Mon',
+        3: 'Tue',
+        4: 'Wed',
+        5: 'Thu',
+        6: 'Fri',
+        7: 'Sat',
+      };
+      final text = labels[value.toInt()];
+      if (text == null) return const SizedBox.shrink();
+      return SideTitleWidget(
+        meta: meta,
+        space: 6,
+        child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
       );
+    },
+  );
 }
