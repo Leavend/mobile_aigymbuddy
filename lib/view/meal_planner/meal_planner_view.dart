@@ -19,467 +19,455 @@ class MealPlannerView extends StatefulWidget {
 }
 
 class _MealPlannerViewState extends State<MealPlannerView> {
-  final List<Map<String, String>> todayMealArr = const [
+  static const List<Map<String, String>> _todayMeals = [
     {
-      "name": "Salmon Nigiri",
-      "image": "assets/img/m_1.png",
-      "time": "28/05/2023 07:00 AM",
+      'name': 'Salmon Nigiri',
+      'image': 'assets/img/m_1.png',
+      'time': '28/05/2023 07:00 AM',
     },
     {
-      "name": "Lowfat Milk",
-      "image": "assets/img/m_2.png",
-      "time": "28/05/2023 08:00 AM",
+      'name': 'Lowfat Milk',
+      'image': 'assets/img/m_2.png',
+      'time': '28/05/2023 08:00 AM',
     },
   ];
 
-  final List<Map<String, String>> findEatArr = const [
+  static const List<Map<String, String>> _findSomethingToEat = [
     {
-      "name": "Breakfast",
-      "image": "assets/img/m_3.png",
-      "number": "120+ Foods",
+      'name': 'Breakfast',
+      'image': 'assets/img/m_3.png',
+      'number': '120+ Foods',
     },
-    {"name": "Lunch", "image": "assets/img/m_4.png", "number": "130+ Foods"},
+    {
+      'name': 'Lunch',
+      'image': 'assets/img/m_4.png',
+      'number': '130+ Foods',
+    },
   ];
+
+  static const List<String> _nutritionPeriods = ['Weekly', 'Monthly'];
+  static const List<String> _mealFilters = [
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Snack',
+    'Dessert',
+  ];
+
+  String _selectedNutritionPeriod = _nutritionPeriods.first;
+  String _selectedMealFilter = _mealFilters.first;
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: TColor.white,
-        centerTitle: true,
-        elevation: 0,
-        leading: InkWell(
-          onTap: () => context.pop(),
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            height: 40,
-            width: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: TColor.lightGray,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Image.asset(
-              "assets/img/black_btn.png",
-              width: 15,
-              height: 15,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-        title: Text(
-          "Meal Planner",
-          style: TextStyle(
-            color: TColor.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        actions: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              height: 40,
-              width: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Image.asset(
-                "assets/img/more_btn.png",
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(context),
       backgroundColor: TColor.white,
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ---------- Header: Meal Nutritions + chart ----------
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Meal Nutritions",
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Container(
-                        height: 30,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: TColor.primaryG),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            items: const ["Weekly", "Monthly"]
-                                .map(
-                                  (name) => DropdownMenuItem<String>(
-                                    value: name,
-                                    child: Text(
-                                      name,
-                                      style: TextStyle(
-                                        color: TColor.gray,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {},
-                            icon: Icon(Icons.expand_more, color: TColor.white),
-                            hint: Text(
-                              "Weekly",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: TColor.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
+                  _buildNutritionHeader(),
                   SizedBox(height: media.width * 0.05),
-
-                  // Line chart
-                  Container(
-                    padding: const EdgeInsets.only(left: 15),
-                    height: media.width * 0.5,
-                    width: double.maxFinite,
-                    child: LineChart(
-                      LineChartData(
-                        lineTouchData: LineTouchData(
-                          enabled: true,
-                          handleBuiltInTouches: false,
-                          touchCallback:
-                              (
-                                FlTouchEvent event,
-                                LineTouchResponse? response,
-                              ) {
-                                // no-op; aktifkan bila ingin interaksi khusus
-                              },
-                          mouseCursorResolver:
-                              (
-                                FlTouchEvent event,
-                                LineTouchResponse? response,
-                              ) {
-                                if (response == null ||
-                                    response.lineBarSpots == null) {
-                                  return SystemMouseCursors.basic;
-                                }
-                                return SystemMouseCursors.click;
-                              },
-                          getTouchedSpotIndicator:
-                              (
-                                LineChartBarData barData,
-                                List<int> spotIndexes,
-                              ) {
-                                return spotIndexes.map((index) {
-                                  return TouchedSpotIndicatorData(
-                                    const FlLine(color: Colors.transparent),
-                                    FlDotData(
-                                      show: true,
-                                      getDotPainter:
-                                          (spot, percent, barData, index) =>
-                                              FlDotCirclePainter(
-                                                radius: 3,
-                                                color: Colors.white,
-                                                strokeWidth: 3,
-                                                strokeColor:
-                                                    TColor.secondaryColor1,
-                                              ),
-                                    ),
-                                  );
-                                }).toList();
-                              },
-                          // API baru: pakai getTooltipColor, hapus tooltipRoundedRadius
-                          touchTooltipData: LineTouchTooltipData(
-                            getTooltipColor: (_) => TColor.secondaryColor1,
-                            getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
-                              return lineBarsSpot.map((lineBarSpot) {
-                                return LineTooltipItem(
-                                  "${lineBarSpot.x.toInt()} mins ago",
-                                  const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              }).toList();
-                            },
-                          ),
-                        ),
-                        lineBarsData: lineBarsData1,
-                        minY: -0.5,
-                        maxY: 110,
-                        titlesData: FlTitlesData(
-                          show: true,
-                          leftTitles: const AxisTitles(),
-                          topTitles: const AxisTitles(),
-                          bottomTitles: AxisTitles(sideTitles: bottomTitles),
-                          rightTitles: AxisTitles(sideTitles: rightTitles),
-                        ),
-                        gridData: FlGridData(
-                          show: true,
-                          drawHorizontalLine: true,
-                          horizontalInterval: 25,
-                          drawVerticalLine: false,
-                          getDrawingHorizontalLine: (value) => FlLine(
-                            color: TColor.gray.withValues(alpha: 0.15),
-                            strokeWidth: 2,
-                          ),
-                        ),
-                        borderData: FlBorderData(
-                          show: true,
-                          border: Border.all(color: Colors.transparent),
-                        ),
-                      ),
-                    ),
-                  ),
-
+                  _buildLineChart(media),
                   SizedBox(height: media.width * 0.05),
-
-                  // Daily Meal Schedule
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                      horizontal: 15,
-                    ),
-                    decoration: BoxDecoration(
-                      color: TColor.primaryColor2.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Daily Meal Schedule",
-                          style: TextStyle(
-                            color: TColor.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 70,
-                          height: 25,
-                          child: RoundButton(
-                            title: "Check",
-                            type: RoundButtonType.bgGradient,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            onPressed: () {
-                              context.push(AppRoute.mealSchedule);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
+                  _buildDailyScheduleCard(),
                   SizedBox(height: media.width * 0.05),
-
-                  // Today Meals + filter
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Today Meals",
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Container(
-                        height: 30,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: TColor.primaryG),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            items:
-                                const [
-                                      "Breakfast",
-                                      "Lunch",
-                                      "Dinner",
-                                      "Snack",
-                                      "Dessert",
-                                    ]
-                                    .map(
-                                      (name) => DropdownMenuItem<String>(
-                                        value: name,
-                                        child: Text(
-                                          name,
-                                          style: TextStyle(
-                                            color: TColor.gray,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                            onChanged: (value) {},
-                            icon: Icon(Icons.expand_more, color: TColor.white),
-                            hint: Text(
-                              "Breakfast",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: TColor.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
+                  _buildTodayMealsHeader(),
                   SizedBox(height: media.width * 0.05),
-
-                  // Today meal list
-                  ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: todayMealArr.length,
-                    itemBuilder: (context, index) {
-                      final mObj = todayMealArr[index];
-                      return TodayMealRow(mObj: mObj);
-                    },
-                  ),
+                  _buildTodayMealsList(),
                 ],
               ),
             ),
-
-            // ---------- Find Something to Eat ----------
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                "Find Something to Eat",
-                style: TextStyle(
-                  color: TColor.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: media.width * 0.55,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                scrollDirection: Axis.horizontal,
-                itemCount: findEatArr.length,
-                itemBuilder: (context, index) {
-                  final fObj = findEatArr[index];
-                  return InkWell(
-                    onTap: () {
-                      context.push(
-                        AppRoute.mealFoodDetails,
-                        extra: MealFoodDetailsArgs(
-                          food: Map<String, dynamic>.from(fObj),
-                        ),
-                      );
-                    },
-                    child: FindEatCell(fObj: fObj, index: index),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: media.width * 0.05),
+            _buildFindSomethingToEatHeader(),
+            _buildFindSomethingToEatList(media),
           ],
         ),
       ),
     );
   }
 
-  // --------- Chart series ---------
-
-  List<LineChartBarData> get lineBarsData1 => [lineChartBarData1_1];
-
-  LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(
-      colors: [TColor.primaryColor2, TColor.primaryColor1],
-    ),
-    barWidth: 2,
-    isStrokeCapRound: true,
-    dotData: FlDotData(
-      show: true,
-      getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-        radius: 3,
-        color: Colors.white,
-        strokeWidth: 1,
-        strokeColor: TColor.primaryColor2,
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: TColor.white,
+      centerTitle: true,
+      elevation: 0,
+      leading: _SquareIconButton(
+        assetPath: 'assets/img/black_btn.png',
+        onPressed: () => context.pop(),
       ),
-    ),
-    belowBarData: BarAreaData(show: false),
-    spots: const [
-      FlSpot(1, 35),
-      FlSpot(2, 70),
-      FlSpot(3, 40),
-      FlSpot(4, 80),
-      FlSpot(5, 25),
-      FlSpot(6, 70),
-      FlSpot(7, 35),
-    ],
-  );
+      title: Text(
+        'Meal Planner',
+        style: TextStyle(
+          color: TColor.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: const [
+        Padding(
+          padding: EdgeInsets.only(right: 8),
+          child: _SquareIconButton(assetPath: 'assets/img/more_btn.png'),
+        ),
+      ],
+    );
+  }
 
-  // --------- Axis titles ---------
+  Widget _buildNutritionHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Meal Nutritions',
+          style: TextStyle(
+            color: TColor.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        _GradientDropdown(
+          value: _selectedNutritionPeriod,
+          options: _nutritionPeriods,
+          onChanged: (value) {
+            if (value == null) return;
+            setState(() => _selectedNutritionPeriod = value);
+          },
+        ),
+      ],
+    );
+  }
 
-  SideTitles get rightTitles => SideTitles(
-    showTitles: true,
-    interval: 20,
-    reservedSize: 40,
-    getTitlesWidget: (value, meta) {
-      const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
-      final idx = (value ~/ 20);
-      if (idx < 0 || idx >= labels.length) return const SizedBox.shrink();
-      return Text(
-        labels[idx],
-        style: TextStyle(color: TColor.gray, fontSize: 12),
-        textAlign: TextAlign.center,
+  Widget _buildLineChart(Size media) {
+    return Container(
+      padding: const EdgeInsets.only(left: 15),
+      height: media.width * 0.5,
+      width: double.infinity,
+      child: LineChart(
+        LineChartData(
+          lineTouchData: LineTouchData(
+            enabled: true,
+            handleBuiltInTouches: false,
+            touchCallback: (_, __) {},
+            mouseCursorResolver: (event, response) {
+              final spots = response?.lineBarSpots;
+              if (spots == null || spots.isEmpty) {
+                return SystemMouseCursors.basic;
+              }
+              return SystemMouseCursors.click;
+            },
+            getTouchedSpotIndicator: (_, indexes) {
+              return indexes
+                  .map(
+                    (_) => TouchedSpotIndicatorData(
+                      const FlLine(color: Colors.transparent),
+                      FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, barData, index) =>
+                            FlDotCirclePainter(
+                          radius: 3,
+                          color: Colors.white,
+                          strokeWidth: 3,
+                          strokeColor: TColor.secondaryColor1,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList();
+            },
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipColor: (_) => TColor.secondaryColor1,
+              getTooltipItems: (spots) {
+                return spots
+                    .map(
+                      (spot) => LineTooltipItem(
+                        '${spot.x.toInt()} mins ago',
+                        const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                    .toList();
+              },
+            ),
+          ),
+          lineBarsData: _lineBars,
+          minY: -0.5,
+          maxY: 110,
+          titlesData: FlTitlesData(
+            show: true,
+            leftTitles: const AxisTitles(),
+            topTitles: const AxisTitles(),
+            bottomTitles: AxisTitles(sideTitles: _bottomTitles),
+            rightTitles: AxisTitles(sideTitles: _rightTitles),
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawHorizontalLine: true,
+            horizontalInterval: 25,
+            drawVerticalLine: false,
+            getDrawingHorizontalLine: (value) => FlLine(
+              color: TColor.gray.withValues(alpha: 0.15),
+              strokeWidth: 2,
+            ),
+          ),
+          borderData: FlBorderData(
+            show: true,
+            border: Border.all(color: Colors.transparent),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDailyScheduleCard() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      decoration: BoxDecoration(
+        color: TColor.primaryColor2.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Daily Meal Schedule',
+            style: TextStyle(
+              color: TColor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(
+            width: 70,
+            height: 25,
+            child: RoundButton(
+              title: 'Check',
+              type: RoundButtonType.bgGradient,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              onPressed: () => context.push(AppRoute.mealSchedule),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodayMealsHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Today Meals',
+          style: TextStyle(
+            color: TColor.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        _GradientDropdown(
+          value: _selectedMealFilter,
+          options: _mealFilters,
+          onChanged: (value) {
+            if (value == null) return;
+            setState(() => _selectedMealFilter = value);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTodayMealsList() {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _todayMeals.length,
+      itemBuilder: (context, index) => TodayMealRow.fromMap(_todayMeals[index]),
+    );
+  }
+
+  Widget _buildFindSomethingToEatHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        'Find Something to Eat',
+        style: TextStyle(
+          color: TColor.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFindSomethingToEatList(Size media) {
+    return SizedBox(
+      height: media.width * 0.55,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        scrollDirection: Axis.horizontal,
+        itemCount: _findSomethingToEat.length,
+        itemBuilder: (context, index) {
+          final food = _findSomethingToEat[index];
+          return InkWell(
+            onTap: () => context.push(
+              AppRoute.mealFoodDetails,
+              extra: MealFoodDetailsArgs(food: Map<String, dynamic>.from(food)),
+            ),
+            child: FindEatCell.fromMap(food, index: index),
+          );
+        },
+      ),
+    );
+  }
+
+  List<LineChartBarData> get _lineBars => [
+        LineChartBarData(
+          isCurved: true,
+          gradient: LinearGradient(
+            colors: [TColor.primaryColor2, TColor.primaryColor1],
+          ),
+          barWidth: 2,
+          isStrokeCapRound: true,
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+              radius: 3,
+              color: Colors.white,
+              strokeWidth: 1,
+              strokeColor: TColor.primaryColor2,
+            ),
+          ),
+          belowBarData: BarAreaData(show: false),
+          spots: const [
+            FlSpot(1, 35),
+            FlSpot(2, 70),
+            FlSpot(3, 40),
+            FlSpot(4, 80),
+            FlSpot(5, 25),
+            FlSpot(6, 70),
+            FlSpot(7, 35),
+          ],
+        ),
+      ];
+
+  SideTitles get _rightTitles => SideTitles(
+        showTitles: true,
+        interval: 20,
+        reservedSize: 40,
+        getTitlesWidget: (value, meta) {
+          const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
+          final index = value ~/ 20;
+          if (index < 0 || index >= labels.length) {
+            return const SizedBox.shrink();
+          }
+          return Text(
+            labels[index],
+            style: TextStyle(color: TColor.gray, fontSize: 12),
+            textAlign: TextAlign.center,
+          );
+        },
       );
-    },
-  );
 
-  SideTitles get bottomTitles => SideTitles(
-    showTitles: true,
-    reservedSize: 32,
-    interval: 1,
-    getTitlesWidget: (value, meta) {
-      const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      final idx = value.toInt() - 1; // data points 1..7
-      final text = (idx >= 0 && idx < labels.length) ? labels[idx] : '';
-      return SideTitleWidget(
-        meta: meta, // API baru: wajib meta
-        space: 10,
-        child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
+  SideTitles get _bottomTitles => SideTitles(
+        showTitles: true,
+        reservedSize: 32,
+        interval: 1,
+        getTitlesWidget: (value, meta) {
+          const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          final index = value.toInt() - 1;
+          final text = (index >= 0 && index < labels.length) ? labels[index] : '';
+          return SideTitleWidget(
+            meta: meta,
+            space: 10,
+            child: Text(text, style: TextStyle(color: TColor.gray, fontSize: 12)),
+          );
+        },
       );
-    },
-  );
+}
+
+class _GradientDropdown extends StatelessWidget {
+  const _GradientDropdown({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String value;
+  final List<String> options;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 30,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: TColor.primaryG),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          onChanged: onChanged,
+          icon: Icon(Icons.expand_more, color: TColor.white),
+          items: options
+              .map(
+                (option) => DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(
+                    option,
+                    style: TextStyle(color: TColor.gray, fontSize: 14),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class _SquareIconButton extends StatelessWidget {
+  const _SquareIconButton({
+    required this.assetPath,
+    this.onPressed,
+  });
+
+  final String assetPath;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        height: 40,
+        width: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: TColor.lightGray,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Image.asset(
+          assetPath,
+          width: 15,
+          height: 15,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
 }
