@@ -276,8 +276,9 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                     itemCount: _todaySchedule.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 12),
-                    itemBuilder: (context, index) =>
-                        TodaySleepScheduleRow(schedule: _todaySchedule[index]),
+                    itemBuilder: (context, index) => TodaySleepScheduleRow(
+                      schedule: _todaySchedule[index],
+                    ),
                   ),
 
                   const SizedBox(height: 16),

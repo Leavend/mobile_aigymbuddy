@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 import '../common/models/sleep_schedule_entry.dart';
 
 class TodaySleepScheduleRow extends StatefulWidget {
-  const TodaySleepScheduleRow({super.key, required this.schedule});
+  const TodaySleepScheduleRow({
+    super.key,
+    required this.schedule,
+  });
 
   final SleepScheduleEntry schedule;
 
@@ -38,8 +41,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
               width: 40,
               height: 40,
               fit: BoxFit.cover,
-              // FIX: Replaced __ and ___ with a single _ for unused parameters.
-              errorBuilder: (_, _, _) => Container(
+              errorBuilder: (_, __, ___) => Container(
                 width: 40,
                 height: 40,
                 color: TColor.lightGray,

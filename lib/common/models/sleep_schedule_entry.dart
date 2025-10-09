@@ -13,7 +13,7 @@ class SleepScheduleEntry {
     required this.imageReference,
     ImageProvider<Object>? fallbackImage,
   }) : _fallbackImage =
-           fallbackImage ?? const AssetImage('assets/img/sleep_schedule.png');
+            fallbackImage ?? const AssetImage('assets/img/sleep_schedule.png');
 
   /// Display name shown to the user (e.g. `Bedtime`).
   final String title;
