@@ -8,53 +8,58 @@ import 'package:aigymbuddy/common_widget/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-// --- Constants moved outside the class for better separation of concerns ---
+import 'widgets/auth_page_layout.dart';
+import 'widgets/auth_validators.dart';
 
-const _socialProviders = ['assets/img/google.png', 'assets/img/facebook.png'];
+abstract final class _LoginTexts {
+  static const socialProviders = [
+    'assets/img/google.png',
+    'assets/img/facebook.png',
+  ];
 
-const _greetingText = LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
-const _welcomeBackText = LocalizedText(
-  english: 'Welcome Back',
-  indonesian: 'Selamat Datang Kembali',
-);
-const _emailHint = LocalizedText(english: 'Email', indonesian: 'Email');
-const _passwordHint = LocalizedText(
-  english: 'Password',
-  indonesian: 'Kata Sandi',
-);
-const _forgotPasswordText = LocalizedText(
-  english: 'Forgot your password?',
-  indonesian: 'Lupa kata sandi?',
-);
-const _loginButtonText = LocalizedText(english: 'Login', indonesian: 'Masuk');
-const _dividerText = LocalizedText(english: 'Or', indonesian: 'Atau');
-const _noAccountText = LocalizedText(
-  english: 'Don’t have an account yet? ',
-  indonesian: 'Belum punya akun? ',
-);
-const _registerText = LocalizedText(english: 'Register', indonesian: 'Daftar');
+  static const greeting =
+      LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
+  static const welcomeBack = LocalizedText(
+    english: 'Welcome Back',
+    indonesian: 'Selamat Datang Kembali',
+  );
+  static const emailHint =
+      LocalizedText(english: 'Email', indonesian: 'Email');
+  static const passwordHint = LocalizedText(
+    english: 'Password',
+    indonesian: 'Kata Sandi',
+  );
+  static const forgotPassword = LocalizedText(
+    english: 'Forgot your password?',
+    indonesian: 'Lupa kata sandi?',
+  );
+  static const loginButton =
+      LocalizedText(english: 'Login', indonesian: 'Masuk');
+  static const divider = LocalizedText(english: 'Or', indonesian: 'Atau');
+  static const noAccount = LocalizedText(
+    english: 'Don’t have an account yet? ',
+    indonesian: 'Belum punya akun? ',
+  );
+  static const register =
+      LocalizedText(english: 'Register', indonesian: 'Daftar');
 
-final _emailRegExp = RegExp(
-  r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$',
-  caseSensitive: false,
-);
-
-const _emailRequiredError = LocalizedText(
-  english: 'Email is required',
-  indonesian: 'Email wajib diisi',
-);
-const _emailInvalidError = LocalizedText(
-  english: 'Enter a valid email address',
-  indonesian: 'Masukkan alamat email yang valid',
-);
-const _passwordRequiredError = LocalizedText(
-  english: 'Password is required',
-  indonesian: 'Kata sandi wajib diisi',
-);
-const _passwordLengthError = LocalizedText(
-  english: 'Password must be at least 8 characters',
-  indonesian: 'Kata sandi minimal 8 karakter',
-);
+  static const emailRequired = LocalizedText(
+    english: 'Email is required',
+    indonesian: 'Email wajib diisi',
+  );
+  static const emailInvalid = LocalizedText(
+    english: 'Enter a valid email address',
+    indonesian: 'Masukkan alamat email yang valid',
+  );
+  static const passwordRequired = LocalizedText(
+    english: 'Password is required',
+    indonesian: 'Kata sandi wajib diisi',
+  );
+  static const passwordLength = LocalizedText(
+    english: 'Password must be at least 8 characters',
+    indonesian: 'Kata sandi minimal 8 karakter',
+  );
+}
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -77,7 +82,6 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    // Add listeners to enable/disable the login button dynamically
     _emailController.addListener(_validateForm);
     _passwordController.addListener(_validateForm);
   }
@@ -94,77 +98,51 @@ class _LoginViewState extends State<LoginView> {
   void _validateForm() {
     final isValid = _canSubmit();
     if (isValid != _isLoginEnabled) {
-      setState(() {
-        _isLoginEnabled = isValid;
-      });
+      setState(() => _isLoginEnabled = isValid);
     }
   }
 
   void _onLoginPressed() {
-    // Unfocus all fields to hide keyboard
     FocusScope.of(context).unfocus();
 
-    setState(() {
-      _autoValidate = true;
-    });
+    setState(() => _autoValidate = true);
 
-    // Validate the form
     if (_formKey.currentState?.validate() ?? false) {
-      // Navigate to the next screen if the form is valid
       context.push(AppRoute.completeProfile);
     }
   }
 
+  void _onForgotPasswordPressed() {
+    FocusScope.of(context).unfocus();
+    context.go(AppRoute.main);
+  }
+
   String? _validateEmail(String? value) {
-    final text = value?.trim() ?? '';
-    if (text.isEmpty) {
-      return context.localize(_emailRequiredError);
-    }
-    if (!_emailRegExp.hasMatch(text)) {
-      return context.localize(_emailInvalidError);
-    }
-    return null;
+    return AuthValidators.validateEmail(
+      context: context,
+      value: value,
+      emptyMessage: _LoginTexts.emailRequired,
+      invalidMessage: _LoginTexts.emailInvalid,
+    );
   }
 
   String? _validatePassword(String? value) {
-    final text = value ?? '';
-    if (text.isEmpty) {
-      return context.localize(_passwordRequiredError);
-    }
-    if (text.length < 8) {
-      return context.localize(_passwordLengthError);
-    }
-    return null;
+    return AuthValidators.validatePassword(
+      context: context,
+      value: value,
+      emptyMessage: _LoginTexts.passwordRequired,
+      lengthMessage: _LoginTexts.passwordLength,
+    );
   }
 
   bool _canSubmit() {
-    return _validateEmail(_emailController.text) == null &&
-        _validatePassword(_passwordController.text) == null;
+    return AuthValidators.isValidEmail(_emailController.text) &&
+        _passwordController.text.length >= 8;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: TColor.white,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: 420,
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: _buildContent(context),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
+    return AuthPageLayout(child: _buildContent(context));
   }
 
   Widget _buildContent(BuildContext context) {
@@ -188,7 +166,7 @@ class _LoginViewState extends State<LoginView> {
           _buildForgotPasswordButton(context),
           const SizedBox(height: 28),
           RoundButton(
-            title: context.localize(_loginButtonText),
+            title: context.localize(_LoginTexts.loginButton),
             onPressed: _onLoginPressed,
             isEnabled: _isLoginEnabled,
           ),
@@ -208,15 +186,15 @@ class _LoginViewState extends State<LoginView> {
       children: [
         const SizedBox(height: 24),
         Text(
-          context.localize(_greetingText),
+          context.localize(_LoginTexts.greeting),
           textAlign: TextAlign.center,
-          style: TextStyle(color: TColor.gray, fontSize: 16),
+          style: const TextStyle(color: TColor.gray, fontSize: 16),
         ),
         const SizedBox(height: 6),
         Text(
-          context.localize(_welcomeBackText),
+          context.localize(_LoginTexts.welcomeBack),
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: TColor.black,
             fontSize: 24,
             fontWeight: FontWeight.w700,
@@ -230,7 +208,7 @@ class _LoginViewState extends State<LoginView> {
     return RoundTextField(
       controller: _emailController,
       focusNode: _emailFocusNode,
-      hintText: context.localize(_emailHint),
+      hintText: context.localize(_LoginTexts.emailHint),
       icon: 'assets/img/email.png',
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
@@ -243,7 +221,7 @@ class _LoginViewState extends State<LoginView> {
     return RoundTextField(
       controller: _passwordController,
       focusNode: _passwordFocusNode,
-      hintText: context.localize(_passwordHint),
+      hintText: context.localize(_LoginTexts.passwordHint),
       icon: 'assets/img/lock.png',
       obscureText: !_isPasswordVisible,
       textInputAction: TextInputAction.done,
@@ -253,14 +231,11 @@ class _LoginViewState extends State<LoginView> {
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
         onPressed: () {
-          setState(() {
-            _isPasswordVisible = !_isPasswordVisible;
-          });
+          setState(() => _isPasswordVisible = !_isPasswordVisible);
         },
         icon: Image.asset(
           _isPasswordVisible
               ? 'assets/img/hide_password.png'
-              // Assuming you have this asset. If not, you can use a different icon.
               : 'assets/img/show_password.png',
           width: 20,
           height: 20,
@@ -274,15 +249,15 @@ class _LoginViewState extends State<LoginView> {
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: () {},
+        onPressed: _onForgotPasswordPressed,
         style: TextButton.styleFrom(
           padding: EdgeInsets.zero,
           minimumSize: const Size(0, 0),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: Text(
-          context.localize(_forgotPasswordText),
-          style: TextStyle(
+          context.localize(_LoginTexts.forgotPassword),
+          style: const TextStyle(
             color: TColor.gray,
             fontSize: 12,
             decoration: TextDecoration.underline,
@@ -304,8 +279,8 @@ class _LoginViewState extends State<LoginView> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            context.localize(_dividerText),
-            style: TextStyle(color: TColor.black, fontSize: 12),
+            context.localize(_LoginTexts.divider),
+            style: const TextStyle(color: TColor.black, fontSize: 12),
           ),
         ),
         Expanded(
@@ -322,9 +297,10 @@ class _LoginViewState extends State<LoginView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        for (var i = 0; i < _socialProviders.length; i++) ...[
-          SocialAuthButton(assetPath: _socialProviders[i]),
-          if (i < _socialProviders.length - 1) const SizedBox(width: 16),
+        for (var i = 0; i < _LoginTexts.socialProviders.length; i++) ...[
+          SocialAuthButton(assetPath: _LoginTexts.socialProviders[i]),
+          if (i < _LoginTexts.socialProviders.length - 1)
+            const SizedBox(width: 16),
         ],
       ],
     );
@@ -332,20 +308,18 @@ class _LoginViewState extends State<LoginView> {
 
   Widget _buildSignUpPrompt(BuildContext context) {
     return TextButton(
-      onPressed: () {
-        context.go(AppRoute.signUp);
-      },
+      onPressed: () => context.go(AppRoute.signUp),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            context.localize(_noAccountText),
-            style: TextStyle(color: TColor.black, fontSize: 14),
+            context.localize(_LoginTexts.noAccount),
+            style: const TextStyle(color: TColor.black, fontSize: 14),
           ),
           Text(
-            context.localize(_registerText),
-            style: TextStyle(
+            context.localize(_LoginTexts.register),
+            style: const TextStyle(
               color: TColor.black,
               fontSize: 14,
               fontWeight: FontWeight.w700,
