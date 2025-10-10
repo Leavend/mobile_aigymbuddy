@@ -350,8 +350,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     final clamped = target.isBefore(_firstAvailableDate)
         ? _firstAvailableDate
         : target.isAfter(_lastAvailableDate)
-            ? _lastAvailableDate
-            : target;
+        ? _lastAvailableDate
+        : target;
     _selectedDate = clamped;
     _calendarController.goToDay(clamped);
     _updateEventsForSelectedDay();
@@ -477,9 +477,9 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
       final message = _markDoneSnack
           .resolve(language)
           .replaceFirst('{name}', event.name.resolve(language));
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 

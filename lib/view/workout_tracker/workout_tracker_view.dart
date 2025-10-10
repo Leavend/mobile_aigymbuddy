@@ -50,10 +50,7 @@ class WorkoutTrackerView extends StatelessWidget {
         english: '11 Exercises',
         indonesian: '11 Latihan',
       ),
-      duration: LocalizedText(
-        english: '32 mins',
-        indonesian: '32 menit',
-      ),
+      duration: LocalizedText(english: '32 mins', indonesian: '32 menit'),
     ),
     _TrainingOption(
       imageAsset: 'assets/img/what_2.png',
@@ -65,25 +62,16 @@ class WorkoutTrackerView extends StatelessWidget {
         english: '12 Exercises',
         indonesian: '12 Latihan',
       ),
-      duration: LocalizedText(
-        english: '40 mins',
-        indonesian: '40 menit',
-      ),
+      duration: LocalizedText(english: '40 mins', indonesian: '40 menit'),
     ),
     _TrainingOption(
       imageAsset: 'assets/img/what_3.png',
-      title: LocalizedText(
-        english: 'AB Workout',
-        indonesian: 'Latihan Perut',
-      ),
+      title: LocalizedText(english: 'AB Workout', indonesian: 'Latihan Perut'),
       exercises: LocalizedText(
         english: '14 Exercises',
         indonesian: '14 Latihan',
       ),
-      duration: LocalizedText(
-        english: '20 mins',
-        indonesian: '20 menit',
-      ),
+      duration: LocalizedText(english: '20 mins', indonesian: '20 menit'),
     ),
   ];
 
@@ -92,10 +80,7 @@ class WorkoutTrackerView extends StatelessWidget {
     indonesian: 'Jadwal Latihan Harian',
   );
 
-  static const _checkLabel = LocalizedText(
-    english: 'Check',
-    indonesian: 'Cek',
-  );
+  static const _checkLabel = LocalizedText(english: 'Check', indonesian: 'Cek');
 
   static const _upcomingTitle = LocalizedText(
     english: 'Upcoming Workout',
@@ -527,10 +512,7 @@ class WorkoutTrackerView extends StatelessWidget {
     context.pushNamed(AppRoute.workoutScheduleName);
   }
 
-  void _openWorkoutDetail(
-    BuildContext context,
-    Map<String, String> workout,
-  ) {
+  void _openWorkoutDetail(BuildContext context, Map<String, String> workout) {
     final detailData = <String, dynamic>{
       'title': workout['title'] ?? 'Workout',
       'time': workout['time'] ?? 'Today, 03:00pm',

@@ -116,10 +116,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   static const _equipmentItems = <_EquipmentItem>[
     _EquipmentItem(
       imageAsset: 'assets/img/barbell.png',
-      title: LocalizedText(
-        english: 'Barbell',
-        indonesian: 'Barbel',
-      ),
+      title: LocalizedText(english: 'Barbell', indonesian: 'Barbel'),
     ),
     _EquipmentItem(
       imageAsset: 'assets/img/skipping_rope.png',
@@ -148,7 +145,10 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
         ),
         _ExerciseItemConfig(
           imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(english: 'Jumping Jack', indonesian: 'Jumping Jack'),
+          title: LocalizedText(
+            english: 'Jumping Jack',
+            indonesian: 'Jumping Jack',
+          ),
           subtitle: LocalizedText(english: '12x', indonesian: '12x'),
         ),
         _ExerciseItemConfig(
@@ -163,12 +163,18 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
         ),
         _ExerciseItemConfig(
           imageAsset: 'assets/img/img_1.png',
-          title: LocalizedText(english: 'Arm Raises', indonesian: 'Angkat Lengan'),
+          title: LocalizedText(
+            english: 'Arm Raises',
+            indonesian: 'Angkat Lengan',
+          ),
           subtitle: LocalizedText(english: '00:53', indonesian: '00:53'),
         ),
         _ExerciseItemConfig(
           imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(english: 'Rest and Drink', indonesian: 'Istirahat dan Minum'),
+          title: LocalizedText(
+            english: 'Rest and Drink',
+            indonesian: 'Istirahat dan Minum',
+          ),
           subtitle: LocalizedText(english: '02:00', indonesian: '02:00'),
         ),
       ],
@@ -183,7 +189,10 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
         ),
         _ExerciseItemConfig(
           imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(english: 'Jumping Jack', indonesian: 'Jumping Jack'),
+          title: LocalizedText(
+            english: 'Jumping Jack',
+            indonesian: 'Jumping Jack',
+          ),
           subtitle: LocalizedText(english: '12x', indonesian: '12x'),
         ),
         _ExerciseItemConfig(
@@ -198,12 +207,18 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
         ),
         _ExerciseItemConfig(
           imageAsset: 'assets/img/img_1.png',
-          title: LocalizedText(english: 'Arm Raises', indonesian: 'Angkat Lengan'),
+          title: LocalizedText(
+            english: 'Arm Raises',
+            indonesian: 'Angkat Lengan',
+          ),
           subtitle: LocalizedText(english: '00:53', indonesian: '00:53'),
         ),
         _ExerciseItemConfig(
           imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(english: 'Rest and Drink', indonesian: 'Istirahat dan Minum'),
+          title: LocalizedText(
+            english: 'Rest and Drink',
+            indonesian: 'Istirahat dan Minum',
+          ),
           subtitle: LocalizedText(english: '02:00', indonesian: '02:00'),
         ),
       ],
@@ -260,7 +275,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       IconTitleNextRow(
                         icon: 'assets/img/time.png',
                         title: _scheduleWorkoutLabel.resolve(language),
-                        time: _workout['time']?.toString() ??
+                        time:
+                            _workout['time']?.toString() ??
                             (language == AppLanguage.english
                                 ? '5/27, 09:00 AM'
                                 : '27/5, 09.00'),
@@ -272,7 +288,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       IconTitleNextRow(
                         icon: 'assets/img/difficulity.png',
                         title: _difficultyLabel.resolve(language),
-                        time: _workout['difficulty']?.toString() ??
+                        time:
+                            _workout['difficulty']?.toString() ??
                             _defaultDifficulty.resolve(language),
                         color: TColor.secondaryColor2.withValues(alpha: 0.3),
                         onPressed: _showDifficultyInfo,
@@ -305,10 +322,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     );
   }
 
-  SliverAppBar _buildHeaderAppBar(
-    BuildContext context,
-    AppLanguage language,
-  ) {
+  SliverAppBar _buildHeaderAppBar(BuildContext context, AppLanguage language) {
     return SliverAppBar(
       backgroundColor: Colors.transparent,
       centerTitle: true,
@@ -381,9 +395,11 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   }
 
   Widget _buildWorkoutHeader(BuildContext context, AppLanguage language) {
-    final exercises = _workout['exercises']?.toString() ??
+    final exercises =
+        _workout['exercises']?.toString() ??
         (language == AppLanguage.english ? '11 Exercises' : '11 Latihan');
-    final time = _workout['time']?.toString() ??
+    final time =
+        _workout['time']?.toString() ??
         (language == AppLanguage.english ? '32 mins' : '32 menit');
 
     return Row(
@@ -558,9 +574,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     final message = _isFavorite
         ? _addedToFavourite.resolve(language)
         : _removedFromFavourite.resolve(language);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _showDifficultyInfo() async {
@@ -715,8 +731,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   }
 
   void _startWorkout(List<ExerciseSet> workoutSets) {
-    final firstExercise = workoutSets.isNotEmpty &&
-            workoutSets.first.exercises.isNotEmpty
+    final firstExercise =
+        workoutSets.isNotEmpty && workoutSets.first.exercises.isNotEmpty
         ? workoutSets.first.exercises.first
         : null;
 
