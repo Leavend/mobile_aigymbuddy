@@ -1,7 +1,10 @@
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/date_time_utils.dart';
 import '../../common_widget/icon_title_next_row.dart';
@@ -18,22 +21,103 @@ class AddScheduleView extends StatefulWidget {
 
 class _AddScheduleViewState extends State<AddScheduleView> {
   late DateTime _selectedDateTime;
-  String _selectedWorkout = 'Upperbody Workout';
-  String _selectedDifficulty = 'Beginner';
+  late _WorkoutOption _selectedWorkout;
+  late _DifficultyOption _selectedDifficulty;
   int? _customRepetitions;
   double? _customWeight;
 
-  static const List<String> _workoutOptions = <String>[
-    'Upperbody Workout',
-    'Fullbody Workout',
-    'Lowerbody Workout',
-    'Core Burner',
+  static const _appBarTitle = LocalizedText(
+    english: 'Add Schedule',
+    indonesian: 'Tambah Jadwal',
+  );
+
+  static const _scheduleTooltip = LocalizedText(
+    english: 'Templates for schedules coming soon.',
+    indonesian: 'Template untuk jadwal segera hadir.',
+  );
+
+  static const _scheduleHint = LocalizedText(
+    english: 'Templates for schedules coming soon.',
+    indonesian: 'Template jadwal segera hadir.',
+  );
+
+  static const _timeLabel = LocalizedText(english: 'Time', indonesian: 'Waktu');
+
+  static const _detailsLabel = LocalizedText(
+    english: 'Workout Details',
+    indonesian: 'Detail Latihan',
+  );
+
+  static const _chooseWorkoutLabel = LocalizedText(
+    english: 'Choose Workout',
+    indonesian: 'Pilih Latihan',
+  );
+
+  static const _difficultyLabel = LocalizedText(
+    english: 'Difficulty',
+    indonesian: 'Tingkat Kesulitan',
+  );
+
+  static const _customRepetitionsLabel = LocalizedText(
+    english: 'Custom Repetitions',
+    indonesian: 'Repetisi Khusus',
+  );
+
+  static const _customWeightsLabel = LocalizedText(
+    english: 'Custom Weights',
+    indonesian: 'Beban Khusus',
+  );
+
+  static const _notSetLabel = LocalizedText(
+    english: 'Not set',
+    indonesian: 'Belum diatur',
+  );
+
+  static const _saveLabel = LocalizedText(
+    english: 'Save',
+    indonesian: 'Simpan',
+  );
+  static const _workoutOptions = <_WorkoutOption>[
+    _WorkoutOption(
+      id: 'upperbody',
+      label: LocalizedText(
+        english: 'Upperbody Workout',
+        indonesian: 'Latihan Tubuh Atas',
+      ),
+    ),
+    _WorkoutOption(
+      id: 'fullbody',
+      label: LocalizedText(
+        english: 'Fullbody Workout',
+        indonesian: 'Latihan Seluruh Tubuh',
+      ),
+    ),
+    _WorkoutOption(
+      id: 'lowerbody',
+      label: LocalizedText(
+        english: 'Lowerbody Workout',
+        indonesian: 'Latihan Tubuh Bawah',
+      ),
+    ),
+    _WorkoutOption(
+      id: 'core_burner',
+      label: LocalizedText(english: 'Core Burner', indonesian: 'Pembakar Inti'),
+    ),
   ];
 
-  static const List<String> _difficultyOptions = <String>[
-    'Beginner',
-    'Intermediate',
-    'Advanced',
+  static const _difficultyOptions = <_DifficultyOption>[
+    _DifficultyOption(
+      id: 'beginner',
+      label: LocalizedText(english: 'Beginner', indonesian: 'Pemula'),
+    ),
+    _DifficultyOption(
+      id: 'intermediate',
+      label: LocalizedText(english: 'Intermediate', indonesian: 'Menengah'),
+    ),
+    _DifficultyOption(
+      id: 'advanced',
+      label: LocalizedText(english: 'Advanced', indonesian: 'Lanjutan'),
+    ),
   ];
 
   @override
@@ -46,11 +130,14 @@ class _AddScheduleViewState extends State<AddScheduleView> {
       widget.date.hour,
       widget.date.minute,
     );
+    _selectedWorkout = _workoutOptions.first;
+    _selectedDifficulty = _difficultyOptions.first;
   }
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final language = context.appLanguage;
 
     return Scaffold(
       appBar: AppBar(
@@ -58,9 +145,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
         centerTitle: true,
         elevation: 0,
         leading: InkWell(
-          onTap: () {
-            context.pop();
-          },
+          onTap: () => context.pop(),
           child: Container(
             margin: const EdgeInsets.all(8),
             height: 40,
@@ -71,7 +156,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(
-              "assets/img/closed_btn.png",
+              'assets/img/closed_btn.png',
               width: 15,
               height: 15,
               fit: BoxFit.contain,
@@ -79,7 +164,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
           ),
         ),
         title: Text(
-          "Add Schedule",
+          _appBarTitle.resolve(language),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -87,28 +172,30 @@ class _AddScheduleViewState extends State<AddScheduleView> {
           ),
         ),
         actions: [
-          InkWell(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Templates for schedules coming soon.'),
+          Semantics(
+            label: _scheduleTooltip.resolve(language),
+            button: true,
+            child: InkWell(
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(_scheduleHint.resolve(language))),
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.all(8),
+                height: 40,
+                width: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: TColor.lightGray,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              );
-            },
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              height: 40,
-              width: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Image.asset(
-                "assets/img/more_btn.png",
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
+                child: Image.asset(
+                  'assets/img/more_btn.png',
+                  width: 15,
+                  height: 15,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
@@ -122,20 +209,17 @@ class _AddScheduleViewState extends State<AddScheduleView> {
           children: [
             Row(
               children: [
-                Image.asset("assets/img/date.png", width: 20, height: 20),
+                Image.asset('assets/img/date.png', width: 20, height: 20),
                 const SizedBox(width: 8),
                 Text(
-                  DateTimeUtils.formatDate(
-                    widget.date,
-                    pattern: "E, dd MMMM yyyy",
-                  ),
+                  _formatFullDate(widget.date, language),
                   style: TextStyle(color: TColor.gray, fontSize: 14),
                 ),
               ],
             ),
             const SizedBox(height: 20),
             Text(
-              "Time",
+              _timeLabel.resolve(language),
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 14,
@@ -145,14 +229,8 @@ class _AddScheduleViewState extends State<AddScheduleView> {
             SizedBox(
               height: media.width * 0.35,
               child: CupertinoDatePicker(
-                initialDateTime: DateTime(
-                  widget.date.year,
-                  widget.date.month,
-                  widget.date.day,
-                  _selectedDateTime.hour,
-                  _selectedDateTime.minute,
-                ),
-                use24hFormat: false,
+                initialDateTime: _selectedDateTime,
+                use24hFormat: language == AppLanguage.indonesian,
                 minuteInterval: 1,
                 mode: CupertinoDatePickerMode.time,
                 onDateTimeChanged: _handleTimeChanged,
@@ -160,7 +238,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
             ),
             const SizedBox(height: 20),
             Text(
-              "Details Workout",
+              _detailsLabel.resolve(language),
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 14,
@@ -169,42 +247,45 @@ class _AddScheduleViewState extends State<AddScheduleView> {
             ),
             const SizedBox(height: 8),
             IconTitleNextRow(
-              icon: "assets/img/choose_workout.png",
-              title: "Choose Workout",
-              time: _selectedWorkout,
+              icon: 'assets/img/choose_workout.png',
+              title: _chooseWorkoutLabel.resolve(language),
+              time: _selectedWorkout.label.resolve(language),
               color: TColor.lightGray,
               onPressed: _pickWorkout,
             ),
             const SizedBox(height: 10),
             IconTitleNextRow(
-              icon: "assets/img/difficulity.png",
-              title: "Difficulity",
-              time: _selectedDifficulty,
+              icon: 'assets/img/difficulity.png',
+              title: _difficultyLabel.resolve(language),
+              time: _selectedDifficulty.label.resolve(language),
               color: TColor.lightGray,
               onPressed: _pickDifficulty,
             ),
             const SizedBox(height: 10),
             IconTitleNextRow(
-              icon: "assets/img/repetitions.png",
-              title: "Custom Repetitions",
+              icon: 'assets/img/repetitions.png',
+              title: _customRepetitionsLabel.resolve(language),
               time: _customRepetitions == null
-                  ? 'Not set'
-                  : '${_customRepetitions!} reps',
+                  ? _notSetLabel.resolve(language)
+                  : _localizedRepetition(_customRepetitions!, language),
               color: TColor.lightGray,
               onPressed: _pickRepetitions,
             ),
             const SizedBox(height: 10),
             IconTitleNextRow(
-              icon: "assets/img/repetitions.png",
-              title: "Custom Weights",
+              icon: 'assets/img/repetitions.png',
+              title: _customWeightsLabel.resolve(language),
               time: _customWeight == null
-                  ? 'Not set'
-                  : '${_customWeight!.toStringAsFixed(1)} kg',
+                  ? _notSetLabel.resolve(language)
+                  : _localizedWeight(_customWeight!, language),
               color: TColor.lightGray,
               onPressed: _pickWeight,
             ),
             const Spacer(),
-            RoundButton(title: "Save", onPressed: _handleSave),
+            RoundButton(
+              title: _saveLabel.resolve(language),
+              onPressed: _handleSave,
+            ),
             const SizedBox(height: 20),
           ],
         ),
@@ -225,10 +306,11 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   }
 
   Future<void> _pickWorkout() async {
-    final selected = await _showOptionPicker<String>(
-      title: 'Choose Workout',
+    final selected = await _showOptionPicker<_WorkoutOption>(
+      title: _chooseWorkoutLabel,
       options: _workoutOptions,
       currentValue: _selectedWorkout,
+      labelBuilder: (option, language) => option.label.resolve(language),
     );
     if (selected != null) {
       setState(() => _selectedWorkout = selected);
@@ -236,10 +318,11 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   }
 
   Future<void> _pickDifficulty() async {
-    final selected = await _showOptionPicker<String>(
-      title: 'Select Difficulty',
+    final selected = await _showOptionPicker<_DifficultyOption>(
+      title: _difficultyLabel,
       options: _difficultyOptions,
       currentValue: _selectedDifficulty,
+      labelBuilder: (option, language) => option.label.resolve(language),
     );
     if (selected != null) {
       setState(() => _selectedDifficulty = selected);
@@ -249,10 +332,10 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   Future<void> _pickRepetitions() async {
     final options = List<int>.generate(20, (index) => (index + 1) * 5);
     final selected = await _showOptionPicker<int>(
-      title: 'Custom Repetitions',
+      title: _customRepetitionsLabel,
       options: options,
       currentValue: _customRepetitions,
-      labelBuilder: (value) => '$value reps',
+      labelBuilder: (value, language) => _localizedRepetition(value, language),
     );
     if (selected != null) {
       setState(() => _customRepetitions = selected);
@@ -262,10 +345,10 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   Future<void> _pickWeight() async {
     final options = List<double>.generate(16, (index) => 5 + (index * 2.5));
     final selected = await _showOptionPicker<double>(
-      title: 'Custom Weights',
+      title: _customWeightsLabel,
       options: options,
       currentValue: _customWeight,
-      labelBuilder: (value) => '${value.toStringAsFixed(1)} kg',
+      labelBuilder: (value, language) => _localizedWeight(value, language),
     );
     if (selected != null) {
       setState(() => _customWeight = selected);
@@ -273,17 +356,18 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   }
 
   Future<T?> _showOptionPicker<T>({
-    required String title,
+    required LocalizedText title,
     required List<T> options,
-    T? currentValue,
-    String Function(T value)? labelBuilder,
+    required T? currentValue,
+    required String Function(T value, AppLanguage language) labelBuilder,
   }) {
     return showModalBottomSheet<T>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
+        final language = sheetContext.appLanguage;
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -304,7 +388,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      title,
+                      title.resolve(language),
                       style: TextStyle(
                         color: TColor.black,
                         fontSize: 16,
@@ -315,9 +399,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                 ),
                 const SizedBox(height: 8),
                 ...options.map((option) {
-                  final label = labelBuilder != null
-                      ? labelBuilder(option)
-                      : option.toString();
+                  final label = labelBuilder(option, language);
                   final isSelected =
                       currentValue != null && option == currentValue;
                   return ListTile(
@@ -325,7 +407,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                     trailing: isSelected
                         ? Icon(Icons.check, color: TColor.primaryColor2)
                         : null,
-                    onTap: () => context.pop(option),
+                    onTap: () => sheetContext.pop(option),
                   );
                 }),
               ],
@@ -338,21 +420,54 @@ class _AddScheduleViewState extends State<AddScheduleView> {
 
   void _handleSave() {
     final messenger = ScaffoldMessenger.of(context);
+    final language = context.appLanguage;
     final formattedDate = DateTimeUtils.formatDate(
       _selectedDateTime,
-      pattern: 'E, dd MMM yyyy • h:mm a',
+      pattern: language == AppLanguage.english
+          ? 'E, dd MMM yyyy • h:mm a'
+          : 'E, dd MMM yyyy • HH.mm',
     );
 
-    messenger.showSnackBar(
-      SnackBar(content: Text('Schedule saved for $formattedDate')),
-    );
+    final confirmation = language == AppLanguage.english
+        ? 'Schedule saved for $formattedDate'
+        : 'Jadwal tersimpan untuk $formattedDate';
+
+    messenger.showSnackBar(SnackBar(content: Text(confirmation)));
 
     context.pop({
       'date': _selectedDateTime,
-      'workout': _selectedWorkout,
-      'difficulty': _selectedDifficulty,
+      'workout': _selectedWorkout.label.resolve(language),
+      'difficulty': _selectedDifficulty.label.resolve(language),
       'repetitions': _customRepetitions,
       'weight': _customWeight,
     });
   }
+
+  String _localizedRepetition(int value, AppLanguage language) {
+    return language == AppLanguage.english ? '$value reps' : '$value repetisi';
+  }
+
+  String _localizedWeight(double value, AppLanguage language) {
+    final formatted = value.toStringAsFixed(1);
+    return language == AppLanguage.english ? '$formatted kg' : '$formatted kg';
+  }
+
+  String _formatFullDate(DateTime date, AppLanguage language) {
+    final format = DateFormat('E, dd MMMM yyyy', language.code);
+    return format.format(date);
+  }
+}
+
+class _WorkoutOption {
+  const _WorkoutOption({required this.id, required this.label});
+
+  final String id;
+  final LocalizedText label;
+}
+
+class _DifficultyOption {
+  const _DifficultyOption({required this.id, required this.label});
+
+  final String id;
+  final LocalizedText label;
 }
