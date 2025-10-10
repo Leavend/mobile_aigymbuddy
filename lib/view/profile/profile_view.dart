@@ -12,18 +12,12 @@ import 'package:aigymbuddy/common_widget/title_subtitle_cell.dart';
 
 enum _ProfileAction {
   personalData(
-    label: LocalizedText(
-      english: 'Personal Data',
-      indonesian: 'Data Pribadi',
-    ),
+    label: LocalizedText(english: 'Personal Data', indonesian: 'Data Pribadi'),
     iconPath: 'assets/img/p_personal.png',
     route: AppRoute.completeProfile,
   ),
   achievement(
-    label: LocalizedText(
-      english: 'Achievement',
-      indonesian: 'Pencapaian',
-    ),
+    label: LocalizedText(english: 'Achievement', indonesian: 'Pencapaian'),
     iconPath: 'assets/img/p_achi.png',
     route: AppRoute.finishedWorkout,
   ),
@@ -44,10 +38,7 @@ enum _ProfileAction {
     route: AppRoute.workoutTracker,
   ),
   contactUs(
-    label: LocalizedText(
-      english: 'Contact Us',
-      indonesian: 'Hubungi Kami',
-    ),
+    label: LocalizedText(english: 'Contact Us', indonesian: 'Hubungi Kami'),
     iconPath: 'assets/img/p_contact.png',
   ),
   privacyPolicy(
@@ -58,10 +49,7 @@ enum _ProfileAction {
     iconPath: 'assets/img/p_privacy.png',
   ),
   settings(
-    label: LocalizedText(
-      english: 'Settings',
-      indonesian: 'Pengaturan',
-    ),
+    label: LocalizedText(english: 'Settings', indonesian: 'Pengaturan'),
     iconPath: 'assets/img/p_setting.png',
   );
 
@@ -86,35 +74,23 @@ class _ProfileMetric {
 class _ProfileStrings {
   const _ProfileStrings._();
 
-  static const title = LocalizedText(
-    english: 'Profile',
-    indonesian: 'Profil',
-  );
+  static const title = LocalizedText(english: 'Profile', indonesian: 'Profil');
 
-  static const edit = LocalizedText(
-    english: 'Edit',
-    indonesian: 'Ubah',
-  );
+  static const edit = LocalizedText(english: 'Edit', indonesian: 'Ubah');
 
   static const program = LocalizedText(
     english: 'Lose a Fat Program',
     indonesian: 'Program Kurangi Lemak',
   );
 
-  static const account = LocalizedText(
-    english: 'Account',
-    indonesian: 'Akun',
-  );
+  static const account = LocalizedText(english: 'Account', indonesian: 'Akun');
 
   static const notification = LocalizedText(
     english: 'Notification',
     indonesian: 'Notifikasi',
   );
 
-  static const other = LocalizedText(
-    english: 'Other',
-    indonesian: 'Lainnya',
-  );
+  static const other = LocalizedText(english: 'Other', indonesian: 'Lainnya');
 
   static const popupNotification = LocalizedText(
     english: 'Pop-up Notification',
@@ -129,24 +105,15 @@ class _ProfileStrings {
   static const metrics = [
     _ProfileMetric(
       value: '180cm',
-      label: LocalizedText(
-        english: 'Height',
-        indonesian: 'Tinggi Badan',
-      ),
+      label: LocalizedText(english: 'Height', indonesian: 'Tinggi Badan'),
     ),
     _ProfileMetric(
       value: '65kg',
-      label: LocalizedText(
-        english: 'Weight',
-        indonesian: 'Berat Badan',
-      ),
+      label: LocalizedText(english: 'Weight', indonesian: 'Berat Badan'),
     ),
     _ProfileMetric(
       value: '22yo',
-      label: LocalizedText(
-        english: 'Age',
-        indonesian: 'Usia',
-      ),
+      label: LocalizedText(english: 'Age', indonesian: 'Usia'),
     ),
   ];
 
@@ -313,15 +280,14 @@ class _ProfileViewState extends State<ProfileView> {
 
     for (var i = 0; i < _ProfileStrings.metrics.length; i++) {
       final metric = _ProfileStrings.metrics[i];
-      metricWidgets
-        ..add(
-          Expanded(
-            child: TitleSubtitleCell(
-              title: metric.value,
-              subtitle: metric.label.resolve(language),
-            ),
+      metricWidgets.add(
+        Expanded(
+          child: TitleSubtitleCell(
+            title: metric.value,
+            subtitle: metric.label.resolve(language),
           ),
-        );
+        ),
+      );
 
       if (i != _ProfileStrings.metrics.length - 1) {
         metricWidgets.add(const SizedBox(width: 15));
@@ -467,14 +433,12 @@ class _ProfileViewState extends State<ProfileView> {
   void _showComingSoon(LocalizedText featureName) {
     final messenger = ScaffoldMessenger.of(context);
     final language = context.appLanguage;
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(
-            _ProfileStrings.comingSoonMessage(language, featureName),
-          ),
-        ),
-      );
+    messenger.hideCurrentSnackBar(); // Call the first method
+    messenger.showSnackBar(
+      // Call the second method
+      SnackBar(
+        content: Text(_ProfileStrings.comingSoonMessage(language, featureName)),
+      ),
+    );
   }
 }
