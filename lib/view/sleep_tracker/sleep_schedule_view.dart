@@ -1,6 +1,8 @@
 // lib/view/sleep_tracker/sleep_schedule_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
@@ -38,9 +40,11 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final language = context.appLanguage;
+    final localize = context.localize;
 
     return Scaffold(
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(context, localize),
       backgroundColor: TColor.white,
       body: SafeArea(
         bottom: false,
@@ -54,7 +58,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                   vertical: 10,
                   horizontal: 20,
                 ),
-                child: _buildIdealSleepCard(media),
+                child: _buildIdealSleepCard(context, media, localize),
               ),
               SizedBox(height: media.width * 0.05),
               Padding(
@@ -63,7 +67,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                   horizontal: 20,
                 ),
                 child: Text(
-                  'Your Schedule',
+                  localize(_SleepScheduleStrings.yourSchedule),
                   style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
@@ -71,7 +75,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                   ),
                 ),
               ),
-              _buildCalendar(),
+              _buildCalendar(context, language),
               SizedBox(height: media.width * 0.03),
               _buildScheduleList(),
               Padding(
@@ -79,7 +83,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                   vertical: 10,
                   horizontal: 20,
                 ),
-                child: _buildSleepSummary(media),
+                child: _buildSleepSummary(context, media, localize),
               ),
             ],
           ),
@@ -99,7 +103,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar(BuildContext context, String Function(LocalizedText) localize) {
     return AppBar(
       backgroundColor: TColor.white,
       centerTitle: true,
@@ -124,7 +128,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
         ),
       ),
       title: Text(
-        'Sleep Schedule',
+        localize(_SleepScheduleStrings.sleepScheduleTitle),
         style: TextStyle(
           color: TColor.black,
           fontSize: 16,
@@ -155,7 +159,11 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
     );
   }
 
-  Widget _buildIdealSleepCard(Size media) {
+  Widget _buildIdealSleepCard(
+    BuildContext context,
+    Size media,
+    String Function(LocalizedText) localize,
+  ) {
     return Container(
       width: double.maxFinite,
       padding: const EdgeInsets.all(20),
@@ -177,11 +185,11 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
             children: [
               const SizedBox(height: 15),
               Text(
-                'Ideal Hours for Sleep',
+                localize(_SleepScheduleStrings.idealHours),
                 style: TextStyle(color: TColor.black, fontSize: 14),
               ),
               Text(
-                '8hours 30minutes',
+                localize(_SleepScheduleStrings.idealHoursValue),
                 style: TextStyle(
                   color: TColor.primaryColor2,
                   fontSize: 16,
@@ -193,7 +201,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 width: 110,
                 height: 35,
                 child: RoundButton(
-                  title: 'Learn More',
+                  title: localize(_SleepScheduleStrings.learnMore),
                   fontSize: 12,
                   onPressed: () {},
                 ),
@@ -209,7 +217,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
     );
   }
 
-  Widget _buildCalendar() {
+  Widget _buildCalendar(BuildContext context, AppLanguage language) {
     return CalendarAgenda(
       controller: _calendarController,
       appbar: false,
@@ -220,7 +228,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       fullCalendarDay: WeekDay.short,
       selectedDateColor: Colors.white,
       dateColor: Colors.black,
-      locale: 'en',
+      locale: language.code,
       initialDate: DateTime.now(),
       calendarEventColor: TColor.primaryColor2,
       firstDate: DateTime.now().subtract(const Duration(days: 140)),
@@ -243,7 +251,11 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
     );
   }
 
-  Widget _buildSleepSummary(Size media) {
+  Widget _buildSleepSummary(
+    BuildContext context,
+    Size media,
+    String Function(LocalizedText) localize,
+  ) {
     return Container(
       width: double.maxFinite,
       padding: const EdgeInsets.all(20),
@@ -260,7 +272,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'You will get 8hours 10minutes\nfor tonight',
+            localize(_SleepScheduleStrings.tonightSleepDuration),
             style: TextStyle(color: TColor.black, fontSize: 12),
           ),
           const SizedBox(height: 15),
@@ -290,4 +302,36 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       ),
     );
   }
+}
+
+class _SleepScheduleStrings {
+  static const sleepScheduleTitle = LocalizedText(
+    english: 'Sleep Schedule',
+    indonesian: 'Jadwal Tidur',
+  );
+
+  static const idealHours = LocalizedText(
+    english: 'Ideal Hours for Sleep',
+    indonesian: 'Durasi Tidur Ideal',
+  );
+
+  static const idealHoursValue = LocalizedText(
+    english: '8 hours 30 minutes',
+    indonesian: '8 jam 30 menit',
+  );
+
+  static const learnMore = LocalizedText(
+    english: 'Learn More',
+    indonesian: 'Pelajari Lebih Lanjut',
+  );
+
+  static const yourSchedule = LocalizedText(
+    english: 'Your Schedule',
+    indonesian: 'Jadwalmu',
+  );
+
+  static const tonightSleepDuration = LocalizedText(
+    english: 'You will get 8 hours 10 minutes\nfor tonight',
+    indonesian: 'Kamu akan mendapatkan 8 jam 10 menit\nmalam ini',
+  );
 }

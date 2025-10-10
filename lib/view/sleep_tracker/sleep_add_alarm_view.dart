@@ -1,6 +1,8 @@
 // lib/view/sleep_tracker/sleep_add_alarm_view.dart
 
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -31,26 +33,28 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
     DateTime.sunday,
   ];
 
-  static const _weekdayLabels = <int, String>{
-    DateTime.monday: 'Mon',
-    DateTime.tuesday: 'Tue',
-    DateTime.wednesday: 'Wed',
-    DateTime.thursday: 'Thu',
-    DateTime.friday: 'Fri',
-    DateTime.saturday: 'Sat',
-    DateTime.sunday: 'Sun',
+  static const Map<int, LocalizedText> _weekdayLabels = {
+    DateTime.monday: LocalizedText(english: 'Mon', indonesian: 'Sen'),
+    DateTime.tuesday: LocalizedText(english: 'Tue', indonesian: 'Sel'),
+    DateTime.wednesday: LocalizedText(english: 'Wed', indonesian: 'Rab'),
+    DateTime.thursday: LocalizedText(english: 'Thu', indonesian: 'Kam'),
+    DateTime.friday: LocalizedText(english: 'Fri', indonesian: 'Jum'),
+    DateTime.saturday: LocalizedText(english: 'Sat', indonesian: 'Sab'),
+    DateTime.sunday: LocalizedText(english: 'Sun', indonesian: 'Min'),
   };
 
-  bool _vibrateEnabled = false;
-  late TimeOfDay _bedTime;
-  Duration _sleepDuration = const Duration(hours: 8, minutes: 30);
-  Set<int> _repeatWeekdays = {
+  static const Set<int> _workWeek = {
     DateTime.monday,
     DateTime.tuesday,
     DateTime.wednesday,
     DateTime.thursday,
     DateTime.friday,
   };
+
+  bool _vibrateEnabled = false;
+  late TimeOfDay _bedTime;
+  Duration _sleepDuration = const Duration(hours: 8, minutes: 30);
+  Set<int> _repeatWeekdays = {..._workWeek};
 
   @override
   void initState() {
@@ -60,6 +64,14 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
 
   @override
   Widget build(BuildContext context) {
+    final language = context.appLanguage;
+    final localize = context.localize;
+
+    final selectedDateLabel = _formatSelectedDate(language);
+    final bedtimeLabel = _formatBedtime(language);
+    final sleepDurationLabel = _formatSleepDuration(language);
+    final repeatSummary = _formatRepeatSummary(language);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: TColor.white,
@@ -86,7 +98,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
           ),
         ),
         title: Text(
-          "Add Alarm",
+          localize(_SleepAddAlarmStrings.addAlarmTitle),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -123,7 +135,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _formattedSelectedDate,
+              selectedDateLabel,
               style: TextStyle(
                 color: TColor.gray,
                 fontSize: 12,
@@ -133,31 +145,34 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
             const SizedBox(height: 12),
             IconTitleNextRow(
               icon: "assets/img/Bed_Add.png",
-              title: "Bedtime",
-              time: _formattedBedtime,
+              title: localize(_SleepAddAlarmStrings.bedtime),
+              time: bedtimeLabel,
               color: TColor.lightGray,
               onPressed: _handleBedtimeTap,
             ),
             const SizedBox(height: 10),
             IconTitleNextRow(
               icon: "assets/img/HoursTime.png",
-              title: "Hours of sleep",
-              time: _formattedSleepDuration,
+              title: localize(_SleepAddAlarmStrings.hoursOfSleep),
+              time: sleepDurationLabel,
               color: TColor.lightGray,
               onPressed: _handleSleepDurationTap,
             ),
             const SizedBox(height: 10),
             IconTitleNextRow(
               icon: "assets/img/Repeat.png",
-              title: "Repeat",
-              time: _formattedRepeatSummary,
+              title: localize(_SleepAddAlarmStrings.repeat),
+              time: repeatSummary,
               color: TColor.lightGray,
               onPressed: _handleRepeatSelection,
             ),
             const SizedBox(height: 10),
-            _buildVibrateTile(),
+            _buildVibrateTile(localize(_SleepAddAlarmStrings.vibrateLabel)),
             const Spacer(),
-            RoundButton(title: "Add", onPressed: _handleSubmit),
+            RoundButton(
+              title: localize(_SleepAddAlarmStrings.addAction),
+              onPressed: _handleSubmit,
+            ),
             const SizedBox(height: 20),
           ],
         ),
@@ -165,53 +180,54 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
     );
   }
 
-  String get _formattedSelectedDate {
-    return DateFormat('EEEE, d MMMM yyyy').format(widget.date);
+  String _formatSelectedDate(AppLanguage language) {
+    return DateFormat('EEEE, d MMMM yyyy', language.code).format(widget.date);
   }
 
-  String get _formattedBedtime {
+  String _formatBedtime(AppLanguage language) {
     final dateTime = _bedtimeAsDateTime;
-    return DateFormat('hh:mm a').format(dateTime);
+    return DateFormat('hh:mm a', language.code).format(dateTime);
   }
 
-  String get _formattedSleepDuration {
+  String _formatSleepDuration(AppLanguage language) {
     final hours = _sleepDuration.inHours;
     final minutes = _sleepDuration.inMinutes.remainder(60);
 
     final segments = <String>[];
     if (hours > 0) {
-      segments.add('${hours}h');
+      final singular = language == AppLanguage.english ? 'hour' : 'jam';
+      final plural = language == AppLanguage.english ? 'hours' : 'jam';
+      final label = hours == 1 ? singular : plural;
+      segments.add('$hours $label');
     }
     if (minutes > 0 || segments.isEmpty) {
-      segments.add('${minutes}m');
+      final singular = language == AppLanguage.english ? 'minute' : 'menit';
+      final plural = language == AppLanguage.english ? 'minutes' : 'menit';
+      final label = minutes == 1 ? singular : plural;
+      segments.add('$minutes $label');
     }
+
     return segments.join(' ');
   }
 
-  String get _formattedRepeatSummary {
+  String _formatRepeatSummary(AppLanguage language) {
     if (_repeatWeekdays.length == DateTime.daysPerWeek) {
-      return 'Everyday';
+      return _SleepAddAlarmStrings.everyday.resolve(language);
     }
 
-    const workWeek = {
-      DateTime.monday,
-      DateTime.tuesday,
-      DateTime.wednesday,
-      DateTime.thursday,
-      DateTime.friday,
-    };
-
-    if (_repeatWeekdays.containsAll(workWeek) &&
-        _repeatWeekdays.length == workWeek.length) {
-      return 'Mon – Fri';
+    if (_repeatWeekdays.containsAll(_workWeek) &&
+        _repeatWeekdays.length == _workWeek.length) {
+      return _SleepAddAlarmStrings.workWeek.resolve(language);
     }
 
     if (_repeatWeekdays.isEmpty) {
-      return 'Never';
+      return _SleepAddAlarmStrings.never.resolve(language);
     }
 
     final sorted = _repeatWeekdays.toList()..sort();
-    return sorted.map((day) => _weekdayLabels[day]!).join(', ');
+    return sorted
+        .map((day) => _weekdayLabels[day]!.resolve(language))
+        .join(', ');
   }
 
   DateTime get _bedtimeAsDateTime {
@@ -226,10 +242,19 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
   }
 
   Future<void> _handleBedtimeTap() async {
+    final language = context.appLanguage;
+    final helpText = context.localize(_SleepAddAlarmStrings.selectBedtime);
     final picked = await showTimePicker(
       context: context,
       initialTime: _bedTime,
-      helpText: 'Select bedtime',
+      helpText: helpText,
+      builder: (context, child) {
+        return Localizations.override(
+          context: context,
+          locale: language.locale,
+          child: child,
+        );
+      },
     );
 
     if (picked != null) {
@@ -252,51 +277,57 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
   }
 
   Future<Duration?> _showDurationPicker() {
+    final language = context.appLanguage;
+    final localize = context.localize;
     return showModalBottomSheet<Duration>(
       context: context,
-      builder: (context) {
+      builder: (sheetContext) {
         Duration pendingDuration = _sleepDuration;
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Hours of sleep',
-                  style: TextStyle(
-                    color: TColor.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 200,
-                  child: CupertinoTimerPicker(
-                    mode: CupertinoTimerPickerMode.hm,
-                    minuteInterval: 5,
-                    initialTimerDuration: _sleepDuration,
-                    onTimerDurationChanged: (value) => pendingDuration = value,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+        return Localizations.override(
+          context: sheetContext,
+          locale: language.locale,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    localize(_SleepAddAlarmStrings.hoursOfSleep),
+                    style: TextStyle(
+                      color: TColor.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () =>
-                          Navigator.of(context).pop(pendingDuration),
-                      child: const Text('Save'),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 200,
+                    child: CupertinoTimerPicker(
+                      mode: CupertinoTimerPickerMode.hm,
+                      minuteInterval: 5,
+                      initialTimerDuration: _sleepDuration,
+                      onTimerDurationChanged: (value) => pendingDuration = value,
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        child: Text(localize(_SleepAddAlarmStrings.cancel)),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () =>
+                            Navigator.of(sheetContext).pop(pendingDuration),
+                        child: Text(localize(_SleepAddAlarmStrings.save)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -305,69 +336,76 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
   }
 
   Future<Set<int>?> _showRepeatPicker() {
+    final language = context.appLanguage;
+    final localize = context.localize;
     return showModalBottomSheet<Set<int>>(
       context: context,
-      builder: (context) {
+      builder: (sheetContext) {
         final pendingSelection = _repeatWeekdays.toSet();
         return StatefulBuilder(
           builder: (context, setModalState) {
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Repeat',
-                      style: TextStyle(
-                        color: TColor.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+            return Localizations.override(
+              context: sheetContext,
+              locale: language.locale,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        localize(_SleepAddAlarmStrings.repeat),
+                        style: TextStyle(
+                          color: TColor.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 320,
-                      child: ListView(
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 320,
+                        child: ListView(
+                          children: [
+                            for (final day in _weekdayOrder)
+                              CheckboxListTile(
+                                value: pendingSelection.contains(day),
+                                title: Text(
+                                  _weekdayLabels[day]!.resolve(language),
+                                ),
+                                onChanged: (value) {
+                                  if (value == null) return;
+                                  setModalState(() {
+                                    if (value) {
+                                      pendingSelection.add(day);
+                                    } else {
+                                      pendingSelection.remove(day);
+                                    }
+                                  });
+                                },
+                              ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          for (final day in _weekdayOrder)
-                            CheckboxListTile(
-                              value: pendingSelection.contains(day),
-                              title: Text(_weekdayLabels[day]!),
-                              onChanged: (value) {
-                                if (value == null) return;
-                                setModalState(() {
-                                  if (value) {
-                                    pendingSelection.add(day);
-                                  } else {
-                                    pendingSelection.remove(day);
-                                  }
-                                });
-                              },
-                            ),
+                          TextButton(
+                            onPressed: () => Navigator.of(sheetContext).pop(),
+                            child: Text(localize(_SleepAddAlarmStrings.cancel)),
+                          ),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(sheetContext)
+                                .pop(pendingSelection.toSet()),
+                            child: Text(localize(_SleepAddAlarmStrings.save)),
+                          ),
                         ],
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(
-                            context,
-                          ).pop(pendingSelection.toSet()),
-                          child: const Text('Save'),
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -387,7 +425,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
     context.pop(config);
   }
 
-  Widget _buildVibrateTile() {
+  Widget _buildVibrateTile(String label) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
@@ -412,7 +450,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              "Vibrate When Alarm Sound",
+              label,
               style: TextStyle(color: TColor.gray, fontSize: 12),
             ),
           ),
@@ -482,4 +520,66 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
       ),
     );
   }
+}
+
+class _SleepAddAlarmStrings {
+  static const addAlarmTitle = LocalizedText(
+    english: 'Add Alarm',
+    indonesian: 'Tambah Alarm',
+  );
+
+  static const bedtime = LocalizedText(
+    english: 'Bedtime',
+    indonesian: 'Waktu Tidur',
+  );
+
+  static const hoursOfSleep = LocalizedText(
+    english: 'Hours of sleep',
+    indonesian: 'Durasi tidur',
+  );
+
+  static const repeat = LocalizedText(
+    english: 'Repeat',
+    indonesian: 'Ulangi',
+  );
+
+  static const selectBedtime = LocalizedText(
+    english: 'Select bedtime',
+    indonesian: 'Pilih waktu tidur',
+  );
+
+  static const everyday = LocalizedText(
+    english: 'Everyday',
+    indonesian: 'Setiap hari',
+  );
+
+  static const workWeek = LocalizedText(
+    english: 'Mon – Fri',
+    indonesian: 'Sen – Jum',
+  );
+
+  static const never = LocalizedText(
+    english: 'Never',
+    indonesian: 'Tidak pernah',
+  );
+
+  static const cancel = LocalizedText(
+    english: 'Cancel',
+    indonesian: 'Batal',
+  );
+
+  static const save = LocalizedText(
+    english: 'Save',
+    indonesian: 'Simpan',
+  );
+
+  static const vibrateLabel = LocalizedText(
+    english: 'Vibrate When Alarm Sound',
+    indonesian: 'Getar Saat Alarm Berbunyi',
+  );
+
+  static const addAction = LocalizedText(
+    english: 'Add',
+    indonesian: 'Tambah',
+  );
 }
