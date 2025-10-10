@@ -1,3 +1,5 @@
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,44 +15,136 @@ class ExercisesStepDetails extends StatelessWidget {
 
   final Map<String, dynamic> exercise;
 
-  static const String _description =
-      'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, '
-      'is a physical jumping exercise performed by jumping to a position with the legs spread wide. '
-      'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, '
-      'is a physical jumping exercise performed by jumping to a position with the legs spread wide.';
+  static const _description = LocalizedText(
+    english:
+        'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide. A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide.',
+    indonesian:
+        'Jumping jack, atau dikenal juga sebagai star jump, adalah gerakan melompat dengan kedua kaki terbuka lebar. Gerakan ini sering digunakan di militer Amerika sebagai pemanasan. Jumping jack membantu menggerakkan seluruh tubuh dan meningkatkan detak jantung.',
+  );
 
-  static const List<InstructionStep> _steps = [
-    InstructionStep(
+  static const _descriptionsLabel = LocalizedText(
+    english: 'Descriptions',
+    indonesian: 'Deskripsi',
+  );
+
+  static const _readMoreLabel = LocalizedText(
+    english: ' Read More ...',
+    indonesian: ' Baca Selengkapnya ...',
+  );
+
+  static const _readLessLabel = LocalizedText(
+    english: ' Read Less',
+    indonesian: ' Sembunyikan',
+  );
+
+  static const _howToDoLabel = LocalizedText(
+    english: 'How To Do It',
+    indonesian: 'Cara Melakukannya',
+  );
+
+  static const _setsLabel = LocalizedText(
+    english: '{count} Steps',
+    indonesian: '{count} Langkah',
+  );
+
+  static const _customRepetitionsLabel = LocalizedText(
+    english: 'Custom Repetitions',
+    indonesian: 'Repetisi Khusus',
+  );
+
+  static const _saveLabel = LocalizedText(
+    english: 'Save',
+    indonesian: 'Simpan',
+  );
+
+  static const _saveSnack = LocalizedText(
+    english: 'Exercise saved.',
+    indonesian: 'Latihan disimpan.',
+  );
+
+  static const _videoPreviewSnack = LocalizedText(
+    english: 'Video preview will be available soon.',
+    indonesian: 'Pratinjau video akan tersedia segera.',
+  );
+
+  static const _actionsComingSoon = LocalizedText(
+    english: 'Additional actions coming soon.',
+    indonesian: 'Aksi tambahan segera hadir.',
+  );
+
+  static const _stepSummaryTitle = LocalizedText(
+    english: 'Step Summary',
+    indonesian: 'Ringkasan Langkah',
+  );
+
+  static const _untitledStep = LocalizedText(
+    english: 'Untitled Step',
+    indonesian: 'Langkah Tanpa Judul',
+  );
+
+  static const _steps = <_InstructionStepConfig>[
+    _InstructionStepConfig(
       number: '01',
-      title: 'Spread Your Arms',
-      description:
-          'To make the gestures feel more relaxed, stretch your arms as you start this movement. Do not bend your hands.',
+      title: LocalizedText(
+        english: 'Spread Your Arms',
+        indonesian: 'Rentangkan Lengan',
+      ),
+      description: LocalizedText(
+        english:
+            'To make the gestures feel more relaxed, stretch your arms as you start this movement. Do not bend your hands.',
+        indonesian:
+            'Untuk membuat gerakan terasa lebih rileks, rentangkan kedua lengan saat memulai gerakan. Jangan menekuk tangan.',
+      ),
     ),
-    InstructionStep(
+    _InstructionStepConfig(
       number: '02',
-      title: 'Rest at The Toe',
-      description:
-          'The basis of this movement is jumping. Focus on landing softly using the tips of your feet.',
+      title: LocalizedText(
+        english: 'Rest at The Toe',
+        indonesian: 'Bertumpu di Ujung Kaki',
+      ),
+      description: LocalizedText(
+        english:
+            'The basis of this movement is jumping. Focus on landing softly using the tips of your feet.',
+        indonesian:
+            'Dasar gerakan ini adalah melompat. Fokuskan pendaratan secara lembut menggunakan ujung kaki.',
+      ),
     ),
-    InstructionStep(
+    _InstructionStepConfig(
       number: '03',
-      title: 'Adjust Foot Movement',
-      description:
-          'Jumping Jack is not just an ordinary jump. You also have to pay close attention to leg movements.',
+      title: LocalizedText(
+        english: 'Adjust Foot Movement',
+        indonesian: 'Atur Gerakan Kaki',
+      ),
+      description: LocalizedText(
+        english:
+            'Jumping Jack is not just an ordinary jump. You also have to pay close attention to leg movements.',
+        indonesian:
+            'Jumping jack bukan sekadar melompat. Kamu juga perlu memperhatikan gerakan kaki.',
+      ),
     ),
-    InstructionStep(
+    _InstructionStepConfig(
       number: '04',
-      title: 'Clapping Both Hands',
-      description:
-          'Without realizing it, clapping your hands helps you keep your rhythm while doing the Jumping Jack.',
+      title: LocalizedText(
+        english: 'Clapping Both Hands',
+        indonesian: 'Tepuk Kedua Tangan',
+      ),
+      description: LocalizedText(
+        english:
+            'Without realizing it, clapping your hands helps you keep your rhythm while doing the Jumping Jack.',
+        indonesian:
+            'Tanpa disadari, menepuk tangan membantu menjaga ritme saat melakukan jumping jack.',
+      ),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-    final exerciseTitle = exercise['title'] as String? ?? 'Exercise';
-    final difficulty = (exercise['level'] ?? exercise['difficulty']) as String?;
+    final language = context.appLanguage;
+    final exerciseTitle = exercise['title'] as String? ??
+        (language == AppLanguage.english ? 'Exercise' : 'Latihan');
+    final difficulty =
+        (exercise['level'] ?? exercise['difficulty']) as String?;
     final rawCalories = exercise['calories'];
     final calories = rawCalories is num
         ? rawCalories.round().toString()
@@ -60,11 +154,18 @@ class ExercisesStepDetails extends StatelessWidget {
       metadataParts.add(difficulty);
     }
     if (calories.isNotEmpty) {
-      metadataParts.add('$calories Calories Burn');
+      metadataParts.add(
+        language == AppLanguage.english
+            ? '$calories Calories Burn'
+            : '$calories Kalori Terbakar',
+      );
     }
     final metadataText = metadataParts.isEmpty
-        ? 'Easy | 390 Calories Burn'
+        ? (language == AppLanguage.english
+            ? 'Easy | 390 Calories Burn'
+            : 'Mudah | 390 Kalori Terbakar')
         : metadataParts.join(' | ');
+    final steps = _buildSteps(language);
 
     return Scaffold(
       appBar: AppBar(
@@ -93,10 +194,9 @@ class ExercisesStepDetails extends StatelessWidget {
         actions: [
           InkWell(
             onTap: () {
+              final message = _actionsComingSoon.resolve(language);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Additional actions coming soon.'),
-                ),
+                SnackBar(content: Text(message)),
               );
             },
             child: Container(
@@ -124,7 +224,7 @@ class ExercisesStepDetails extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildVideoPreview(context, media),
+            _buildVideoPreview(context, media, language),
             const SizedBox(height: 15),
             Text(
               exerciseTitle,
@@ -141,7 +241,7 @@ class ExercisesStepDetails extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             Text(
-              'Descriptions',
+              _descriptionsLabel.resolve(language),
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
@@ -150,12 +250,12 @@ class ExercisesStepDetails extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             ReadMoreText(
-              _description,
+              _description.resolve(language),
               trimLines: 4,
               colorClickableText: TColor.black,
               trimMode: TrimMode.Line,
-              trimCollapsedText: ' Read More ...',
-              trimExpandedText: ' Read Less',
+              trimCollapsedText: _readMoreLabel.resolve(language),
+              trimExpandedText: _readLessLabel.resolve(language),
               style: TextStyle(color: TColor.gray, fontSize: 12),
               moreStyle: const TextStyle(
                 fontSize: 12,
@@ -167,7 +267,7 @@ class ExercisesStepDetails extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'How To Do It',
+                  _howToDoLabel.resolve(language),
                   style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
@@ -175,9 +275,11 @@ class ExercisesStepDetails extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => _showStepsSummary(context),
+                  onPressed: () => _showStepsSummary(context, steps),
                   child: Text(
-                    '${_steps.length} Sets',
+                    _setsLabel
+                        .resolve(language)
+                        .replaceFirst('{count}', steps.length.toString()),
                     style: TextStyle(color: TColor.gray, fontSize: 12),
                   ),
                 ),
@@ -186,17 +288,17 @@ class ExercisesStepDetails extends StatelessWidget {
             ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: _steps.length,
+              itemCount: steps.length,
               itemBuilder: (context, index) {
-                final step = _steps[index];
+                final step = steps[index];
                 return StepDetailRow(
                   step: step,
-                  isLast: index == _steps.length - 1,
+                  isLast: index == steps.length - 1,
                 );
               },
             ),
             Text(
-              'Custom Repetitions',
+              _customRepetitionsLabel.resolve(language),
               style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
@@ -204,13 +306,13 @@ class ExercisesStepDetails extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            _buildRepetitionPicker(),
+            _buildRepetitionPicker(language),
             RoundButton(
-              title: 'Save',
+              title: _saveLabel.resolve(language),
               elevation: 0,
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Exercise saved.')),
+                  SnackBar(content: Text(_saveSnack.resolve(language))),
                 );
                 context.pop();
               },
@@ -222,7 +324,11 @@ class ExercisesStepDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildVideoPreview(BuildContext context, Size media) {
+  Widget _buildVideoPreview(
+    BuildContext context,
+    Size media,
+    AppLanguage language,
+  ) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -251,9 +357,7 @@ class ExercisesStepDetails extends StatelessWidget {
         IconButton(
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Video preview will be available soon.'),
-              ),
+              SnackBar(content: Text(_videoPreviewSnack.resolve(language))),
             );
           },
           icon: Image.asset('assets/img/Play.png', width: 30, height: 30),
@@ -262,7 +366,7 @@ class ExercisesStepDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildRepetitionPicker() {
+  Widget _buildRepetitionPicker(AppLanguage language) {
     return SizedBox(
       height: 150,
       child: CupertinoPicker.builder(
@@ -286,6 +390,10 @@ class ExercisesStepDetails extends StatelessWidget {
         onSelectedItemChanged: (_) {},
         childCount: 60,
         itemBuilder: (context, index) {
+          final caloriesText = language == AppLanguage.english
+              ? '${(index + 1) * 15} Calories Burn'
+              : '${(index + 1) * 15} Kalori Terbakar';
+          final timesText = language == AppLanguage.english ? ' times' : ' kali';
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -296,7 +404,7 @@ class ExercisesStepDetails extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
               Text(
-                ' ${(index + 1) * 15} Calories Burn',
+                ' $caloriesText',
                 style: TextStyle(color: TColor.gray, fontSize: 10),
               ),
               Text(
@@ -308,7 +416,7 @@ class ExercisesStepDetails extends StatelessWidget {
                 ),
               ),
               Text(
-                ' times',
+                timesText,
                 style: TextStyle(color: TColor.gray, fontSize: 16),
               ),
             ],
@@ -318,7 +426,8 @@ class ExercisesStepDetails extends StatelessWidget {
     );
   }
 
-  void _showStepsSummary(BuildContext context) {
+  void _showStepsSummary(BuildContext context, List<InstructionStep> steps) {
+    final language = context.appLanguage;
     showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -342,7 +451,7 @@ class ExercisesStepDetails extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Step Summary',
+                  _stepSummaryTitle.resolve(language),
                   style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
@@ -350,9 +459,9 @@ class ExercisesStepDetails extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                ..._steps.map(
+                ...steps.map(
                   (step) => ListTile(
-                    title: Text(step.title ?? 'Untitled Step'),
+                    title: Text(step.title ?? _untitledStep.resolve(language)),
                     subtitle: Text(step.description),
                     leading: CircleAvatar(
                       radius: 16,
@@ -376,4 +485,28 @@ class ExercisesStepDetails extends StatelessWidget {
       },
     );
   }
+
+  List<InstructionStep> _buildSteps(AppLanguage language) {
+    return _steps
+        .map(
+          (step) => InstructionStep(
+            number: step.number,
+            title: step.title?.resolve(language),
+            description: step.description.resolve(language),
+          ),
+        )
+        .toList(growable: false);
+  }
+}
+
+class _InstructionStepConfig {
+  const _InstructionStepConfig({
+    required this.number,
+    required this.description,
+    this.title,
+  });
+
+  final String number;
+  final LocalizedText description;
+  final LocalizedText? title;
 }
