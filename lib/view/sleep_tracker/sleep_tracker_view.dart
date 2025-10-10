@@ -156,10 +156,12 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                           show: true,
                           leftTitles: const AxisTitles(),
                           topTitles: const AxisTitles(),
-                          bottomTitles:
-                              AxisTitles(sideTitles: _buildBottomTitles(language)),
-                          rightTitles:
-                              AxisTitles(sideTitles: _buildRightTitles(language)),
+                          bottomTitles: AxisTitles(
+                            sideTitles: _buildBottomTitles(language),
+                          ),
+                          rightTitles: AxisTitles(
+                            sideTitles: _buildRightTitles(language),
+                          ),
                         ),
                         gridData: FlGridData(
                           show: true,
@@ -342,46 +344,43 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
   );
 
   SideTitles _buildRightTitles(AppLanguage language) => SideTitles(
-        showTitles: true,
-        interval: 2,
-        reservedSize: 42,
-        getTitlesWidget: (value, meta) {
-          final intValue = value.toInt();
-          if (intValue.isNegative || intValue > 10) {
-            return const SizedBox.shrink();
-          }
-          final label = _formatHourTick(intValue, language);
-          return SideTitleWidget(
-            meta: meta,
-            space: 8,
-            child: Text(
-              label,
-              style: TextStyle(color: TColor.gray, fontSize: 12),
-            ),
-          );
-        },
+    showTitles: true,
+    interval: 2,
+    reservedSize: 42,
+    getTitlesWidget: (value, meta) {
+      final intValue = value.toInt();
+      if (intValue.isNegative || intValue > 10) {
+        return const SizedBox.shrink();
+      }
+      final label = _formatHourTick(intValue, language);
+      return SideTitleWidget(
+        meta: meta,
+        space: 8,
+        child: Text(label, style: TextStyle(color: TColor.gray, fontSize: 12)),
       );
+    },
+  );
 
   SideTitles _buildBottomTitles(AppLanguage language) => SideTitles(
-        showTitles: true,
-        reservedSize: 28,
-        interval: 1,
-        getTitlesWidget: (value, meta) {
-          final abbreviation =
-              _SleepTrackerStrings.weekdayLabels[value.toInt()]?.resolve(language);
-          if (abbreviation == null) {
-            return const SizedBox.shrink();
-          }
-          return SideTitleWidget(
-            meta: meta,
-            space: 6,
-            child: Text(
-              abbreviation,
-              style: TextStyle(color: TColor.gray, fontSize: 12),
-            ),
-          );
-        },
+    showTitles: true,
+    reservedSize: 28,
+    interval: 1,
+    getTitlesWidget: (value, meta) {
+      final abbreviation = _SleepTrackerStrings.weekdayLabels[value.toInt()]
+          ?.resolve(language);
+      if (abbreviation == null) {
+        return const SizedBox.shrink();
+      }
+      return SideTitleWidget(
+        meta: meta,
+        space: 6,
+        child: Text(
+          abbreviation,
+          style: TextStyle(color: TColor.gray, fontSize: 12),
+        ),
       );
+    },
+  );
 
   String _formatTooltipHours(double value, AppLanguage language) {
     final hours = value.toInt();
@@ -416,20 +415,14 @@ class _SleepTrackerStrings {
     indonesian: 'Jadwal Tidur Harian',
   );
 
-  static const check = LocalizedText(
-    english: 'Check',
-    indonesian: 'Periksa',
-  );
+  static const check = LocalizedText(english: 'Check', indonesian: 'Periksa');
 
   static const todaySchedule = LocalizedText(
     english: 'Today Schedule',
     indonesian: 'Jadwal Hari Ini',
   );
 
-  static const hours = LocalizedText(
-    english: 'hours',
-    indonesian: 'jam',
-  );
+  static const hours = LocalizedText(english: 'hours', indonesian: 'jam');
 
   static const Map<int, LocalizedText> weekdayLabels = {
     1: LocalizedText(english: 'Sun', indonesian: 'Min'),

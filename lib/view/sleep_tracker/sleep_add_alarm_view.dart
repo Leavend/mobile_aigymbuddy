@@ -307,7 +307,8 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                       mode: CupertinoTimerPickerMode.hm,
                       minuteInterval: 5,
                       initialTimerDuration: _sleepDuration,
-                      onTimerDurationChanged: (value) => pendingDuration = value,
+                      onTimerDurationChanged: (value) =>
+                          pendingDuration = value,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -398,8 +399,9 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => Navigator.of(sheetContext)
-                                .pop(pendingSelection.toSet()),
+                            onPressed: () => Navigator.of(
+                              sheetContext,
+                            ).pop(pendingSelection.toSet()),
                             child: Text(localize(_SleepAddAlarmStrings.save)),
                           ),
                         ],
@@ -538,10 +540,7 @@ class _SleepAddAlarmStrings {
     indonesian: 'Durasi tidur',
   );
 
-  static const repeat = LocalizedText(
-    english: 'Repeat',
-    indonesian: 'Ulangi',
-  );
+  static const repeat = LocalizedText(english: 'Repeat', indonesian: 'Ulangi');
 
   static const selectBedtime = LocalizedText(
     english: 'Select bedtime',
@@ -563,23 +562,14 @@ class _SleepAddAlarmStrings {
     indonesian: 'Tidak pernah',
   );
 
-  static const cancel = LocalizedText(
-    english: 'Cancel',
-    indonesian: 'Batal',
-  );
+  static const cancel = LocalizedText(english: 'Cancel', indonesian: 'Batal');
 
-  static const save = LocalizedText(
-    english: 'Save',
-    indonesian: 'Simpan',
-  );
+  static const save = LocalizedText(english: 'Save', indonesian: 'Simpan');
 
   static const vibrateLabel = LocalizedText(
     english: 'Vibrate When Alarm Sound',
     indonesian: 'Getar Saat Alarm Berbunyi',
   );
 
-  static const addAction = LocalizedText(
-    english: 'Add',
-    indonesian: 'Tambah',
-  );
+  static const addAction = LocalizedText(english: 'Add', indonesian: 'Tambah');
 }

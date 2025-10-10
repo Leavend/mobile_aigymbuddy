@@ -103,7 +103,10 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, String Function(LocalizedText) localize) {
+  AppBar _buildAppBar(
+    BuildContext context,
+    String Function(LocalizedText) localize,
+  ) {
     return AppBar(
       backgroundColor: TColor.white,
       centerTitle: true,
