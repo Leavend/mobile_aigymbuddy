@@ -1,11 +1,12 @@
-// lib/view/workout_tracker/workout_schedule_view.dart
-
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/date_time_utils.dart';
 import '../../common_widget/round_button.dart';
@@ -18,17 +19,78 @@ class WorkoutScheduleView extends StatefulWidget {
 }
 
 class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
-  static const List<Map<String, String>> _rawEvents = [
-    {'name': 'Ab Workout', 'start_time': '25/05/2023 07:30 AM'},
-    {'name': 'Upperbody Workout', 'start_time': '25/05/2023 09:00 AM'},
-    {'name': 'Lowerbody Workout', 'start_time': '25/05/2023 03:00 PM'},
-    {'name': 'Ab Workout', 'start_time': '26/05/2023 07:30 AM'},
-    {'name': 'Upperbody Workout', 'start_time': '26/05/2023 09:00 AM'},
-    {'name': 'Lowerbody Workout', 'start_time': '26/05/2023 03:00 PM'},
-    {'name': 'Ab Workout', 'start_time': '27/05/2023 07:30 AM'},
-    {'name': 'Upperbody Workout', 'start_time': '27/05/2023 09:00 AM'},
-    {'name': 'Lowerbody Workout', 'start_time': '27/05/2023 03:00 PM'},
+  static const _rawEvents = <Map<String, String>>[
+    {
+      'name_en': 'Ab Workout',
+      'name_id': 'Latihan Perut',
+      'start_time': '25/05/2023 07:30 AM',
+    },
+    {
+      'name_en': 'Upperbody Workout',
+      'name_id': 'Latihan Tubuh Atas',
+      'start_time': '25/05/2023 09:00 AM',
+    },
+    {
+      'name_en': 'Lowerbody Workout',
+      'name_id': 'Latihan Tubuh Bawah',
+      'start_time': '25/05/2023 03:00 PM',
+    },
+    {
+      'name_en': 'Ab Workout',
+      'name_id': 'Latihan Perut',
+      'start_time': '26/05/2023 07:30 AM',
+    },
+    {
+      'name_en': 'Upperbody Workout',
+      'name_id': 'Latihan Tubuh Atas',
+      'start_time': '26/05/2023 09:00 AM',
+    },
+    {
+      'name_en': 'Lowerbody Workout',
+      'name_id': 'Latihan Tubuh Bawah',
+      'start_time': '26/05/2023 03:00 PM',
+    },
+    {
+      'name_en': 'Ab Workout',
+      'name_id': 'Latihan Perut',
+      'start_time': '27/05/2023 07:30 AM',
+    },
+    {
+      'name_en': 'Upperbody Workout',
+      'name_id': 'Latihan Tubuh Atas',
+      'start_time': '27/05/2023 09:00 AM',
+    },
+    {
+      'name_en': 'Lowerbody Workout',
+      'name_id': 'Latihan Tubuh Bawah',
+      'start_time': '27/05/2023 03:00 PM',
+    },
   ];
+
+  static const _appBarTitle = LocalizedText(
+    english: 'Workout Schedule',
+    indonesian: 'Jadwal Latihan',
+  );
+
+  static const _scheduleActionsTooltip = LocalizedText(
+    english: 'Add schedule',
+    indonesian: 'Tambah jadwal',
+  );
+
+  static const _dialogTitle = LocalizedText(
+    english: 'Workout Schedule',
+    indonesian: 'Jadwal Latihan',
+  );
+
+  static const _markDoneLabel = LocalizedText(
+    english: 'Mark Done',
+    indonesian: 'Tandai Selesai',
+  );
+
+  static const _markDoneSnack = LocalizedText(
+    english: 'Marked {name} as done',
+    indonesian: 'Latihan {name} selesai',
+  );
 
   final CalendarAgendaController _calendarController =
       CalendarAgendaController();
@@ -57,6 +119,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final language = context.appLanguage;
 
     return Scaffold(
       appBar: AppBar(
@@ -83,7 +146,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
           ),
         ),
         title: Text(
-          'Workout Schedule',
+          _appBarTitle.resolve(language),
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -91,22 +154,26 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
           ),
         ),
         actions: [
-          InkWell(
-            onTap: _navigateToAddSchedule,
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              height: 40,
-              width: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Image.asset(
-                'assets/img/more_btn.png',
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
+          Semantics(
+            label: _scheduleActionsTooltip.resolve(language),
+            button: true,
+            child: InkWell(
+              onTap: _navigateToAddSchedule,
+              child: Container(
+                margin: const EdgeInsets.all(8),
+                height: 40,
+                width: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: TColor.lightGray,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Image.asset(
+                  'assets/img/more_btn.png',
+                  width: 15,
+                  height: 15,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
@@ -150,7 +217,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
             fullCalendarDay: WeekDay.short,
             selectedDateColor: Colors.white,
             dateColor: Colors.black,
-            locale: 'en',
+            locale: language.code,
             initialDate: _selectedDate,
             calendarEventColor: TColor.primaryColor2,
             firstDate: _firstAvailableDate,
@@ -187,7 +254,12 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                           SizedBox(
                             width: 80,
                             child: Text(
-                              DateTimeUtils.formatMinutesToTime(index * 60),
+                              DateTimeUtils.formatMinutesToTime(
+                                index * 60,
+                                pattern: language == AppLanguage.english
+                                    ? 'hh:mm a'
+                                    : 'HH.mm',
+                              ),
                               style: TextStyle(
                                 color: TColor.black,
                                 fontSize: 12,
@@ -222,7 +294,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                           ),
                                         ),
                                         child: Text(
-                                          "${event.name}, ${DateTimeUtils.formatDate(event.startTime, pattern: 'h:mm aa')}",
+                                          '${event.name.resolve(language)}, ${_formatTime(event.startTime, language)}',
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -246,24 +318,28 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
           ),
         ],
       ),
-      floatingActionButton: InkWell(
-        onTap: _navigateToAddSchedule,
-        child: Container(
-          width: 55,
-          height: 55,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: TColor.secondaryG),
-            borderRadius: BorderRadius.circular(27.5),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                offset: Offset(0, 2),
-              ),
-            ],
+      floatingActionButton: Semantics(
+        label: _scheduleActionsTooltip.resolve(language),
+        button: true,
+        child: InkWell(
+          onTap: _navigateToAddSchedule,
+          child: Container(
+            width: 55,
+            height: 55,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: TColor.secondaryG),
+              borderRadius: BorderRadius.circular(27.5),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 5,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: Icon(Icons.add, size: 20, color: TColor.white),
           ),
-          alignment: Alignment.center,
-          child: Icon(Icons.add, size: 20, color: TColor.white),
         ),
       ),
     );
@@ -274,8 +350,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     final clamped = target.isBefore(_firstAvailableDate)
         ? _firstAvailableDate
         : target.isAfter(_lastAvailableDate)
-        ? _lastAvailableDate
-        : target;
+            ? _lastAvailableDate
+            : target;
     _selectedDate = clamped;
     _calendarController.goToDay(clamped);
     _updateEventsForSelectedDay();
@@ -292,6 +368,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
+        final language = dialogContext.appLanguage;
         return AlertDialog(
           backgroundColor: Colors.transparent,
           contentPadding: EdgeInsets.zero,
@@ -328,7 +405,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                       ),
                     ),
                     Text(
-                      'Workout Schedule',
+                      _dialogTitle.resolve(language),
                       style: TextStyle(
                         color: TColor.black,
                         fontSize: 16,
@@ -361,7 +438,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 ),
                 const SizedBox(height: 15),
                 Text(
-                  event.name,
+                  event.name.resolve(language),
                   style: TextStyle(
                     color: TColor.black,
                     fontSize: 14,
@@ -378,14 +455,14 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      "${event.startTime.relativeDayLabel} | ${DateTimeUtils.formatDate(event.startTime, pattern: 'h:mm aa')}",
+                      '${_describeRelativeDay(event.startTime, language)} | ${_formatTime(event.startTime, language)}',
                       style: TextStyle(color: TColor.gray, fontSize: 12),
                     ),
                   ],
                 ),
                 const SizedBox(height: 15),
                 RoundButton(
-                  title: 'Mark Done',
+                  title: _markDoneLabel.resolve(language),
                   onPressed: () => Navigator.of(dialogContext).pop(true),
                 ),
               ],
@@ -396,9 +473,13 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     );
 
     if (result == true && mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Marked ${event.name} as done')));
+      final language = context.appLanguage;
+      final message = _markDoneSnack
+          .resolve(language)
+          .replaceFirst('{name}', event.name.resolve(language));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
     }
   }
 
@@ -412,18 +493,46 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
       setState(() {});
     }
   }
+
+  String _formatTime(DateTime time, AppLanguage language) {
+    final format = DateFormat(
+      language == AppLanguage.english ? 'h:mm a' : 'HH.mm',
+      language.code,
+    );
+    return format.format(time);
+  }
+
+  String _describeRelativeDay(DateTime date, AppLanguage language) {
+    final today = DateTimeUtils.startOfDay(DateTime.now());
+    final target = DateTimeUtils.startOfDay(date);
+    final difference = target.difference(today).inDays;
+
+    if (difference == 0) {
+      return language == AppLanguage.english ? 'Today' : 'Hari ini';
+    }
+    if (difference == 1) {
+      return language == AppLanguage.english ? 'Tomorrow' : 'Besok';
+    }
+    if (difference == -1) {
+      return language == AppLanguage.english ? 'Yesterday' : 'Kemarin';
+    }
+
+    final formatter = DateFormat('E', language.code);
+    return formatter.format(date);
+  }
 }
 
 class WorkoutEvent {
   const WorkoutEvent({required this.name, required this.startTime});
 
-  final String name;
+  final LocalizedText name;
   final DateTime startTime;
 
   static WorkoutEvent? fromJson(Map<String, String> json) {
-    final name = json['name'];
+    final nameEn = json['name_en'];
+    final nameId = json['name_id'];
     final rawStartTime = json['start_time'];
-    if (name == null || rawStartTime == null) {
+    if (nameEn == null || nameId == null || rawStartTime == null) {
       debugPrint('Invalid workout event payload: $json');
       return null;
     }
@@ -433,9 +542,12 @@ class WorkoutEvent {
         rawStartTime,
         pattern: 'dd/MM/yyyy hh:mm aa',
       );
-      return WorkoutEvent(name: name, startTime: startTime);
+      return WorkoutEvent(
+        name: LocalizedText(english: nameEn, indonesian: nameId),
+        startTime: startTime,
+      );
     } on FormatException catch (error) {
-      debugPrint('Failed to parse date for "$name": $error');
+      debugPrint('Failed to parse date for "$nameEn": $error');
       return null;
     }
   }

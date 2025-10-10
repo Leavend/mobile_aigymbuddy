@@ -32,8 +32,8 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   );
 
   static const _scheduleTooltip = LocalizedText(
-    english: 'Templates for schedules coming soon.',
-    indonesian: 'Template untuk jadwal segera hadir.',
+    english: 'Schedule actions',
+    indonesian: 'Aksi jadwal',
   );
 
   static const _scheduleHint = LocalizedText(
@@ -41,7 +41,10 @@ class _AddScheduleViewState extends State<AddScheduleView> {
     indonesian: 'Template jadwal segera hadir.',
   );
 
-  static const _timeLabel = LocalizedText(english: 'Time', indonesian: 'Waktu');
+  static const _timeLabel = LocalizedText(
+    english: 'Time',
+    indonesian: 'Waktu',
+  );
 
   static const _detailsLabel = LocalizedText(
     english: 'Workout Details',
@@ -77,6 +80,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
     english: 'Save',
     indonesian: 'Simpan',
   );
+
   static const _workoutOptions = <_WorkoutOption>[
     _WorkoutOption(
       id: 'upperbody',
@@ -101,22 +105,34 @@ class _AddScheduleViewState extends State<AddScheduleView> {
     ),
     _WorkoutOption(
       id: 'core_burner',
-      label: LocalizedText(english: 'Core Burner', indonesian: 'Pembakar Inti'),
+      label: LocalizedText(
+        english: 'Core Burner',
+        indonesian: 'Pembakar Inti',
+      ),
     ),
   ];
 
   static const _difficultyOptions = <_DifficultyOption>[
     _DifficultyOption(
       id: 'beginner',
-      label: LocalizedText(english: 'Beginner', indonesian: 'Pemula'),
+      label: LocalizedText(
+        english: 'Beginner',
+        indonesian: 'Pemula',
+      ),
     ),
     _DifficultyOption(
       id: 'intermediate',
-      label: LocalizedText(english: 'Intermediate', indonesian: 'Menengah'),
+      label: LocalizedText(
+        english: 'Intermediate',
+        indonesian: 'Menengah',
+      ),
     ),
     _DifficultyOption(
       id: 'advanced',
-      label: LocalizedText(english: 'Advanced', indonesian: 'Lanjutan'),
+      label: LocalizedText(
+        english: 'Advanced',
+        indonesian: 'Lanjutan',
+      ),
     ),
   ];
 
@@ -400,8 +416,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                 const SizedBox(height: 8),
                 ...options.map((option) {
                   final label = labelBuilder(option, language);
-                  final isSelected =
-                      currentValue != null && option == currentValue;
+                  final isSelected = currentValue != null && option == currentValue;
                   return ListTile(
                     title: Text(label),
                     trailing: isSelected
@@ -444,12 +459,16 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   }
 
   String _localizedRepetition(int value, AppLanguage language) {
-    return language == AppLanguage.english ? '$value reps' : '$value repetisi';
+    return language == AppLanguage.english
+        ? '$value reps'
+        : '$value repetisi';
   }
 
   String _localizedWeight(double value, AppLanguage language) {
     final formatted = value.toStringAsFixed(1);
-    return language == AppLanguage.english ? '$formatted kg' : '$formatted kg';
+    return language == AppLanguage.english
+        ? '$formatted kg'
+        : '$formatted kg';
   }
 
   String _formatFullDate(DateTime date, AppLanguage language) {
