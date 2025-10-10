@@ -1,3 +1,5 @@
+// lib/view/splash/launch_view.dart
+
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
