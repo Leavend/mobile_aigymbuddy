@@ -1,39 +1,69 @@
-// lib/view/profile/profile_view.dart
-
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../common/app_router.dart';
-import '../../common/color_extension.dart';
-import '../../common_widget/round_button.dart';
-import '../../common_widget/setting_row.dart';
-import '../../common_widget/title_subtitle_cell.dart';
+import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common_widget/round_button.dart';
+import 'package:aigymbuddy/common_widget/setting_row.dart';
+import 'package:aigymbuddy/common_widget/title_subtitle_cell.dart';
 
 enum _ProfileAction {
   personalData(
-    label: 'Personal Data',
+    label: LocalizedText(
+      english: 'Personal Data',
+      indonesian: 'Data Pribadi',
+    ),
     iconPath: 'assets/img/p_personal.png',
     route: AppRoute.completeProfile,
   ),
   achievement(
-    label: 'Achievement',
+    label: LocalizedText(
+      english: 'Achievement',
+      indonesian: 'Pencapaian',
+    ),
     iconPath: 'assets/img/p_achi.png',
     route: AppRoute.finishedWorkout,
   ),
   activityHistory(
-    label: 'Activity History',
+    label: LocalizedText(
+      english: 'Activity History',
+      indonesian: 'Riwayat Aktivitas',
+    ),
     iconPath: 'assets/img/p_activity.png',
     route: AppRoute.activityTracker,
   ),
   workoutProgress(
-    label: 'Workout Progress',
+    label: LocalizedText(
+      english: 'Workout Progress',
+      indonesian: 'Progres Latihan',
+    ),
     iconPath: 'assets/img/p_workout.png',
     route: AppRoute.workoutTracker,
   ),
-  contactUs(label: 'Contact Us', iconPath: 'assets/img/p_contact.png'),
-  privacyPolicy(label: 'Privacy Policy', iconPath: 'assets/img/p_privacy.png'),
-  settings(label: 'Settings', iconPath: 'assets/img/p_setting.png');
+  contactUs(
+    label: LocalizedText(
+      english: 'Contact Us',
+      indonesian: 'Hubungi Kami',
+    ),
+    iconPath: 'assets/img/p_contact.png',
+  ),
+  privacyPolicy(
+    label: LocalizedText(
+      english: 'Privacy Policy',
+      indonesian: 'Kebijakan Privasi',
+    ),
+    iconPath: 'assets/img/p_privacy.png',
+  ),
+  settings(
+    label: LocalizedText(
+      english: 'Settings',
+      indonesian: 'Pengaturan',
+    ),
+    iconPath: 'assets/img/p_setting.png',
+  );
 
   const _ProfileAction({
     required this.label,
@@ -41,9 +71,95 @@ enum _ProfileAction {
     this.route,
   });
 
-  final String label;
+  final LocalizedText label;
   final String iconPath;
   final String? route;
+}
+
+class _ProfileMetric {
+  const _ProfileMetric({required this.value, required this.label});
+
+  final String value;
+  final LocalizedText label;
+}
+
+class _ProfileStrings {
+  const _ProfileStrings._();
+
+  static const title = LocalizedText(
+    english: 'Profile',
+    indonesian: 'Profil',
+  );
+
+  static const edit = LocalizedText(
+    english: 'Edit',
+    indonesian: 'Ubah',
+  );
+
+  static const program = LocalizedText(
+    english: 'Lose a Fat Program',
+    indonesian: 'Program Kurangi Lemak',
+  );
+
+  static const account = LocalizedText(
+    english: 'Account',
+    indonesian: 'Akun',
+  );
+
+  static const notification = LocalizedText(
+    english: 'Notification',
+    indonesian: 'Notifikasi',
+  );
+
+  static const other = LocalizedText(
+    english: 'Other',
+    indonesian: 'Lainnya',
+  );
+
+  static const popupNotification = LocalizedText(
+    english: 'Pop-up Notification',
+    indonesian: 'Notifikasi Pop-up',
+  );
+
+  static const moreOptions = LocalizedText(
+    english: 'More options',
+    indonesian: 'Opsi lainnya',
+  );
+
+  static const metrics = [
+    _ProfileMetric(
+      value: '180cm',
+      label: LocalizedText(
+        english: 'Height',
+        indonesian: 'Tinggi Badan',
+      ),
+    ),
+    _ProfileMetric(
+      value: '65kg',
+      label: LocalizedText(
+        english: 'Weight',
+        indonesian: 'Berat Badan',
+      ),
+    ),
+    _ProfileMetric(
+      value: '22yo',
+      label: LocalizedText(
+        english: 'Age',
+        indonesian: 'Usia',
+      ),
+    ),
+  ];
+
+  static String comingSoonMessage(
+    AppLanguage language,
+    LocalizedText featureName,
+  ) {
+    final feature = featureName.resolve(language);
+    return switch (language) {
+      AppLanguage.english => '$feature feature is coming soon.',
+      AppLanguage.indonesian => 'Fitur $feature akan hadir segera.',
+    };
+  }
 }
 
 class ProfileView extends StatefulWidget {
@@ -71,49 +187,35 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    final language = context.appLanguage;
+    final localize = context.localize;
+
     return Scaffold(
       backgroundColor: TColor.white,
-      appBar: _buildAppBar(),
+      appBar: _buildAppBar(localize),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildHeader(),
+              _buildHeader(localize),
               const SizedBox(height: 15),
-              const Row(
-                children: [
-                  Expanded(
-                    child: TitleSubtitleCell(
-                      title: '180cm',
-                      subtitle: 'Height',
-                    ),
-                  ),
-                  SizedBox(width: 15),
-                  Expanded(
-                    child: TitleSubtitleCell(title: '65kg', subtitle: 'Weight'),
-                  ),
-                  SizedBox(width: 15),
-                  Expanded(
-                    child: TitleSubtitleCell(title: '22yo', subtitle: 'Age'),
-                  ),
-                ],
+              _buildMetrics(language),
+              const SizedBox(height: 25),
+              _buildSection(
+                title: localize(_ProfileStrings.account),
+                child: _buildMenuList(_accountActions, language),
               ),
               const SizedBox(height: 25),
               _buildSection(
-                title: 'Account',
-                child: _buildMenuList(_accountActions),
-              ),
-              const SizedBox(height: 25),
-              _buildSection(
-                title: 'Notification',
+                title: localize(_ProfileStrings.notification),
                 child: _buildNotificationToggle(),
               ),
               const SizedBox(height: 25),
               _buildSection(
-                title: 'Other',
-                child: _buildMenuList(_otherActions),
+                title: localize(_ProfileStrings.other),
+                child: _buildMenuList(_otherActions, language),
               ),
             ],
           ),
@@ -122,14 +224,14 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar(String Function(LocalizedText) localize) {
     return AppBar(
       backgroundColor: TColor.white,
       elevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: true,
       title: Text(
-        'Profile',
+        localize(_ProfileStrings.title),
         style: TextStyle(
           color: TColor.black,
           fontSize: 16,
@@ -145,7 +247,7 @@ class _ProfileViewState extends State<ProfileView> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: IconButton(
-              onPressed: () => _showComingSoon('More options'),
+              onPressed: () => _showComingSoon(_ProfileStrings.moreOptions),
               icon: Image.asset(
                 'assets/img/more_btn.png',
                 width: 15,
@@ -159,7 +261,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(String Function(LocalizedText) localize) {
     return Row(
       children: [
         ClipRRect(
@@ -185,7 +287,7 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ),
               Text(
-                'Lose a Fat Program',
+                localize(_ProfileStrings.program),
                 style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ],
@@ -195,7 +297,7 @@ class _ProfileViewState extends State<ProfileView> {
           width: 70,
           height: 25,
           child: RoundButton(
-            title: 'Edit',
+            title: localize(_ProfileStrings.edit),
             type: RoundButtonType.bgGradient,
             fontSize: 12,
             fontWeight: FontWeight.w400,
@@ -204,6 +306,29 @@ class _ProfileViewState extends State<ProfileView> {
         ),
       ],
     );
+  }
+
+  Widget _buildMetrics(AppLanguage language) {
+    final metricWidgets = <Widget>[];
+
+    for (var i = 0; i < _ProfileStrings.metrics.length; i++) {
+      final metric = _ProfileStrings.metrics[i];
+      metricWidgets
+        ..add(
+          Expanded(
+            child: TitleSubtitleCell(
+              title: metric.value,
+              subtitle: metric.label.resolve(language),
+            ),
+          ),
+        );
+
+      if (i != _ProfileStrings.metrics.length - 1) {
+        metricWidgets.add(const SizedBox(width: 15));
+      }
+    }
+
+    return Row(children: metricWidgets);
   }
 
   Widget _buildSection({required String title, required Widget child}) {
@@ -232,7 +357,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _buildMenuList(List<_ProfileAction> actions) {
+  Widget _buildMenuList(List<_ProfileAction> actions, AppLanguage language) {
     return ListView.separated(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
@@ -241,7 +366,7 @@ class _ProfileViewState extends State<ProfileView> {
         final action = actions[index];
         return SettingRow(
           icon: action.iconPath,
-          title: action.label,
+          title: action.label.resolve(language),
           onPressed: () => _onActionSelected(action),
         );
       },
@@ -265,7 +390,7 @@ class _ProfileViewState extends State<ProfileView> {
           const SizedBox(width: 15),
           Expanded(
             child: Text(
-              'Pop-up Notification',
+              context.localize(_ProfileStrings.popupNotification),
               style: TextStyle(color: TColor.black, fontSize: 12),
             ),
           ),
@@ -339,12 +464,17 @@ class _ProfileViewState extends State<ProfileView> {
     _showComingSoon(action.label);
   }
 
-  void _showComingSoon(String featureName) {
+  void _showComingSoon(LocalizedText featureName) {
     final messenger = ScaffoldMessenger.of(context);
+    final language = context.appLanguage;
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text('$featureName feature is coming soon.')),
+        SnackBar(
+          content: Text(
+            _ProfileStrings.comingSoonMessage(language, featureName),
+          ),
+        ),
       );
   }
 }
