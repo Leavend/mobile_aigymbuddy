@@ -281,7 +281,7 @@ class _ProfileViewState extends State<ProfileView> {
           ),
         ),
         SizedBox(
-          width: 70,
+          width: 95,
           height: 25,
           child: RoundButton(
             title: localize(_ProfileStrings.edit),

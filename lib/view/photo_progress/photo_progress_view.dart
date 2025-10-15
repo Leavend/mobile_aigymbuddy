@@ -252,8 +252,8 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             ),
           ),
           SizedBox(
-            width: 110,
-            height: 32,
+            width: 125,
+            height: 25,
             child: RoundButton(
               title: localize(_PhotoProgressTexts.compareButton),
               type: RoundButtonType.bgGradient,
