@@ -1,9 +1,6 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/date_time_utils.dart';
-import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -43,8 +40,6 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
     final localize = context.localize;
-    final language = context.appLanguage;
-    final languageController = AppLanguageScope.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -64,28 +59,22 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: SafeArea(
-              child: AppLanguageToggle(
-                selectedLanguage: language,
-                onSelected: languageController.select,
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: _showMoreOptions,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-            icon: Container(
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: Image.asset(
-                'assets/img/more_btn.png',
-                width: 16,
-                height: 16,
-                fit: BoxFit.contain,
+            child: IconButton(
+              onPressed: _showMoreOptions,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+              icon: Container(
+                decoration: BoxDecoration(
+                  color: TColor.lightGray,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Image.asset(
+                  'assets/img/more_btn.png',
+                  width: 16,
+                  height: 16,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
