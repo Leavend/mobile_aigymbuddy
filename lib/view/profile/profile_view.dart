@@ -6,6 +6,7 @@ import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common_widget/app_language_toggle.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/setting_row.dart';
 import 'package:aigymbuddy/common_widget/title_subtitle_cell.dart';
@@ -90,6 +91,16 @@ class _ProfileStrings {
     indonesian: 'Notifikasi',
   );
 
+  static const language = LocalizedText(
+    english: 'Language',
+    indonesian: 'Bahasa',
+  );
+
+  static const languageDescription = LocalizedText(
+    english: 'Select your preferred app language',
+    indonesian: 'Pilih bahasa aplikasi Anda',
+  );
+
   static const other = LocalizedText(english: 'Other', indonesian: 'Lainnya');
 
   static const popupNotification = LocalizedText(
@@ -156,6 +167,7 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     final language = context.appLanguage;
     final localize = context.localize;
+    final languageController = AppLanguageScope.of(context);
 
     return Scaffold(
       backgroundColor: TColor.white,
@@ -173,6 +185,14 @@ class _ProfileViewState extends State<ProfileView> {
               _buildSection(
                 title: localize(_ProfileStrings.account),
                 child: _buildMenuList(_accountActions, language),
+              ),
+              const SizedBox(height: 25),
+              _buildSection(
+                title: localize(_ProfileStrings.language),
+                child: _buildLanguageSection(
+                  language: language,
+                  onSelected: languageController.select,
+                ),
               ),
               const SizedBox(height: 25),
               _buildSection(
@@ -363,6 +383,35 @@ class _ProfileViewState extends State<ProfileView> {
           _buildToggle(),
         ],
       ),
+    );
+  }
+
+  Widget _buildLanguageSection({
+    required AppLanguage language,
+    required ValueChanged<AppLanguage> onSelected,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(Icons.translate, size: 18, color: TColor.primaryColor1),
+        const SizedBox(width: 15),
+        Expanded(
+          child: Text(
+            context.localize(_ProfileStrings.languageDescription),
+            style: TextStyle(color: TColor.black, fontSize: 12),
+          ),
+        ),
+        Flexible(
+          fit: FlexFit.loose,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: AppLanguageToggle(
+              selectedLanguage: language,
+              onSelected: onSelected,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
