@@ -26,9 +26,11 @@ untuk fitur sinkronisasi dan integrasi AI di kemudian hari.
 ### Catatan Platform Web
 
 - Backend Drift memakai WebAssembly resmi dengan penyimpanan IndexedDB. Modul
-  SQLite (`sqlite3.wasm`) dan worker (`drift_worker.js`) otomatis diambil dari
-  paket dependensi pada jalur `assets/packages/<package>/...` sehingga tidak
-  perlu menyalin berkas secara manual.
+  SQLite (`sqlite3.wasm`) dan worker (`drift_worker.js`) telah didaftarkan pada
+  `pubspec.yaml` melalui entri `packages/sqlite3/...` dan
+  `packages/drift/...` sehingga Flutter otomatis menyalinnya ke jalur
+  `assets/packages/<package>/...` saat build. Tidak perlu menyalin berkas
+  secara manual.
 - Jika ingin meng-host file sendiri (misal untuk lingkungan tanpa akses
   internet), setel variabel kompilasi berikut saat build:
   ```bash
