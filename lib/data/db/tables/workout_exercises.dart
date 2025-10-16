@@ -13,6 +13,7 @@ class WorkoutExercises extends Table {
   IntColumn get exerciseId =>
       integer().references(Exercises, #id, onDelete: KeyAction.cascade)();
 
+  // ignore: recursive_getters
   IntColumn get sets => integer().check(sets.isBiggerOrEqualValue(1))();
 
   IntColumn get reps => integer().nullable()();
@@ -21,5 +22,6 @@ class WorkoutExercises extends Table {
 
   IntColumn get restSec => integer()
       .withDefault(const Constant(60))
+      // ignore: recursive_getters
       .check(restSec.isBiggerOrEqualValue(0))();
 }
