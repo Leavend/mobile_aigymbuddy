@@ -1,5 +1,7 @@
+// lib/data/db/connection/connection_factory_web.dart
+
 import 'package:drift/drift.dart';
-import 'package:drift/wasm.dart';
+import 'package:drift/web.dart';
 
 /// Membuka database Drift pada platform web menggunakan backend WebAssembly
 /// resmi. Drift akan memuat modul SQLite dan worker langsung dari paket
