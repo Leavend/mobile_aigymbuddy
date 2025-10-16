@@ -27,7 +27,8 @@ untuk fitur sinkronisasi dan integrasi AI di kemudian hari.
 
 - Backend Drift memakai WebAssembly resmi dengan penyimpanan IndexedDB. Modul
   SQLite (`sqlite3.wasm`) dan worker (`drift_worker.js`) otomatis diambil dari
-  paket dependensi sehingga tidak perlu menyalin berkas secara manual.
+  paket dependensi pada jalur `assets/packages/<package>/...` sehingga tidak
+  perlu menyalin berkas secara manual.
 - Jika ingin meng-host file sendiri (misal untuk lingkungan tanpa akses
   internet), setel variabel kompilasi berikut saat build:
   ```bash

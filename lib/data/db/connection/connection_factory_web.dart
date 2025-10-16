@@ -2,27 +2,40 @@ import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 import 'package:flutter/foundation.dart';
 
-/// Membuka koneksi basis data untuk platform web menggunakan WebAssembly (WASM).
-///
-/// `LazyDatabase` digunakan untuk membungkus inisialisasi `WasmDatabase` yang bersifat
-/// asinkron, sehingga menyediakan [QueryExecutor] secara sinkron sesuai kebutuhan
-/// konstruktor [AppDatabase].
-QueryExecutor createDriftExecutorImpl() {
-  return LazyDatabase(() async {
-    final result = await WasmDatabase.open(
-      databaseName: 'ai_gym_buddy', // Nama basis data Anda
-      sqlite3Uri: Uri.parse('sqlite3.wasm'),
-      driftWorkerUri: Uri.parse('drift_worker.js'),
-    );
+const _defaultSqlite3Path =
+    'assets/packages/sqlite3/wasm/sqlite3.wasm';
+const _defaultWorkerPath =
+    'assets/packages/drift/wasm/drift_worker.js';
 
-    if (result.missingFeatures.isNotEmpty) {
-      // Menangani kasus di mana browser tidak mendukung fitur yang diperlukan.
-      // Anda dapat menampilkan pesan galat kepada pengguna di sini.
-      debugPrint(
-          'Browser ini tidak mendukung semua fitur yang diperlukan untuk basis data.');
-    }
-
-    return result.resolvedExecutor;
-  });
+Uri _resolveUri(String raw) {
+  final uri = Uri.parse(raw);
+  if (uri.hasScheme || uri.hasAuthority) {
+    return uri;
+  }
+  return Uri.base.resolveUri(uri);
 }
 
+/// Membuka database Drift pada platform web menggunakan backend WebAssembly
+/// resmi. Modul sqlite3 dan worker diambil dari paket dependensi bawaan dan
+/// data disimpan ke IndexedDB untuk mendukung skenario offline-first.
+QueryExecutor createDriftExecutorImpl() {
+  const sqlite3Uri = String.fromEnvironment(
+    'DRIFT_SQLITE3_WASM_URI',
+    defaultValue: _defaultSqlite3Path,
+  );
+
+  const driftWorkerUri = String.fromEnvironment(
+    'DRIFT_WORKER_URI',
+    defaultValue: _defaultWorkerPath,
+  );
+
+  return LazyDatabase(() async {
+    final options = DriftWebOptions(
+      sqlite3Uri: _resolveUri(sqlite3Uri),
+      driftWorkerUri: _resolveUri(driftWorkerUri),
+      storage: DriftWebStorage.indexedDb('ai_gym_buddy'),
+    );
+
+    return WasmDatabase.open(options);
+  });
+}
