@@ -33,16 +33,24 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
   TrackingDao(super.db);
 
   /// Creates a session for the given [workoutId].
-  Future<int> startSession(int workoutId) {
+  Future<int> startSession(int workoutId, {String? note}) {
     return into(
       sessions,
-    ).insert(SessionsCompanion.insert(workoutId: workoutId));
+    ).insert(
+      SessionsCompanion.insert(
+        workoutId: workoutId,
+        note: Value(note),
+      ),
+    );
   }
 
   /// Sets the session [endedAt] timestamp to now.
-  Future<void> endSession(int sessionId) {
+  Future<void> endSession(int sessionId, {String? note}) {
     return (update(sessions)..where((tbl) => tbl.id.equals(sessionId))).write(
-      SessionsCompanion(endedAt: Value(DateTime.now().toUtc())),
+      SessionsCompanion(
+        endedAt: Value(DateTime.now().toUtc()),
+        note: Value(note),
+      ),
     );
   }
 
