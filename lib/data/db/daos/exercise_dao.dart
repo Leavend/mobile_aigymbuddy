@@ -40,6 +40,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<Exercise?> getById(int id) {
-    return (select(exercises)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+    return (select(exercises)..where((tbl) => tbl.id.equals(id)))
+        .getSingleOrNull();
   }
 }

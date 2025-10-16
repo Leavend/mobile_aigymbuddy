@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+// lib/app/app_state.dart
+
 import 'package:flutter/widgets.dart';
 
 /// Global application state shared with the router for launch decisions.
@@ -27,8 +28,7 @@ class AppStateScope extends InheritedNotifier<AppStateController> {
   }) : super(notifier: controller);
 
   static AppStateController of(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<AppStateScope>();
+    final scope = context.dependOnInheritedWidgetOfExactType<AppStateScope>();
     assert(scope != null, 'AppStateScope not found in context');
     return scope!.notifier!;
   }
