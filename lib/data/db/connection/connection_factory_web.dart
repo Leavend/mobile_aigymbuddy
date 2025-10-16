@@ -1,31 +1,28 @@
-// lib/data/db/connection/connection_factory_web.dart
-
 import 'package:drift/drift.dart';
-import 'package:drift/web.dart';
+import 'package:drift/wasm.dart';
+import 'package:flutter/foundation.dart';
 
-/// Membuka database Drift pada platform web menggunakan backend WebAssembly
-/// resmi. Drift akan memuat modul SQLite dan worker langsung dari paket
-/// dependensi (`packages/sqlite3/wasm/sqlite3.wasm` dan
-/// `packages/drift/wasm/drift_worker.js`) sehingga tidak perlu menyalin file
-/// secara manual.
+/// Membuka koneksi basis data untuk platform web menggunakan WebAssembly (WASM).
+///
+/// `LazyDatabase` digunakan untuk membungkus inisialisasi `WasmDatabase` yang bersifat
+/// asinkron, sehingga menyediakan [QueryExecutor] secara sinkron sesuai kebutuhan
+/// konstruktor [AppDatabase].
 QueryExecutor createDriftExecutorImpl() {
-  const sqlite3Uri = String.fromEnvironment(
-    'DRIFT_SQLITE3_WASM_URI',
-    defaultValue: 'packages/sqlite3/wasm/sqlite3.wasm',
-  );
-
-  const driftWorkerUri = String.fromEnvironment(
-    'DRIFT_WORKER_URI',
-    defaultValue: 'packages/drift/wasm/drift_worker.js',
-  );
-
   return LazyDatabase(() async {
-    final options = DriftWebOptions(
-      sqlite3Uri: Uri.parse(sqlite3Uri),
-      driftWorkerUri: Uri.parse(driftWorkerUri),
-      storage: DriftWebStorage.indexedDb('ai_gym_buddy'),
+    final result = await WasmDatabase.open(
+      databaseName: 'ai_gym_buddy', // Nama basis data Anda
+      sqlite3Uri: Uri.parse('sqlite3.wasm'),
+      driftWorkerUri: Uri.parse('drift_worker.js'),
     );
 
-    return await WasmDatabase.open(options);
+    if (result.missingFeatures.isNotEmpty) {
+      // Menangani kasus di mana browser tidak mendukung fitur yang diperlukan.
+      // Anda dapat menampilkan pesan galat kepada pengguna di sini.
+      debugPrint(
+          'Browser ini tidak mendukung semua fitur yang diperlukan untuk basis data.');
+    }
+
+    return result.resolvedExecutor;
   });
 }
+
