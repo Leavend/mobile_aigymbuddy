@@ -1,5 +1,7 @@
+// lib/data/db/connection/connection_factory_web.dart
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
+import 'package:flutter/foundation.dart';
 
 // Default asset locations declared in pubspec.yaml so Flutter copies the files
 // from the drift and sqlite3 packages into the compiled web bundle.

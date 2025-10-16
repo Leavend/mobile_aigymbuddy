@@ -9,15 +9,11 @@ part 'exercise_dao.g.dart';
 @DriftAccessor(tables: [Exercises])
 class ExerciseDao extends DatabaseAccessor<AppDatabase>
     with _$ExerciseDaoMixin {
-  /// Membuat instance DAO yang terhubung ke database yang diberikan.
   ExerciseDao(super.db);
-
-  /// Menyisipkan beberapa baris exercise dan mengabaikan duplikat.
   Future<void> insertMany(List<ExercisesCompanion> entries) async {
     if (entries.isEmpty) return;
 
     await batch((batch) {
-      // Menggunakan mode InsertMode.insertOrIgnore untuk menangani konflik.
       batch.insertAll(exercises, entries, mode: InsertMode.insertOrIgnore);
     });
   }
@@ -28,7 +24,6 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase>
       ..orderBy([(tbl) => OrderingTerm.asc(tbl.name)]);
 
     if (mode != null) {
-      // Menyaring exercise yang cocok dengan mode yang diberikan atau 'both'.
       query.where((tbl) => tbl.mode.equals(mode) | tbl.mode.equals('both'));
     }
 
