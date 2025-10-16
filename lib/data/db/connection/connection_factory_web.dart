@@ -1,19 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:drift/wasm.dart';
+import 'package:drift/web.dart';
 
-/// Membuka koneksi basis data untuk platform web menggunakan WebAssembly (WASM).
-///
-/// `LazyDatabase` digunakan untuk membungkus inisialisasi `WasmDatabase` yang bersifat
-/// asinkron, sehingga menyediakan [QueryExecutor] secara sinkron sesuai kebutuhan
-/// konstruktor [AppDatabase].
+/// Menggunakan penyimpanan IndexedDB bawaan Drift untuk platform web sehingga
+/// tidak membutuhkan aset tambahan seperti `sqlite3.wasm`.
 QueryExecutor createDriftExecutorImpl() {
-  return LazyDatabase(() async {
-    final dbResult = await WasmDatabase.open(
-      databaseName: 'ai_gym_buddy', // Nama basis data Anda
-      sqlite3Uri: Uri.parse('sqlite3.wasm'),
-      driftWorkerUri: Uri.parse('drift_worker.js'),
-    );
-    return dbResult.resolvedExecutor;
-  });
+  return WebDatabase.withStorage(
+    DriftWebStorage.indexedDb('ai_gym_buddy'),
+  );
 }
 
