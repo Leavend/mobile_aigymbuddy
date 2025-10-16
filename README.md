@@ -1,16 +1,39 @@
-# aigymbuddy
+# AI Gym Buddy
 
-A new Flutter project.
+MVP aplikasi latihan pribadi dengan penyimpanan offline-first berbasis Drift
+(`SQLite`). Proyek disiapkan dengan arsitektur bersih agar mudah dikembangkan
+untuk fitur sinkronisasi dan integrasi AI di kemudian hari.
 
-## Getting Started
+## Menjalankan Proyek
 
-This project is a starting point for a Flutter application.
+1. **Pasang dependensi**
+   ```bash
+   flutter pub get
+   ```
 
-A few resources to get you started if this is your first Flutter project:
+2. **Jalankan code generation Drift** setiap kali ada perubahan pada tabel atau
+   DAO.
+   ```bash
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+3. **Jalankan aplikasi**
+   ```bash
+   flutter run            # perangkat/emulator mobile
+   flutter run -d chrome  # build web
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Catatan Platform Web
+
+- Backend Drift memakai WebAssembly resmi dengan penyimpanan IndexedDB. Modul
+  SQLite (`sqlite3.wasm`) dan worker (`drift_worker.js`) telah didaftarkan pada
+  `pubspec.yaml` melalui entri `packages/sqlite3/...` dan
+  `packages/drift/...` sehingga Flutter otomatis menyalinnya ke jalur
+  `assets/packages/<package>/...` saat build. Tidak perlu menyalin berkas
+  secara manual.
+- Jika ingin meng-host file sendiri (misal untuk lingkungan tanpa akses
+  internet), setel variabel kompilasi berikut saat build:
+  ```bash
+  flutter run -d chrome --dart-define=DRIFT_SQLITE3_WASM_URI=/path/sqlite3.wasm \
+                               --dart-define=DRIFT_WORKER_URI=/path/drift_worker.js
+  ```
