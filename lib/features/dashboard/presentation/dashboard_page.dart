@@ -578,7 +578,7 @@ class WorkoutLogSection extends StatelessWidget {
               const Text('Katalog latihan belum tersedia.'),
             if (exercises.isNotEmpty)
               DropdownButtonFormField<ExerciseSummary>(
-                value: selectedExercise,
+                initialValue: selectedExercise,
                 items: exercises
                     .map(
                       (exercise) => DropdownMenuItem(

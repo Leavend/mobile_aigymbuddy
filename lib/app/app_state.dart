@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+// lib/app/app_state.dart
+
 import 'package:flutter/widgets.dart';
 
 /// Global application state shared with the router for launch decisions.

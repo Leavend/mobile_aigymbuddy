@@ -1,3 +1,5 @@
+// lib/data/db/app_database.dart
+
 import 'package:drift/drift.dart';
 
 import 'connection/connection_factory.dart';
@@ -30,7 +32,7 @@ part 'app_database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(createDriftExecutor());
 
-  AppDatabase.forTesting(QueryExecutor executor) : super(executor);
+  AppDatabase.forTesting(super.executor);
 
   @override
   int get schemaVersion => 1;
@@ -49,3 +51,4 @@ class AppDatabase extends _$AppDatabase {
         },
       );
 }
+

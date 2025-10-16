@@ -216,7 +216,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<Gender>(
-                      value: _selectedGender,
+                      initialValue: _selectedGender,
                       items: Gender.values
                           .map(
                             (gender) => DropdownMenuItem(
@@ -234,7 +234,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<FitnessGoal>(
-                      value: _selectedGoal,
+                      initialValue: _selectedGoal,
                       items: FitnessGoal.values
                           .map(
                             (goal) => DropdownMenuItem(
@@ -252,7 +252,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<ExperienceLevel>(
-                      value: _selectedLevel,
+                      initialValue: _selectedLevel,
                       items: ExperienceLevel.values
                           .map(
                             (level) => DropdownMenuItem(
@@ -270,7 +270,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<WorkoutMode>(
-                      value: _selectedMode,
+                      initialValue: _selectedMode,
                       items: WorkoutMode.values
                           .map(
                             (mode) => DropdownMenuItem(

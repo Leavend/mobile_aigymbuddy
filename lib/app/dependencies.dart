@@ -1,3 +1,5 @@
+// lib/app/dependencies.dart
+
 import 'package:flutter/widgets.dart';
 
 import '../data/db/app_database.dart';
@@ -10,7 +12,7 @@ import '../features/tracking/domain/tracking_repository.dart';
 
 /// Aggregates repositories and exposes them through the widget tree.
 class AppDependencies extends InheritedWidget {
-  AppDependencies._({
+  const AppDependencies._({
     super.key,
     required this.profileRepository,
     required this.exerciseRepository,
