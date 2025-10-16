@@ -22,10 +22,10 @@ class ExerciseListItem {
   final String subtitle;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'image': imageAsset,
-    'title': title,
-    'value': subtitle,
-  };
+        'image': imageAsset,
+        'title': title,
+        'value': subtitle,
+      };
 }
 
 class ExercisesRow extends StatelessWidget {

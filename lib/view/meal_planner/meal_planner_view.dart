@@ -165,7 +165,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           lineTouchData: LineTouchData(
             enabled: true,
             handleBuiltInTouches: false,
-            touchCallback: (_, _) {},
+            touchCallback: (_, __) {},
             mouseCursorResolver: (event, response) {
               final spots = response?.lineBarSpots;
               if (spots == null || spots.isEmpty) {
@@ -182,11 +182,11 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                         show: true,
                         getDotPainter: (spot, percent, barData, index) =>
                             FlDotCirclePainter(
-                              radius: 3,
-                              color: Colors.white,
-                              strokeWidth: 3,
-                              strokeColor: TColor.secondaryColor1,
-                            ),
+                          radius: 3,
+                          color: Colors.white,
+                          strokeWidth: 3,
+                          strokeColor: TColor.secondaryColor1,
+                        ),
                       ),
                     ),
                   )
@@ -368,52 +368,53 @@ class _MealPlannerViewState extends State<MealPlannerView> {
   }
 
   List<LineChartBarData> get _lineBars => [
-    LineChartBarData(
-      isCurved: true,
-      gradient: LinearGradient(
-        colors: [TColor.primaryColor2, TColor.primaryColor1],
-      ),
-      barWidth: 2,
-      isStrokeCapRound: true,
-      dotData: FlDotData(
-        show: true,
-        getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-          radius: 3,
-          color: Colors.white,
-          strokeWidth: 1,
-          strokeColor: TColor.primaryColor2,
+        LineChartBarData(
+          isCurved: true,
+          gradient: LinearGradient(
+            colors: [TColor.primaryColor2, TColor.primaryColor1],
+          ),
+          barWidth: 2,
+          isStrokeCapRound: true,
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) =>
+                FlDotCirclePainter(
+              radius: 3,
+              color: Colors.white,
+              strokeWidth: 1,
+              strokeColor: TColor.primaryColor2,
+            ),
+          ),
+          belowBarData: BarAreaData(show: false),
+          spots: const [
+            FlSpot(1, 35),
+            FlSpot(2, 70),
+            FlSpot(3, 40),
+            FlSpot(4, 80),
+            FlSpot(5, 25),
+            FlSpot(6, 70),
+            FlSpot(7, 35),
+          ],
         ),
-      ),
-      belowBarData: BarAreaData(show: false),
-      spots: const [
-        FlSpot(1, 35),
-        FlSpot(2, 70),
-        FlSpot(3, 40),
-        FlSpot(4, 80),
-        FlSpot(5, 25),
-        FlSpot(6, 70),
-        FlSpot(7, 35),
-      ],
-    ),
-  ];
+      ];
 
   SideTitles get _rightTitles => SideTitles(
-    showTitles: true,
-    interval: 20,
-    reservedSize: 40,
-    getTitlesWidget: (value, meta) {
-      const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
-      final index = value ~/ 20;
-      if (index < 0 || index >= labels.length) {
-        return const SizedBox.shrink();
-      }
-      return Text(
-        labels[index],
-        style: TextStyle(color: TColor.gray, fontSize: 12),
-        textAlign: TextAlign.center,
+        showTitles: true,
+        interval: 20,
+        reservedSize: 40,
+        getTitlesWidget: (value, meta) {
+          const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
+          final index = value ~/ 20;
+          if (index < 0 || index >= labels.length) {
+            return const SizedBox.shrink();
+          }
+          return Text(
+            labels[index],
+            style: TextStyle(color: TColor.gray, fontSize: 12),
+            textAlign: TextAlign.center,
+          );
+        },
       );
-    },
-  );
 
   SideTitles _buildBottomTitles(AppLanguage language) {
     return SideTitles(
@@ -422,8 +423,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       interval: 1,
       getTitlesWidget: (value, meta) {
         final index = value.toInt() - 1;
-        final label =
-            (index >= 0 &&
+        final label = (index >= 0 &&
                 index < _MealPlannerStrings.weekdayAbbreviations.length)
             ? _MealPlannerStrings.weekdayAbbreviations[index].resolve(language)
             : '';

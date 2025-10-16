@@ -303,7 +303,7 @@ class _ResultViewState extends State<ResultView> {
           shrinkWrap: true,
           padding: const EdgeInsets.symmetric(vertical: 16),
           itemCount: _photoComparisons.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 16),
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final comparison = _photoComparisons[index];
             return Column(
@@ -413,7 +413,7 @@ class _ResultViewState extends State<ResultView> {
           shrinkWrap: true,
           padding: const EdgeInsets.symmetric(vertical: 16),
           itemCount: _statistics.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 16),
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final stat = _statistics[index];
             return Column(
@@ -531,106 +531,106 @@ class _ResultViewState extends State<ResultView> {
   }
 
   LineTouchData _lineTouchData(AppLanguage language) => LineTouchData(
-    enabled: true,
-    handleBuiltInTouches: true,
-    touchTooltipData: LineTouchTooltipData(
-      getTooltipItems: (spots) => spots
-          .map(
-            (spot) => LineTooltipItem(
-              _ResultTexts.minutesAgo(language, spot.x.toInt()),
-              const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
-          .toList(),
-    ),
-  );
+        enabled: true,
+        handleBuiltInTouches: true,
+        touchTooltipData: LineTouchTooltipData(
+          getTooltipItems: (spots) => spots
+              .map(
+                (spot) => LineTooltipItem(
+                  _ResultTexts.minutesAgo(language, spot.x.toInt()),
+                  const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      );
 
   List<LineChartBarData> get _lineBarsData => [
-    LineChartBarData(
-      isCurved: true,
-      gradient: LinearGradient(colors: TColor.primaryG),
-      barWidth: 3,
-      isStrokeCapRound: true,
-      dotData: const FlDotData(show: false),
-      belowBarData: BarAreaData(show: false),
-      spots: const [
-        FlSpot(1, 35),
-        FlSpot(2, 70),
-        FlSpot(3, 40),
-        FlSpot(4, 80),
-        FlSpot(5, 25),
-        FlSpot(6, 70),
-        FlSpot(7, 35),
-      ],
-    ),
-    LineChartBarData(
-      isCurved: true,
-      gradient: LinearGradient(
-        colors: [
-          TColor.secondaryColor2.withValues(alpha: 0.5),
-          TColor.secondaryColor1.withValues(alpha: 0.5),
-        ],
-      ),
-      barWidth: 2,
-      isStrokeCapRound: true,
-      dotData: const FlDotData(show: false),
-      belowBarData: BarAreaData(show: false),
-      spots: const [
-        FlSpot(1, 80),
-        FlSpot(2, 50),
-        FlSpot(3, 90),
-        FlSpot(4, 40),
-        FlSpot(5, 80),
-        FlSpot(6, 35),
-        FlSpot(7, 60),
-      ],
-    ),
-  ];
+        LineChartBarData(
+          isCurved: true,
+          gradient: LinearGradient(colors: TColor.primaryG),
+          barWidth: 3,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(show: false),
+          belowBarData: BarAreaData(show: false),
+          spots: const [
+            FlSpot(1, 35),
+            FlSpot(2, 70),
+            FlSpot(3, 40),
+            FlSpot(4, 80),
+            FlSpot(5, 25),
+            FlSpot(6, 70),
+            FlSpot(7, 35),
+          ],
+        ),
+        LineChartBarData(
+          isCurved: true,
+          gradient: LinearGradient(
+            colors: [
+              TColor.secondaryColor2.withValues(alpha: 0.5),
+              TColor.secondaryColor1.withValues(alpha: 0.5),
+            ],
+          ),
+          barWidth: 2,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(show: false),
+          belowBarData: BarAreaData(show: false),
+          spots: const [
+            FlSpot(1, 80),
+            FlSpot(2, 50),
+            FlSpot(3, 90),
+            FlSpot(4, 40),
+            FlSpot(5, 80),
+            FlSpot(6, 35),
+            FlSpot(7, 60),
+          ],
+        ),
+      ];
 
   SideTitles get _rightTitles => SideTitles(
-    showTitles: true,
-    interval: 20,
-    reservedSize: 40,
-    getTitlesWidget: (value, _) {
-      switch (value.toInt()) {
-        case 0:
-        case 20:
-        case 40:
-        case 60:
-        case 80:
-        case 100:
-          return Text(
-            '${value.toInt()}%',
-            style: TextStyle(color: TColor.gray, fontSize: 12),
-            textAlign: TextAlign.center,
-          );
-        default:
-          return const SizedBox.shrink();
-      }
-    },
-  );
+        showTitles: true,
+        interval: 20,
+        reservedSize: 40,
+        getTitlesWidget: (value, _) {
+          switch (value.toInt()) {
+            case 0:
+            case 20:
+            case 40:
+            case 60:
+            case 80:
+            case 100:
+              return Text(
+                '${value.toInt()}%',
+                style: TextStyle(color: TColor.gray, fontSize: 12),
+                textAlign: TextAlign.center,
+              );
+            default:
+              return const SizedBox.shrink();
+          }
+        },
+      );
 
   SideTitles _bottomTitles(AppLanguage language) => SideTitles(
-    showTitles: true,
-    reservedSize: 32,
-    interval: 1,
-    getTitlesWidget: (value, meta) {
-      final style = TextStyle(color: TColor.gray, fontSize: 12);
-      final label = _ResultTexts.monthShortLabel(language, value.toInt());
-      if (label == null) {
-        return const SizedBox.shrink();
-      }
-      return SideTitleWidget(
-        meta: meta,
-        space: 10,
-        child: Text(label, style: style),
+        showTitles: true,
+        reservedSize: 32,
+        interval: 1,
+        getTitlesWidget: (value, meta) {
+          final style = TextStyle(color: TColor.gray, fontSize: 12);
+          final label = _ResultTexts.monthShortLabel(language, value.toInt());
+          if (label == null) {
+            return const SizedBox.shrink();
+          }
+          return SideTitleWidget(
+            meta: meta,
+            space: 10,
+            child: Text(label, style: style),
+          );
+        },
       );
-    },
-  );
 }
 
 enum _ResultTab { photo, statistic }
@@ -737,9 +737,8 @@ final class _ResultTexts {
   }
 
   static String minutesAgo(AppLanguage language, int minutes) {
-    final suffix = language == AppLanguage.indonesian
-        ? 'menit lalu'
-        : 'mins ago';
+    final suffix =
+        language == AppLanguage.indonesian ? 'menit lalu' : 'mins ago';
     return '$minutes $suffix';
   }
 }

@@ -29,9 +29,9 @@ class RoundButton extends StatelessWidget {
     this.borderRadius = const BorderRadius.all(Radius.circular(25)),
     this.isEnabled = true,
     this.textStyle,
-  }) : assert(height > 0, 'height must be greater than zero'),
-       assert(fontSize > 0, 'fontSize must be greater than zero'),
-       assert(elevation >= 0, 'elevation cannot be negative');
+  })  : assert(height > 0, 'height must be greater than zero'),
+        assert(fontSize > 0, 'fontSize must be greater than zero'),
+        assert(elevation >= 0, 'elevation cannot be negative');
 
   final String title;
   final RoundButtonType type;

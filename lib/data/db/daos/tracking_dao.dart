@@ -1,3 +1,5 @@
+// lib/data/db/daos/tracking_dao.dart
+
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
@@ -28,11 +30,13 @@ class WeightPoint {
 @DriftAccessor(tables: [Sessions, SetLogs, WorkoutExercises, BodyWeightEntries])
 class TrackingDao extends DatabaseAccessor<AppDatabase>
     with _$TrackingDaoMixin {
-  TrackingDao(AppDatabase db) : super(db);
+  TrackingDao(super.db);
 
   /// Creates a session for the given [workoutId].
   Future<int> startSession(int workoutId) {
-    return into(sessions).insert(SessionsCompanion.insert(workoutId: workoutId));
+    return into(
+      sessions,
+    ).insert(SessionsCompanion.insert(workoutId: workoutId));
   }
 
   /// Sets the session [endedAt] timestamp to now.
@@ -51,20 +55,23 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
     double? weight,
     String? note,
   }) {
-    return into(setLogs).insert(SetLogsCompanion.insert(
-      sessionId: sessionId,
-      workoutExerciseId: workoutExerciseId,
-      setIndex: setIndex,
-      reps: Value(reps),
-      weight: Value(weight),
-      note: Value(note),
-    ));
+    return into(setLogs).insert(
+      SetLogsCompanion.insert(
+        sessionId: sessionId,
+        workoutExerciseId: workoutExerciseId,
+        setIndex: setIndex,
+        reps: Value(reps),
+        weight: Value(weight),
+        note: Value(note),
+      ),
+    );
   }
 
   /// Records a body weight entry at the current timestamp.
   Future<int> insertBodyWeight(double weightKg) {
-    return into(bodyWeightEntries)
-        .insert(BodyWeightEntriesCompanion.insert(weightKg: weightKg));
+    return into(
+      bodyWeightEntries,
+    ).insert(BodyWeightEntriesCompanion.insert(weightKg: weightKg));
   }
 
   /// Calculates aggregated weekly training volume for the last [weeks].

@@ -23,11 +23,11 @@ import 'tables/workouts.dart';
 part 'app_database.g.dart';
 
 LazyDatabase _openConnection() => LazyDatabase(() async {
-  final dir = await getApplicationDocumentsDirectory();
-  final file = File(p.join(dir.path, 'ai_gym_buddy.sqlite'));
-  final executor = NativeDatabase.createInBackground(file);
-  return executor;
-});
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dir.path, 'ai_gym_buddy.sqlite'));
+      final executor = NativeDatabase.createInBackground(file);
+      return executor;
+    });
 
 @DriftDatabase(
   tables: [
@@ -39,12 +39,7 @@ LazyDatabase _openConnection() => LazyDatabase(() async {
     SetLogs,
     BodyWeightEntries,
   ],
-  daos: [
-    UserProfileDao,
-    ExerciseDao,
-    WorkoutDao,
-    TrackingDao,
-  ],
+  daos: [UserProfileDao, ExerciseDao, WorkoutDao, TrackingDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());

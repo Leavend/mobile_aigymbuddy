@@ -350,8 +350,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
     final clamped = target.isBefore(_firstAvailableDate)
         ? _firstAvailableDate
         : target.isAfter(_lastAvailableDate)
-        ? _lastAvailableDate
-        : target;
+            ? _lastAvailableDate
+            : target;
     _selectedDate = clamped;
     _calendarController.goToDay(clamped);
     _updateEventsForSelectedDay();

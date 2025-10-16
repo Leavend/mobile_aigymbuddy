@@ -489,11 +489,10 @@ class _MealScheduleStrings {
     final itemLabel = language == AppLanguage.indonesian
         ? 'Menu'
         : itemCount == 1
-        ? 'Item'
-        : 'Items';
-    final calorieLabel = language == AppLanguage.indonesian
-        ? 'kalori'
-        : 'calories';
+            ? 'Item'
+            : 'Items';
+    final calorieLabel =
+        language == AppLanguage.indonesian ? 'kalori' : 'calories';
     return '$itemCount $itemLabel | $calories $calorieLabel';
   }
 }

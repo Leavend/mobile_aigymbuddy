@@ -158,8 +158,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     );
 
     if (picked != null) {
-      final formatted =
-          '${picked.year.toString().padLeft(4, '0')}-'
+      final formatted = '${picked.year.toString().padLeft(4, '0')}-'
           '${picked.month.toString().padLeft(2, '0')}-'
           '${picked.day.toString().padLeft(2, '0')}';
       _dobController.text = formatted;
@@ -523,10 +522,11 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
-    _Gender.female => const LocalizedText(
-      english: 'Female',
-      indonesian: 'Wanita',
-    ),
-  };
+        _Gender.male =>
+          const LocalizedText(english: 'Male', indonesian: 'Pria'),
+        _Gender.female => const LocalizedText(
+            english: 'Female',
+            indonesian: 'Wanita',
+          ),
+      };
 }

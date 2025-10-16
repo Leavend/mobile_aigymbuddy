@@ -379,9 +379,8 @@ class WorkoutTrackerView extends StatelessWidget {
   }
 
   LineChartData _buildChartData(AppLanguage language) {
-    final tooltipSuffix = language == AppLanguage.english
-        ? 'mins ago'
-        : 'menit lalu';
+    final tooltipSuffix =
+        language == AppLanguage.english ? 'mins ago' : 'menit lalu';
 
     return LineChartData(
       lineTouchData: LineTouchData(

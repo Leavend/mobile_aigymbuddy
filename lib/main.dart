@@ -2,7 +2,6 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 
 import 'data/db/app_database.dart';
-import 'data/db/tables/user_profiles.dart';
 import 'data/seed/seed_repository.dart';
 
 Future<void> main() async {
@@ -15,16 +14,18 @@ Future<void> main() async {
   final profileDao = database.userProfileDao;
   final profile = await profileDao.getSingle();
   if (profile == null) {
-    await profileDao.upsert(UserProfilesCompanion.insert(
-      name: const Value('Alex Gymgoer'),
-      age: 28,
-      heightCm: 175.0,
-      weightKg: 72.5,
-      gender: 'other',
-      goal: 'build_muscle',
-      level: 'intermediate',
-      preferredMode: 'gym',
-    ));
+    await profileDao.upsert(
+      UserProfilesCompanion.insert(
+        name: const Value('Alex Gymgoer'),
+        age: 28,
+        heightCm: 175.0,
+        weightKg: 72.5,
+        gender: 'other',
+        goal: 'build_muscle',
+        level: 'intermediate',
+        preferredMode: 'gym',
+      ),
+    );
   }
 
   runApp(DatabaseDemoApp(database: database));
@@ -82,20 +83,27 @@ class DemoHome extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Welcome, ${profile.name ?? 'Gym Buddy'}',
-                    style: Theme.of(context).textTheme.headlineSmall),
+                Text(
+                  'Welcome, ${profile.name ?? 'Gym Buddy'}',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
                 const SizedBox(height: 12),
                 Text('Goal: ${profile.goal}'),
                 Text('Level: ${profile.level}'),
                 const SizedBox(height: 24),
                 FutureBuilder<int>(
-                  future: database.exerciseDao.list().then((value) => value.length),
+                  future: database.exerciseDao.list().then(
+                        (value) => value.length,
+                      ),
                   builder: (context, exercisesSnapshot) {
-                    if (exercisesSnapshot.connectionState != ConnectionState.done) {
+                    if (exercisesSnapshot.connectionState !=
+                        ConnectionState.done) {
                       return const CircularProgressIndicator();
                     }
 
-                    return Text('Seeded exercises: ${exercisesSnapshot.data ?? 0}');
+                    return Text(
+                      'Seeded exercises: ${exercisesSnapshot.data ?? 0}',
+                    );
                   },
                 ),
               ],

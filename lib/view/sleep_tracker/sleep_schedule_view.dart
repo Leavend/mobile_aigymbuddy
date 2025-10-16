@@ -1,5 +1,3 @@
-// lib/view/sleep_tracker/sleep_schedule_view.dart
-
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
@@ -248,7 +246,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _todaySchedule.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) =>
           TodaySleepScheduleRow(schedule: _todaySchedule[index]),
     );

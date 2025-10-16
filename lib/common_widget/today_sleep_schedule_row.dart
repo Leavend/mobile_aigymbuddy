@@ -45,7 +45,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
               width: 40,
               height: 40,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(
+              errorBuilder: (_, __, ___) => Container(
                 width: 40,
                 height: 40,
                 color: TColor.lightGray,

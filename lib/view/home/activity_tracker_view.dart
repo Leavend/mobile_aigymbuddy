@@ -360,9 +360,8 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
     final labels = _TrackerStrings.weekdayShort;
     final idx = value.toInt();
-    final text = (idx >= 0 && idx < labels.length)
-        ? labels[idx].resolve(language)
-        : '';
+    final text =
+        (idx >= 0 && idx < labels.length) ? labels[idx].resolve(language) : '';
     return SideTitleWidget(
       meta: meta,
       space: 16,
@@ -371,60 +370,60 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
   }
 
   List<BarChartGroupData> _buildBarGroups() => List.generate(7, (index) {
-    switch (index) {
-      case 0:
-        return _buildGroupData(
-          0,
-          5,
-          TColor.primaryG,
-          isTouched: index == _touchedBarIndex,
-        );
-      case 1:
-        return _buildGroupData(
-          1,
-          10.5,
-          TColor.secondaryG,
-          isTouched: index == _touchedBarIndex,
-        );
-      case 2:
-        return _buildGroupData(
-          2,
-          5,
-          TColor.primaryG,
-          isTouched: index == _touchedBarIndex,
-        );
-      case 3:
-        return _buildGroupData(
-          3,
-          7.5,
-          TColor.secondaryG,
-          isTouched: index == _touchedBarIndex,
-        );
-      case 4:
-        return _buildGroupData(
-          4,
-          15,
-          TColor.primaryG,
-          isTouched: index == _touchedBarIndex,
-        );
-      case 5:
-        return _buildGroupData(
-          5,
-          5.5,
-          TColor.secondaryG,
-          isTouched: index == _touchedBarIndex,
-        );
-      case 6:
-        return _buildGroupData(
-          6,
-          8.5,
-          TColor.primaryG,
-          isTouched: index == _touchedBarIndex,
-        );
-      default:
-        throw StateError('Invalid index $index');
-    }
-  });
+        switch (index) {
+          case 0:
+            return _buildGroupData(
+              0,
+              5,
+              TColor.primaryG,
+              isTouched: index == _touchedBarIndex,
+            );
+          case 1:
+            return _buildGroupData(
+              1,
+              10.5,
+              TColor.secondaryG,
+              isTouched: index == _touchedBarIndex,
+            );
+          case 2:
+            return _buildGroupData(
+              2,
+              5,
+              TColor.primaryG,
+              isTouched: index == _touchedBarIndex,
+            );
+          case 3:
+            return _buildGroupData(
+              3,
+              7.5,
+              TColor.secondaryG,
+              isTouched: index == _touchedBarIndex,
+            );
+          case 4:
+            return _buildGroupData(
+              4,
+              15,
+              TColor.primaryG,
+              isTouched: index == _touchedBarIndex,
+            );
+          case 5:
+            return _buildGroupData(
+              5,
+              5.5,
+              TColor.secondaryG,
+              isTouched: index == _touchedBarIndex,
+            );
+          case 6:
+            return _buildGroupData(
+              6,
+              8.5,
+              TColor.primaryG,
+              isTouched: index == _touchedBarIndex,
+            );
+          default:
+            throw StateError('Invalid index $index');
+        }
+      });
 
   BarChartGroupData _buildGroupData(
     int x,

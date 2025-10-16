@@ -275,8 +275,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       IconTitleNextRow(
                         icon: 'assets/img/time.png',
                         title: _scheduleWorkoutLabel.resolve(language),
-                        time:
-                            _workout['time']?.toString() ??
+                        time: _workout['time']?.toString() ??
                             (language == AppLanguage.english
                                 ? '5/27, 09:00 AM'
                                 : '27/5, 09.00'),
@@ -288,8 +287,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       IconTitleNextRow(
                         icon: 'assets/img/difficulity.png',
                         title: _difficultyLabel.resolve(language),
-                        time:
-                            _workout['difficulty']?.toString() ??
+                        time: _workout['difficulty']?.toString() ??
                             _defaultDifficulty.resolve(language),
                         color: TColor.secondaryColor2.withValues(alpha: 0.3),
                         onPressed: _showDifficultyInfo,
@@ -395,11 +393,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   }
 
   Widget _buildWorkoutHeader(BuildContext context, AppLanguage language) {
-    final exercises =
-        _workout['exercises']?.toString() ??
+    final exercises = _workout['exercises']?.toString() ??
         (language == AppLanguage.english ? '11 Exercises' : '11 Latihan');
-    final time =
-        _workout['time']?.toString() ??
+    final time = _workout['time']?.toString() ??
         (language == AppLanguage.english ? '32 mins' : '32 menit');
 
     return Row(
@@ -733,8 +729,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   void _startWorkout(List<ExerciseSet> workoutSets) {
     final firstExercise =
         workoutSets.isNotEmpty && workoutSets.first.exercises.isNotEmpty
-        ? workoutSets.first.exercises.first
-        : null;
+            ? workoutSets.first.exercises.first
+            : null;
 
     if (firstExercise == null) {
       final language = context.appLanguage;

@@ -6,20 +6,30 @@ class UserProfiles extends Table {
 
   TextColumn get name => text().nullable()();
 
+  // ignore: recursive_getters
   IntColumn get age => integer().check(age.isBiggerOrEqualValue(0))();
 
   RealColumn get heightCm => real()();
 
   RealColumn get weightKg => real()();
 
-  TextColumn get gender => text().check(gender.isIn(const ['male', 'female', 'other']))();
+  TextColumn get gender =>
+      // ignore: recursive_getters
+      text().check(gender.isIn(const ['male', 'female', 'other']))();
 
-  TextColumn get goal =>
-      text().check(goal.isIn(const ['lose_weight', 'build_muscle', 'endurance']))();
+  TextColumn get goal => text().check(
+        // ignore: recursive_getters
+        goal.isIn(const ['lose_weight', 'build_muscle', 'endurance']),
+      )();
 
-  TextColumn get level => text().check(level.isIn(const ['beginner', 'intermediate', 'advanced']))();
+  TextColumn get level => text().check(
+        // ignore: recursive_getters
+        level.isIn(const ['beginner', 'intermediate', 'advanced']),
+      )();
 
-  TextColumn get preferredMode => text().check(preferredMode.isIn(const ['home', 'gym']))();
+  TextColumn get preferredMode =>
+      // ignore: recursive_getters
+      text().check(preferredMode.isIn(const ['home', 'gym']))();
 
   DateTimeColumn get createdAt =>
       dateTime().clientDefault(() => DateTime.now().toUtc())();

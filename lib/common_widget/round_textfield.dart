@@ -43,9 +43,8 @@ class RoundTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = enabled
-        ? TColor.lightGray
-        : TColor.lightGray.withValues(alpha: 0.6);
+    final backgroundColor =
+        enabled ? TColor.lightGray : TColor.lightGray.withValues(alpha: 0.6);
 
     return Container(
       margin: margin,

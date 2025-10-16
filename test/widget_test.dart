@@ -5,26 +5,35 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/view/sleep_tracker/sleep_schedule_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:aigymbuddy/main.dart';
-
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('SleepScheduleView builds and displays title',
+      (WidgetTester tester) async {
+    // Create an instance of the language controller for the test.
+    final appLanguageController = AppLanguageController();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Build the SleepScheduleView widget wrapped in necessary providers.
+    await tester.pumpWidget(
+      MaterialApp(
+        home: AppLanguageScope(
+          controller:
+              appLanguageController, // Set a default language controller for testing
+          child: const SleepScheduleView(),
+        ),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Allow the widget to settle.
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the title is displayed.
+    expect(find.text('Sleep Schedule'), findsOneWidget);
+
+    // Verify that the floating action button is present.
+    expect(find.byIcon(Icons.add), findsOneWidget);
   });
 }

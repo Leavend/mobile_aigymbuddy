@@ -19,6 +19,7 @@ class WorkoutExercises extends Table {
 
   IntColumn get durationSec => integer().nullable()();
 
-  IntColumn get restSec =>
-      integer().withDefault(const Constant(60)).check(restSec.isBiggerOrEqualValue(0))();
+  IntColumn get restSec => integer()
+      .withDefault(const Constant(60))
+      .check(restSec.isBiggerOrEqualValue(0))();
 }

@@ -121,77 +121,77 @@ class _HomeViewState extends State<HomeView> {
   }
 
   LineChartBarData get _heartRateLine => LineChartBarData(
-    showingIndicators: _heartRateTooltipSpots,
-    spots: _heartRateSpots,
-    isCurved: true,
-    barWidth: 3,
-    gradient: LinearGradient(colors: TColor.primaryG),
-    belowBarData: BarAreaData(
-      show: true,
-      gradient: LinearGradient(
-        colors: [
-          TColor.primaryColor2.withValues(alpha: .2),
-          TColor.primaryColor1.withValues(alpha: .05),
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-    ),
-    dotData: const FlDotData(show: false),
-  );
+        showingIndicators: _heartRateTooltipSpots,
+        spots: _heartRateSpots,
+        isCurved: true,
+        barWidth: 3,
+        gradient: LinearGradient(colors: TColor.primaryG),
+        belowBarData: BarAreaData(
+          show: true,
+          gradient: LinearGradient(
+            colors: [
+              TColor.primaryColor2.withValues(alpha: .2),
+              TColor.primaryColor1.withValues(alpha: .05),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        dotData: const FlDotData(show: false),
+      );
 
   LineChartBarData get _workoutLine1 => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(
-      colors: [
-        TColor.primaryColor2.withValues(alpha: .5),
-        TColor.primaryColor1.withValues(alpha: .5),
-      ],
-    ),
-    barWidth: 4,
-    isStrokeCapRound: true,
-    dotData: const FlDotData(show: false),
-    spots: const [
-      FlSpot(1, 35),
-      FlSpot(2, 70),
-      FlSpot(3, 40),
-      FlSpot(4, 80),
-      FlSpot(5, 25),
-      FlSpot(6, 70),
-      FlSpot(7, 35),
-    ],
-  );
+        isCurved: true,
+        gradient: LinearGradient(
+          colors: [
+            TColor.primaryColor2.withValues(alpha: .5),
+            TColor.primaryColor1.withValues(alpha: .5),
+          ],
+        ),
+        barWidth: 4,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        spots: const [
+          FlSpot(1, 35),
+          FlSpot(2, 70),
+          FlSpot(3, 40),
+          FlSpot(4, 80),
+          FlSpot(5, 25),
+          FlSpot(6, 70),
+          FlSpot(7, 35),
+        ],
+      );
 
   LineChartBarData get _workoutLine2 => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(
-      colors: [
-        TColor.secondaryColor2.withValues(alpha: .5),
-        TColor.secondaryColor1.withValues(alpha: .5),
-      ],
-    ),
-    barWidth: 2,
-    isStrokeCapRound: true,
-    dotData: const FlDotData(show: false),
-    spots: const [
-      FlSpot(1, 80),
-      FlSpot(2, 50),
-      FlSpot(3, 90),
-      FlSpot(4, 40),
-      FlSpot(5, 80),
-      FlSpot(6, 35),
-      FlSpot(7, 60),
-    ],
-  );
+        isCurved: true,
+        gradient: LinearGradient(
+          colors: [
+            TColor.secondaryColor2.withValues(alpha: .5),
+            TColor.secondaryColor1.withValues(alpha: .5),
+          ],
+        ),
+        barWidth: 2,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        spots: const [
+          FlSpot(1, 80),
+          FlSpot(2, 50),
+          FlSpot(3, 90),
+          FlSpot(4, 40),
+          FlSpot(5, 80),
+          FlSpot(6, 35),
+          FlSpot(7, 60),
+        ],
+      );
 
   TextStyle get _sectionTitleStyle =>
       TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700);
 
   BoxDecoration get _cardDecoration => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(20),
-    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-  );
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -369,15 +369,15 @@ class _HomeViewState extends State<HomeView> {
                             getDotPainter:
                                 (spot, percent, barData, spotIndex) =>
                                     _buildIndicatorPainter(
-                                      spot: spot,
-                                      percent: percent,
-                                      barData: barData,
-                                      spotIndex: spotIndex,
-                                      baseOpacity: 0.6,
-                                      opacityScale: 0.3,
-                                      maxSpotValue: 100,
-                                      oddStrokeWidth: 2,
-                                    ),
+                              spot: spot,
+                              percent: percent,
+                              barData: barData,
+                              spotIndex: spotIndex,
+                              baseOpacity: 0.6,
+                              opacityScale: 0.3,
+                              maxSpotValue: 100,
+                              oddStrokeWidth: 2,
+                            ),
                           ),
                         ),
                       )
@@ -652,15 +652,15 @@ class _HomeViewState extends State<HomeView> {
                           show: true,
                           getDotPainter: (spot, percent, barData, spotIndex) =>
                               _buildIndicatorPainter(
-                                spot: spot,
-                                percent: percent,
-                                barData: barData,
-                                spotIndex: spotIndex,
-                                baseOpacity: 0.5,
-                                opacityScale: 0.4,
-                                maxSpotValue: 120,
-                                oddStrokeWidth: 2.5,
-                              ),
+                            spot: spot,
+                            percent: percent,
+                            barData: barData,
+                            spotIndex: spotIndex,
+                            baseOpacity: 0.5,
+                            opacityScale: 0.4,
+                            maxSpotValue: 120,
+                            oddStrokeWidth: 2.5,
+                          ),
                         ),
                       ),
                     )
@@ -791,22 +791,23 @@ class _HomeViewState extends State<HomeView> {
   }
 
   List<PieChartSectionData> _buildBmiSections() => [
-    PieChartSectionData(
-      color: TColor.secondaryColor1,
-      value: 33,
-      title: '',
-      radius: 55,
-      badgeWidget: const Text(
-        '20,1',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
+        PieChartSectionData(
+          color: TColor.secondaryColor1,
+          value: 33,
+          title: '',
+          radius: 55,
+          badgeWidget: const Text(
+            '20,1',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
-      ),
-    ),
-    PieChartSectionData(color: Colors.white, value: 75, title: '', radius: 45),
-  ];
+        PieChartSectionData(
+            color: Colors.white, value: 75, title: '', radius: 45),
+      ];
 
   Widget _buildGradientText(
     String text, {

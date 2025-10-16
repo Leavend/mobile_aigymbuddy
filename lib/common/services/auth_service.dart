@@ -4,7 +4,8 @@ typedef SharedPreferencesFactory = Future<SharedPreferences> Function();
 
 class AuthService {
   AuthService({SharedPreferencesFactory? preferencesFactory})
-    : _preferencesFactory = preferencesFactory ?? SharedPreferences.getInstance;
+      : _preferencesFactory =
+            preferencesFactory ?? SharedPreferences.getInstance;
 
   static final AuthService instance = AuthService();
 

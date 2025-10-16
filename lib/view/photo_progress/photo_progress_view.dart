@@ -314,7 +314,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: group.photos.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
                 final photo = group.photos[index];
                 return ClipRRect(

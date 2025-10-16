@@ -1,3 +1,5 @@
+// lib/data/db/daos/workout_dao.dart
+
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
@@ -45,9 +47,8 @@ class WorkoutPlanItem {
 
 /// DAO responsible for workout plan persistence.
 @DriftAccessor(tables: [Workouts, WorkoutExercises, Exercises])
-class WorkoutDao extends DatabaseAccessor<AppDatabase>
-    with _$WorkoutDaoMixin {
-  WorkoutDao(AppDatabase db) : super(db);
+class WorkoutDao extends DatabaseAccessor<AppDatabase> with _$WorkoutDaoMixin {
+  WorkoutDao(super.db);
 
   /// Creates a workout plan and its detail rows inside a transaction.
   Future<int> createPlan({
@@ -59,13 +60,15 @@ class WorkoutDao extends DatabaseAccessor<AppDatabase>
     required List<WorkoutItemInput> items,
   }) {
     return transaction(() async {
-      final workoutId = await into(workouts).insert(WorkoutsCompanion.insert(
-        title: title,
-        goal: goal,
-        level: level,
-        mode: mode,
-        scheduledFor: Value(scheduledFor),
-      ));
+      final workoutId = await into(workouts).insert(
+        WorkoutsCompanion.insert(
+          title: title,
+          goal: goal,
+          level: level,
+          mode: mode,
+          scheduledFor: Value(scheduledFor),
+        ),
+      );
 
       if (items.isNotEmpty) {
         await batch((batch) {
@@ -93,17 +96,23 @@ class WorkoutDao extends DatabaseAccessor<AppDatabase>
 
   /// Fetches a plan along with the detailed exercises.
   Future<WorkoutPlanWithItems?> getPlanWithItems(int workoutId) async {
-    final workout = await (select(workouts)..where((tbl) => tbl.id.equals(workoutId)))
+    final workout = await (select(
+      workouts,
+    )..where((tbl) => tbl.id.equals(workoutId)))
         .getSingleOrNull();
 
     if (workout == null) {
       return null;
     }
 
-    final joined = await (select(workoutExercises)
-          ..where((tbl) => tbl.workoutId.equals(workoutId)))
+    final joined = await (select(
+      workoutExercises,
+    )..where((tbl) => tbl.workoutId.equals(workoutId)))
         .join([
-      innerJoin(exercises, exercises.id.equalsExp(workoutExercises.exerciseId)),
+      innerJoin(
+        exercises,
+        exercises.id.equalsExp(workoutExercises.exerciseId),
+      ),
     ]).get();
 
     final items = joined

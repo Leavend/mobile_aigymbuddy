@@ -112,8 +112,8 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                           },
                           mouseCursorResolver: (event, response) =>
                               (response?.lineBarSpots?.isNotEmpty ?? false)
-                              ? SystemMouseCursors.click
-                              : SystemMouseCursors.basic,
+                                  ? SystemMouseCursors.click
+                                  : SystemMouseCursors.basic,
                           getTouchedSpotIndicator: (barData, spotIndexes) =>
                               spotIndexes
                                   .map(
@@ -124,12 +124,11 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                                         getDotPainter:
                                             (spot, percent, bar, i) =>
                                                 FlDotCirclePainter(
-                                                  radius: 3,
-                                                  color: Colors.white,
-                                                  strokeWidth: 1.5,
-                                                  strokeColor:
-                                                      TColor.primaryColor2,
-                                                ),
+                                          radius: 3,
+                                          color: Colors.white,
+                                          strokeWidth: 1.5,
+                                          strokeColor: TColor.primaryColor2,
+                                        ),
                                       ),
                                     ),
                                   )
@@ -317,70 +316,71 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
   List<LineChartBarData> get _lineBarsData => [_primaryLineBarData];
 
   LineChartBarData get _primaryLineBarData => LineChartBarData(
-    isCurved: true,
-    gradient: LinearGradient(
-      colors: [TColor.primaryColor2, TColor.primaryColor1],
-    ),
-    barWidth: 2,
-    isStrokeCapRound: true,
-    dotData: const FlDotData(show: false),
-    belowBarData: BarAreaData(
-      show: true,
-      gradient: LinearGradient(
-        colors: [TColor.primaryColor2.withValues(alpha: .35), TColor.white],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-    ),
-    spots: const [
-      FlSpot(1, 3),
-      FlSpot(2, 5),
-      FlSpot(3, 4),
-      FlSpot(4, 7),
-      FlSpot(5, 4),
-      FlSpot(6, 8),
-      FlSpot(7, 5),
-    ],
-  );
+        isCurved: true,
+        gradient: LinearGradient(
+          colors: [TColor.primaryColor2, TColor.primaryColor1],
+        ),
+        barWidth: 2,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        belowBarData: BarAreaData(
+          show: true,
+          gradient: LinearGradient(
+            colors: [TColor.primaryColor2.withValues(alpha: .35), TColor.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        spots: const [
+          FlSpot(1, 3),
+          FlSpot(2, 5),
+          FlSpot(3, 4),
+          FlSpot(4, 7),
+          FlSpot(5, 4),
+          FlSpot(6, 8),
+          FlSpot(7, 5),
+        ],
+      );
 
   SideTitles _buildRightTitles(AppLanguage language) => SideTitles(
-    showTitles: true,
-    interval: 2,
-    reservedSize: 42,
-    getTitlesWidget: (value, meta) {
-      final intValue = value.toInt();
-      if (intValue.isNegative || intValue > 10) {
-        return const SizedBox.shrink();
-      }
-      final label = _formatHourTick(intValue, language);
-      return SideTitleWidget(
-        meta: meta,
-        space: 8,
-        child: Text(label, style: TextStyle(color: TColor.gray, fontSize: 12)),
+        showTitles: true,
+        interval: 2,
+        reservedSize: 42,
+        getTitlesWidget: (value, meta) {
+          final intValue = value.toInt();
+          if (intValue.isNegative || intValue > 10) {
+            return const SizedBox.shrink();
+          }
+          final label = _formatHourTick(intValue, language);
+          return SideTitleWidget(
+            meta: meta,
+            space: 8,
+            child:
+                Text(label, style: TextStyle(color: TColor.gray, fontSize: 12)),
+          );
+        },
       );
-    },
-  );
 
   SideTitles _buildBottomTitles(AppLanguage language) => SideTitles(
-    showTitles: true,
-    reservedSize: 28,
-    interval: 1,
-    getTitlesWidget: (value, meta) {
-      final abbreviation = _SleepTrackerStrings.weekdayLabels[value.toInt()]
-          ?.resolve(language);
-      if (abbreviation == null) {
-        return const SizedBox.shrink();
-      }
-      return SideTitleWidget(
-        meta: meta,
-        space: 6,
-        child: Text(
-          abbreviation,
-          style: TextStyle(color: TColor.gray, fontSize: 12),
-        ),
+        showTitles: true,
+        reservedSize: 28,
+        interval: 1,
+        getTitlesWidget: (value, meta) {
+          final abbreviation = _SleepTrackerStrings.weekdayLabels[value.toInt()]
+              ?.resolve(language);
+          if (abbreviation == null) {
+            return const SizedBox.shrink();
+          }
+          return SideTitleWidget(
+            meta: meta,
+            space: 6,
+            child: Text(
+              abbreviation,
+              style: TextStyle(color: TColor.gray, fontSize: 12),
+            ),
+          );
+        },
       );
-    },
-  );
 
   String _formatTooltipHours(double value, AppLanguage language) {
     final hours = value.toInt();

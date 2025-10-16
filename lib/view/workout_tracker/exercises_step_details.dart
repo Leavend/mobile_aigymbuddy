@@ -141,8 +141,7 @@ class ExercisesStepDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
     final language = context.appLanguage;
-    final exerciseTitle =
-        exercise['title'] as String? ??
+    final exerciseTitle = exercise['title'] as String? ??
         (language == AppLanguage.english ? 'Exercise' : 'Latihan');
     final difficulty = (exercise['level'] ?? exercise['difficulty']) as String?;
     final rawCalories = exercise['calories'];
@@ -162,8 +161,8 @@ class ExercisesStepDetails extends StatelessWidget {
     }
     final metadataText = metadataParts.isEmpty
         ? (language == AppLanguage.english
-              ? 'Easy | 390 Calories Burn'
-              : 'Mudah | 390 Kalori Terbakar')
+            ? 'Easy | 390 Calories Burn'
+            : 'Mudah | 390 Kalori Terbakar')
         : metadataParts.join(' | ');
     final steps = _buildSteps(language);
 
@@ -393,9 +392,8 @@ class ExercisesStepDetails extends StatelessWidget {
           final caloriesText = language == AppLanguage.english
               ? '${(index + 1) * 15} Calories Burn'
               : '${(index + 1) * 15} Kalori Terbakar';
-          final timesText = language == AppLanguage.english
-              ? ' times'
-              : ' kali';
+          final timesText =
+              language == AppLanguage.english ? ' times' : ' kali';
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

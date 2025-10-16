@@ -1,11 +1,12 @@
 import 'dart:convert';
 
+import 'package:drift/drift.dart';
 import 'package:flutter/services.dart';
 
+import '../db/app_database.dart';
 import '../db/daos/exercise_dao.dart';
-import '../db/tables/exercises.dart';
 
-/// Seeds the exercise catalog from an asset on the first launch.
+/// Mengisi katalog exercise dari aset saat aplikasi pertama kali dijalankan.
 class SeedRepository {
   SeedRepository(this._exerciseDao);
 
@@ -25,7 +26,7 @@ class SeedRepository {
       return ExercisesCompanion.insert(
         name: map['name'] as String,
         category: map['category'] as String,
-        requiresEquipment: map['requiresEquipment'] as bool,
+        requiresEquipment: Value(map['requiresEquipment'] as bool),
         equipment: Value(map['equipment'] as String?),
         mode: map['mode'] as String,
         difficulty: map['difficulty'] as String,

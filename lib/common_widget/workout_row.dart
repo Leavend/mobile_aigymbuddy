@@ -16,8 +16,7 @@ class WorkoutSummaryItem {
   });
 
   factory WorkoutSummaryItem.fromJson(Map<String, dynamic> json) {
-    final progressValue =
-        double.tryParse(json['progress']?.toString() ?? '') ??
+    final progressValue = double.tryParse(json['progress']?.toString() ?? '') ??
         (json['progress'] is num ? (json['progress'] as num).toDouble() : 0);
     return WorkoutSummaryItem(
       imageAsset: json['image']?.toString() ?? 'assets/img/workout.png',

@@ -389,8 +389,8 @@ class _NavigationMetrics {
     var centerGap = snapshot.centerGap;
     final requiredWidth =
         _clusterWidth(constraints.leadingCount, buttonWidth, tabSpacing) +
-        centerGap +
-        _clusterWidth(constraints.trailingCount, buttonWidth, tabSpacing);
+            centerGap +
+            _clusterWidth(constraints.trailingCount, buttonWidth, tabSpacing);
 
     var overflow = requiredWidth - availableInnerWidth;
     if (overflow <= 0) {
