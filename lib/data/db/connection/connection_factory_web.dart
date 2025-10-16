@@ -1,6 +1,6 @@
 // lib/data/db/connection/connection_factory_web.dart
 import 'package:drift/drift.dart';
-import 'package:drift/wasm.dart';
+import 'package:drift/web.dart';
 import 'package:flutter/foundation.dart';
 
 // Pastikan path ini benar dan terdaftar di pubspec.yaml sebagai asset.
@@ -15,14 +15,11 @@ Uri _resolveUri(String raw) {
 
 /// Membuka database Drift di web (WASM) dengan penyimpanan persisten otomatis.
 QueryExecutor createDriftExecutorImpl() {
-  const sqlite3Uri = String.fromEnvironment(
-    'DRIFT_SQLITE3_WASM_URI',
-    defaultValue: _defaultSqlite3Path,
-  );
+  final storage = DriftWebStorage.indexedDb('ai_gym_buddy');
 
-  const driftWorkerUri = String.fromEnvironment(
-    'DRIFT_WORKER_URI',
-    defaultValue: _defaultWorkerPath,
+  return WebDatabase.withStorage(
+    storage,
+    logStatements: kDebugMode,
   );
 
   return LazyDatabase(() async {
