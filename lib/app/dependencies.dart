@@ -42,8 +42,7 @@ class AppDependencies extends InheritedWidget {
   final TrackingRepository trackingRepository;
 
   static AppDependencies of(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<AppDependencies>();
+    final scope = context.dependOnInheritedWidgetOfExactType<AppDependencies>();
     assert(scope != null, 'AppDependencies not found in context');
     return scope!;
   }

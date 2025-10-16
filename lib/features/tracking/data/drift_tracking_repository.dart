@@ -6,7 +6,8 @@ import '../domain/models.dart';
 import '../domain/tracking_repository.dart';
 
 class DriftTrackingRepository implements TrackingRepository {
-  DriftTrackingRepository(this._dao, this._profileRepository, this._exerciseDao);
+  DriftTrackingRepository(
+      this._dao, this._profileRepository, this._exerciseDao);
 
   final TrackingDao _dao;
   final ProfileRepository _profileRepository;

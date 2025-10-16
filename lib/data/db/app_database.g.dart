@@ -664,6 +664,10 @@ class $ExercisesTable extends Exercises
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {name},
+      ];
+  @override
   Exercise map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Exercise(
@@ -691,12 +695,25 @@ class $ExercisesTable extends Exercises
 }
 
 class Exercise extends DataClass implements Insertable<Exercise> {
+  /// The unique identifier for the exercise.
   final int id;
+
+  /// The name of the exercise, which must be unique.
   final String name;
+
+  /// The category of the exercise (e.g., upper body, lower body, core).
   final String category;
+
+  /// A boolean flag indicating if the exercise requires equipment.
   final bool requiresEquipment;
+
+  /// A nullable text field for the name of the equipment required.
   final String? equipment;
+
+  /// The environment where the exercise can be performed (home, gym, or both).
   final String mode;
+
+  /// The difficulty level of the exercise.
   final String difficulty;
   const Exercise(
       {required this.id,
