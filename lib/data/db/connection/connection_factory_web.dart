@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
+import 'package:flutter/foundation.dart';
 
 const _defaultSqlite3Path =
     'assets/packages/sqlite3/wasm/sqlite3.wasm';
