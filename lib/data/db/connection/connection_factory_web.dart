@@ -1,3 +1,5 @@
+// lib/data/db/connection/connection_factory_web.dart
+
 import 'package:drift/drift.dart';
 import 'package:drift/web.dart';
 
@@ -8,4 +10,3 @@ QueryExecutor createDriftExecutorImpl() {
     DriftWebStorage.indexedDb('ai_gym_buddy'),
   );
 }
-
