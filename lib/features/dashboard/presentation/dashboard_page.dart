@@ -1,5 +1,3 @@
-// lib/features/dashboard/presentation/dashboard_page.dart
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -286,8 +284,7 @@ class ProfileSummaryCard extends StatelessWidget {
                   label: 'Berat',
                   value: '${profile!.weightKg.toStringAsFixed(1)} kg',
                 ),
-                _InfoChip(
-                    label: 'Gender', value: describeGender(profile!.gender)),
+                _InfoChip(label: 'Gender', value: describeGender(profile!.gender)),
                 _InfoChip(label: 'Target', value: describeGoal(profile!.goal)),
                 _InfoChip(label: 'Level', value: describeLevel(profile!.level)),
                 _InfoChip(label: 'Mode', value: describeMode(profile!.mode)),
@@ -406,8 +403,7 @@ class WeightLineChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval:
-                  spots.length > 1 ? (spots.last.x / (spots.length - 1)) : 1,
+              interval: spots.length > 1 ? (spots.last.x / (spots.length - 1)) : 1,
               getTitlesWidget: (value, meta) {
                 final date = start.add(Duration(days: value.toInt()));
                 return Padding(
@@ -428,10 +424,8 @@ class WeightLineChart extends StatelessWidget {
               ),
             ),
           ),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         lineBarsData: [
           LineChartBarData(
@@ -521,10 +515,10 @@ class WeeklyVolumeCard extends StatelessWidget {
                         },
                       ),
                     ),
-                    rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                    rightTitles:
+                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles:
+                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
                   gridData: const FlGridData(show: false),
                 ),
@@ -580,7 +574,7 @@ class WorkoutLogSection extends StatelessWidget {
               const Text('Katalog latihan belum tersedia.'),
             if (exercises.isNotEmpty)
               DropdownButtonFormField<ExerciseSummary>(
-                initialValue: selectedExercise,
+                value: selectedExercise,
                 items: exercises
                     .map(
                       (exercise) => DropdownMenuItem(
@@ -663,13 +657,11 @@ class WorkoutLogSection extends StatelessWidget {
                     for (final log in logs)
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title:
-                            Text('${log.exerciseName} - Set ${log.setIndex}'),
+                        title: Text('${log.exerciseName} - Set ${log.setIndex}'),
                         subtitle: Text(
                           _describeLog(log),
                         ),
-                        trailing: Text(DateFormat('dd MMM')
-                            .format(log.performedAt.toLocal())),
+                        trailing: Text(DateFormat('dd MMM').format(log.performedAt.toLocal())),
                       ),
                   ],
                 );

@@ -1,5 +1,3 @@
-// lib/features/profile/presentation/profile_form_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -168,8 +166,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                         Expanded(
                           child: TextFormField(
                             controller: _ageController,
-                            decoration:
-                                const InputDecoration(labelText: 'Usia'),
+                            decoration: const InputDecoration(labelText: 'Usia'),
                             keyboardType: TextInputType.number,
                             validator: (value) {
                               final parsed = int.tryParse(value ?? '');
@@ -187,8 +184,8 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                             decoration: const InputDecoration(
                               labelText: 'Tinggi (cm)',
                             ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
+                            keyboardType:
+                                const TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               final parsed = double.tryParse(value ?? '');
                               if (parsed == null || parsed <= 0) {
@@ -218,7 +215,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<Gender>(
-                      initialValue: _selectedGender,
+                      value: _selectedGender,
                       items: Gender.values
                           .map(
                             (gender) => DropdownMenuItem(
@@ -236,7 +233,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<FitnessGoal>(
-                      initialValue: _selectedGoal,
+                      value: _selectedGoal,
                       items: FitnessGoal.values
                           .map(
                             (goal) => DropdownMenuItem(
@@ -254,7 +251,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<ExperienceLevel>(
-                      initialValue: _selectedLevel,
+                      value: _selectedLevel,
                       items: ExperienceLevel.values
                           .map(
                             (level) => DropdownMenuItem(
@@ -272,7 +269,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<WorkoutMode>(
-                      initialValue: _selectedMode,
+                      value: _selectedMode,
                       items: WorkoutMode.values
                           .map(
                             (mode) => DropdownMenuItem(
@@ -286,16 +283,14 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                           setState(() => _selectedMode = value);
                         }
                       },
-                      decoration: const InputDecoration(
-                          labelText: 'Preferensi latihan'),
+                      decoration: const InputDecoration(labelText: 'Preferensi latihan'),
                     ),
                     const SizedBox(height: 32),
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton(
                         onPressed: _submitting ? null : _submit,
-                        child: Text(
-                            widget.isEditing ? 'Simpan Perubahan' : 'Mulai'),
+                        child: Text(widget.isEditing ? 'Simpan Perubahan' : 'Mulai'),
                       ),
                     ),
                   ],

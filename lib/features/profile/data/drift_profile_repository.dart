@@ -28,7 +28,8 @@ class DriftProfileRepository implements ProfileRepository {
   Future<void> saveProfile(domain.UserProfile profile) {
     return _dao.upsert(
       db.UserProfilesCompanion(
-        id: profile.id == null ? const Value.absent() : Value(profile.id!),
+        id:
+            profile.id == null ? const Value.absent() : Value(profile.id!),
         name: Value(profile.name),
         age: Value(profile.age),
         heightCm: Value(profile.heightCm),
