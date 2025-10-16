@@ -96,6 +96,7 @@ class LogSessionViewModel extends ChangeNotifier {
       );
       _sessionId = id;
       _sessionActive = true;
+      _sets = const [];
       _subscribeToSets(id);
       return true;
     } catch (error, stackTrace) {
@@ -114,6 +115,14 @@ class LogSessionViewModel extends ChangeNotifier {
       _sets = event;
       notifyListeners();
     });
+  }
+
+  Future<void> _clearSessionState() async {
+    await _subscription?.cancel();
+    _subscription = null;
+    _sessionId = null;
+    _sets = const [];
+    _sessionActive = false;
   }
 
   Future<bool> addSet({
@@ -160,9 +169,7 @@ class LogSessionViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       await _finishSession(sessionId: _sessionId!, note: finalNote ?? note);
-      _sessionActive = false;
-      _subscription?.cancel();
-      _subscription = null;
+      await _clearSessionState();
       return true;
     } catch (error, stackTrace) {
       debugPrint('Failed to finish session: $error\n$stackTrace');

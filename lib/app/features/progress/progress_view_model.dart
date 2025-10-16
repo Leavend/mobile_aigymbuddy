@@ -19,14 +19,30 @@ class ProgressViewModel extends ChangeNotifier {
         _watchRecentSessions = watchRecentSessions,
         _addBodyWeightEntry = addBodyWeightEntry,
         _getWeeklyVolume = getWeeklyVolume {
-    _weightSubscription = _watchBodyWeightHistory().listen((entries) {
-      _weightHistory = entries;
-      notifyListeners();
-    });
-    _sessionSubscription = _watchRecentSessions().listen((sessions) {
-      _sessions = sessions;
-      notifyListeners();
-    });
+    _weightSubscription = _watchBodyWeightHistory().listen(
+      (entries) {
+        _weightHistory = entries;
+        _error = null;
+        notifyListeners();
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        debugPrint('Failed to watch weight history: $error\n$stackTrace');
+        _error = 'Tidak dapat memuat riwayat berat badan.';
+        notifyListeners();
+      },
+    );
+    _sessionSubscription = _watchRecentSessions().listen(
+      (sessions) {
+        _sessions = sessions;
+        _error = null;
+        notifyListeners();
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        debugPrint('Failed to watch sessions: $error\n$stackTrace');
+        _error = 'Tidak dapat memuat riwayat sesi.';
+        notifyListeners();
+      },
+    );
     _loadWeeklyVolume();
   }
 
@@ -52,8 +68,14 @@ class ProgressViewModel extends ChangeNotifier {
   String? get error => _error;
 
   Future<void> _loadWeeklyVolume() async {
-    final data = await _getWeeklyVolume();
-    _weeklyVolume = data;
+    try {
+      final data = await _getWeeklyVolume();
+      _weeklyVolume = data;
+      _error = null;
+    } catch (error, stackTrace) {
+      debugPrint('Failed to load weekly volume: $error\n$stackTrace');
+      _error = 'Tidak dapat memuat ringkasan volume latihan.';
+    }
     notifyListeners();
   }
 
@@ -63,6 +85,7 @@ class ProgressViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       await _addBodyWeightEntry(weightKg: weightKg);
+      await _loadWeeklyVolume();
       return true;
     } catch (error, stackTrace) {
       debugPrint('Failed to add weight entry: $error\n$stackTrace');

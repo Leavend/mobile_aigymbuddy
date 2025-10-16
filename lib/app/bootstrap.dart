@@ -89,7 +89,7 @@ Future<AppDependencies> bootstrap() async {
     getUserProfile: GetUserProfile(userProfileRepository),
     watchUserProfile: WatchUserProfile(userProfileRepository),
     upsertUserProfile: UpsertUserProfile(userProfileRepository),
-    addBodyWeightEntry: AddBodyWeightEntry(progressRepository),
+    addBodyWeightEntry: AddBodyWeightEntry(progressRepository, userProfileRepository),
     watchBodyWeightHistory: WatchBodyWeightHistory(progressRepository),
     getBodyWeightHistory: GetBodyWeightHistory(progressRepository),
     getWeeklyVolume: GetWeeklyVolume(progressRepository),

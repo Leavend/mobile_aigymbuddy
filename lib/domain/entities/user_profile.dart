@@ -54,7 +54,7 @@ class UserProfile {
       goal: goal ?? this.goal,
       level: level ?? this.level,
       preferredMode: preferredMode ?? this.preferredMode,
-      createdAt: createdAt,
+      createdAt: this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
