@@ -81,9 +81,6 @@ flutter:
   assets:
     - assets/img/
     - assets/seed/seed_exercises.json
-    # Drift web backend (WASM) assets bundled from dependencies.
-    - packages/sqlite3/wasm/sqlite3.wasm
-    - packages/drift/wasm/drift_worker.dart.js
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
