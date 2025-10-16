@@ -1,13 +1,6 @@
-// Run `flutter pub get` then `dart run build_runner build -d` before using
-// the generated code. Launch the app with `flutter run` afterwards.
-
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
+import 'connection/connection_factory.dart';
 import 'daos/exercise_dao.dart';
 import 'daos/tracking_dao.dart';
 import 'daos/user_profile_dao.dart';
@@ -22,13 +15,6 @@ import 'tables/workouts.dart';
 
 part 'app_database.g.dart';
 
-LazyDatabase _openConnection() => LazyDatabase(() async {
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dir.path, 'ai_gym_buddy.sqlite'));
-      final executor = NativeDatabase.createInBackground(file);
-      return executor;
-    });
-
 @DriftDatabase(
   tables: [
     UserProfiles,
@@ -42,12 +28,9 @@ LazyDatabase _openConnection() => LazyDatabase(() async {
   daos: [UserProfileDao, ExerciseDao, WorkoutDao, TrackingDao],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase() : super(createDriftExecutor());
 
-  AppDatabase.forTesting() : super(NativeDatabase.memory()) {
-    // Ensures foreign keys are respected when using in-memory database.
-    customStatement('PRAGMA foreign_keys = ON');
-  }
+  AppDatabase.forTesting(QueryExecutor executor) : super(executor);
 
   @override
   int get schemaVersion => 1;

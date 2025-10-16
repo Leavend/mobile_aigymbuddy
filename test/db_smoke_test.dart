@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart' show Value;
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:aigymbuddy/data/db/app_database.dart';
 
 void main() {
   test('upsert and fetch user profile', () async {
-    final db = AppDatabase.forTesting();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
 
     await db.userProfileDao.upsert(
