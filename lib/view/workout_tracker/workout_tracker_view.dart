@@ -1,80 +1,29 @@
-import 'package:aigymbuddy/common/app_router.dart';
-import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/dependencies.dart';
+import '../../common/app_router.dart';
+import '../../common/color_extension.dart';
+import '../../common/localization/app_language.dart';
+import '../../common/localization/app_language_scope.dart';
+import '../../common/models/navigation_args.dart';
 import '../../common_widget/round_button.dart';
 import '../../common_widget/upcoming_workout_row.dart';
 import '../../common_widget/what_train_row.dart';
+import '../shared/models/workout.dart';
+import '../shared/repositories/workout_repository.dart';
+import 'workout_localizations.dart';
+import 'workout_visuals.dart';
 
-class WorkoutTrackerView extends StatelessWidget {
+class WorkoutTrackerView extends StatefulWidget {
   const WorkoutTrackerView({super.key});
 
-  static const _upcomingWorkouts = <_UpcomingWorkout>[
-    _UpcomingWorkout(
-      imageAsset: 'assets/img/Workout1.png',
-      title: LocalizedText(
-        english: 'Fullbody Workout',
-        indonesian: 'Latihan Seluruh Tubuh',
-      ),
-      time: LocalizedText(
-        english: 'Today, 03:00pm',
-        indonesian: 'Hari ini, 15.00',
-      ),
-    ),
-    _UpcomingWorkout(
-      imageAsset: 'assets/img/Workout2.png',
-      title: LocalizedText(
-        english: 'Upperbody Workout',
-        indonesian: 'Latihan Tubuh Atas',
-      ),
-      time: LocalizedText(
-        english: 'June 05, 02:00pm',
-        indonesian: '5 Juni, 14.00',
-      ),
-    ),
-  ];
+  @override
+  State<WorkoutTrackerView> createState() => _WorkoutTrackerViewState();
+}
 
-  static const _trainingOptions = <_TrainingOption>[
-    _TrainingOption(
-      imageAsset: 'assets/img/what_1.png',
-      title: LocalizedText(
-        english: 'Fullbody Workout',
-        indonesian: 'Latihan Seluruh Tubuh',
-      ),
-      exercises: LocalizedText(
-        english: '11 Exercises',
-        indonesian: '11 Latihan',
-      ),
-      duration: LocalizedText(english: '32 mins', indonesian: '32 menit'),
-    ),
-    _TrainingOption(
-      imageAsset: 'assets/img/what_2.png',
-      title: LocalizedText(
-        english: 'Lowerbody Workout',
-        indonesian: 'Latihan Tubuh Bawah',
-      ),
-      exercises: LocalizedText(
-        english: '12 Exercises',
-        indonesian: '12 Latihan',
-      ),
-      duration: LocalizedText(english: '40 mins', indonesian: '40 menit'),
-    ),
-    _TrainingOption(
-      imageAsset: 'assets/img/what_3.png',
-      title: LocalizedText(english: 'AB Workout', indonesian: 'Latihan Perut'),
-      exercises: LocalizedText(
-        english: '14 Exercises',
-        indonesian: '14 Latihan',
-      ),
-      duration: LocalizedText(english: '20 mins', indonesian: '20 menit'),
-    ),
-  ];
-
+class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
   static const _dailyScheduleTitle = LocalizedText(
     english: 'Daily Workout Schedule',
     indonesian: 'Jadwal Latihan Harian',
@@ -122,6 +71,16 @@ class WorkoutTrackerView extends StatelessWidget {
     indonesian: 'Opsi jadwal',
   );
 
+  static const _noUpcoming = LocalizedText(
+    english: 'No workouts scheduled yet. Plan your next session to stay on track.',
+    indonesian: 'Belum ada latihan terjadwal. Jadwalkan sesi berikutnya untuk tetap konsisten.',
+  );
+
+  static const _noRecommendations = LocalizedText(
+    english: 'Create a workout plan to get personalised recommendations.',
+    indonesian: 'Buat rencana latihan untuk mendapatkan rekomendasi personal.',
+  );
+
   static const _weekdayLabels = <int, LocalizedText>{
     1: LocalizedText(english: 'Sun', indonesian: 'Min'),
     2: LocalizedText(english: 'Mon', indonesian: 'Sen'),
@@ -131,6 +90,22 @@ class WorkoutTrackerView extends StatelessWidget {
     6: LocalizedText(english: 'Fri', indonesian: 'Jum'),
     7: LocalizedText(english: 'Sat', indonesian: 'Sab'),
   };
+
+  bool _initialised = false;
+  late final WorkoutRepository _repository;
+  late final Stream<List<WorkoutOverview>> _upcomingStream;
+  late final Stream<List<WorkoutOverview>> _recommendationsStream;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialised) return;
+    final deps = AppDependencies.of(context);
+    _repository = deps.workoutRepository;
+    _upcomingStream = _repository.watchUpcomingWorkouts(limit: 5);
+    _recommendationsStream = _repository.watchRecommendations(limit: 6);
+    _initialised = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,9 +147,27 @@ class WorkoutTrackerView extends StatelessWidget {
                   SizedBox(height: media.width * 0.05),
                   _buildDailyScheduleCard(context, language),
                   SizedBox(height: media.width * 0.05),
-                  _buildUpcomingSection(context, language),
+                  _WorkoutStreamSection(
+                    stream: _upcomingStream,
+                    header: _buildUpcomingHeader(context, language),
+                    emptyMessage: _noUpcoming.resolve(language),
+                    builder: (workouts) => _buildUpcomingList(
+                      context,
+                      language,
+                      workouts,
+                    ),
+                  ),
                   SizedBox(height: media.width * 0.05),
-                  _buildTrainingSection(context, language),
+                  _WorkoutStreamSection(
+                    stream: _recommendationsStream,
+                    header: _buildTrainingHeader(language),
+                    emptyMessage: _noRecommendations.resolve(language),
+                    builder: (workouts) => _buildTrainingList(
+                      context,
+                      language,
+                      workouts,
+                    ),
+                  ),
                   SizedBox(height: media.width * 0.1),
                 ],
               ),
@@ -296,85 +289,109 @@ class WorkoutTrackerView extends StatelessWidget {
     );
   }
 
-  Widget _buildUpcomingSection(BuildContext context, AppLanguage language) {
-    return Column(
+  Widget _buildUpcomingHeader(BuildContext context, AppLanguage language) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _upcomingTitle.resolve(language),
-              style: TextStyle(
-                color: TColor.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            TextButton(
-              onPressed: () => _openSchedule(context),
-              child: Text(
-                _seeMoreLabel.resolve(language),
-                style: TextStyle(
-                  color: TColor.gray,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
+        Text(
+          _upcomingTitle.resolve(language),
+          style: TextStyle(
+            color: TColor.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        ListView.builder(
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: _upcomingWorkouts.length,
-          itemBuilder: (context, index) {
-            final workout = _upcomingWorkouts[index];
-            final data = workout.toLocalizedMap(language);
-            return InkWell(
-              onTap: () => _openWorkoutDetail(context, data),
-              child: UpcomingWorkoutRow.fromMap(data),
-            );
-          },
+        TextButton(
+          onPressed: () => _openSchedule(context),
+          child: Text(
+            _seeMoreLabel.resolve(language),
+            style: TextStyle(
+              color: TColor.gray,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildTrainingSection(BuildContext context, AppLanguage language) {
-    return Column(
+  Widget _buildUpcomingList(
+    BuildContext context,
+    AppLanguage language,
+    List<WorkoutOverview> workouts,
+  ) {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: workouts.length,
+      itemBuilder: (context, index) {
+        final overview = workouts[index];
+        final item = UpcomingWorkoutItem(
+          title: overview.title,
+          timeLabel: WorkoutLocalizations.upcomingTimeLabel(
+            language,
+            overview.scheduledFor,
+          ),
+          imageAsset: WorkoutVisuals.coverImageFor(overview.goal),
+        );
+        return InkWell(
+          onTap: () => _openWorkoutDetail(context, overview),
+          child: UpcomingWorkoutRow(workout: item),
+        );
+      },
+    );
+  }
+
+  Widget _buildTrainingHeader(AppLanguage language) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _trainingTitle.resolve(language),
-              style: TextStyle(
-                color: TColor.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        ListView.builder(
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: _trainingOptions.length,
-          itemBuilder: (context, index) {
-            final option = _trainingOptions[index];
-            final data = option.toLocalizedMap(language);
-            return InkWell(
-              onTap: () => _openWorkoutDetail(context, data),
-              child: WhatTrainRow.fromMap(
-                data,
-                onViewMore: () => _openWorkoutDetail(context, data),
-              ),
-            );
-          },
+        Text(
+          _trainingTitle.resolve(language),
+          style: TextStyle(
+            color: TColor.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTrainingList(
+    BuildContext context,
+    AppLanguage language,
+    List<WorkoutOverview> workouts,
+  ) {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: workouts.length,
+      itemBuilder: (context, index) {
+        final overview = workouts[index];
+        final option = TrainingOptionItem(
+          title: overview.title,
+          exercises: WorkoutLocalizations.exerciseCount(
+            language,
+            overview.exerciseCount,
+          ),
+          duration: WorkoutLocalizations.durationLabel(
+            language,
+            overview.estimatedDuration,
+          ),
+          imageAsset: WorkoutVisuals.trainingImageFor(overview.goal),
+        );
+        return InkWell(
+          onTap: () => _openWorkoutDetail(context, overview),
+          child: WhatTrainRow(
+            option: option,
+            onViewMore: () => _openWorkoutDetail(context, overview),
+          ),
+        );
+      },
     );
   }
 
@@ -427,74 +444,30 @@ class WorkoutTrackerView extends StatelessWidget {
   }
 
   List<LineChartBarData> _buildLineBars() {
-    return [
+    return const [
       LineChartBarData(
         isCurved: true,
         color: TColor.white,
         barWidth: 4,
         isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
+        dotData: FlDotData(show: false),
         belowBarData: BarAreaData(show: false),
-        spots: const [
+        spots: [
           FlSpot(1, 35),
           FlSpot(2, 70),
           FlSpot(3, 40),
           FlSpot(4, 80),
-          FlSpot(5, 25),
-          FlSpot(6, 70),
-          FlSpot(7, 35),
-        ],
-      ),
-      LineChartBarData(
-        isCurved: true,
-        color: TColor.white.withValues(alpha: 0.5),
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 80),
-          FlSpot(2, 50),
-          FlSpot(3, 90),
-          FlSpot(4, 40),
-          FlSpot(5, 80),
-          FlSpot(6, 35),
-          FlSpot(7, 60),
+          FlSpot(5, 35),
+          FlSpot(6, 60),
+          FlSpot(7, 40),
         ],
       ),
     ];
   }
 
-  SideTitles _buildRightTitles() {
-    const labels = <int, String>{
-      0: '0%',
-      20: '20%',
-      40: '40%',
-      60: '60%',
-      80: '80%',
-      100: '100%',
-    };
-
-    return SideTitles(
-      showTitles: true,
-      interval: 20,
-      reservedSize: 40,
-      getTitlesWidget: (value, _) {
-        final text = labels[value.toInt()];
-        if (text == null) return const SizedBox.shrink();
-        return Text(
-          text,
-          style: TextStyle(color: TColor.white, fontSize: 12),
-          textAlign: TextAlign.center,
-        );
-      },
-    );
-  }
-
   SideTitles _buildBottomTitles(AppLanguage language) {
     return SideTitles(
       showTitles: true,
-      reservedSize: 32,
       interval: 1,
       getTitlesWidget: (value, _) {
         final label = _weekdayLabels[value.toInt()];
@@ -507,21 +480,37 @@ class WorkoutTrackerView extends StatelessWidget {
     );
   }
 
+  SideTitles _buildRightTitles() {
+    return SideTitles(
+      showTitles: true,
+      reservedSize: 32,
+      interval: 25,
+      getTitlesWidget: (value, _) {
+        if (value == 0) {
+          return Text(
+            '0%',
+            style: TextStyle(color: TColor.white, fontSize: 12),
+          );
+        }
+        return Text(
+          '${value.toInt()}%',
+          style: TextStyle(color: TColor.white, fontSize: 12),
+        );
+      },
+    );
+  }
+
   void _openSchedule(BuildContext context) {
     context.pushNamed(AppRoute.workoutScheduleName);
   }
 
-  void _openWorkoutDetail(BuildContext context, Map<String, String> workout) {
-    final detailData = <String, dynamic>{
-      'title': workout['title'] ?? 'Workout',
-      'time': workout['time'] ?? 'Today, 03:00pm',
-      'exercises': workout['exercises'] ?? '11 Exercises',
-      'image': workout['image'],
-    };
-
+  void _openWorkoutDetail(BuildContext context, WorkoutOverview overview) {
     context.pushNamed(
       AppRoute.workoutDetailName,
-      extra: WorkoutDetailArgs(workout: detailData),
+      extra: WorkoutDetailArgs(
+        workoutId: overview.id,
+        fallbackOverview: overview,
+      ),
     );
   }
 
@@ -577,45 +566,108 @@ class WorkoutTrackerView extends StatelessWidget {
   }
 }
 
-class _UpcomingWorkout {
-  const _UpcomingWorkout({
-    required this.imageAsset,
-    required this.title,
-    required this.time,
+class _WorkoutStreamSection extends StatelessWidget {
+  const _WorkoutStreamSection({
+    required this.stream,
+    required this.header,
+    required this.builder,
+    required this.emptyMessage,
   });
 
-  final String imageAsset;
-  final LocalizedText title;
-  final LocalizedText time;
+  final Stream<List<WorkoutOverview>> stream;
+  final Widget header;
+  final Widget Function(List<WorkoutOverview>) builder;
+  final String emptyMessage;
 
-  Map<String, String> toLocalizedMap(AppLanguage language) {
-    return <String, String>{
-      'image': imageAsset,
-      'title': title.resolve(language),
-      'time': time.resolve(language),
-    };
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<WorkoutOverview>>(
+      stream: stream,
+      builder: (context, snapshot) {
+        final columnChildren = <Widget>[header];
+
+        if (snapshot.hasError) {
+          columnChildren.add(_ErrorPlaceholder(error: snapshot.error!));
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: columnChildren,
+          );
+        }
+
+        final workouts = snapshot.data;
+        if (workouts == null) {
+          columnChildren.add(
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          );
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: columnChildren,
+          );
+        }
+
+        if (workouts.isEmpty) {
+          columnChildren.add(_EmptyPlaceholder(message: emptyMessage));
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: columnChildren,
+          );
+        }
+
+        columnChildren.add(builder(workouts));
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: columnChildren,
+        );
+      },
+    );
   }
 }
 
-class _TrainingOption {
-  const _TrainingOption({
-    required this.imageAsset,
-    required this.title,
-    required this.exercises,
-    required this.duration,
-  });
+class _EmptyPlaceholder extends StatelessWidget {
+  const _EmptyPlaceholder({required this.message});
 
-  final String imageAsset;
-  final LocalizedText title;
-  final LocalizedText exercises;
-  final LocalizedText duration;
+  final String message;
 
-  Map<String, String> toLocalizedMap(AppLanguage language) {
-    return <String, String>{
-      'image': imageAsset,
-      'title': title.resolve(language),
-      'exercises': exercises.resolve(language),
-      'time': duration.resolve(language),
-    };
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: TColor.lightGray.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        message,
+        style: TextStyle(color: TColor.gray, fontSize: 12),
+      ),
+    );
+  }
+}
+
+class _ErrorPlaceholder extends StatelessWidget {
+  const _ErrorPlaceholder({required this.error});
+
+  final Object error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.redAccent.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        error.toString(),
+        style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+      ),
+    );
   }
 }

@@ -193,10 +193,7 @@ class ExercisesStepDetails extends StatelessWidget {
         actions: [
           InkWell(
             onTap: () {
-              final message = _actionsComingSoon.resolve(language);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(message)));
+              _showSnack(context, language, _actionsComingSoon);
             },
             child: Container(
               margin: const EdgeInsets.all(8),
@@ -310,9 +307,7 @@ class ExercisesStepDetails extends StatelessWidget {
               title: _saveLabel.resolve(language),
               elevation: 0,
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(_saveSnack.resolve(language))),
-                );
+                _showSnack(context, language, _saveSnack);
                 context.pop();
               },
             ),
@@ -355,9 +350,7 @@ class ExercisesStepDetails extends StatelessWidget {
         ),
         IconButton(
           onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(_videoPreviewSnack.resolve(language))),
-            );
+            _showSnack(context, language, _videoPreviewSnack);
           },
           icon: Image.asset('assets/img/Play.png', width: 30, height: 30),
         ),
@@ -496,6 +489,16 @@ class ExercisesStepDetails extends StatelessWidget {
           ),
         )
         .toList(growable: false);
+  }
+
+  void _showSnack(
+    BuildContext context,
+    AppLanguage language,
+    LocalizedText localizedText,
+  ) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(localizedText.resolve(language))),
+    );
   }
 }
 

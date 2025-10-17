@@ -1,20 +1,25 @@
-import 'package:aigymbuddy/common/app_router.dart';
-import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/common/models/navigation_args.dart';
-import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
-import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/dependencies.dart';
+import '../../common/app_router.dart';
+import '../../common/color_extension.dart';
+import '../../common/localization/app_language.dart';
+import '../../common/localization/app_language_scope.dart';
+import '../../common/models/navigation_args.dart';
 import '../../common_widget/exercises_row.dart';
 import '../../common_widget/exercises_set_section.dart';
+import '../../common_widget/icon_title_next_row.dart';
+import '../../common_widget/round_button.dart';
+import '../shared/models/workout.dart';
+import '../shared/repositories/workout_repository.dart';
+import 'workout_localizations.dart';
+import 'workout_visuals.dart';
 
 class WorkoutDetailView extends StatefulWidget {
-  const WorkoutDetailView({super.key, required this.workout});
+  const WorkoutDetailView({super.key, required this.args});
 
-  final Map<String, dynamic> workout;
+  final WorkoutDetailArgs args;
 
   @override
   State<WorkoutDetailView> createState() => _WorkoutDetailViewState();
@@ -34,11 +39,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   static const _difficultyLabel = LocalizedText(
     english: 'Difficulty',
     indonesian: 'Tingkat Kesulitan',
-  );
-
-  static const _defaultDifficulty = LocalizedText(
-    english: 'Beginner',
-    indonesian: 'Pemula',
   );
 
   static const _equipmentTitle = LocalizedText(
@@ -113,454 +113,72 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     indonesian: 'Belum ada latihan tersedia.',
   );
 
-  static const _equipmentItems = <_EquipmentItem>[
-    _EquipmentItem(
-      imageAsset: 'assets/img/barbell.png',
-      title: LocalizedText(english: 'Barbell', indonesian: 'Barbel'),
-    ),
-    _EquipmentItem(
-      imageAsset: 'assets/img/skipping_rope.png',
-      title: LocalizedText(
-        english: 'Skipping Rope',
-        indonesian: 'Tali Skipping',
-      ),
-    ),
-    _EquipmentItem(
-      imageAsset: 'assets/img/bottle.png',
-      title: LocalizedText(
-        english: 'Bottle 1 Liter',
-        indonesian: 'Botol 1 Liter',
-      ),
-    ),
-  ];
-
-  static const _exerciseSets = <_ExerciseSetConfig>[
-    _ExerciseSetConfig(
-      name: LocalizedText(english: 'Set 1', indonesian: 'Set 1'),
-      exercises: [
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_1.png',
-          title: LocalizedText(english: 'Warm Up', indonesian: 'Pemanasan'),
-          subtitle: LocalizedText(english: '05:00', indonesian: '05:00'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(
-            english: 'Jumping Jack',
-            indonesian: 'Jumping Jack',
-          ),
-          subtitle: LocalizedText(english: '12x', indonesian: '12x'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_1.png',
-          title: LocalizedText(english: 'Skipping', indonesian: 'Skipping'),
-          subtitle: LocalizedText(english: '15x', indonesian: '15x'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(english: 'Squats', indonesian: 'Squat'),
-          subtitle: LocalizedText(english: '20x', indonesian: '20x'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_1.png',
-          title: LocalizedText(
-            english: 'Arm Raises',
-            indonesian: 'Angkat Lengan',
-          ),
-          subtitle: LocalizedText(english: '00:53', indonesian: '00:53'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(
-            english: 'Rest and Drink',
-            indonesian: 'Istirahat dan Minum',
-          ),
-          subtitle: LocalizedText(english: '02:00', indonesian: '02:00'),
-        ),
-      ],
-    ),
-    _ExerciseSetConfig(
-      name: LocalizedText(english: 'Set 2', indonesian: 'Set 2'),
-      exercises: [
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_1.png',
-          title: LocalizedText(english: 'Warm Up', indonesian: 'Pemanasan'),
-          subtitle: LocalizedText(english: '05:00', indonesian: '05:00'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(
-            english: 'Jumping Jack',
-            indonesian: 'Jumping Jack',
-          ),
-          subtitle: LocalizedText(english: '12x', indonesian: '12x'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_1.png',
-          title: LocalizedText(english: 'Skipping', indonesian: 'Skipping'),
-          subtitle: LocalizedText(english: '15x', indonesian: '15x'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(english: 'Squats', indonesian: 'Squat'),
-          subtitle: LocalizedText(english: '20x', indonesian: '20x'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_1.png',
-          title: LocalizedText(
-            english: 'Arm Raises',
-            indonesian: 'Angkat Lengan',
-          ),
-          subtitle: LocalizedText(english: '00:53', indonesian: '00:53'),
-        ),
-        _ExerciseItemConfig(
-          imageAsset: 'assets/img/img_2.png',
-          title: LocalizedText(
-            english: 'Rest and Drink',
-            indonesian: 'Istirahat dan Minum',
-          ),
-          subtitle: LocalizedText(english: '02:00', indonesian: '02:00'),
-        ),
-      ],
-    ),
-  ];
-
   bool _isFavorite = false;
+  late WorkoutRepository _repository;
+  Future<WorkoutDetail?>? _detailFuture;
 
-  Map<String, dynamic> get _workout => widget.workout;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _repository = AppDependencies.of(context).workoutRepository;
+    _detailFuture ??=
+        _repository.loadWorkoutDetail(widget.args.workoutId);
+  }
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
     final language = context.appLanguage;
-    final workoutSets = _buildWorkoutSets(language);
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: TColor.primaryG),
-      ),
-      child: NestedScrollView(
-        headerSliverBuilder: (context, _) => [
-          _buildHeaderAppBar(context, language),
-          _buildHeroImage(media),
-        ],
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          decoration: BoxDecoration(
-            color: TColor.white,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      Container(
-                        width: 50,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: TColor.gray.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                      SizedBox(height: media.width * 0.05),
-                      _buildWorkoutHeader(context, language),
-                      SizedBox(height: media.width * 0.05),
-                      IconTitleNextRow(
-                        icon: 'assets/img/time.png',
-                        title: _scheduleWorkoutLabel.resolve(language),
-                        time: _workout['time']?.toString() ??
-                            (language == AppLanguage.english
-                                ? '5/27, 09:00 AM'
-                                : '27/5, 09.00'),
-                        color: TColor.primaryColor2.withValues(alpha: 0.3),
-                        onPressed: () =>
-                            context.pushNamed(AppRoute.workoutScheduleName),
-                      ),
-                      SizedBox(height: media.width * 0.02),
-                      IconTitleNextRow(
-                        icon: 'assets/img/difficulity.png',
-                        title: _difficultyLabel.resolve(language),
-                        time: _workout['difficulty']?.toString() ??
-                            _defaultDifficulty.resolve(language),
-                        color: TColor.secondaryColor2.withValues(alpha: 0.3),
-                        onPressed: _showDifficultyInfo,
-                      ),
-                      SizedBox(height: media.width * 0.05),
-                      _buildEquipmentSection(media, language),
-                      SizedBox(height: media.width * 0.05),
-                      _buildExercisesSection(context, language, workoutSets),
-                      SizedBox(height: media.width * 0.1),
-                    ],
-                  ),
-                ),
-                SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      RoundButton(
-                        title: _startWorkoutLabel.resolve(language),
-                        onPressed: () => _startWorkout(workoutSets),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+    final detailFuture = _detailFuture;
+    if (detailFuture == null) {
+      return const SizedBox.shrink();
+    }
 
-  SliverAppBar _buildHeaderAppBar(BuildContext context, AppLanguage language) {
-    return SliverAppBar(
-      backgroundColor: Colors.transparent,
-      centerTitle: true,
-      elevation: 0,
-      leading: InkWell(
-        onTap: () => context.pop(),
-        child: Container(
-          margin: const EdgeInsets.all(8),
-          height: 40,
-          width: 40,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: TColor.lightGray,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Image.asset(
-            'assets/img/black_btn.png',
-            width: 15,
-            height: 15,
-            fit: BoxFit.contain,
-          ),
-        ),
-      ),
-      actions: [
-        InkWell(
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(_moreActionsSnack.resolve(language))),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            height: 40,
-            width: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: TColor.lightGray,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Image.asset(
-              'assets/img/more_btn.png',
-              width: 15,
-              height: 15,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+    return FutureBuilder<WorkoutDetail?>(
+      future: detailFuture,
+      builder: (context, snapshot) {
+        final detail = snapshot.data;
+        final overview = detail?.overview ?? widget.args.fallbackOverview;
+        final isLoading = snapshot.connectionState != ConnectionState.done;
 
-  SliverAppBar _buildHeroImage(Size media) {
-    return SliverAppBar(
-      backgroundColor: Colors.transparent,
-      centerTitle: true,
-      elevation: 0,
-      leadingWidth: 0,
-      leading: const SizedBox(),
-      expandedHeight: media.width * 0.5,
-      flexibleSpace: Align(
-        alignment: Alignment.center,
-        child: Image.asset(
-          'assets/img/detail_top.png',
-          width: media.width * 0.75,
-          height: media.width * 0.8,
-          fit: BoxFit.contain,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWorkoutHeader(BuildContext context, AppLanguage language) {
-    final exercises = _workout['exercises']?.toString() ??
-        (language == AppLanguage.english ? '11 Exercises' : '11 Latihan');
-    final time = _workout['time']?.toString() ??
-        (language == AppLanguage.english ? '32 mins' : '32 menit');
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _workout['title']?.toString() ??
-                    (language == AppLanguage.english
-                        ? 'Workout Plan'
-                        : 'Rencana Latihan'),
-                style: TextStyle(
-                  color: TColor.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+        if (overview == null) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => context.pop(),
               ),
-              Text(
-                '$exercises | $time | ${_calorieSummary.resolve(language)}',
-                style: TextStyle(color: TColor.gray, fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-        TextButton(
-          onPressed: _toggleFavorite,
-          child: Image.asset(
-            'assets/img/fav.png',
-            width: 15,
-            height: 15,
-            fit: BoxFit.contain,
-            color: _isFavorite ? TColor.secondaryColor2 : null,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEquipmentSection(Size media, AppLanguage language) {
-    final summary = _equipmentSummaryLabel
-        .resolve(language)
-        .replaceFirst('{count}', _equipmentItems.length.toString());
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _equipmentTitle.resolve(language),
-              style: TextStyle(
-                color: TColor.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
+              title: const Text('Workout'),
             ),
-            TextButton(
-              onPressed: _showEquipmentSheet,
+            body: Center(
               child: Text(
-                summary,
-                style: TextStyle(color: TColor.gray, fontSize: 12),
+                language == AppLanguage.english
+                    ? 'Workout not found.'
+                    : 'Latihan tidak ditemukan.',
               ),
             ),
-          ],
-        ),
-        SizedBox(
-          height: media.width * 0.5,
-          child: ListView.builder(
-            padding: EdgeInsets.zero,
-            scrollDirection: Axis.horizontal,
-            itemCount: _equipmentItems.length,
-            itemBuilder: (context, index) {
-              final item = _equipmentItems[index];
-              return Container(
-                margin: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: media.width * 0.35,
-                      width: media.width * 0.35,
-                      decoration: BoxDecoration(
-                        color: TColor.lightGray,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        item.imageAsset,
-                        width: media.width * 0.2,
-                        height: media.width * 0.2,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        item.title.resolve(language),
-                        style: TextStyle(color: TColor.black, fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
+          );
+        }
 
-  Widget _buildExercisesSection(
-    BuildContext context,
-    AppLanguage language,
-    List<ExerciseSet> workoutSets,
-  ) {
-    final summary = _exercisesSummaryLabel
-        .resolve(language)
-        .replaceFirst('{count}', workoutSets.length.toString());
+        final workoutSets = detail == null
+            ? _defaultExerciseSets(language)
+            : _mapExercisesToSets(language, detail.exercises);
 
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _exercisesTitle.resolve(language),
-              style: TextStyle(
-                color: TColor.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            TextButton(
-              onPressed: () => _showExerciseSummary(workoutSets),
-              child: Text(
-                summary,
-                style: TextStyle(color: TColor.gray, fontSize: 12),
-              ),
-            ),
-          ],
-        ),
-        ListView.builder(
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: workoutSets.length,
-          itemBuilder: (context, index) {
-            final set = workoutSets[index];
-            return ExercisesSetSection(
-              set: set,
-              onPressed: (exercise) {
-                context.pushNamed(
-                  AppRoute.exerciseStepsName,
-                  extra: ExerciseStepsArgs(
-                    exercise: Map<String, dynamic>.from(exercise.toJson()),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ],
+        return _WorkoutDetailScaffold(
+          media: media,
+          language: language,
+          overview: overview,
+          workoutSets: workoutSets,
+          isLoading: isLoading,
+          isFavorite: _isFavorite,
+          onToggleFavorite: _toggleFavorite,
+          onShowDifficultyInfo: _showDifficultyInfo,
+          onShowEquipmentSheet: _showEquipmentSheet,
+          onShowExerciseSummary: () => _showExerciseSummary(workoutSets),
+          onStartWorkout: () => _startWorkout(workoutSets),
+        );
+      },
     );
   }
 
@@ -570,9 +188,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     final message = _isFavorite
         ? _addedToFavourite.resolve(language)
         : _removedFromFavourite.resolve(language);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _showDifficultyInfo() async {
@@ -748,7 +365,43 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     );
   }
 
-  List<ExerciseSet> _buildWorkoutSets(AppLanguage language) {
+  List<ExerciseSet> _mapExercisesToSets(
+    AppLanguage language,
+    List<WorkoutExerciseDetail> exercises,
+  ) {
+    if (exercises.isEmpty) {
+      return _defaultExerciseSets(language);
+    }
+
+    final items = exercises.map((exercise) {
+      final segments = <String>['${exercise.sets} sets'];
+      if (exercise.reps != null) {
+        segments.add('${exercise.reps} reps');
+      }
+      if (exercise.duration != null) {
+        segments.add(
+          WorkoutLocalizations.durationLabel(language, exercise.duration),
+        );
+      }
+      if (exercise.rest > 0) {
+        final restLabel = language == AppLanguage.english
+            ? 'Rest ${exercise.rest}s'
+            : 'Istirahat ${exercise.rest}dtk';
+        segments.add(restLabel);
+      }
+
+      return ExerciseListItem(
+        imageAsset: WorkoutVisuals.exerciseImageForCategory(exercise.category),
+        title: exercise.name,
+        subtitle: segments.join(' • '),
+      );
+    }).toList(growable: false);
+
+    final name = language == AppLanguage.english ? 'Exercises' : 'Latihan';
+    return [ExerciseSet(name: name, exercises: items)];
+  }
+
+  List<ExerciseSet> _defaultExerciseSets(AppLanguage language) {
     return _exerciseSets
         .map(
           (set) => ExerciseSet(
@@ -765,6 +418,381 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           ),
         )
         .toList(growable: false);
+  }
+}
+
+class _WorkoutDetailScaffold extends StatelessWidget {
+  const _WorkoutDetailScaffold({
+    required this.media,
+    required this.language,
+    required this.overview,
+    required this.workoutSets,
+    required this.isLoading,
+    required this.isFavorite,
+    required this.onToggleFavorite,
+    required this.onShowDifficultyInfo,
+    required this.onShowEquipmentSheet,
+    required this.onShowExerciseSummary,
+    required this.onStartWorkout,
+  });
+
+  final Size media;
+  final AppLanguage language;
+  final WorkoutOverview overview;
+  final List<ExerciseSet> workoutSets;
+  final bool isLoading;
+  final bool isFavorite;
+  final VoidCallback onToggleFavorite;
+  final VoidCallback onShowDifficultyInfo;
+  final VoidCallback onShowEquipmentSheet;
+  final VoidCallback onShowExerciseSummary;
+  final VoidCallback onStartWorkout;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: TColor.primaryG),
+      ),
+      child: NestedScrollView(
+        headerSliverBuilder: (context, _) => [
+          _buildHeaderAppBar(context),
+          _buildHeroImage(),
+        ],
+        body: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          decoration: BoxDecoration(
+            color: TColor.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
+            ),
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Container(
+                        width: 50,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: TColor.gray.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                      if (isLoading) const LinearProgressIndicator(minHeight: 2),
+                      SizedBox(height: media.width * 0.05),
+                      _buildWorkoutHeader(),
+                      SizedBox(height: media.width * 0.05),
+                      IconTitleNextRow(
+                        icon: 'assets/img/time.png',
+                        title: _WorkoutDetailViewState._scheduleWorkoutLabel
+                            .resolve(language),
+                        time: _scheduleLabel(),
+                        color: TColor.primaryColor2.withValues(alpha: 0.3),
+                        onPressed: () => context.pushNamed(AppRoute.workoutScheduleName),
+                      ),
+                      SizedBox(height: media.width * 0.02),
+                      IconTitleNextRow(
+                        icon: 'assets/img/difficulity.png',
+                        title: _WorkoutDetailViewState._difficultyLabel
+                            .resolve(language),
+                        time: _difficultyLabelText(),
+                        color: TColor.secondaryColor2.withValues(alpha: 0.3),
+                        onPressed: onShowDifficultyInfo,
+                      ),
+                      SizedBox(height: media.width * 0.05),
+                      _buildEquipmentSection(),
+                      SizedBox(height: media.width * 0.05),
+                      _buildExercisesSection(context),
+                      SizedBox(height: media.width * 0.1),
+                    ],
+                  ),
+                ),
+                SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      RoundButton(
+                        title: _WorkoutDetailViewState._startWorkoutLabel
+                            .resolve(language),
+                        onPressed: onStartWorkout,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  SliverAppBar _buildHeaderAppBar(BuildContext context) {
+    return SliverAppBar(
+      backgroundColor: Colors.transparent,
+      centerTitle: true,
+      elevation: 0,
+      leading: InkWell(
+        onTap: () => context.pop(),
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          height: 40,
+          width: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: TColor.lightGray,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Image.asset(
+            'assets/img/black_btn.png',
+            width: 15,
+            height: 15,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+      actions: [
+        InkWell(
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  _WorkoutDetailViewState._moreActionsSnack.resolve(language),
+                ),
+              ),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            height: 40,
+            width: 40,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: TColor.lightGray,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Image.asset(
+              'assets/img/more_btn.png',
+              width: 15,
+              height: 15,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  SliverAppBar _buildHeroImage() {
+    return SliverAppBar(
+      backgroundColor: Colors.transparent,
+      centerTitle: true,
+      elevation: 0,
+      leadingWidth: 0,
+      leading: const SizedBox(),
+      expandedHeight: media.width * 0.5,
+      flexibleSpace: Align(
+        alignment: Alignment.center,
+        child: Image.asset(
+          WorkoutVisuals.coverImageFor(overview.goal),
+          width: media.width * 0.75,
+          height: media.width * 0.8,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWorkoutHeader() {
+    final exercisesLabel = WorkoutLocalizations.exerciseCount(
+      language,
+      overview.exerciseCount,
+    );
+    final durationLabel = WorkoutLocalizations.durationLabel(
+      language,
+      overview.estimatedDuration,
+    );
+    final subtitle =
+        '$exercisesLabel | $durationLabel | ${_WorkoutDetailViewState._calorieSummary.resolve(language)}';
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                overview.title,
+                style: TextStyle(
+                  color: TColor.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(color: TColor.gray, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+        TextButton(
+          onPressed: onToggleFavorite,
+          child: Image.asset(
+            'assets/img/fav.png',
+            width: 15,
+            height: 15,
+            fit: BoxFit.contain,
+            color: isFavorite ? TColor.secondaryColor2 : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEquipmentSection() {
+    final summary = _WorkoutDetailViewState._equipmentSummaryLabel
+        .resolve(language)
+        .replaceFirst('{count}', _equipmentItems.length.toString());
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              _WorkoutDetailViewState._equipmentTitle.resolve(language),
+              style: TextStyle(
+                color: TColor.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            TextButton(
+              onPressed: onShowEquipmentSheet,
+              child: Text(
+                summary,
+                style: TextStyle(color: TColor.gray, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: media.width * 0.5,
+          child: ListView.builder(
+            padding: EdgeInsets.zero,
+            scrollDirection: Axis.horizontal,
+            itemCount: _equipmentItems.length,
+            itemBuilder: (context, index) {
+              final item = _equipmentItems[index];
+              return Container(
+                margin: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: media.width * 0.35,
+                      width: media.width * 0.35,
+                      decoration: BoxDecoration(
+                        color: TColor.lightGray,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        item.imageAsset,
+                        width: media.width * 0.2,
+                        height: media.width * 0.2,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        item.title.resolve(language),
+                        style: TextStyle(color: TColor.black, fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExercisesSection(BuildContext context) {
+    final summary = _WorkoutDetailViewState._exercisesSummaryLabel
+        .resolve(language)
+        .replaceFirst('{count}', workoutSets.length.toString());
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              _WorkoutDetailViewState._exercisesTitle.resolve(language),
+              style: TextStyle(
+                color: TColor.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            TextButton(
+              onPressed: onShowExerciseSummary,
+              child: Text(
+                summary,
+                style: TextStyle(color: TColor.gray, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+        ListView.builder(
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: workoutSets.length,
+          itemBuilder: (context, index) {
+            final set = workoutSets[index];
+            return ExercisesSetSection(
+              set: set,
+              onPressed: (exercise) {
+                context.pushNamed(
+                  AppRoute.exerciseStepsName,
+                  extra: ExerciseStepsArgs(
+                    exercise: Map<String, dynamic>.from(exercise.toJson()),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  String _scheduleLabel() {
+    final scheduled = overview.scheduledFor;
+    if (scheduled == null) {
+      return language == AppLanguage.english
+          ? 'Not scheduled'
+          : 'Belum dijadwalkan';
+    }
+    return WorkoutLocalizations.scheduleTime(language, scheduled);
+  }
+
+  String _difficultyLabelText() {
+    return WorkoutLocalizations.levelLabel(language, overview.level);
   }
 }
 
@@ -793,3 +821,115 @@ class _ExerciseItemConfig {
   final LocalizedText title;
   final LocalizedText subtitle;
 }
+
+const _equipmentItems = <_EquipmentItem>[
+  _EquipmentItem(
+    imageAsset: 'assets/img/barbell.png',
+    title: LocalizedText(english: 'Barbell', indonesian: 'Barbel'),
+  ),
+  _EquipmentItem(
+    imageAsset: 'assets/img/skipping_rope.png',
+    title: LocalizedText(
+      english: 'Skipping Rope',
+      indonesian: 'Tali Skipping',
+    ),
+  ),
+  _EquipmentItem(
+    imageAsset: 'assets/img/bottle.png',
+    title: LocalizedText(
+      english: 'Bottle 1 Liter',
+      indonesian: 'Botol 1 Liter',
+    ),
+  ),
+];
+
+const _exerciseSets = <_ExerciseSetConfig>[
+  _ExerciseSetConfig(
+    name: LocalizedText(english: 'Set 1', indonesian: 'Set 1'),
+    exercises: [
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_1.png',
+        title: LocalizedText(english: 'Warm Up', indonesian: 'Pemanasan'),
+        subtitle: LocalizedText(english: '05:00', indonesian: '05:00'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_2.png',
+        title: LocalizedText(
+          english: 'Jumping Jack',
+          indonesian: 'Jumping Jack',
+        ),
+        subtitle: LocalizedText(english: '12x', indonesian: '12x'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_1.png',
+        title: LocalizedText(english: 'Skipping', indonesian: 'Skipping'),
+        subtitle: LocalizedText(english: '15x', indonesian: '15x'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_2.png',
+        title: LocalizedText(english: 'Squats', indonesian: 'Squat'),
+        subtitle: LocalizedText(english: '20x', indonesian: '20x'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_1.png',
+        title: LocalizedText(
+          english: 'Arm Raises',
+          indonesian: 'Angkat Lengan',
+        ),
+        subtitle: LocalizedText(english: '00:53', indonesian: '00:53'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_2.png',
+        title: LocalizedText(
+          english: 'Rest and Drink',
+          indonesian: 'Istirahat dan Minum',
+        ),
+        subtitle: LocalizedText(english: '02:00', indonesian: '02:00'),
+      ),
+    ],
+  ),
+  _ExerciseSetConfig(
+    name: LocalizedText(english: 'Set 2', indonesian: 'Set 2'),
+    exercises: [
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_1.png',
+        title: LocalizedText(english: 'Warm Up', indonesian: 'Pemanasan'),
+        subtitle: LocalizedText(english: '05:00', indonesian: '05:00'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_2.png',
+        title: LocalizedText(
+          english: 'Jumping Jack',
+          indonesian: 'Jumping Jack',
+        ),
+        subtitle: LocalizedText(english: '12x', indonesian: '12x'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_1.png',
+        title: LocalizedText(english: 'Skipping', indonesian: 'Skipping'),
+        subtitle: LocalizedText(english: '15x', indonesian: '15x'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_2.png',
+        title: LocalizedText(english: 'Squats', indonesian: 'Squat'),
+        subtitle: LocalizedText(english: '20x', indonesian: '20x'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_1.png',
+        title: LocalizedText(
+          english: 'Arm Raises',
+          indonesian: 'Angkat Lengan',
+        ),
+        subtitle: LocalizedText(english: '00:53', indonesian: '00:53'),
+      ),
+      _ExerciseItemConfig(
+        imageAsset: 'assets/img/img_2.png',
+        title: LocalizedText(
+          english: 'Rest and Drink',
+          indonesian: 'Istirahat dan Minum',
+        ),
+        subtitle: LocalizedText(english: '02:00', indonesian: '02:00'),
+      ),
+    ],
+  ),
+];

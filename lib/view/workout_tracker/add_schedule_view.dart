@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../app/dependencies.dart';
 import '../../common/date_time_utils.dart';
 import '../../common_widget/icon_title_next_row.dart';
 import '../../common_widget/round_button.dart';
+import '../shared/models/workout.dart';
 
 class AddScheduleView extends StatefulWidget {
   const AddScheduleView({super.key, required this.date});
@@ -25,6 +27,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   late _DifficultyOption _selectedDifficulty;
   int? _customRepetitions;
   double? _customWeight;
+  bool _isSaving = false;
 
   static const _appBarTitle = LocalizedText(
     english: 'Add Schedule',
@@ -85,6 +88,8 @@ class _AddScheduleViewState extends State<AddScheduleView> {
         english: 'Upperbody Workout',
         indonesian: 'Latihan Tubuh Atas',
       ),
+      goal: WorkoutGoal.buildMuscle,
+      environment: WorkoutEnvironment.gym,
     ),
     _WorkoutOption(
       id: 'fullbody',
@@ -92,6 +97,8 @@ class _AddScheduleViewState extends State<AddScheduleView> {
         english: 'Fullbody Workout',
         indonesian: 'Latihan Seluruh Tubuh',
       ),
+      goal: WorkoutGoal.loseWeight,
+      environment: WorkoutEnvironment.home,
     ),
     _WorkoutOption(
       id: 'lowerbody',
@@ -99,10 +106,14 @@ class _AddScheduleViewState extends State<AddScheduleView> {
         english: 'Lowerbody Workout',
         indonesian: 'Latihan Tubuh Bawah',
       ),
+      goal: WorkoutGoal.buildMuscle,
+      environment: WorkoutEnvironment.gym,
     ),
     _WorkoutOption(
       id: 'core_burner',
       label: LocalizedText(english: 'Core Burner', indonesian: 'Pembakar Inti'),
+      goal: WorkoutGoal.endurance,
+      environment: WorkoutEnvironment.home,
     ),
   ];
 
@@ -110,14 +121,17 @@ class _AddScheduleViewState extends State<AddScheduleView> {
     _DifficultyOption(
       id: 'beginner',
       label: LocalizedText(english: 'Beginner', indonesian: 'Pemula'),
+      level: WorkoutLevel.beginner,
     ),
     _DifficultyOption(
       id: 'intermediate',
       label: LocalizedText(english: 'Intermediate', indonesian: 'Menengah'),
+      level: WorkoutLevel.intermediate,
     ),
     _DifficultyOption(
       id: 'advanced',
       label: LocalizedText(english: 'Advanced', indonesian: 'Lanjutan'),
+      level: WorkoutLevel.advanced,
     ),
   ];
 
@@ -285,7 +299,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
             const Spacer(),
             RoundButton(
               title: _saveLabel.resolve(language),
-              onPressed: _handleSave,
+              onPressed: _isSaving ? null : _handleSave,
             ),
             const SizedBox(height: 20),
           ],
@@ -419,29 +433,74 @@ class _AddScheduleViewState extends State<AddScheduleView> {
     );
   }
 
-  void _handleSave() {
+  Future<void> _handleSave() async {
+    if (_isSaving) return;
     final messenger = ScaffoldMessenger.of(context);
     final language = context.appLanguage;
-    final formattedDate = DateTimeUtils.formatDate(
-      _selectedDateTime,
-      pattern: language == AppLanguage.english
-          ? 'E, dd MMM yyyy • h:mm a'
-          : 'E, dd MMM yyyy • HH.mm',
-    );
 
-    final confirmation = language == AppLanguage.english
-        ? 'Schedule saved for $formattedDate'
-        : 'Jadwal tersimpan untuk $formattedDate';
+    setState(() => _isSaving = true);
 
-    messenger.showSnackBar(SnackBar(content: Text(confirmation)));
+    try {
+      final notes = _buildNotes(language);
+      final title = _selectedWorkout.label.resolve(AppLanguage.english);
+      final draft = WorkoutScheduleDraft(
+        title: title,
+        goal: _selectedWorkout.goal,
+        level: _selectedDifficulty.level,
+        environment: _selectedWorkout.environment,
+        scheduledFor: _selectedDateTime,
+        notes: notes,
+      );
 
-    context.pop({
-      'date': _selectedDateTime,
-      'workout': _selectedWorkout.label.resolve(language),
-      'difficulty': _selectedDifficulty.label.resolve(language),
-      'repetitions': _customRepetitions,
-      'weight': _customWeight,
-    });
+      final repository = AppDependencies.of(context).workoutRepository;
+      final workoutId = await repository.createQuickSchedule(draft);
+      if (!mounted) return;
+
+      final formattedDate = DateTimeUtils.formatDate(
+        _selectedDateTime,
+        pattern: language == AppLanguage.english
+            ? 'E, dd MMM yyyy • h:mm a'
+            : 'E, dd MMM yyyy • HH.mm',
+      );
+
+      final confirmation = language == AppLanguage.english
+          ? 'Schedule saved for $formattedDate'
+          : 'Jadwal tersimpan untuk $formattedDate';
+
+      messenger.showSnackBar(SnackBar(content: Text(confirmation)));
+      context.pop(workoutId);
+    } catch (error, stackTrace) {
+      debugPrint('Failed to save workout schedule: $error\n$stackTrace');
+      if (!mounted) return;
+      final message = language == AppLanguage.english
+          ? 'Failed to save schedule. Please try again.'
+          : 'Gagal menyimpan jadwal. Silakan coba lagi.';
+      messenger.showSnackBar(SnackBar(content: Text(message)));
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+
+  String? _buildNotes(AppLanguage language) {
+    final notes = <String>[];
+    if (_customRepetitions != null) {
+      notes.add(
+        language == AppLanguage.english
+            ? 'Reps: ${_customRepetitions!}'
+            : 'Repetisi: ${_customRepetitions!}',
+      );
+    }
+    if (_customWeight != null) {
+      final formatted = _customWeight!.toStringAsFixed(1);
+      notes.add(
+        language == AppLanguage.english
+            ? 'Weight: $formatted kg'
+            : 'Beban: $formatted kg',
+      );
+    }
+    return notes.isEmpty ? null : notes.join(' • ');
   }
 
   String _localizedRepetition(int value, AppLanguage language) {
@@ -460,15 +519,27 @@ class _AddScheduleViewState extends State<AddScheduleView> {
 }
 
 class _WorkoutOption {
-  const _WorkoutOption({required this.id, required this.label});
+  const _WorkoutOption({
+    required this.id,
+    required this.label,
+    required this.goal,
+    required this.environment,
+  });
 
   final String id;
   final LocalizedText label;
+  final WorkoutGoal goal;
+  final WorkoutEnvironment environment;
 }
 
 class _DifficultyOption {
-  const _DifficultyOption({required this.id, required this.label});
+  const _DifficultyOption({
+    required this.id,
+    required this.label,
+    required this.level,
+  });
 
   final String id;
   final LocalizedText label;
+  final WorkoutLevel level;
 }
