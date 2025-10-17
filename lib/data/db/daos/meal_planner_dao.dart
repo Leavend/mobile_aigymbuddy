@@ -1,6 +1,5 @@
 // lib/data/db/daos/meal_planner_dao.dart
 
-import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
@@ -11,10 +10,10 @@ class MealPlannerStore {
   final AppDatabase _db;
 
   Future<bool> hasSeedData() async {
-    final result = await _db.customSelect(
-      'SELECT COUNT(*) AS total FROM meals',
-    ).getSingleOrNull();
-    final total = result == null ? 0 : (result.data['total'] as int? ?? 0);
+    final row = await _db
+        .customSelect('SELECT COUNT(*) AS total FROM meals')
+        .getSingleOrNull();
+    final total = row == null ? 0 : row.read<int>('total');
     return total > 0;
   }
 
@@ -34,22 +33,31 @@ class MealPlannerStore {
   }
 
   Future<List<Map<String, Object?>>> listCategories() {
-    return _db.customSelect(
-      'SELECT id, name_en, name_id, image_asset FROM meal_categories ORDER BY id',
-    ).get().then((rows) => rows.map((row) => row.data).toList());
+    return _db
+        .customSelect(
+          'SELECT id, name_en, name_id, image_asset FROM meal_categories ORDER BY id',
+        )
+        .get()
+        .then((rows) => rows.map((row) => row.data).toList());
   }
 
   Future<List<Map<String, Object?>>> listMealsByCategory(int categoryId) {
-    return _db.customSelect(
-      'SELECT * FROM meals WHERE category_id = ? ORDER BY name_en',
-      variables: [Variable.withInt(categoryId)],
-    ).get().then((rows) => rows.map((row) => row.data).toList());
+    return _db
+        .customSelect(
+          'SELECT * FROM meals WHERE category_id = ? ORDER BY name_en',
+          variables: [Variable.withInt(categoryId)],
+        )
+        .get()
+        .then((rows) => rows.map((row) => row.data).toList());
   }
 
   Future<List<Map<String, Object?>>> listPopularMeals() {
-    return _db.customSelect(
-      'SELECT * FROM meals ORDER BY id LIMIT 4',
-    ).get().then((rows) => rows.map((row) => row.data).toList());
+    return _db
+        .customSelect(
+          'SELECT * FROM meals ORDER BY id LIMIT 4',
+        )
+        .get()
+        .then((rows) => rows.map((row) => row.data).toList());
   }
 
   Future<List<Map<String, Object?>>> searchMealsByName(String query) {
@@ -57,11 +65,17 @@ class MealPlannerStore {
       return listPopularMeals();
     }
     final pattern = '%${query.toLowerCase()}%';
-    return _db.customSelect(
-      'SELECT * FROM meals WHERE lower(name_en) LIKE ? OR lower(name_id) LIKE ? '
-      'ORDER BY name_en',
-      variables: [Variable.withString(pattern), Variable.withString(pattern)],
-    ).get().then((rows) => rows.map((row) => row.data).toList());
+    return _db
+        .customSelect(
+          'SELECT * FROM meals WHERE lower(name_en) LIKE ? OR lower(name_id) LIKE ? '
+          'ORDER BY name_en',
+          variables: [
+            Variable.withString(pattern),
+            Variable.withString(pattern)
+          ],
+        )
+        .get()
+        .then((rows) => rows.map((row) => row.data).toList());
   }
 
   Stream<List<Map<String, Object?>>> watchMealsForDay(DateTime day) {
@@ -80,7 +94,7 @@ class MealPlannerStore {
         .then((rows) => rows.map((row) => row.data).toList());
   }
 
-  Selectable<Map<String, Object?>> _scheduleSelectable(
+  Selectable<QueryRow> _scheduleSelectable(
     DateTime start,
     DateTime end,
   ) {
@@ -94,7 +108,7 @@ class MealPlannerStore {
         Variable.withString(start.toIso8601String()),
         Variable.withString(end.toIso8601String()),
       ],
-      tableNames: const {'meal_schedule_entries', 'meals'},
+      readsFrom: {_db.mealScheduleEntries, _db.meals},
     );
   }
 
@@ -109,56 +123,74 @@ class MealPlannerStore {
   }
 
   Future<List<Map<String, Object?>>> listNutritionFacts(int mealId) {
-    return _db.customSelect(
-      'SELECT * FROM meal_nutrition_facts WHERE meal_id = ? ORDER BY id',
-      variables: [Variable.withInt(mealId)],
-    ).get().then((rows) => rows.map((row) => row.data).toList());
+    return _db
+        .customSelect(
+          'SELECT * FROM meal_nutrition_facts WHERE meal_id = ? ORDER BY id',
+          variables: [Variable.withInt(mealId)],
+        )
+        .get()
+        .then((rows) => rows.map((row) => row.data).toList());
   }
 
   Future<List<Map<String, Object?>>> listIngredients(int mealId) {
-    return _db.customSelect(
-      'SELECT * FROM meal_ingredients WHERE meal_id = ? ORDER BY id',
-      variables: [Variable.withInt(mealId)],
-    ).get().then((rows) => rows.map((row) => row.data).toList());
+    return _db
+        .customSelect(
+          'SELECT * FROM meal_ingredients WHERE meal_id = ? ORDER BY id',
+          variables: [Variable.withInt(mealId)],
+        )
+        .get()
+        .then((rows) => rows.map((row) => row.data).toList());
   }
 
   Future<List<Map<String, Object?>>> listInstructions(int mealId) {
-    return _db.customSelect(
-      'SELECT * FROM meal_instructions WHERE meal_id = ? ORDER BY step_order',
-      variables: [Variable.withInt(mealId)],
-    ).get().then((rows) => rows.map((row) => row.data).toList());
+    return _db
+        .customSelect(
+          'SELECT * FROM meal_instructions WHERE meal_id = ? ORDER BY step_order',
+          variables: [Variable.withInt(mealId)],
+        )
+        .get()
+        .then((rows) => rows.map((row) => row.data).toList());
   }
 
   Future<List<Map<String, Object?>>> listNutritionProgress(
     DateTime start,
     DateTime end,
   ) {
-    return _db.customSelect(
-      'SELECT * FROM meal_nutrition_progress_entries WHERE day >= ? AND day <= ? '
-      'ORDER BY day',
-      variables: [
-        Variable.withString(start.toIso8601String()),
-        Variable.withString(end.toIso8601String()),
-      ],
-    ).get().then((rows) => rows.map((row) => row.data).toList());
+    return _db
+        .customSelect(
+          'SELECT * FROM meal_nutrition_progress_entries WHERE day >= ? AND day <= ? '
+          'ORDER BY day',
+          variables: [
+            Variable.withString(start.toIso8601String()),
+            Variable.withString(end.toIso8601String()),
+          ],
+        )
+        .get()
+        .then((rows) => rows.map((row) => row.data).toList());
   }
 
   Future<Map<int, int>> countMealsPerCategory() async {
-    final rows = await _db.customSelect(
-      'SELECT category_id, COUNT(*) as total FROM meals GROUP BY category_id',
-    ).get();
-    return Map.fromEntries(
-      rows.map((row) => MapEntry(row.data['category_id'] as int, row.data['total'] as int)),
-    );
+    final rows = await _db
+        .customSelect(
+          'SELECT category_id, COUNT(*) as total FROM meals GROUP BY category_id',
+        )
+        .get();
+    return {
+      for (final row in rows)
+        row.read<int>('category_id'): row.read<int>('total'),
+    };
   }
 
   Future<Map<String, int>> countMealsPerPeriod() async {
-    final rows = await _db.customSelect(
-      'SELECT period, COUNT(*) as total FROM meals GROUP BY period',
-    ).get();
-    return Map.fromEntries(
-      rows.map((row) => MapEntry(row.data['period'] as String, row.data['total'] as int)),
-    );
+    final rows = await _db
+        .customSelect(
+          'SELECT period, COUNT(*) as total FROM meals GROUP BY period',
+        )
+        .get();
+    return {
+      for (final row in rows)
+        row.read<String>('period'): row.read<int>('total'),
+    };
   }
 
   Future<void> _insertAll(
@@ -596,17 +628,20 @@ List<Map<String, Object?>> _seedSchedules() {
     {
       'id': 4,
       'meal_id': 8,
-      'scheduled_at': base.add(const Duration(hours: 16, minutes: 30)).toIso8601String(),
+      'scheduled_at':
+          base.add(const Duration(hours: 16, minutes: 30)).toIso8601String(),
     },
     {
       'id': 5,
       'meal_id': 9,
-      'scheduled_at': base.add(const Duration(hours: 19, minutes: 10)).toIso8601String(),
+      'scheduled_at':
+          base.add(const Duration(hours: 19, minutes: 10)).toIso8601String(),
     },
     {
       'id': 6,
       'meal_id': 10,
-      'scheduled_at': base.add(const Duration(hours: 20, minutes: 10)).toIso8601String(),
+      'scheduled_at':
+          base.add(const Duration(hours: 20, minutes: 10)).toIso8601String(),
     },
   ];
 }
@@ -616,13 +651,12 @@ List<Map<String, Object?>> _seedProgressEntries() {
   final end = DateTime(today.year, today.month, today.day);
   final start = end.subtract(const Duration(days: 6));
   final values = [0.35, 0.7, 0.4, 0.8, 0.25, 0.7, 0.35];
-  return values
-      .mapIndexed(
-        (index, value) => {
-          'id': index + 1,
-          'day': start.add(Duration(days: index)).toIso8601String(),
-          'completion': value * 100,
-        },
-      )
-      .toList();
+  return List.generate(values.length, (index) {
+    final value = values[index];
+    return {
+      'id': index + 1,
+      'day': start.add(Duration(days: index)).toIso8601String(),
+      'completion': value * 100,
+    };
+  });
 }

@@ -2,7 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../../../common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'meal_period.dart';
 
 @immutable
@@ -38,9 +38,11 @@ class MealSummary {
 
   String localizedCalories(AppLanguage language) {
     final value = calories;
-    if (value == null) return language == AppLanguage.indonesian
-        ? 'Kalori tidak tersedia'
-        : 'Calories N/A';
+    if (value == null) {
+      return language == AppLanguage.indonesian
+          ? 'Kalori tidak tersedia'
+          : 'Calories N/A';
+    }
     final unit = language == AppLanguage.indonesian ? 'kKal' : 'kCal';
     return '$value $unit';
   }

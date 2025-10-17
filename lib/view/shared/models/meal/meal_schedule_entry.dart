@@ -1,6 +1,6 @@
 // lib/view/shared/models/meal/meal_schedule_entry.dart
 
-import '../../../common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'meal_period.dart';
 import 'meal_summary.dart';
 

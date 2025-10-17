@@ -141,10 +141,12 @@ class MealFoodDetailsController extends ChangeNotifier {
     if (categories.isEmpty) {
       return 0;
     }
-    return categories.firstWhere(
-      (category) => category.id == preferred,
-      orElse: () => categories.first,
-    ).id;
+    return categories
+        .firstWhere(
+          (category) => category.id == preferred,
+          orElse: () => categories.first,
+        )
+        .id;
   }
 
   void _setLoading(bool value) {

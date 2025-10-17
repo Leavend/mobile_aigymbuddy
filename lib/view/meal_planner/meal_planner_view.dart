@@ -367,7 +367,8 @@ class _NutritionChart extends StatelessWidget {
     final spots = points
         .asMap()
         .entries
-        .map((entry) => FlSpot((entry.key + 1).toDouble(), entry.value.completion))
+        .map((entry) =>
+            FlSpot((entry.key + 1).toDouble(), entry.value.completion))
         .toList();
 
     return SizedBox(

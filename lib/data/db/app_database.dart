@@ -14,6 +14,8 @@ import 'tables/set_logs.dart';
 import 'tables/user_profiles.dart';
 import 'tables/workout_exercises.dart';
 import 'tables/workouts.dart';
+import 'tables/meals.dart';
+import 'tables/meal_schedule_entries.dart';
 
 part 'app_database.g.dart';
 
@@ -26,6 +28,8 @@ part 'app_database.g.dart';
     Sessions,
     SetLogs,
     BodyWeightEntries,
+    Meals,
+    MealScheduleEntries,
   ],
   daos: [UserProfileDao, ExerciseDao, WorkoutDao, TrackingDao],
 )

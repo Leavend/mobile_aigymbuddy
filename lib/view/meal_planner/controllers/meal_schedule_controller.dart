@@ -101,7 +101,8 @@ class MealScheduleController extends ChangeNotifier {
     _handleError(error, stackTrace, {'day': _selectedDate});
   }
 
-  void _handleError(Object error, StackTrace stackTrace, Map<String, Object> context) {
+  void _handleError(
+      Object error, StackTrace stackTrace, Map<String, Object> context) {
     FlutterError.reportError(FlutterErrorDetails(
       exception: error,
       stack: stackTrace,

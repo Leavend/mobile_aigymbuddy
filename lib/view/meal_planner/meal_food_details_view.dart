@@ -451,8 +451,8 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             return PopularMealRow(
               meal: PopularMealItem(
                 name: meal.localizedName(language),
-                image: meal.imageAsset,
-                heroImage: meal.heroImageAsset,
+                imageAsset: meal.imageAsset,
+                // heroImageAsset: meal.heroImageAsset,
                 size: meal.sizeLabel ?? 'Medium',
                 time: meal.localizedTime(language),
                 kcal: meal.localizedCalories(language),
@@ -498,8 +498,8 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
         return PopularMealRow(
           meal: PopularMealItem(
             name: meal.localizedName(language),
-            image: meal.imageAsset,
-            heroImage: meal.heroImageAsset,
+            imageAsset: meal.imageAsset,
+            // heroImageAsset: meal.heroImageAsset,
             size: meal.sizeLabel ?? 'Medium',
             time: meal.localizedTime(language),
             kcal: meal.localizedCalories(language),

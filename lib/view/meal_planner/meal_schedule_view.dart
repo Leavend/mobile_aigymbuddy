@@ -71,8 +71,8 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       builder: (context, _) {
         final language = context.appLanguage;
         final selectedDate = _controller.selectedDate;
-        final dateLabel = DateFormat('EEE, d MMM yyyy', language.code)
-            .format(selectedDate);
+        final dateLabel =
+            DateFormat('EEE, d MMM yyyy', language.code).format(selectedDate);
         final meals = _controller.schedule;
         final nutrition = _controller.nutrition;
         final isScheduleLoading =
@@ -115,7 +115,8 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                   ),
                 ],
               ),
-              if (_controller.isLoadingSchedule || _controller.isLoadingNutrition)
+              if (_controller.isLoadingSchedule ||
+                  _controller.isLoadingNutrition)
                 const Positioned(
                   top: 0,
                   left: 0,
@@ -174,7 +175,8 @@ class _MealScheduleViewState extends State<MealScheduleView> {
           IconButton(
             tooltip: context.localize(_MealScheduleStrings.previousDayTooltip),
             onPressed: _goPrevDay,
-            icon: Image.asset('assets/img/black_btn.png', width: 20, height: 20),
+            icon:
+                Image.asset('assets/img/black_btn.png', width: 20, height: 20),
           ),
           Expanded(
             child: Column(
@@ -441,7 +443,8 @@ class _MealScheduleStrings {
   );
 
   static String mealSummary(AppLanguage language, int count, int calories) {
-    final caloriesLabel = language == AppLanguage.indonesian ? 'kalori' : 'kCal';
+    final caloriesLabel =
+        language == AppLanguage.indonesian ? 'kalori' : 'kCal';
     final mealLabel = language == AppLanguage.indonesian ? 'menu' : 'meals';
     return '$count $mealLabel • $calories $caloriesLabel';
   }

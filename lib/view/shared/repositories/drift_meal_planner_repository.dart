@@ -1,10 +1,10 @@
 // lib/view/shared/repositories/drift_meal_planner_repository.dart
 
-import '../../common/localization/app_language.dart';
-import '../../common/models/ingredient.dart';
-import '../../common/models/instruction_step.dart';
-import '../../common/models/nutrition_info.dart';
-import '../../data/db/daos/meal_planner_dao.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/models/ingredient.dart';
+import 'package:aigymbuddy/common/models/instruction_step.dart';
+import 'package:aigymbuddy/common/models/nutrition_info.dart';
+import 'package:aigymbuddy/data/db/daos/meal_planner_dao.dart';
 import '../models/meal/meal_category.dart';
 import '../models/meal/meal_detail.dart';
 import '../models/meal/meal_nutrition_progress.dart';
@@ -38,8 +38,8 @@ class DriftMealPlannerRepository implements MealPlannerRepository {
   Stream<List<MealScheduleEntry>> watchMealsForDay(DateTime day) {
     return Stream.fromFuture(_ensureReady()).asyncExpand(
       (_) => _store.watchMealsForDay(day).map(
-        (rows) => rows.map(_mapScheduleRow).toList(),
-      ),
+            (rows) => rows.map(_mapScheduleRow).toList(),
+          ),
     );
   }
 
@@ -128,7 +128,8 @@ class DriftMealPlannerRepository implements MealPlannerRepository {
   }
 
   @override
-  Future<List<MealNutritionProgressPoint>> fetchWeeklyNutritionProgress() async {
+  Future<List<MealNutritionProgressPoint>>
+      fetchWeeklyNutritionProgress() async {
     await _ensureReady();
     final today = DateTime.now();
     final end = DateTime(today.year, today.month, today.day);
@@ -177,7 +178,8 @@ class DriftMealPlannerRepository implements MealPlannerRepository {
           (fact['value_en'] as String).replaceAll(RegExp(r'[^0-9.]'), ''),
         );
         if (numeric == null) continue;
-        totals.update(title, (value) => value + numeric, ifAbsent: () => numeric);
+        totals.update(title, (value) => value + numeric,
+            ifAbsent: () => numeric);
       }
     }
 

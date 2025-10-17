@@ -1,3 +1,5 @@
+// lib/view/meal_planner/food_info_details_view.dart
+
 import 'dart:async';
 
 import 'package:aigymbuddy/common/color_extension.dart';
@@ -135,7 +137,6 @@ class _FoodDetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final language = context.appLanguage;
     final author = context.localize(_FoodInfoStrings.byAuthor);
 
     return SingleChildScrollView(
@@ -479,12 +480,7 @@ class _StepsSection extends StatelessWidget {
           itemCount: steps.length,
           itemBuilder: (_, index) {
             final step = steps[index];
-            return FoodStepDetailRow(
-              step: index + 1,
-              title: step.title ??
-                  context.localize(_FoodInfoStrings.stepLabel(index + 1)),
-              description: step.description,
-            );
+            return FoodStepDetailRow(step: step);
           },
         ),
       ],
@@ -501,7 +497,7 @@ class _BottomAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final language = context.appLanguage;
     final buttonLabel =
-        _FoodInfoStrings.addToMeal(language, detail.period.label.resolve(language));
+        _FoodInfoStrings.addToMeal(language, detail.localizedName(language));
 
     return Positioned(
       left: 20,
@@ -715,11 +711,6 @@ class _FoodInfoStrings {
     final suffix = language == AppLanguage.indonesian ? 'Bahan' : 'Ingredients';
     return '$total $suffix';
   }
-
-  static LocalizedText stepLabel(int number) => LocalizedText(
-        english: 'Step $number',
-        indonesian: 'Langkah $number',
-      );
 
   static String addToMeal(AppLanguage language, String mealName) {
     if (language == AppLanguage.indonesian) {

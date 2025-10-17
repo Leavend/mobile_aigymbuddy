@@ -1,6 +1,6 @@
 // lib/view/shared/models/meal/meal_category.dart
 
-import '../../../common/localization/app_language.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
 
 class MealCategorySummary {
   MealCategorySummary({

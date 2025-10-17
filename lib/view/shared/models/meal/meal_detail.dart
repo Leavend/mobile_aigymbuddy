@@ -1,9 +1,9 @@
 // lib/view/shared/models/meal/meal_detail.dart
 
-import '../../../common/localization/app_language.dart';
-import '../../../common/models/ingredient.dart';
-import '../../../common/models/instruction_step.dart';
-import '../../../common/models/nutrition_info.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
+import 'package:aigymbuddy/common/models/ingredient.dart';
+import 'package:aigymbuddy/common/models/instruction_step.dart';
+import 'package:aigymbuddy/common/models/nutrition_info.dart';
 import 'meal_period.dart';
 
 class MealDetail {
@@ -33,5 +33,6 @@ class MealDetail {
 
   String localizedName(AppLanguage language) => name.resolve(language);
 
-  String localizedDescription(AppLanguage language) => description.resolve(language);
+  String localizedDescription(AppLanguage language) =>
+      description.resolve(language);
 }

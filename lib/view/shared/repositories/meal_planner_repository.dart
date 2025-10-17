@@ -1,6 +1,6 @@
 // lib/view/shared/repositories/meal_planner_repository.dart
 
-import '../../common/models/nutrition_info.dart';
+import 'package:aigymbuddy/common/models/nutrition_info.dart';
 import '../models/meal/meal_category.dart';
 import '../models/meal/meal_detail.dart';
 import '../models/meal/meal_nutrition_progress.dart';
