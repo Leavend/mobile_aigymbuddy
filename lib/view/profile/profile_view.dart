@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/dependencies.dart';
 import '../../common/app_router.dart';
-import '../../features/profile/domain/profile_repository.dart';
-import '../../features/profile/domain/user_profile.dart' as domain;
+import '../shared/models/user_profile.dart' as domain;
+import '../shared/repositories/profile_repository.dart';
 import '../login/models/onboarding_draft.dart';
 
 class ProfileView extends StatefulWidget {

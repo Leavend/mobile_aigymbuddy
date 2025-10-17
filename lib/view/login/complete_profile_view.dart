@@ -4,7 +4,7 @@ import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
-import 'package:aigymbuddy/features/profile/domain/user_profile.dart' as domain;
+import 'package:aigymbuddy/view/shared/models/user_profile.dart' as domain;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';

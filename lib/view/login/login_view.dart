@@ -10,7 +10,7 @@ import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
-import 'package:aigymbuddy/features/profile/domain/profile_repository.dart';
+import 'package:aigymbuddy/view/shared/repositories/profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -136,8 +136,8 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _attemptLogin() async {
-    final repository =
-        _profileRepository ?? AppDependencies.of(context).profileRepository;
+    final repository = _profileRepository ??
+        AppDependencies.of(context).profileRepository;
 
     setState(() => _isSubmitting = true);
     try {
@@ -147,18 +147,17 @@ class _LoginViewState extends State<LoginView> {
       if (profile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content:
-                Text('Profil belum tersedia. Silakan daftar terlebih dahulu.'),
+            content: Text('Profil belum tersedia. Silakan daftar terlebih dahulu.'),
           ),
         );
-        // We add a return in finally to ensure _isSubmitting is set to false
-      } else {
-        await AuthService.instance.setHasCredentials(true);
-        // FIX: Add a mounted check immediately after the await call
-        if (!mounted) return;
-        AppStateScope.of(context).updateHasProfile(true);
-        context.go(AppRoute.main);
+        return;
       }
+
+      await AuthService.instance.setHasCredentials(true);
+      AppStateScope.of(context).updateHasProfile(true);
+
+      if (!mounted) return;
+      context.go(AppRoute.main);
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

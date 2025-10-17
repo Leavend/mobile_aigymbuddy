@@ -1,5 +1,3 @@
-// lib/view/login/what_your_goal_view.dart
-
 import 'package:aigymbuddy/app/app_state.dart';
 import 'package:aigymbuddy/app/dependencies.dart';
 import 'package:aigymbuddy/common/app_router.dart';
@@ -8,7 +6,7 @@ import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/features/profile/domain/user_profile.dart' as domain;
+import 'package:aigymbuddy/view/shared/models/user_profile.dart' as domain;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -107,7 +105,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-    // final language = context.appLanguage; // FIX: Removed unused variable
+    final language = context.appLanguage;
     final confirmLabel = context.localize(
       _mode == ProfileFormMode.edit ? _GoalTexts.save : _GoalTexts.confirm,
     );
@@ -171,7 +169,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
             const SizedBox(height: 32),
             RoundButton(
               title: confirmLabel,
-              onPressed: () => _onConfirm(),
+              onPressed: _saving ? null : _onConfirm,
               isEnabled: !_saving,
             ),
             const SizedBox(height: 12),
@@ -238,7 +236,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   int _goalIndexFor(domain.FitnessGoal? goal) {
     if (goal == null) return 0;
     return WhatYourGoalView._goals
-        .indexWhere((element) => element.goal == goal)
+            .indexWhere((element) => element.goal == goal)
         .clamp(0, WhatYourGoalView._goals.length - 1);
   }
 
@@ -269,15 +267,13 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
           await trackingRepository.addBodyWeight(weight);
         }
         await AuthService.instance.setHasCredentials(true);
-        if (!mounted) return; // Guard before using BuildContext
         AppStateScope.of(context).updateHasProfile(true);
-        if (!mounted) return; // Guard before using BuildContext
+        if (!mounted) return;
         context.go(
           AppRoute.welcome,
           extra: WelcomeArgs(displayName: updatedDraft.displayName),
         );
       } else {
-        // FIX: Added mounted check before using BuildContext
         if (!mounted) return;
         context.go(AppRoute.profile);
         ScaffoldMessenger.of(context).showSnackBar(
