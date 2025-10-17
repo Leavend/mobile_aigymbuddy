@@ -80,7 +80,8 @@ class _HomeViewState extends State<HomeView> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _startEdit(profile_domain.UserProfile profile) {
@@ -143,7 +144,8 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     const SizedBox(height: 24),
                     _RecentSetsCard(
-                      stream: _controller.trackingRepository.watchRecentSetLogs(),
+                      stream:
+                          _controller.trackingRepository.watchRecentSetLogs(),
                     ),
                     const SizedBox(height: 24),
                     _WeeklyVolumeCard(future: state.weeklyVolumeFuture),
@@ -388,7 +390,7 @@ class _LogSetCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<ExerciseSummary>(
-              value: _isFormEnabled ? selectedExercise : null,
+              initialValue: _isFormEnabled ? selectedExercise : null,
               decoration: const InputDecoration(labelText: 'Pilih latihan'),
               disabledHint: const Text('Latihan belum tersedia'),
               items: exercises

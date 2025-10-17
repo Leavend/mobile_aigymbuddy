@@ -5,7 +5,8 @@ class HomeActionResult {
     this.shouldResetForm = false,
   });
 
-  factory HomeActionResult.success(String message, {bool shouldResetForm = false}) {
+  factory HomeActionResult.success(String message,
+      {bool shouldResetForm = false}) {
     return HomeActionResult._(
       message: message,
       isSuccess: true,

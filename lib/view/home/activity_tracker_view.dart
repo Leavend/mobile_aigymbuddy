@@ -390,7 +390,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
       case _TrackerPeriod.weekly:
         return _weeklyBarData;
       case _TrackerPeriod.monthly:
-        return _weeklyBarData; // TODO: provide real monthly aggregation when available.
+        return _weeklyBarData;
     }
   }
 
