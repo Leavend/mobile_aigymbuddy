@@ -235,7 +235,6 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       ),
     );
   }
-
 }
 
 class _Calendar extends StatelessWidget {
@@ -284,7 +283,8 @@ class _ScheduleList extends StatelessWidget {
       shrinkWrap: true,
       itemCount: schedules.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, index) => TodaySleepScheduleRow(schedule: schedules[index]),
+      itemBuilder: (_, index) =>
+          TodaySleepScheduleRow(schedule: schedules[index]),
     );
   }
 }

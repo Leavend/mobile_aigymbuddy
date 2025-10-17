@@ -436,8 +436,7 @@ class _DailyScheduleCta extends StatelessWidget {
               type: RoundButtonType.bgGradient,
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              onPressed: () =>
-                  context.pushNamed(AppRoute.sleepScheduleName),
+              onPressed: () => context.pushNamed(AppRoute.sleepScheduleName),
             ),
           ),
         ],
@@ -459,7 +458,8 @@ class _TodayScheduleList extends StatelessWidget {
       shrinkWrap: true,
       itemCount: schedules.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, index) => TodaySleepScheduleRow(schedule: schedules[index]),
+      itemBuilder: (_, index) =>
+          TodaySleepScheduleRow(schedule: schedules[index]),
     );
   }
 }
