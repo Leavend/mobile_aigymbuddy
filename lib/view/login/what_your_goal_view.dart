@@ -170,8 +170,9 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
             const SizedBox(height: 32),
             RoundButton(
               title: confirmLabel,
-              // FIX: Removed the ternary operator because `isEnabled` handles the disabled state.
-              onPressed: () => _onConfirm(),
+              onPressed: () {
+                _onConfirm();
+              },
               isEnabled: !_saving,
             ),
             const SizedBox(height: 12),
