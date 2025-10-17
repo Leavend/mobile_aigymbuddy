@@ -8,39 +8,37 @@ import 'package:go_router/go_router.dart';
 class SelectView extends StatelessWidget {
   const SelectView({super.key});
 
-  static const List<_FeatureDestination> _destinations = [
-    _FeatureDestination(
+  static final List<_FeatureDestination> _destinations = List.unmodifiable([
+    const _FeatureDestination(
       label: LocalizedText(
         english: 'Workout Tracker',
         indonesian: 'Pelacak Latihan',
       ),
       route: AppRoute.workoutTracker,
     ),
-    _FeatureDestination(
+    const _FeatureDestination(
       label: LocalizedText(
         english: 'Meal Planner',
         indonesian: 'Perencana Makan',
       ),
       route: AppRoute.mealPlanner,
     ),
-    _FeatureDestination(
+    const _FeatureDestination(
       label: LocalizedText(
         english: 'Sleep Tracker',
         indonesian: 'Pelacak Tidur',
       ),
       route: AppRoute.sleepTracker,
     ),
-  ];
+  ]);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: _FeatureList(destinations: _destinations),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: _FeatureList(destinations: _destinations),
         ),
       ),
     );
@@ -56,19 +54,18 @@ class _FeatureList extends StatelessWidget {
   Widget build(BuildContext context) {
     final localize = context.localize;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (var i = 0; i < destinations.length; i++)
-          Padding(
-            padding: EdgeInsets.only(top: i == 0 ? 0 : 16),
-            child: _FeatureButton(
-              destination: destinations[i],
-              label: localize(destinations[i].label),
-            ),
-          ),
-      ],
+    return ListView.separated(
+      itemCount: destinations.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 16),
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (context, index) {
+        final destination = destinations[index];
+        return _FeatureButton(
+          destination: destination,
+          label: localize(destination.label),
+        );
+      },
     );
   }
 }
