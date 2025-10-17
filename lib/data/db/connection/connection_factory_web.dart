@@ -18,7 +18,7 @@ Uri _resolveUri(String path) {
   return Uri.base.resolve(path);
 }
 
-Future<WasmDatabaseOpenResult> _openWasmDatabase({
+Future<dynamic> _openWasmDatabase({
   required Uri sqlite3Uri,
   required Uri driftWorkerUri,
 }) {
@@ -31,7 +31,7 @@ Future<WasmDatabaseOpenResult> _openWasmDatabase({
 
 QueryExecutor createDriftExecutorImpl() {
   return LazyDatabase(() async {
-    WasmDatabaseOpenResult result;
+    dynamic result;
     try {
       result = await _openWasmDatabase(
         sqlite3Uri: _resolveUri(_localSqlite3AssetPath),
