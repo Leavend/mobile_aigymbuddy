@@ -150,8 +150,7 @@ class _HomeViewState extends State<HomeView> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _startEdit(profile_domain.UserProfile profile) {
@@ -175,9 +174,7 @@ class _HomeViewState extends State<HomeView> {
           return ListView(
             padding: const EdgeInsets.all(24),
             children: [
-              _ProfileSummaryCard(
-                  profile: profile,
-                  onEdit: profile == null ? null : () => _startEdit(profile)),
+              _ProfileSummaryCard(profile: profile, onEdit: profile == null ? null : () => _startEdit(profile)),
               const SizedBox(height: 24),
               _WeightChartCard(
                 weightStream: _trackingRepository.watchBodyWeight(),
@@ -189,8 +186,7 @@ class _HomeViewState extends State<HomeView> {
               _LogSetCard(
                 exercises: _exercises,
                 selectedExercise: _selectedExercise,
-                onExerciseChanged: (exercise) =>
-                    setState(() => _selectedExercise = exercise),
+                onExerciseChanged: (exercise) => setState(() => _selectedExercise = exercise),
                 setIndexController: _setIndexController,
                 repsController: _repsController,
                 loadController: _loadController,
@@ -218,15 +214,11 @@ class _ProfileSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // FIX: Create a local variable to allow type promotion for null safety.
-    final p = profile;
-
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
-        // Use the local variable `p` for the null check.
-        child: p == null
+        child: profile == null
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -244,13 +236,12 @@ class _ProfileSummaryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    // Now you can safely access properties on `p`.
-                    p.name ?? 'Gym Buddy',
+                    profile.name ?? 'Gym Buddy',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${profile_domain.describeGoal(p.goal)} • ${profile_domain.describeLevel(p.level)}',
+                    '${profile_domain.describeGoal(profile.goal)} • ${profile_domain.describeLevel(profile.level)}',
                     style: Theme.of(context)
                         .textTheme
                         .bodyMedium
@@ -309,14 +300,8 @@ class _WeightChartCard extends StatelessWidget {
                   }
 
                   final spots = _mapToSpots(entries);
-                  final minY = entries
-                          .map((e) => e.weightKg)
-                          .reduce((a, b) => a < b ? a : b) -
-                      1;
-                  final maxY = entries
-                          .map((e) => e.weightKg)
-                          .reduce((a, b) => a > b ? a : b) +
-                      1;
+                  final minY = entries.map((e) => e.weightKg).reduce((a, b) => a < b ? a : b) - 1;
+                  final maxY = entries.map((e) => e.weightKg).reduce((a, b) => a > b ? a : b) + 1;
 
                   return LineChart(
                     LineChartData(
@@ -324,8 +309,7 @@ class _WeightChartCard extends StatelessWidget {
                       maxY: maxY,
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
-                          sideTitles:
-                              SideTitles(showTitles: true, reservedSize: 42),
+                          sideTitles: SideTitles(showTitles: true, reservedSize: 42),
                         ),
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
@@ -339,8 +323,7 @@ class _WeightChartCard extends StatelessWidget {
                               final entry = entries[index];
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8),
-                                child: Text(DateFormat('dd/MM')
-                                    .format(entry.timestamp.toLocal())),
+                                child: Text(DateFormat('dd/MM').format(entry.timestamp.toLocal())),
                               );
                             },
                           ),
@@ -366,8 +349,7 @@ class _WeightChartCard extends StatelessWidget {
                 Expanded(
                   child: TextField(
                     controller: controller,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     decoration: const InputDecoration(
                       labelText: 'Berat badan (kg)',
                     ),
@@ -437,8 +419,7 @@ class _LogSetCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<ExerciseSummary>(
-              // FIX: `value` is deprecated, use `initialValue` instead.
-              initialValue: selectedExercise,
+              value: selectedExercise,
               decoration: const InputDecoration(labelText: 'Pilih latihan'),
               items: exercises
                   .map(
@@ -473,15 +454,13 @@ class _LogSetCard extends StatelessWidget {
             const SizedBox(height: 12),
             TextField(
               controller: loadController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(labelText: 'Beban (kg)'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: noteController,
-              decoration:
-                  const InputDecoration(labelText: 'Catatan (opsional)'),
+              decoration: const InputDecoration(labelText: 'Catatan (opsional)'),
             ),
             const SizedBox(height: 16),
             FilledButton(
@@ -543,8 +522,7 @@ class _RecentSetsCard extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       title: Text(log.exerciseName),
                       subtitle: Text(subtitle),
-                      trailing: Text(DateFormat('dd MMM')
-                          .format(log.performedAt.toLocal())),
+                      trailing: Text(DateFormat('dd MMM').format(log.performedAt.toLocal())),
                     );
                   },
                 );
