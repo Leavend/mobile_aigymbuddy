@@ -1,19 +1,19 @@
 // lib/view/login/login_view.dart
 
-import 'package:aigymbuddy/common/app_router.dart';
-import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/app/app_state.dart';
 import 'package:aigymbuddy/app/dependencies.dart';
+import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
-import 'package:aigymbuddy/view/shared/repositories/profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'models/login_form_controller.dart';
 import 'widgets/auth_page_layout.dart';
 import 'widgets/auth_validators.dart';
 
@@ -70,6 +70,14 @@ abstract final class _LoginTexts {
     english: 'Password must be at least 8 characters',
     indonesian: 'Kata sandi minimal 8 karakter',
   );
+  static const missingProfile = LocalizedText(
+    english: 'Profile not found. Please sign up first.',
+    indonesian: 'Profil belum tersedia. Silakan daftar terlebih dahulu.',
+  );
+  static const genericError = LocalizedText(
+    english: 'Failed to login. Please try again.',
+    indonesian: 'Gagal masuk. Silakan coba lagi.',
+  );
 }
 
 class LoginView extends StatefulWidget {
@@ -80,159 +88,56 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _emailFocusNode = FocusNode();
-  final _passwordFocusNode = FocusNode();
+  LoginFormController? _controller;
 
-  bool _isPasswordVisible = false;
-  bool _isLoginEnabled = false;
-  bool _autoValidate = false;
-  bool _isSubmitting = false;
-  ProfileRepository? _profileRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    _emailController.addListener(_validateForm);
-    _passwordController.addListener(_validateForm);
-  }
+  LoginFormController get _formController => _controller!;
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _profileRepository ??= AppDependencies.of(context).profileRepository;
-  }
-
-  void _validateForm() {
-    final isValid = _canSubmit();
-    if (isValid != _isLoginEnabled) {
-      setState(() => _isLoginEnabled = isValid);
-    }
-  }
-
-  void _onLoginPressed() {
-    FocusScope.of(context).unfocus();
-
-    setState(() => _autoValidate = true);
-
-    if (_isSubmitting) {
-      return;
-    }
-
-    if (_formKey.currentState?.validate() ?? false) {
-      _attemptLogin();
-    }
-  }
-
-  Future<void> _attemptLogin() async {
-    final repository =
-        _profileRepository ?? AppDependencies.of(context).profileRepository;
-
-    setState(() => _isSubmitting = true);
-    try {
-      final profile = await repository.loadProfile();
-      if (!mounted) return;
-
-      if (profile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Profil belum tersedia. Silakan daftar terlebih dahulu.'),
-          ),
-        );
-        // Also reset the submitting state here to re-enable the button
-        setState(() => _isSubmitting = false);
-        return;
-      }
-
-      await AuthService.instance.setHasCredentials(true);
-
-      // FIX: Add a mounted check before using the context.
-      if (!mounted) return;
-      AppStateScope.of(context).updateHasProfile(true);
-
-      if (!mounted) return;
-      context.go(AppRoute.main);
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal masuk: $error')),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-      }
-    }
-  }
-
-  void _onForgotPasswordPressed() {
-    FocusScope.of(context).unfocus();
-    context.go(AppRoute.main);
-  }
-
-  String? _validateEmail(String? value) {
-    return AuthValidators.validateEmail(
-      context: context,
-      value: value,
-      emptyMessage: _LoginTexts.emailRequired,
-      invalidMessage: _LoginTexts.emailInvalid,
+    _controller ??= LoginFormController(
+      profileRepository: AppDependencies.of(context).profileRepository,
+      authService: AuthService.instance,
     );
-  }
-
-  String? _validatePassword(String? value) {
-    return AuthValidators.validatePassword(
-      context: context,
-      value: value,
-      emptyMessage: _LoginTexts.passwordRequired,
-      lengthMessage: _LoginTexts.passwordLength,
-    );
-  }
-
-  bool _canSubmit() {
-    return AuthValidators.isValidEmail(_emailController.text) &&
-        _passwordController.text.length >= 8;
   }
 
   @override
   Widget build(BuildContext context) {
-    return AuthPageLayout(child: _buildContent(context));
+    final controller = _formController;
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        return AuthPageLayout(child: _buildContent(context, controller));
+      },
+    );
   }
 
-  Widget _buildContent(BuildContext context) {
-    final autovalidateMode = _autoValidate
-        ? AutovalidateMode.onUserInteraction
-        : AutovalidateMode.disabled;
-
+  Widget _buildContent(BuildContext context, LoginFormController controller) {
     return Form(
-      key: _formKey,
-      autovalidateMode: autovalidateMode,
+      key: controller.formKey,
+      autovalidateMode: controller.autovalidateMode,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildHeader(context),
           const SizedBox(height: 36),
-          _buildEmailField(context),
+          _buildEmailField(context, controller),
           const SizedBox(height: 20),
-          _buildPasswordField(context),
+          _buildPasswordField(context, controller),
           const SizedBox(height: 16),
           _buildForgotPasswordButton(context),
           const SizedBox(height: 28),
           RoundButton(
             title: context.localize(_LoginTexts.loginButton),
-            onPressed: _onLoginPressed,
-            isEnabled: _isLoginEnabled && !_isSubmitting,
+            onPressed: () => _handleLogin(controller),
+            isEnabled: controller.isLoginEnabled,
           ),
           const SizedBox(height: 28),
           _buildDivider(context),
@@ -268,37 +173,41 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _buildEmailField(BuildContext context) {
+  Widget _buildEmailField(
+    BuildContext context,
+    LoginFormController controller,
+  ) {
     return RoundTextField(
-      controller: _emailController,
-      focusNode: _emailFocusNode,
+      controller: controller.emailController,
+      focusNode: controller.emailFocusNode,
       hintText: context.localize(_LoginTexts.emailHint),
       icon: 'assets/img/email.png',
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
       validator: _validateEmail,
-      onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
+      onFieldSubmitted: (_) => controller.passwordFocusNode.requestFocus(),
     );
   }
 
-  Widget _buildPasswordField(BuildContext context) {
+  Widget _buildPasswordField(
+    BuildContext context,
+    LoginFormController controller,
+  ) {
     return RoundTextField(
-      controller: _passwordController,
-      focusNode: _passwordFocusNode,
+      controller: controller.passwordController,
+      focusNode: controller.passwordFocusNode,
       hintText: context.localize(_LoginTexts.passwordHint),
       icon: 'assets/img/lock.png',
-      obscureText: !_isPasswordVisible,
+      obscureText: !controller.isPasswordVisible,
       textInputAction: TextInputAction.done,
       validator: _validatePassword,
-      onFieldSubmitted: (_) => _onLoginPressed(),
+      onFieldSubmitted: (_) => _handleLogin(controller),
       rightIcon: IconButton(
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
-        onPressed: () {
-          setState(() => _isPasswordVisible = !_isPasswordVisible);
-        },
+        onPressed: controller.togglePasswordVisibility,
         icon: Image.asset(
-          _isPasswordVisible
+          controller.isPasswordVisible
               ? 'assets/img/hide_password.png'
               : 'assets/img/show_password.png',
           width: 20,
@@ -391,6 +300,62 @@ class _LoginViewState extends State<LoginView> {
           ),
         ],
       ),
+    );
+  }
+
+  void _onForgotPasswordPressed() {
+    FocusScope.of(context).unfocus();
+    context.go(AppRoute.main);
+  }
+
+  Future<void> _handleLogin(LoginFormController controller) async {
+    FocusScope.of(context).unfocus();
+    final result = await controller.submit();
+    if (!mounted) return;
+
+    switch (result.status) {
+      case LoginStatus.success:
+        AppStateScope.of(context).updateHasProfile(true);
+        if (!mounted) return;
+        context.go(AppRoute.main);
+        break;
+      case LoginStatus.validationError:
+      case LoginStatus.inProgress:
+        break;
+      case LoginStatus.missingProfile:
+        _showSnack(context.localize(_LoginTexts.missingProfile));
+        break;
+      case LoginStatus.failure:
+        final errorText = result.error?.toString();
+        final message = errorText == null || errorText.isEmpty
+            ? context.localize(_LoginTexts.genericError)
+            : '${context.localize(_LoginTexts.genericError)}\n$errorText';
+        _showSnack(message);
+        break;
+    }
+  }
+
+  void _showSnack(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String? _validateEmail(String? value) {
+    return AuthValidators.validateEmail(
+      context: context,
+      value: value,
+      emptyMessage: _LoginTexts.emailRequired,
+      invalidMessage: _LoginTexts.emailInvalid,
+    );
+  }
+
+  String? _validatePassword(String? value) {
+    return AuthValidators.validatePassword(
+      context: context,
+      value: value,
+      emptyMessage: _LoginTexts.passwordRequired,
+      lengthMessage: _LoginTexts.passwordLength,
     );
   }
 }

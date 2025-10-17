@@ -8,12 +8,13 @@ import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/view/shared/models/user_profile.dart' as domain;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'models/goal_selection_controller.dart';
 import 'models/onboarding_draft.dart';
+import 'package:aigymbuddy/view/shared/models/user_profile.dart' as domain;
 import 'widgets/auth_page_layout.dart';
 
 abstract final class _GoalTexts {
@@ -33,6 +34,22 @@ abstract final class _GoalTexts {
     english: 'Save',
     indonesian: 'Simpan',
   );
+  static const experienceSection = LocalizedText(
+    english: 'Experience Level',
+    indonesian: 'Tingkat Pengalaman',
+  );
+  static const modeSection = LocalizedText(
+    english: 'Preferred Training Mode',
+    indonesian: 'Mode Latihan Favorit',
+  );
+  static const profileUpdated = LocalizedText(
+    english: 'Profile updated successfully.',
+    indonesian: 'Profil berhasil diperbarui.',
+  );
+  static const saveFailed = LocalizedText(
+    english: 'Failed to save profile. Please try again.',
+    indonesian: 'Gagal menyimpan profil. Silakan coba lagi.',
+  );
 }
 
 class WhatYourGoalView extends StatefulWidget {
@@ -40,68 +57,35 @@ class WhatYourGoalView extends StatefulWidget {
 
   final ProfileFormArguments args;
 
-  static const _goals = [
-    _GoalCardData(
-      goal: domain.FitnessGoal.buildMuscle,
-      image: 'assets/img/goal_1.png',
-      title: LocalizedText(
-        english: 'Improve Shape',
-        indonesian: 'Bentuk Tubuh Ideal',
-      ),
-      subtitle: LocalizedText(
-        english:
-            'I have a low amount of body fat and\nneed / want to build more muscle',
-        indonesian:
-            'Lemak tubuhku rendah dan aku ingin\nmembangun lebih banyak otot',
-      ),
-    ),
-    _GoalCardData(
-      goal: domain.FitnessGoal.endurance,
-      image: 'assets/img/goal_2.png',
-      title: LocalizedText(
-        english: 'Lean & Tone',
-        indonesian: 'Badan Ramping & Kencang',
-      ),
-      subtitle: LocalizedText(
-        english:
-            'I’m “skinny fat”, look thin but have\nno shape. I want to add lean muscle\nin the right way',
-        indonesian:
-            'Tubuhku tampak kurus tapi kurang berisi.\nAku ingin menambah otot tanpa lemak\ndengan cara tepat',
-      ),
-    ),
-    _GoalCardData(
-      goal: domain.FitnessGoal.loseWeight,
-      image: 'assets/img/goal_3.png',
-      title: LocalizedText(english: 'Lose Fat', indonesian: 'Turunkan Lemak'),
-      subtitle: LocalizedText(
-        english:
-            'I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle mass',
-        indonesian:
-            'Aku perlu menurunkan banyak lemak\ndan ingin menambah massa otot',
-      ),
-    ),
-  ];
-
   @override
   State<WhatYourGoalView> createState() => _WhatYourGoalViewState();
 }
 
 class _WhatYourGoalViewState extends State<WhatYourGoalView> {
-  late OnboardingDraft _draft;
-  late int _goalIndex;
-  late domain.ExperienceLevel _selectedLevel;
-  late domain.WorkoutMode _selectedMode;
-  bool _saving = false;
+  late final GoalSelectionController _controller;
+  final _carouselController = CarouselController();
 
   ProfileFormMode get _mode => widget.args.mode;
 
   @override
   void initState() {
     super.initState();
-    _draft = widget.args.draft;
-    _goalIndex = _goalIndexFor(_draft.goal);
-    _selectedLevel = _draft.level ?? domain.ExperienceLevel.beginner;
-    _selectedMode = _draft.mode ?? domain.WorkoutMode.gym;
+    _controller = GoalSelectionController(draft: widget.args.draft);
+  }
+
+  @override
+  void didUpdateWidget(covariant WhatYourGoalView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.args.draft != widget.args.draft) {
+      _controller.updateDraft(widget.args.draft);
+      _carouselController.jumpToPage(_controller.goalIndex);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -111,74 +95,75 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
       _mode == ProfileFormMode.edit ? _GoalTexts.save : _GoalTexts.confirm,
     );
 
-    return AuthPageLayout(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 16),
-            Text(
-              context.localize(_GoalTexts.title),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: TColor.black,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              context.localize(_GoalTexts.subtitle),
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: TColor.gray, fontSize: 12),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: media.height * 0.5,
-              child: CarouselSlider.builder(
-                itemCount: WhatYourGoalView._goals.length,
-                itemBuilder: (context, index, _) {
-                  final goal = WhatYourGoalView._goals[index];
-                  return _GoalCard(goal: goal, imageWidth: media.width * 0.5);
-                },
-                options: CarouselOptions(
-                  enlargeCenterPage: true,
-                  viewportFraction: 0.75,
-                  aspectRatio: 3 / 4,
-                  enlargeStrategy: CenterPageEnlargeStrategy.height,
-                  initialPage: _goalIndex,
-                  onPageChanged: (index, _) {
-                    setState(() {
-                      _goalIndex = index;
-                      _draft = _draft.copyWith(
-                        goal: WhatYourGoalView._goals[index].goal,
-                      );
-                    });
-                  },
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        return AuthPageLayout(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 16),
+                Text(
+                  context.localize(_GoalTexts.title),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: TColor.black,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 6),
+                Text(
+                  context.localize(_GoalTexts.subtitle),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: TColor.gray, fontSize: 12),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: media.height * 0.5,
+                  child: CarouselSlider.builder(
+                    carouselController: _carouselController,
+                    itemCount: GoalSelectionController.cards.length,
+                    itemBuilder: (context, index, _) {
+                      final goal = GoalSelectionController.cards[index];
+                      return _GoalCard(
+                        goal: goal,
+                        imageWidth: media.width * 0.5,
+                      );
+                    },
+                    options: CarouselOptions(
+                      enlargeCenterPage: true,
+                      viewportFraction: 0.75,
+                      aspectRatio: 3 / 4,
+                      enlargeStrategy: CenterPageEnlargeStrategy.height,
+                      initialPage: _controller.goalIndex,
+                      onPageChanged: (index, _) =>
+                          _controller.updateGoalIndex(index),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildSectionTitle(context.localize(_GoalTexts.experienceSection)),
+                const SizedBox(height: 8),
+                _buildLevelChips(),
+                const SizedBox(height: 24),
+                _buildSectionTitle(context.localize(_GoalTexts.modeSection)),
+                const SizedBox(height: 8),
+                _buildModeChips(),
+                const SizedBox(height: 32),
+                RoundButton(
+                  title: confirmLabel,
+                  onPressed: _onConfirm,
+                  isEnabled: !_controller.isSaving,
+                ),
+                const SizedBox(height: 12),
+              ],
             ),
-            const SizedBox(height: 24),
-            _buildSectionTitle('Experience Level'),
-            const SizedBox(height: 8),
-            _buildLevelChips(),
-            const SizedBox(height: 24),
-            _buildSectionTitle('Preferred Training Mode'),
-            const SizedBox(height: 8),
-            _buildModeChips(),
-            const SizedBox(height: 32),
-            RoundButton(
-              title: confirmLabel,
-              onPressed: () {
-                _onConfirm();
-              },
-              isEnabled: !_saving,
-            ),
-            const SizedBox(height: 12),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -204,13 +189,8 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
         final label = domain.describeLevel(level);
         return ChoiceChip(
           label: Text(label),
-          selected: _selectedLevel == level,
-          onSelected: (_) {
-            setState(() {
-              _selectedLevel = level;
-              _draft = _draft.copyWith(level: level);
-            });
-          },
+          selected: _controller.selectedLevel == level,
+          onSelected: (_) => _controller.selectLevel(level),
         );
       }).toList(),
     );
@@ -224,100 +204,60 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
         final label = domain.describeMode(mode);
         return ChoiceChip(
           label: Text(label),
-          selected: _selectedMode == mode,
-          onSelected: (_) {
-            setState(() {
-              _selectedMode = mode;
-              _draft = _draft.copyWith(mode: mode);
-            });
-          },
+          selected: _controller.selectedMode == mode,
+          onSelected: (_) => _controller.selectMode(mode),
         );
       }).toList(),
     );
   }
 
-  int _goalIndexFor(domain.FitnessGoal? goal) {
-    if (goal == null) return 0;
-    return WhatYourGoalView._goals
-        .indexWhere((element) => element.goal == goal)
-        .clamp(0, WhatYourGoalView._goals.length - 1);
-  }
-
   Future<void> _onConfirm() async {
-    // Return early if already saving to prevent multiple submissions.
-    if (_saving) return;
-
     final deps = AppDependencies.of(context);
-    final profileRepository = deps.profileRepository;
-    final trackingRepository = deps.trackingRepository;
-
-    final selectedGoal = WhatYourGoalView._goals[_goalIndex].goal;
-    final updatedDraft = _draft.copyWith(
-      goal: selectedGoal,
-      level: _selectedLevel,
-      mode: _selectedMode,
+    final result = await _controller.submit(
+      profileRepository: deps.profileRepository,
+      trackingRepository: deps.trackingRepository,
+      authService: AuthService.instance,
+      mode: _mode,
     );
 
-    setState(() {
-      _saving = true;
-      _draft = updatedDraft;
-    });
+    if (!mounted) return;
 
-    try {
-      final profile = updatedDraft.toUserProfile();
-      await profileRepository.saveProfile(profile);
-
-      if (_mode == ProfileFormMode.onboarding) {
-        final weight = updatedDraft.weightKg;
-        if (weight != null) {
-          await trackingRepository.addBodyWeight(weight);
-        }
-        await AuthService.instance.setHasCredentials(true);
-        if (!mounted) return;
+    switch (result.status) {
+      case GoalSubmissionStatus.alreadyInProgress:
+        return;
+      case GoalSubmissionStatus.onboardingCompleted:
         AppStateScope.of(context).updateHasProfile(true);
         if (!mounted) return;
         context.go(
           AppRoute.welcome,
-          extra: WelcomeArgs(displayName: updatedDraft.displayName),
+          extra: WelcomeArgs(displayName: result.draft?.displayName),
         );
-      } else {
-        if (!mounted) return;
+        break;
+      case GoalSubmissionStatus.profileUpdated:
         context.go(AppRoute.profile);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profil berhasil diperbarui.')),
-        );
-      }
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal menyimpan profil: $error')),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _saving = false);
-      }
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(content: Text(context.localize(_GoalTexts.profileUpdated))),
+          );
+        break;
+      case GoalSubmissionStatus.failure:
+        final errorText = result.error?.toString();
+        final message = (errorText != null && errorText.trim().isNotEmpty)
+            ? errorText
+            : context.localize(_GoalTexts.saveFailed);
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(message)));
+        break;
     }
   }
-}
-
-class _GoalCardData {
-  const _GoalCardData({
-    required this.goal,
-    required this.image,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final domain.FitnessGoal goal;
-  final String image;
-  final LocalizedText title;
-  final LocalizedText subtitle;
 }
 
 class _GoalCard extends StatelessWidget {
   const _GoalCard({required this.goal, required this.imageWidth});
 
-  final _GoalCardData goal;
+  final GoalCardData goal;
   final double imageWidth;
 
   @override

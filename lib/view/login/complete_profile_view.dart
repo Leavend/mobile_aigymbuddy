@@ -4,11 +4,10 @@ import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
-import 'package:aigymbuddy/view/shared/models/user_profile.dart' as domain;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import 'models/complete_profile_controller.dart';
 import 'models/onboarding_draft.dart';
 import 'widgets/auth_page_layout.dart';
 
@@ -89,105 +88,266 @@ class CompleteProfileView extends StatefulWidget {
 }
 
 class _CompleteProfileViewState extends State<CompleteProfileView> {
-  final _formKey = GlobalKey<FormState>();
-  final _dobController = TextEditingController();
-  final _weightController = TextEditingController();
-  final _heightController = TextEditingController();
-
-  _Gender? _selectedGender;
-  bool _autoValidate = false;
-  late OnboardingDraft _draft;
-
-  static const _decimalKeyboard = TextInputType.numberWithOptions(
-    decimal: true,
-  );
-  static const double _minWeightKg = 20;
-  static const double _maxWeightKg = 500;
-  static const double _minHeightCm = 50;
-  static const double _maxHeightCm = 300;
-  static const int _minAgeYears = 13;
-  static final List<TextInputFormatter> _numericInputFormatters = [
-    FilteringTextInputFormatter.allow(RegExp(r'^[0-9]{0,3}(?:\.[0-9]{0,2})?$')),
-    LengthLimitingTextInputFormatter(6),
-  ];
+  late final CompleteProfileController _controller;
 
   @override
   void initState() {
     super.initState();
-    _draft = widget.args.draft;
-    _selectedGender = _mapDomainGender(_draft.gender);
-    _dobController.addListener(_onFormDataChanged);
-    _weightController.addListener(_onFormDataChanged);
-    _heightController.addListener(_onFormDataChanged);
-    _applyDraftToControllers();
-  }
-
-  @override
-  void dispose() {
-    _dobController.dispose();
-    _weightController.dispose();
-    _heightController.dispose();
-    super.dispose();
+    _controller = CompleteProfileController(draft: widget.args.draft);
   }
 
   @override
   void didUpdateWidget(covariant CompleteProfileView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.args.draft, widget.args.draft)) {
-      _draft = widget.args.draft;
-      _selectedGender = _mapDomainGender(_draft.gender);
-      _applyDraftToControllers();
+    if (oldWidget.args.draft != widget.args.draft) {
+      _controller.updateDraft(widget.args.draft);
     }
   }
 
-  void _applyDraftToControllers() {
-    final dob = _draft.dateOfBirth;
-    _dobController.text = dob != null ? _formatDate(dob) : '';
-    final weight = _draft.weightKg;
-    _weightController.text = weight != null ? _formatNumber(weight) : '';
-    final height = _draft.heightCm;
-    _heightController.text = height != null ? _formatNumber(height) : '';
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
-  String _formatNumber(double value) {
-    return value % 1 == 0 ? value.toStringAsFixed(0) : value.toStringAsFixed(1);
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context).size;
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        return AuthPageLayout(
+          child: Form(
+            key: _controller.formKey,
+            autovalidateMode: _controller.autovalidateMode,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 16),
+                Image.asset(
+                  'assets/img/complete_profile.png',
+                  width: media.width * 0.65,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 24),
+                _Header(
+                  title: context.localize(_CompleteProfileTexts.title),
+                  subtitle: context.localize(_CompleteProfileTexts.subtitle),
+                ),
+                const SizedBox(height: 24),
+                _buildGenderField(),
+                const SizedBox(height: 16),
+                _buildDobField(),
+                const SizedBox(height: 16),
+                _buildMeasurementField(
+                  controller: _controller.weightController,
+                  hint: _CompleteProfileTexts.weightHint,
+                  iconAsset: 'assets/img/weight.png',
+                  unit: 'KG',
+                  validator: (value) => _validateMeasurement(
+                    value: value,
+                    min: CompleteProfileController.minWeightKg,
+                    max: CompleteProfileController.maxWeightKg,
+                    outOfRangeError: _CompleteProfileTexts.weightOutOfRange,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildMeasurementField(
+                  controller: _controller.heightController,
+                  hint: _CompleteProfileTexts.heightHint,
+                  iconAsset: 'assets/img/hight.png',
+                  unit: 'CM',
+                  validator: (value) => _validateMeasurement(
+                    value: value,
+                    min: CompleteProfileController.minHeightCm,
+                    max: CompleteProfileController.maxHeightCm,
+                    outOfRangeError: _CompleteProfileTexts.heightOutOfRange,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                RoundButton(
+                  title: context.localize(_CompleteProfileTexts.nextButton),
+                  onPressed: _onNextPressed,
+                  isEnabled: _controller.isFormComplete,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
-  void _onFormDataChanged() {
-    final weight = double.tryParse(_weightController.text.trim());
-    final height = double.tryParse(_heightController.text.trim());
-    setState(() {
-      if (weight != null) {
-        _draft = _draft.copyWith(weightKg: weight);
-      }
-      if (height != null) {
-        _draft = _draft.copyWith(heightCm: height);
-      }
-    });
+  Widget _buildGenderField() {
+    return FormField<UiGender>(
+      autovalidateMode: _controller.autovalidateMode,
+      initialValue: _controller.selectedGender,
+      validator: (value) => value == null
+          ? context.localize(_CompleteProfileTexts.genderRequired)
+          : null,
+      builder: (state) {
+        if (state.value != _controller.selectedGender) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              state.didChange(_controller.selectedGender);
+            }
+          });
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: TColor.lightGray,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/img/gender.png',
+                    width: 20,
+                    height: 20,
+                    color: TColor.gray,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<UiGender>(
+                        isExpanded: true,
+                        value: _controller.selectedGender,
+                        hint: Text(
+                          context.localize(_CompleteProfileTexts.genderHint),
+                          style: const TextStyle(
+                            color: TColor.gray,
+                            fontSize: 12,
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: TColor.gray,
+                        ),
+                        items: UiGender.values
+                            .map(
+                              (gender) => DropdownMenuItem<UiGender>(
+                                value: gender,
+                                child: Text(
+                                  context.localize(gender.label),
+                                  style: const TextStyle(
+                                    color: TColor.gray,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          state.didChange(value);
+                          _controller.updateGender(value);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (state.hasError) ...[
+              const SizedBox(height: 6),
+              _ErrorText(text: state.errorText!),
+            ],
+          ],
+        );
+      },
+    );
   }
 
-  void _onNextPressed() {
-    FocusScope.of(context).unfocus();
-    setState(() => _autoValidate = true);
+  Widget _buildDobField() {
+    return FormField<String>(
+      autovalidateMode: _controller.autovalidateMode,
+      initialValue: _controller.dobController.text,
+      validator: _validateDob,
+      builder: (state) {
+        final controllerValue = _controller.dobController.text;
+        if (state.value != controllerValue) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              state.didChange(controllerValue);
+            }
+          });
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () => _pickDob(state),
+              behavior: HitTestBehavior.opaque,
+              child: AbsorbPointer(
+                child: RoundTextField(
+                  controller: _controller.dobController,
+                  hintText: context.localize(_CompleteProfileTexts.dobHint),
+                  icon: 'assets/img/date.png',
+                ),
+              ),
+            ),
+            if (state.hasError) ...[
+              const SizedBox(height: 6),
+              _ErrorText(text: state.errorText!),
+            ],
+          ],
+        );
+      },
+    );
+  }
 
-    if (_formKey.currentState?.validate() ?? false) {
-      final parsedDob = DateTime.parse(_dobController.text.trim());
-      final height = double.parse(_heightController.text.trim());
-      final weight = double.parse(_weightController.text.trim());
-      final gender = _selectedGender!;
-
-      final updatedDraft = _draft
-          .copyWith(
-            gender: _mapUiGenderToDomain(gender),
-            heightCm: height,
-            weightKg: weight,
-          )
-          .updateWithDob(parsedDob);
-
-      _draft = updatedDraft;
-      final args = widget.args.copyWith(draft: updatedDraft);
-      context.push(AppRoute.goal, extra: args);
-    }
+  Widget _buildMeasurementField({
+    required TextEditingController controller,
+    required LocalizedText hint,
+    required String iconAsset,
+    required String unit,
+    required FormFieldValidator<String> validator,
+  }) {
+    return FormField<String>(
+      autovalidateMode: _controller.autovalidateMode,
+      initialValue: controller.text,
+      validator: validator,
+      builder: (state) {
+        if (state.value != controller.text) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              state.didChange(controller.text);
+            }
+          });
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: RoundTextField(
+                    controller: controller,
+                    hintText: context.localize(hint),
+                    icon: iconAsset,
+                    keyboardType: CompleteProfileController.decimalKeyboard,
+                    inputFormatters:
+                        CompleteProfileController.numericInputFormatters,
+                    onChanged: state.didChange,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _UnitTag(text: unit),
+              ],
+            ),
+            if (state.hasError) ...[
+              const SizedBox(height: 6),
+              _ErrorText(text: state.errorText!),
+            ],
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _pickDob(FormFieldState<String> state) async {
@@ -213,19 +373,23 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     );
 
     if (picked != null) {
-      final formatted = _formatDate(picked);
-      _dobController.text = formatted;
+      final formatted = CompleteProfileController.formatDate(picked);
       state.didChange(formatted);
-      setState(() {
-        _draft = _draft.updateWithDob(picked);
-      });
+      _controller.updateDob(picked);
     }
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.year.toString().padLeft(4, '0')}-'
-        '${date.month.toString().padLeft(2, '0')}-'
-        '${date.day.toString().padLeft(2, '0')}';
+  Future<void> _onNextPressed() async {
+    FocusScope.of(context).unfocus();
+    _controller.enableAutovalidate();
+    final draft = _controller.buildNextDraft();
+    if (draft == null) {
+      return;
+    }
+
+    final args = widget.args.copyWith(draft: draft);
+    if (!mounted) return;
+    context.push(AppRoute.goal, extra: args);
   }
 
   String? _validateDob(String? value) {
@@ -244,7 +408,11 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
       return context.localize(_CompleteProfileTexts.dobInvalid);
     }
 
-    final ageThreshold = DateTime(now.year - _minAgeYears, now.month, now.day);
+    final ageThreshold = DateTime(
+      now.year - CompleteProfileController.minAgeYears,
+      now.month,
+      now.day,
+    );
     if (parsed.isAfter(ageThreshold)) {
       return context.localize(_CompleteProfileTexts.dobAgeRestriction);
     }
@@ -273,239 +441,6 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     }
 
     return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
-    final autovalidateMode = _autoValidate
-        ? AutovalidateMode.onUserInteraction
-        : AutovalidateMode.disabled;
-
-    return AuthPageLayout(
-      child: Form(
-        key: _formKey,
-        autovalidateMode: autovalidateMode,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 16),
-            Image.asset(
-              'assets/img/complete_profile.png',
-              width: media.width * 0.65,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 24),
-            _Header(
-              title: context.localize(_CompleteProfileTexts.title),
-              subtitle: context.localize(_CompleteProfileTexts.subtitle),
-            ),
-            const SizedBox(height: 24),
-            _buildGenderField(autovalidateMode),
-            const SizedBox(height: 16),
-            _buildDobField(autovalidateMode),
-            const SizedBox(height: 16),
-            _buildMeasurementField(
-              controller: _weightController,
-              hint: _CompleteProfileTexts.weightHint,
-              iconAsset: 'assets/img/weight.png',
-              unit: 'KG',
-              autovalidateMode: autovalidateMode,
-              validator: (value) => _validateMeasurement(
-                value: value,
-                min: _minWeightKg,
-                max: _maxWeightKg,
-                outOfRangeError: _CompleteProfileTexts.weightOutOfRange,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildMeasurementField(
-              controller: _heightController,
-              hint: _CompleteProfileTexts.heightHint,
-              iconAsset: 'assets/img/hight.png',
-              unit: 'CM',
-              autovalidateMode: autovalidateMode,
-              validator: (value) => _validateMeasurement(
-                value: value,
-                min: _minHeightCm,
-                max: _maxHeightCm,
-                outOfRangeError: _CompleteProfileTexts.heightOutOfRange,
-              ),
-            ),
-            const SizedBox(height: 28),
-            RoundButton(
-              title: context.localize(_CompleteProfileTexts.nextButton),
-              onPressed: _onNextPressed,
-              isEnabled: _isFormComplete,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  bool get _isFormComplete {
-    return _selectedGender != null &&
-        _dobController.text.isNotEmpty &&
-        _weightController.text.isNotEmpty &&
-        _heightController.text.isNotEmpty;
-  }
-
-  Widget _buildGenderField(AutovalidateMode autovalidateMode) {
-    return FormField<_Gender>(
-      autovalidateMode: autovalidateMode,
-      initialValue: _selectedGender,
-      validator: (value) => value == null
-          ? context.localize(_CompleteProfileTexts.genderRequired)
-          : null,
-      builder: (state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 50,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/img/gender.png',
-                    width: 20,
-                    height: 20,
-                    color: TColor.gray,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<_Gender>(
-                        isExpanded: true,
-                        value: state.value,
-                        hint: Text(
-                          context.localize(_CompleteProfileTexts.genderHint),
-                          style: const TextStyle(
-                            color: TColor.gray,
-                            fontSize: 12,
-                          ),
-                        ),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          color: TColor.gray,
-                        ),
-                        items: _Gender.values
-                            .map(
-                              (gender) => DropdownMenuItem<_Gender>(
-                                value: gender,
-                                child: Text(
-                                  context.localize(gender.label),
-                                  style: const TextStyle(
-                                    color: TColor.gray,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          state.didChange(value);
-                          if (value != null) {
-                            setState(() {
-                              _selectedGender = value;
-                              _draft = _draft.copyWith(
-                                gender: _mapUiGenderToDomain(value),
-                              );
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (state.hasError) ...[
-              const SizedBox(height: 6),
-              _ErrorText(text: state.errorText!),
-            ],
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildDobField(AutovalidateMode autovalidateMode) {
-    return FormField<String>(
-      autovalidateMode: autovalidateMode,
-      initialValue: _dobController.text,
-      validator: _validateDob,
-      builder: (state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () => _pickDob(state),
-              behavior: HitTestBehavior.opaque,
-              child: AbsorbPointer(
-                child: RoundTextField(
-                  controller: _dobController,
-                  hintText: context.localize(_CompleteProfileTexts.dobHint),
-                  icon: 'assets/img/date.png',
-                ),
-              ),
-            ),
-            if (state.hasError) ...[
-              const SizedBox(height: 6),
-              _ErrorText(text: state.errorText!),
-            ],
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildMeasurementField({
-    required TextEditingController controller,
-    required LocalizedText hint,
-    required String iconAsset,
-    required String unit,
-    required FormFieldValidator<String> validator,
-    required AutovalidateMode autovalidateMode,
-  }) {
-    return FormField<String>(
-      autovalidateMode: autovalidateMode,
-      initialValue: controller.text,
-      validator: validator,
-      builder: (state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: RoundTextField(
-                    controller: controller,
-                    hintText: context.localize(hint),
-                    icon: iconAsset,
-                    keyboardType: _decimalKeyboard,
-                    inputFormatters: _numericInputFormatters,
-                    onChanged: state.didChange,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                _UnitTag(text: unit),
-              ],
-            ),
-            if (state.hasError) ...[
-              const SizedBox(height: 6),
-              _ErrorText(text: state.errorText!),
-            ],
-          ],
-        );
-      },
-    );
   }
 }
 
@@ -585,38 +520,4 @@ class _Header extends StatelessWidget {
       ],
     );
   }
-}
-
-enum _Gender { male, female, other }
-
-extension on _Gender {
-  LocalizedText get label => switch (this) {
-        _Gender.male =>
-          const LocalizedText(english: 'Male', indonesian: 'Pria'),
-        _Gender.female => const LocalizedText(
-            english: 'Female',
-            indonesian: 'Wanita',
-          ),
-        _Gender.other => const LocalizedText(
-            english: 'Other',
-            indonesian: 'Lainnya',
-          ),
-      };
-}
-
-_Gender? _mapDomainGender(domain.Gender? gender) {
-  return switch (gender) {
-    domain.Gender.male => _Gender.male,
-    domain.Gender.female => _Gender.female,
-    domain.Gender.other => _Gender.other,
-    null => null,
-  };
-}
-
-domain.Gender _mapUiGenderToDomain(_Gender gender) {
-  return switch (gender) {
-    _Gender.male => domain.Gender.male,
-    _Gender.female => domain.Gender.female,
-    _Gender.other => domain.Gender.other,
-  };
 }
