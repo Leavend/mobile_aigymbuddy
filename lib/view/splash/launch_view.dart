@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 enum _LaunchStatus { loading, failure }
 
 class LaunchView extends StatefulWidget {
-  const LaunchView({
+  LaunchView({
     super.key,
     AuthService? authService,
     this.navigationDelay = Duration.zero,
