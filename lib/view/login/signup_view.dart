@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'models/onboarding_draft.dart';
+import 'models/signup_form_controller.dart';
 import 'widgets/auth_page_layout.dart';
 import 'widgets/auth_validators.dart';
 
@@ -96,157 +97,60 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
-  final _formKey = GlobalKey<FormState>();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  final _firstNameFocusNode = FocusNode();
-  final _lastNameFocusNode = FocusNode();
-  final _emailFocusNode = FocusNode();
-  final _passwordFocusNode = FocusNode();
-
-  bool _isTermsAccepted = false;
-  bool _isPasswordVisible = false;
-  bool _isRegisterEnabled = false;
-  bool _autoValidate = false;
-  bool _showTermsError = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _firstNameController.addListener(_validateForm);
-    _lastNameController.addListener(_validateForm);
-    _emailController.addListener(_validateForm);
-    _passwordController.addListener(_validateForm);
-  }
+  late final SignUpFormController _controller = SignUpFormController();
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _firstNameFocusNode.dispose();
-    _lastNameFocusNode.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
+    _controller.dispose();
     super.dispose();
-  }
-
-  void _validateForm() {
-    final isValid = _canSubmitForm();
-    if (isValid != _isRegisterEnabled) {
-      setState(() => _isRegisterEnabled = isValid);
-    }
-  }
-
-  bool _canSubmitForm() {
-    return _firstNameController.text.trim().isNotEmpty &&
-        _lastNameController.text.trim().isNotEmpty &&
-        AuthValidators.isValidEmail(_emailController.text) &&
-        _passwordController.text.length >= 8 &&
-        _isTermsAccepted;
-  }
-
-  void _onRegisterPressed() {
-    FocusScope.of(context).unfocus();
-
-    setState(() {
-      _autoValidate = true;
-      _showTermsError = !_isTermsAccepted;
-    });
-
-    if ((_formKey.currentState?.validate() ?? false) && _isTermsAccepted) {
-      final draft = OnboardingDraft(
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
-        email: _emailController.text.trim(),
-      );
-      final args = ProfileFormArguments(draft: draft);
-      context.push(AppRoute.completeProfile, extra: args);
-    }
-  }
-
-  String? _validateFirstName(String? value) {
-    return AuthValidators.validateRequired(
-      context: context,
-      value: value,
-      emptyMessage: _SignUpTexts.firstNameRequired,
-    );
-  }
-
-  String? _validateLastName(String? value) {
-    return AuthValidators.validateRequired(
-      context: context,
-      value: value,
-      emptyMessage: _SignUpTexts.lastNameRequired,
-    );
-  }
-
-  String? _validateEmail(String? value) {
-    return AuthValidators.validateEmail(
-      context: context,
-      value: value,
-      emptyMessage: _SignUpTexts.emailRequired,
-      invalidMessage: _SignUpTexts.emailInvalid,
-    );
-  }
-
-  String? _validatePassword(String? value) {
-    return AuthValidators.validatePassword(
-      context: context,
-      value: value,
-      emptyMessage: _SignUpTexts.passwordRequired,
-      lengthMessage: _SignUpTexts.passwordLength,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final autovalidateMode = _autoValidate
-        ? AutovalidateMode.onUserInteraction
-        : AutovalidateMode.disabled;
-
-    return AuthPageLayout(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 28),
-          _buildForm(context, autovalidateMode),
-          const SizedBox(height: 12),
-          _buildTermsRow(context),
-          if (_showTermsError && !_isTermsAccepted) ...[
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: Text(
-                context.localize(_SignUpTexts.termsRequired),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                  fontSize: 12,
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final autovalidateMode = _controller.autovalidateMode;
+        return AuthPageLayout(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 28),
+              _buildForm(context, autovalidateMode),
+              const SizedBox(height: 12),
+              _buildTermsRow(context),
+              if (_controller.showTermsError) ...[
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12.0),
+                  child: Text(
+                    context.localize(_SignUpTexts.termsRequired),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
+              ],
+              const SizedBox(height: 24),
+              RoundButton(
+                title: context.localize(_SignUpTexts.registerButton),
+                onPressed: _onRegisterPressed,
+                isEnabled: _controller.isRegisterEnabled,
               ),
-            ),
-          ],
-          const SizedBox(height: 24),
-          RoundButton(
-            title: context.localize(_SignUpTexts.registerButton),
-            onPressed: _onRegisterPressed,
-            isEnabled: _isRegisterEnabled,
+              const SizedBox(height: 16),
+              _buildDivider(context),
+              const SizedBox(height: 16),
+              _buildSocialRow(),
+              const SizedBox(height: 20),
+              _buildLoginPrompt(context),
+              const SizedBox(height: 24),
+            ],
           ),
-          const SizedBox(height: 16),
-          _buildDivider(context),
-          const SizedBox(height: 16),
-          _buildSocialRow(),
-          const SizedBox(height: 20),
-          _buildLoginPrompt(context),
-          const SizedBox(height: 24),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -275,61 +179,61 @@ class _SignUpViewState extends State<SignUpView> {
 
   Widget _buildForm(BuildContext context, AutovalidateMode autovalidateMode) {
     return Form(
-      key: _formKey,
+      key: _controller.formKey,
       autovalidateMode: autovalidateMode,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           RoundTextField(
-            controller: _firstNameController,
-            focusNode: _firstNameFocusNode,
+            controller: _controller.firstNameController,
+            focusNode: _controller.firstNameFocusNode,
             hintText: context.localize(_SignUpTexts.firstNameHint),
             icon: 'assets/img/user_text.png',
             textCapitalization: TextCapitalization.words,
             textInputAction: TextInputAction.next,
             validator: _validateFirstName,
-            onFieldSubmitted: (_) => _lastNameFocusNode.requestFocus(),
+            onFieldSubmitted: (_) =>
+                _controller.lastNameFocusNode.requestFocus(),
           ),
           const SizedBox(height: 16),
           RoundTextField(
-            controller: _lastNameController,
-            focusNode: _lastNameFocusNode,
+            controller: _controller.lastNameController,
+            focusNode: _controller.lastNameFocusNode,
             hintText: context.localize(_SignUpTexts.lastNameHint),
             icon: 'assets/img/user_text.png',
             textCapitalization: TextCapitalization.words,
             textInputAction: TextInputAction.next,
             validator: _validateLastName,
-            onFieldSubmitted: (_) => _emailFocusNode.requestFocus(),
+            onFieldSubmitted: (_) => _controller.emailFocusNode.requestFocus(),
           ),
           const SizedBox(height: 16),
           RoundTextField(
-            controller: _emailController,
-            focusNode: _emailFocusNode,
+            controller: _controller.emailController,
+            focusNode: _controller.emailFocusNode,
             hintText: context.localize(_SignUpTexts.emailHint),
             icon: 'assets/img/email.png',
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             validator: _validateEmail,
-            onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
+            onFieldSubmitted: (_) =>
+                _controller.passwordFocusNode.requestFocus(),
           ),
           const SizedBox(height: 16),
           RoundTextField(
-            controller: _passwordController,
-            focusNode: _passwordFocusNode,
+            controller: _controller.passwordController,
+            focusNode: _controller.passwordFocusNode,
             hintText: context.localize(_SignUpTexts.passwordHint),
             icon: 'assets/img/lock.png',
-            obscureText: !_isPasswordVisible,
+            obscureText: !_controller.isPasswordVisible,
             textInputAction: TextInputAction.done,
             validator: _validatePassword,
             onFieldSubmitted: (_) => _onRegisterPressed(),
             rightIcon: IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              onPressed: () {
-                setState(() => _isPasswordVisible = !_isPasswordVisible);
-              },
+              onPressed: _controller.togglePasswordVisibility,
               icon: Image.asset(
-                _isPasswordVisible
+                _controller.isPasswordVisible
                     ? 'assets/img/hide_password.png'
                     : 'assets/img/show_password.png',
                 width: 20,
@@ -348,15 +252,9 @@ class _SignUpViewState extends State<SignUpView> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Checkbox(
-          value: _isTermsAccepted,
+          value: _controller.isTermsAccepted,
           onChanged: (value) {
-            setState(() {
-              _isTermsAccepted = value ?? false;
-              if (_isTermsAccepted) {
-                _showTermsError = false;
-              }
-            });
-            _validateForm();
+            _controller.updateTerms(value ?? false);
           },
           visualDensity: VisualDensity.compact,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -432,6 +330,50 @@ class _SignUpViewState extends State<SignUpView> {
           ),
         ],
       ),
+    );
+  }
+
+  void _onRegisterPressed() {
+    FocusScope.of(context).unfocus();
+    final result = _controller.submit();
+    if (result.isSuccess) {
+      final draft = result.draft!;
+      final args = ProfileFormArguments(draft: draft);
+      context.push(AppRoute.completeProfile, extra: args);
+    }
+  }
+
+  String? _validateFirstName(String? value) {
+    return AuthValidators.validateRequired(
+      context: context,
+      value: value,
+      emptyMessage: _SignUpTexts.firstNameRequired,
+    );
+  }
+
+  String? _validateLastName(String? value) {
+    return AuthValidators.validateRequired(
+      context: context,
+      value: value,
+      emptyMessage: _SignUpTexts.lastNameRequired,
+    );
+  }
+
+  String? _validateEmail(String? value) {
+    return AuthValidators.validateEmail(
+      context: context,
+      value: value,
+      emptyMessage: _SignUpTexts.emailRequired,
+      invalidMessage: _SignUpTexts.emailInvalid,
+    );
+  }
+
+  String? _validatePassword(String? value) {
+    return AuthValidators.validatePassword(
+      context: context,
+      value: value,
+      emptyMessage: _SignUpTexts.passwordRequired,
+      lengthMessage: _SignUpTexts.passwordLength,
     );
   }
 }
