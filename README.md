@@ -14,7 +14,7 @@ untuk fitur sinkronisasi dan integrasi AI di kemudian hari.
 2. **Jalankan code generation Drift** setiap kali ada perubahan pada tabel atau
    DAO.
    ```bash
-   flutter pub run build_runner build --delete-conflicting-outputs
+   dart run build_runner build --delete-conflicting-outputs
    ```
 
 3. **Jalankan aplikasi**
