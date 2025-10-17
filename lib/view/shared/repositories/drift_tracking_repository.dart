@@ -15,14 +15,17 @@ class DriftTrackingRepository implements TrackingRepository {
 
   @override
   Future<void> addBodyWeight(double weightKg) {
+    if (weightKg <= 0) {
+      throw ArgumentError.value(weightKg, 'weightKg', 'Must be greater than 0');
+    }
     return _dao.insertBodyWeight(weightKg);
   }
 
   @override
   Stream<List<BodyWeightEntry>> watchBodyWeight({int days = 30}) {
-    return _dao
-        .watchWeightSeries(days: days)
-        .map((points) => points.map(_mapWeight).toList());
+    return _dao.watchWeightSeries(days: days).map(
+          (points) => List.unmodifiable(points.map(_mapWeight)),
+        );
   }
 
   @override
@@ -35,6 +38,12 @@ class DriftTrackingRepository implements TrackingRepository {
   }) async {
     if (setIndex <= 0) {
       throw ArgumentError.value(setIndex, 'setIndex', 'Must be greater than 0');
+    }
+    if (reps != null && reps <= 0) {
+      throw ArgumentError.value(reps, 'reps', 'Must be greater than 0');
+    }
+    if (weight != null && weight <= 0) {
+      throw ArgumentError.value(weight, 'weight', 'Must be greater than 0');
     }
 
     final exercise = await _exerciseDao.getById(exerciseId);
@@ -61,15 +70,15 @@ class DriftTrackingRepository implements TrackingRepository {
 
   @override
   Stream<List<WorkoutSetLog>> watchRecentSetLogs({int limit = 20}) {
-    return _dao
-        .watchRecentSetLogs(limit: limit)
-        .map((rows) => rows.map(_mapSetLog).toList());
+    return _dao.watchRecentSetLogs(limit: limit).map(
+          (rows) => List.unmodifiable(rows.map(_mapSetLog)),
+        );
   }
 
   @override
   Future<List<WeeklyVolumePoint>> loadWeeklyVolume({int weeks = 8}) async {
     final rows = await _dao.getWeeklyVolume(weeks);
-    return rows.map(_mapWeeklyVolume).toList();
+    return List.unmodifiable(rows.map(_mapWeeklyVolume));
   }
 
   BodyWeightEntry _mapWeight(WeightPoint point) {

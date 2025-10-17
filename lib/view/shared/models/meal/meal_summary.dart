@@ -46,4 +46,35 @@ class MealSummary {
     final unit = language == AppLanguage.indonesian ? 'kKal' : 'kCal';
     return '$value $unit';
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is MealSummary &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            name == other.name &&
+            imageAsset == other.imageAsset &&
+            heroImageAsset == other.heroImageAsset &&
+            period == other.period &&
+            prepMinutes == other.prepMinutes &&
+            sizeLabel == other.sizeLabel &&
+            calories == other.calories;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        name,
+        imageAsset,
+        heroImageAsset,
+        period,
+        prepMinutes,
+        sizeLabel,
+        calories,
+      );
+
+  @override
+  String toString() =>
+      'MealSummary(id: $id, name: ${name.english}, period: ${period.name})';
 }
