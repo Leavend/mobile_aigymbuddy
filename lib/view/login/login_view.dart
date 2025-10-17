@@ -1,10 +1,14 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/app/app_state.dart';
+import 'package:aigymbuddy/app/dependencies.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
+import 'package:aigymbuddy/view/shared/repositories/profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -83,6 +87,8 @@ class _LoginViewState extends State<LoginView> {
   bool _isPasswordVisible = false;
   bool _isLoginEnabled = false;
   bool _autoValidate = false;
+  bool _isSubmitting = false;
+  ProfileRepository? _profileRepository;
 
   @override
   void initState() {
@@ -100,6 +106,12 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _profileRepository ??= AppDependencies.of(context).profileRepository;
+  }
+
   void _validateForm() {
     final isValid = _canSubmit();
     if (isValid != _isLoginEnabled) {
@@ -112,8 +124,47 @@ class _LoginViewState extends State<LoginView> {
 
     setState(() => _autoValidate = true);
 
+    if (_isSubmitting) {
+      return;
+    }
+
     if (_formKey.currentState?.validate() ?? false) {
-      context.push(AppRoute.completeProfile);
+      _attemptLogin();
+    }
+  }
+
+  Future<void> _attemptLogin() async {
+    final repository = _profileRepository ??
+        AppDependencies.of(context).profileRepository;
+
+    setState(() => _isSubmitting = true);
+    try {
+      final profile = await repository.loadProfile();
+      if (!mounted) return;
+
+      if (profile == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profil belum tersedia. Silakan daftar terlebih dahulu.'),
+          ),
+        );
+        return;
+      }
+
+      await AuthService.instance.setHasCredentials(true);
+      AppStateScope.of(context).updateHasProfile(true);
+
+      if (!mounted) return;
+      context.go(AppRoute.main);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal masuk: $error')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
@@ -173,7 +224,7 @@ class _LoginViewState extends State<LoginView> {
           RoundButton(
             title: context.localize(_LoginTexts.loginButton),
             onPressed: _onLoginPressed,
-            isEnabled: _isLoginEnabled,
+            isEnabled: _isLoginEnabled && !_isSubmitting,
           ),
           const SizedBox(height: 28),
           _buildDivider(context),

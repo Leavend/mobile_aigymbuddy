@@ -1,6 +1,6 @@
-import '../../exercise/domain/exercise.dart';
-import '../../exercise/domain/exercise_repository.dart';
+import '../models/exercise.dart';
 import '../../../data/db/daos/exercise_dao.dart';
+import 'exercise_repository.dart';
 
 class DriftExerciseRepository implements ExerciseRepository {
   DriftExerciseRepository(this._dao);

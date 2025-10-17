@@ -4,10 +4,12 @@ import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
+import 'package:aigymbuddy/view/shared/models/user_profile.dart' as domain;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import 'models/onboarding_draft.dart';
 import 'widgets/auth_page_layout.dart';
 
 abstract final class _CompleteProfileTexts {
@@ -78,7 +80,9 @@ abstract final class _CompleteProfileTexts {
 }
 
 class CompleteProfileView extends StatefulWidget {
-  const CompleteProfileView({super.key});
+  const CompleteProfileView({super.key, required this.args});
+
+  final ProfileFormArguments args;
 
   @override
   State<CompleteProfileView> createState() => _CompleteProfileViewState();
@@ -92,6 +96,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
 
   _Gender? _selectedGender;
   bool _autoValidate = false;
+  late OnboardingDraft _draft;
 
   static const _decimalKeyboard = TextInputType.numberWithOptions(
     decimal: true,
@@ -109,9 +114,12 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   @override
   void initState() {
     super.initState();
+    _draft = widget.args.draft;
+    _selectedGender = _mapDomainGender(_draft.gender);
     _dobController.addListener(_onFormDataChanged);
     _weightController.addListener(_onFormDataChanged);
     _heightController.addListener(_onFormDataChanged);
+    _applyDraftToControllers();
   }
 
   @override
@@ -122,8 +130,40 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant CompleteProfileView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.args.draft, widget.args.draft)) {
+      _draft = widget.args.draft;
+      _selectedGender = _mapDomainGender(_draft.gender);
+      _applyDraftToControllers();
+    }
+  }
+
+  void _applyDraftToControllers() {
+    final dob = _draft.dateOfBirth;
+    _dobController.text = dob != null ? _formatDate(dob) : '';
+    final weight = _draft.weightKg;
+    _weightController.text = weight != null ? _formatNumber(weight) : '';
+    final height = _draft.heightCm;
+    _heightController.text = height != null ? _formatNumber(height) : '';
+  }
+
+  String _formatNumber(double value) {
+    return value % 1 == 0 ? value.toStringAsFixed(0) : value.toStringAsFixed(1);
+  }
+
   void _onFormDataChanged() {
-    setState(() {});
+    final weight = double.tryParse(_weightController.text.trim());
+    final height = double.tryParse(_heightController.text.trim());
+    setState(() {
+      if (weight != null) {
+        _draft = _draft.copyWith(weightKg: weight);
+      }
+      if (height != null) {
+        _draft = _draft.copyWith(heightCm: height);
+      }
+    });
   }
 
   void _onNextPressed() {
@@ -131,7 +171,22 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     setState(() => _autoValidate = true);
 
     if (_formKey.currentState?.validate() ?? false) {
-      context.push(AppRoute.goal);
+      final parsedDob = DateTime.parse(_dobController.text.trim());
+      final height = double.parse(_heightController.text.trim());
+      final weight = double.parse(_weightController.text.trim());
+      final gender = _selectedGender!;
+
+      final updatedDraft = _draft
+          .copyWith(
+            gender: _mapUiGenderToDomain(gender),
+            heightCm: height,
+            weightKg: weight,
+          )
+          .updateWithDob(parsedDob);
+
+      _draft = updatedDraft;
+      final args = widget.args.copyWith(draft: updatedDraft);
+      context.push(AppRoute.goal, extra: args);
     }
   }
 
@@ -158,12 +213,19 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     );
 
     if (picked != null) {
-      final formatted = '${picked.year.toString().padLeft(4, '0')}-'
-          '${picked.month.toString().padLeft(2, '0')}-'
-          '${picked.day.toString().padLeft(2, '0')}';
+      final formatted = _formatDate(picked);
       _dobController.text = formatted;
       state.didChange(formatted);
+      setState(() {
+        _draft = _draft.updateWithDob(picked);
+      });
     }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year.toString().padLeft(4, '0')}-'
+        '${date.month.toString().padLeft(2, '0')}-'
+        '${date.day.toString().padLeft(2, '0')}';
   }
 
   String? _validateDob(String? value) {
@@ -349,7 +411,14 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                             .toList(),
                         onChanged: (value) {
                           state.didChange(value);
-                          setState(() => _selectedGender = value);
+                          if (value != null) {
+                            setState(() {
+                              _selectedGender = value;
+                              _draft = _draft.copyWith(
+                                gender: _mapUiGenderToDomain(value),
+                              );
+                            });
+                          }
                         },
                       ),
                     ),
@@ -518,7 +587,7 @@ class _Header extends StatelessWidget {
   }
 }
 
-enum _Gender { male, female }
+enum _Gender { male, female, other }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
@@ -528,5 +597,26 @@ extension on _Gender {
             english: 'Female',
             indonesian: 'Wanita',
           ),
+        _Gender.other => const LocalizedText(
+            english: 'Other',
+            indonesian: 'Lainnya',
+          ),
       };
+}
+
+_Gender? _mapDomainGender(domain.Gender? gender) {
+  return switch (gender) {
+    domain.Gender.male => _Gender.male,
+    domain.Gender.female => _Gender.female,
+    domain.Gender.other => _Gender.other,
+    null => null,
+  };
+}
+
+domain.Gender _mapUiGenderToDomain(_Gender gender) {
+  return switch (gender) {
+    _Gender.male => domain.Gender.male,
+    _Gender.female => domain.Gender.female,
+    _Gender.other => domain.Gender.other,
+  };
 }

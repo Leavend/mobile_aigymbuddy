@@ -2,8 +2,8 @@ import 'package:drift/drift.dart';
 
 import '../../../data/db/app_database.dart' as db;
 import '../../../data/db/daos/user_profile_dao.dart';
-import '../../profile/domain/profile_repository.dart';
-import '../../profile/domain/user_profile.dart' as domain;
+import '../models/user_profile.dart' as domain;
+import 'profile_repository.dart';
 
 class DriftProfileRepository implements ProfileRepository {
   DriftProfileRepository(this._dao);

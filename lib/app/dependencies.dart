@@ -3,12 +3,12 @@
 import 'package:flutter/widgets.dart';
 
 import '../data/db/app_database.dart';
-import '../features/exercise/data/drift_exercise_repository.dart';
-import '../features/exercise/domain/exercise_repository.dart';
-import '../features/profile/data/drift_profile_repository.dart';
-import '../features/profile/domain/profile_repository.dart';
-import '../features/tracking/data/drift_tracking_repository.dart';
-import '../features/tracking/domain/tracking_repository.dart';
+import '../view/shared/repositories/drift_exercise_repository.dart';
+import '../view/shared/repositories/drift_profile_repository.dart';
+import '../view/shared/repositories/drift_tracking_repository.dart';
+import '../view/shared/repositories/exercise_repository.dart';
+import '../view/shared/repositories/profile_repository.dart';
+import '../view/shared/repositories/tracking_repository.dart';
 
 /// Aggregates repositories and exposes them through the widget tree.
 class AppDependencies extends InheritedWidget {
