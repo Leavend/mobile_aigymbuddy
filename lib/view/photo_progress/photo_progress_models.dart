@@ -1,5 +1,6 @@
+// lib/view/photo_progress/photo_progress_models.dart
+
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 
 /// Signature used throughout the photo progress feature to localize
 /// [LocalizedText] values with the active [BuildContext].

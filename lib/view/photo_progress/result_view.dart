@@ -166,8 +166,7 @@ class _ResultViewState extends State<ResultView> {
                     ..hideCurrentSnackBar()
                     ..showSnackBar(
                       SnackBar(
-                        content:
-                            Text(localize(ResultTexts.saveReportInfo)),
+                        content: Text(localize(ResultTexts.saveReportInfo)),
                       ),
                     );
                 },

@@ -1,4 +1,6 @@
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+// lib/view/photo_progress/photo_progress_strings.dart
+
+import 'package:aigymbuddy/common/localization/app_language.dart';
 
 abstract final class PhotoProgressTexts {
   static const title = LocalizedText(
@@ -109,7 +111,8 @@ abstract final class ComparisonTexts {
   );
 
   static const invalidSelection = LocalizedText(
-    english: 'Please ensure the months are different and the first month is earlier.',
+    english:
+        'Please ensure the months are different and the first month is earlier.',
     indonesian: 'Pastikan kedua bulan berbeda dan bulan pertama lebih awal.',
   );
 

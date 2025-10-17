@@ -1,8 +1,10 @@
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+// lib/view/photo_progress/photo_progress_sample_data.dart
+
+import 'package:aigymbuddy/common/localization/app_language.dart';
 
 import 'photo_progress_models.dart';
 
-const samplePhotoGroups = <PhotoProgressGroup>[
+final samplePhotoGroups = <PhotoProgressGroup>[
   PhotoProgressGroup(
     date: DateTime(2023, 6, 2),
     photos: [
@@ -23,7 +25,7 @@ const samplePhotoGroups = <PhotoProgressGroup>[
   ),
 ];
 
-const samplePhotoComparisons = <PhotoComparison>[
+final samplePhotoComparisons = <PhotoComparison>[
   PhotoComparison(
     title: LocalizedText(english: 'Front Facing', indonesian: 'Tampak Depan'),
     firstImagePath: 'assets/img/pp_1.png',
@@ -46,7 +48,7 @@ const samplePhotoComparisons = <PhotoComparison>[
   ),
 ];
 
-const sampleProgressStatistics = <ProgressStatistic>[
+final sampleProgressStatistics = <ProgressStatistic>[
   ProgressStatistic(
     title: LocalizedText(
       english: 'Lose Weight',
