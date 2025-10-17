@@ -19,7 +19,9 @@ DateTime subtractDays(UtcNow now, int days) {
   final safeDays = days < 0 ? 0 : days;
   final reference = now();
 
-  return safeDays == 0 ? reference : reference.subtract(Duration(days: safeDays));
+  return safeDays == 0
+      ? reference
+      : reference.subtract(Duration(days: safeDays));
 }
 
 /// Guarantees a UTC timestamp for values provided by the UI layer.

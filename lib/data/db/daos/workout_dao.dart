@@ -65,7 +65,8 @@ class WorkoutDao extends DatabaseAccessor<AppDatabase> with _$WorkoutDaoMixin {
         throw ArgumentError('Each workout item must contain at least one set.');
       }
 
-      final scheduledUtc = scheduledFor != null ? ensureUtc(scheduledFor) : null;
+      final scheduledUtc =
+          scheduledFor != null ? ensureUtc(scheduledFor) : null;
       final workoutId = await into(workouts).insert(
         WorkoutsCompanion.insert(
           title: title,

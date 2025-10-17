@@ -54,7 +54,7 @@ class AppDatabase extends _$AppDatabase {
             return;
           }
 
-          // TODO: Add schema migrations when bumping [_schemaVersion].
+          await _enableForeignKeys();
         },
       );
 
