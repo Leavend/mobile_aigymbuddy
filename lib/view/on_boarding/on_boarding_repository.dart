@@ -71,8 +71,10 @@ class StaticOnBoardingContentRepository extends OnBoardingContentRepository {
       indonesian: 'Makan Sehat',
     ),
     subtitle: LocalizedText(
-      english: "Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun",
-      indonesian: 'Mulai gaya hidup sehat bersama kami. Kami bantu atur menu harianmu karena makan sehat itu menyenangkan.',
+      english:
+          "Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun",
+      indonesian:
+          'Mulai gaya hidup sehat bersama kami. Kami bantu atur menu harianmu karena makan sehat itu menyenangkan.',
     ),
     image: 'assets/img/on_3.png',
     gradientColors: [Color(0xff9DCEFF), Color(0xff92A3FD)],
@@ -86,7 +88,8 @@ class StaticOnBoardingContentRepository extends OnBoardingContentRepository {
     subtitle: LocalizedText(
       english:
           'Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning',
-      indonesian: 'Tingkatkan kualitas tidurmu bersama kami. Tidur yang cukup menghadirkan energi positif di pagi hari.',
+      indonesian:
+          'Tingkatkan kualitas tidurmu bersama kami. Tidur yang cukup menghadirkan energi positif di pagi hari.',
     ),
     image: 'assets/img/on_4.png',
     gradientColors: [Color(0xff92A3FD), Color(0xff9DCEFF)],
@@ -100,7 +103,8 @@ class StaticOnBoardingContentRepository extends OnBoardingContentRepository {
     subtitle: LocalizedText(
       english:
           'Personalized programs backed with custom AI recommendations help you stay consistent on your fitness journey.',
-      indonesian: 'Program personal disertai rekomendasi AI membantumu tetap konsisten dalam perjalanan kebugaranmu.',
+      indonesian:
+          'Program personal disertai rekomendasi AI membantumu tetap konsisten dalam perjalanan kebugaranmu.',
     ),
     image: 'assets/img/on_5.png',
     gradientColors: [Color(0xffC58BF2), Color(0xffEEA4CE)],

@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:aigymbuddy/common_widget/on_boarding_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Immutable view state for the onboarding flow.
