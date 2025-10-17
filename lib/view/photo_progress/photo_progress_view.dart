@@ -1,11 +1,14 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/date_time_utils.dart';
-import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import 'photo_progress_models.dart';
+import 'photo_progress_sample_data.dart';
+import 'photo_progress_strings.dart';
 
 class PhotoProgressView extends StatefulWidget {
   const PhotoProgressView({super.key});
@@ -15,111 +18,139 @@ class PhotoProgressView extends StatefulWidget {
 }
 
 class _PhotoProgressViewState extends State<PhotoProgressView> {
-  final List<_PhotoProgressGroup> _photoGroups = [
-    _PhotoProgressGroup(
-      date: DateTime(2023, 6, 2),
-      photos: [
-        'assets/img/pp_1.png',
-        'assets/img/pp_2.png',
-        'assets/img/pp_3.png',
-        'assets/img/pp_4.png',
-      ],
-    ),
-    _PhotoProgressGroup(
-      date: DateTime(2023, 5, 5),
-      photos: [
-        'assets/img/pp_5.png',
-        'assets/img/pp_6.png',
-        'assets/img/pp_7.png',
-        'assets/img/pp_8.png',
-      ],
-    ),
-  ];
-
   bool _isReminderVisible = true;
+  final List<PhotoProgressGroup> _photoGroups = List.of(samplePhotoGroups);
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
     final localize = context.localize;
+    final media = MediaQuery.sizeOf(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: TColor.white,
-        centerTitle: true,
-        elevation: 0,
-        leadingWidth: 0,
-        leading: const SizedBox.shrink(),
-        title: Text(
-          localize(_PhotoProgressTexts.title),
-          style: TextStyle(
-            color: TColor.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              onPressed: _showMoreOptions,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: TColor.lightGray,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Image.asset(
-                  'assets/img/more_btn.png',
-                  width: 16,
-                  height: 16,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(localize),
       backgroundColor: TColor.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_isReminderVisible) _buildReminderCard(),
-            _buildEducationCard(media, localize),
-            _buildCompareCard(localize),
-            _buildGalleryHeader(localize),
-            ..._photoGroups.map(_buildPhotoGroup),
+            if (_isReminderVisible)
+              _ReminderCard(
+                onDismissed: () => setState(() => _isReminderVisible = false),
+              ),
+            _EducationCard(media: media, localize: localize),
+            _CompareCard(localize: localize, onPressed: _goToComparison),
+            _GalleryHeader(localize: localize, onSeeMore: _showGalleryInfo),
+            ..._photoGroups.map((group) => _PhotoGroupTile(group: group)),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onCapturePhoto,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: TColor.secondaryG),
-            borderRadius: BorderRadius.circular(100),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: const Icon(Icons.photo_camera, color: Colors.white),
-        ),
-      ),
+      floatingActionButton: _CaptureButton(onPressed: _onCapturePhoto),
     );
   }
 
-  Widget _buildReminderCard() {
+  PreferredSizeWidget _buildAppBar(Localizer localize) {
+    return AppBar(
+      backgroundColor: TColor.white,
+      centerTitle: true,
+      elevation: 0,
+      leadingWidth: 0,
+      leading: const SizedBox.shrink(),
+      title: Text(
+        localize(PhotoProgressTexts.title),
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: IconButton(
+            onPressed: _showMoreOptions,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+            icon: Container(
+              decoration: BoxDecoration(
+                color: TColor.lightGray,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(10),
+              child: Image.asset(
+                'assets/img/more_btn.png',
+                width: 16,
+                height: 16,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _goToComparison() {
+    context.pushNamed(AppRoute.photoComparisonName);
+  }
+
+  void _showGalleryInfo() {
+    _showSnackBar(context.localize(PhotoProgressTexts.galleryInfo));
+  }
+
+  void _onCapturePhoto() {
+    _showSnackBar(context.localize(PhotoProgressTexts.launchingCamera));
+  }
+
+  void _showMoreOptions() {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) {
+        final localize = sheetContext.localize;
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: Text(localize(PhotoProgressTexts.manageReminders)),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _showSnackBar(localize(PhotoProgressTexts.reminderSettings));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete_outline),
+                title: Text(localize(PhotoProgressTexts.clearGallery)),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _showSnackBar(localize(PhotoProgressTexts.galleryCleared));
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+}
+
+class _ReminderCard extends StatelessWidget {
+  const _ReminderCard({required this.onDismissed});
+
+  final VoidCallback onDismissed;
+
+  @override
+  Widget build(BuildContext context) {
     final localize = context.localize;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -152,7 +183,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    localize(_PhotoProgressTexts.reminderTitle),
+                    localize(PhotoProgressTexts.reminderTitle),
                     style: const TextStyle(
                       color: Colors.red,
                       fontSize: 12,
@@ -160,7 +191,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                     ),
                   ),
                   Text(
-                    localize(_PhotoProgressTexts.reminderSubtitle),
+                    localize(PhotoProgressTexts.reminderSubtitle),
                     style: TextStyle(
                       color: TColor.black,
                       fontSize: 14,
@@ -171,7 +202,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
               ),
             ),
             IconButton(
-              onPressed: () => setState(() => _isReminderVisible = false),
+              onPressed: onDismissed,
               icon: Icon(Icons.close, color: TColor.gray, size: 18),
             ),
           ],
@@ -179,11 +210,16 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
       ),
     );
   }
+}
 
-  Widget _buildEducationCard(
-    Size media,
-    String Function(LocalizedText) localize,
-  ) {
+class _EducationCard extends StatelessWidget {
+  const _EducationCard({required this.media, required this.localize});
+
+  final Size media;
+  final Localizer localize;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Container(
@@ -207,7 +243,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
               children: [
                 const SizedBox(height: 8),
                 Text(
-                  localize(_PhotoProgressTexts.educationDescription),
+                  localize(PhotoProgressTexts.educationDescription),
                   style: TextStyle(color: TColor.black, fontSize: 12),
                 ),
                 const Spacer(),
@@ -215,11 +251,17 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                   width: 120,
                   height: 36,
                   child: RoundButton(
-                    title: localize(_PhotoProgressTexts.learnMoreButton),
+                    title: localize(PhotoProgressTexts.learnMoreButton),
                     fontSize: 12,
-                    onPressed: () => _showSnackBar(
-                      localize(_PhotoProgressTexts.learnMoreInfo),
-                    ),
+                    onPressed: () => ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            localize(PhotoProgressTexts.learnMoreInfo),
+                          ),
+                        ),
+                      ),
                   ),
                 ),
               ],
@@ -233,8 +275,19 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
       ),
     );
   }
+}
 
-  Widget _buildCompareCard(String Function(LocalizedText) localize) {
+class _CompareCard extends StatelessWidget {
+  const _CompareCard({
+    required this.localize,
+    required this.onPressed,
+  });
+
+  final Localizer localize;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -246,7 +299,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            localize(_PhotoProgressTexts.compareTitle),
+            localize(PhotoProgressTexts.compareTitle),
             style: TextStyle(
               color: TColor.black,
               fontSize: 14,
@@ -257,26 +310,37 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             width: 110,
             height: 32,
             child: RoundButton(
-              title: localize(_PhotoProgressTexts.compareButton),
+              title: localize(PhotoProgressTexts.compareButton),
               type: RoundButtonType.bgGradient,
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              onPressed: () => context.pushNamed(AppRoute.photoComparisonName),
+              onPressed: onPressed,
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildGalleryHeader(String Function(LocalizedText) localize) {
+class _GalleryHeader extends StatelessWidget {
+  const _GalleryHeader({
+    required this.localize,
+    required this.onSeeMore,
+  });
+
+  final Localizer localize;
+  final VoidCallback onSeeMore;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            localize(_PhotoProgressTexts.galleryTitle),
+            localize(PhotoProgressTexts.galleryTitle),
             style: TextStyle(
               color: TColor.black,
               fontSize: 16,
@@ -284,10 +348,9 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             ),
           ),
           TextButton(
-            onPressed: () =>
-                _showSnackBar(localize(_PhotoProgressTexts.galleryInfo)),
+            onPressed: onSeeMore,
             child: Text(
-              localize(_PhotoProgressTexts.seeMoreButton),
+              localize(PhotoProgressTexts.seeMoreButton),
               style: TextStyle(color: TColor.gray),
             ),
           ),
@@ -295,8 +358,15 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
       ),
     );
   }
+}
 
-  Widget _buildPhotoGroup(_PhotoProgressGroup group) {
+class _PhotoGroupTile extends StatelessWidget {
+  const _PhotoGroupTile({required this.group});
+
+  final PhotoProgressGroup group;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       child: Column(
@@ -333,138 +403,34 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
       ),
     );
   }
+}
 
-  void _showMoreOptions() {
-    showModalBottomSheet<void>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+class _CaptureButton extends StatelessWidget {
+  const _CaptureButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: onPressed,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: TColor.secondaryG),
+          borderRadius: BorderRadius.circular(100),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: const Icon(Icons.photo_camera, color: Colors.white),
       ),
-      builder: (context) {
-        final localize = context.localize;
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit),
-                title: Text(localize(_PhotoProgressTexts.manageReminders)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _showSnackBar(localize(_PhotoProgressTexts.reminderSettings));
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete_outline),
-                title: Text(localize(_PhotoProgressTexts.clearGallery)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _showSnackBar(localize(_PhotoProgressTexts.galleryCleared));
-                },
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
-
-  void _onCapturePhoto() {
-    _showSnackBar(context.localize(_PhotoProgressTexts.launchingCamera));
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
-  }
-}
-
-class _PhotoProgressGroup {
-  const _PhotoProgressGroup({required this.date, required this.photos});
-
-  final DateTime date;
-  final List<String> photos;
-}
-
-final class _PhotoProgressTexts {
-  static const title = LocalizedText(
-    english: 'Progress Photo',
-    indonesian: 'Foto Progres',
-  );
-
-  static const reminderTitle = LocalizedText(
-    english: 'Reminder!',
-    indonesian: 'Pengingat!',
-  );
-
-  static const reminderSubtitle = LocalizedText(
-    english: 'Next photos fall on July 08',
-    indonesian: 'Foto berikutnya pada 8 Juli',
-  );
-
-  static const educationDescription = LocalizedText(
-    english: 'Track your progress each\nmonth with photos',
-    indonesian: 'Lacak progresmu setiap\nbulan dengan foto',
-  );
-
-  static const learnMoreButton = LocalizedText(
-    english: 'Learn More',
-    indonesian: 'Pelajari',
-  );
-
-  static const learnMoreInfo = LocalizedText(
-    english: 'Tutorial coming soon.',
-    indonesian: 'Panduan segera hadir.',
-  );
-
-  static const compareTitle = LocalizedText(
-    english: 'Compare my photo',
-    indonesian: 'Bandingkan foto saya',
-  );
-
-  static const compareButton = LocalizedText(
-    english: 'Compare',
-    indonesian: 'Bandingkan',
-  );
-
-  static const galleryTitle = LocalizedText(
-    english: 'Gallery',
-    indonesian: 'Galeri',
-  );
-
-  static const seeMoreButton = LocalizedText(
-    english: 'See more',
-    indonesian: 'Lihat semua',
-  );
-
-  static const galleryInfo = LocalizedText(
-    english: 'Opening full gallery soon.',
-    indonesian: 'Galeri lengkap segera tersedia.',
-  );
-
-  static const manageReminders = LocalizedText(
-    english: 'Manage reminders',
-    indonesian: 'Kelola pengingat',
-  );
-
-  static const reminderSettings = LocalizedText(
-    english: 'Reminder settings coming soon.',
-    indonesian: 'Pengaturan pengingat segera hadir.',
-  );
-
-  static const clearGallery = LocalizedText(
-    english: 'Clear gallery',
-    indonesian: 'Hapus galeri',
-  );
-
-  static const galleryCleared = LocalizedText(
-    english: 'Gallery cleared (demo).',
-    indonesian: 'Galeri dibersihkan (demo).',
-  );
-
-  static const launchingCamera = LocalizedText(
-    english: 'Launching camera...',
-    indonesian: 'Membuka kamera...',
-  );
 }

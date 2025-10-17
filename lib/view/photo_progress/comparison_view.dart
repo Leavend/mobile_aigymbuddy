@@ -1,13 +1,15 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/date_time_utils.dart';
-import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import 'photo_progress_models.dart';
+import 'photo_progress_strings.dart';
 
 class ComparisonView extends StatefulWidget {
   const ComparisonView({super.key});
@@ -33,50 +35,7 @@ class _ComparisonViewState extends State<ComparisonView> {
     final localize = context.localize;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: TColor.white,
-        centerTitle: true,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-          icon: Container(
-            decoration: BoxDecoration(
-              color: TColor.lightGray,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            padding: const EdgeInsets.all(10),
-            child: Image.asset('assets/img/black_btn.png', fit: BoxFit.contain),
-          ),
-        ),
-        title: Text(
-          localize(_ComparisonTexts.title),
-          style: TextStyle(
-            color: TColor.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: _showMoreOptions,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-            icon: Container(
-              decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: Image.asset(
-                'assets/img/more_btn.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(localize),
       backgroundColor: TColor.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -84,7 +43,7 @@ class _ComparisonViewState extends State<ComparisonView> {
           children: [
             IconTitleNextRow(
               icon: 'assets/img/date.png',
-              title: localize(_ComparisonTexts.selectMonth1),
+              title: localize(ComparisonTexts.selectMonth1),
               time: DateTimeUtils.formatDate(_firstMonth, pattern: 'MMMM yyyy'),
               onPressed: () => _pickMonth(isFirst: true),
               color: TColor.lightGray,
@@ -92,7 +51,7 @@ class _ComparisonViewState extends State<ComparisonView> {
             const SizedBox(height: 15),
             IconTitleNextRow(
               icon: 'assets/img/date.png',
-              title: localize(_ComparisonTexts.selectMonth2),
+              title: localize(ComparisonTexts.selectMonth2),
               time: DateTimeUtils.formatDate(
                 _secondMonth,
                 pattern: 'MMMM yyyy',
@@ -102,7 +61,7 @@ class _ComparisonViewState extends State<ComparisonView> {
             ),
             const Spacer(),
             RoundButton(
-              title: localize(_ComparisonTexts.compareButton),
+              title: localize(ComparisonTexts.compareButton),
               onPressed: _onCompare,
             ),
             const SizedBox(height: 15),
@@ -112,9 +71,56 @@ class _ComparisonViewState extends State<ComparisonView> {
     );
   }
 
+  PreferredSizeWidget _buildAppBar(Localizer localize) {
+    return AppBar(
+      backgroundColor: TColor.white,
+      centerTitle: true,
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () => context.pop(),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+        icon: Container(
+          decoration: BoxDecoration(
+            color: TColor.lightGray,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.all(10),
+          child: Image.asset('assets/img/black_btn.png', fit: BoxFit.contain),
+        ),
+      ),
+      title: Text(
+        localize(ComparisonTexts.title),
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: [
+        IconButton(
+          onPressed: _showMoreOptions,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          icon: Container(
+            decoration: BoxDecoration(
+              color: TColor.lightGray,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Image.asset(
+              'assets/img/more_btn.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> _pickMonth({required bool isFirst}) async {
     final initialDate = isFirst ? _firstMonth : _secondMonth;
-    final helpText = context.localize(_ComparisonTexts.selectMonthHelp);
+    final helpText = context.localize(ComparisonTexts.selectMonthHelp);
     final selectedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -130,17 +136,18 @@ class _ComparisonViewState extends State<ComparisonView> {
     }
 
     setState(() {
+      final normalized = DateTime(selectedDate.year, selectedDate.month);
       if (isFirst) {
-        _firstMonth = DateTime(selectedDate.year, selectedDate.month);
+        _firstMonth = normalized;
       } else {
-        _secondMonth = DateTime(selectedDate.year, selectedDate.month);
+        _secondMonth = normalized;
       }
     });
   }
 
   void _onCompare() {
     if (!_isSelectionValid()) {
-      _showSnackBar(context.localize(_ComparisonTexts.invalidSelection));
+      _showSnackBar(context.localize(ComparisonTexts.invalidSelection));
       return;
     }
 
@@ -172,17 +179,17 @@ class _ComparisonViewState extends State<ComparisonView> {
             children: [
               ListTile(
                 leading: const Icon(Icons.share),
-                title: Text(localize(_ComparisonTexts.shareProgress)),
+                title: Text(localize(ComparisonTexts.shareProgress)),
                 onTap: () {
-                  Navigator.of(context).pop();
-                  _showSnackBar(localize(_ComparisonTexts.shareInfo));
+                  Navigator.of(sheetContext).pop();
+                  _showSnackBar(localize(ComparisonTexts.shareInfo));
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline),
-                title: Text(localize(_ComparisonTexts.resetSelection)),
+                title: Text(localize(ComparisonTexts.resetSelection)),
                 onTap: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(sheetContext).pop();
                   setState(() {
                     final now = DateTime.now();
                     _secondMonth = DateTime(now.year, now.month);
@@ -202,52 +209,4 @@ class _ComparisonViewState extends State<ComparisonView> {
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
   }
-}
-
-final class _ComparisonTexts {
-  static const title = LocalizedText(
-    english: 'Comparison',
-    indonesian: 'Perbandingan',
-  );
-
-  static const selectMonth1 = LocalizedText(
-    english: 'Select month 1',
-    indonesian: 'Pilih bulan 1',
-  );
-
-  static const selectMonth2 = LocalizedText(
-    english: 'Select month 2',
-    indonesian: 'Pilih bulan 2',
-  );
-
-  static const selectMonthHelp = LocalizedText(
-    english: 'Select month',
-    indonesian: 'Pilih bulan',
-  );
-
-  static const compareButton = LocalizedText(
-    english: 'Compare',
-    indonesian: 'Bandingkan',
-  );
-
-  static const invalidSelection = LocalizedText(
-    english:
-        'Please ensure the months are different and the first month is earlier.',
-    indonesian: 'Pastikan kedua bulan berbeda dan bulan pertama lebih awal.',
-  );
-
-  static const shareProgress = LocalizedText(
-    english: 'Share progress',
-    indonesian: 'Bagikan progres',
-  );
-
-  static const shareInfo = LocalizedText(
-    english: 'Share functionality coming soon.',
-    indonesian: 'Fitur bagikan segera hadir.',
-  );
-
-  static const resetSelection = LocalizedText(
-    english: 'Reset selection',
-    indonesian: 'Atur ulang pilihan',
-  );
 }
