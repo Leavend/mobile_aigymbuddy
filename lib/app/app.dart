@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../data/db/app_database.dart';
-import '../data/seed/seed_repository.dart';
 import 'app_state.dart';
+import 'bootstrap.dart';
 import 'dependencies.dart';
-import 'router.dart';
 
 class AiGymBuddyApp extends StatefulWidget {
   const AiGymBuddyApp({super.key});
@@ -19,36 +18,36 @@ class AiGymBuddyApp extends StatefulWidget {
 class _AiGymBuddyAppState extends State<AiGymBuddyApp> {
   late final AppDatabase _database;
   late final AppStateController _appState;
-  GoRouter? _router;
-  late Future<void> _bootstrapFuture;
+  late final AppBootstrapper _bootstrapper;
+  late Future<AppBootstrapData> _bootstrapFuture;
+  GoRouter? _activeRouter;
 
   @override
   void initState() {
     super.initState();
     _database = AppDatabase();
     _appState = AppStateController();
-    _bootstrapFuture = _bootstrap();
+    _bootstrapper = AppBootstrapper(_database, _appState);
+    _bootstrapFuture = _createBootstrapFuture();
   }
 
-  Future<void> _bootstrap() async {
-    final seedRepository = SeedRepository(_database.exerciseDao);
-    await seedRepository.seedExercisesIfEmpty();
-
-    final profile = await _database.userProfileDao.getSingle();
-    _appState.updateHasProfile(profile != null);
-    _router = createRouter(_appState);
+  Future<AppBootstrapData> _createBootstrapFuture() {
+    return _bootstrapper.initialize().then((result) {
+      _activeRouter?.dispose();
+      _activeRouter = result.router;
+      return result;
+    });
   }
 
   void _retryBootstrap() {
     setState(() {
-      _router = null;
-      _bootstrapFuture = _bootstrap();
+      _bootstrapFuture = _createBootstrapFuture();
     });
   }
 
   @override
   void dispose() {
-    _router?.dispose();
+    _activeRouter?.dispose();
     _database.close();
     _appState.dispose();
     super.dispose();
@@ -56,47 +55,21 @@ class _AiGymBuddyAppState extends State<AiGymBuddyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
+    return FutureBuilder<AppBootstrapData>(
       future: _bootstrapFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
-          );
+          return _buildLoadingApp();
         }
 
-        if (snapshot.hasError || _router == null) {
+        if (snapshot.hasError || snapshot.data == null) {
           final errorMessage = snapshot.hasError
               ? 'Gagal memulai aplikasi. ${snapshot.error}'
               : 'Gagal memulai aplikasi. Silakan coba lagi.';
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: Scaffold(
-              body: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.error_outline, size: 48),
-                      const SizedBox(height: 16),
-                      Text(errorMessage, textAlign: TextAlign.center),
-                      const SizedBox(height: 16),
-                      FilledButton(
-                        onPressed: _retryBootstrap,
-                        child: const Text('Coba lagi'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
+          return _buildErrorApp(errorMessage);
         }
 
+        final router = snapshot.data!.router;
         return AppStateScope(
           controller: _appState,
           child: AppDependencies(
@@ -108,11 +81,46 @@ class _AiGymBuddyAppState extends State<AiGymBuddyApp> {
                 colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
                 useMaterial3: true,
               ),
-              routerConfig: _router!,
+              routerConfig: router,
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildLoadingApp() {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+    );
+  }
+
+  Widget _buildErrorApp(String message) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline, size: 48),
+                const SizedBox(height: 16),
+                Text(message, textAlign: TextAlign.center),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: _retryBootstrap,
+                  child: const Text('Coba lagi'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
