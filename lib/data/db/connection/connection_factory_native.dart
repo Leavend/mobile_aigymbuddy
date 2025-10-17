@@ -1,3 +1,5 @@
+// lib/data/db/connection/connection_factory_native.dart
+
 import 'dart:io';
 
 import 'package:drift/drift.dart';
