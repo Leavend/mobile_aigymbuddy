@@ -7,6 +7,7 @@ import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'models/onboarding_draft.dart';
 import 'widgets/auth_page_layout.dart';
 
 abstract final class _WelcomeTexts {
@@ -25,7 +26,9 @@ abstract final class _WelcomeTexts {
 }
 
 class WelcomeView extends StatefulWidget {
-  const WelcomeView({super.key});
+  const WelcomeView({super.key, this.args});
+
+  final WelcomeArgs? args;
 
   @override
   State<WelcomeView> createState() => _WelcomeViewState();
@@ -35,6 +38,14 @@ class _WelcomeViewState extends State<WelcomeView> {
   @override
   Widget build(BuildContext context) {
     final mediaWidth = MediaQuery.of(context).size.width;
+    final displayName = widget.args?.displayName?.trim();
+    final language = context.appLanguage;
+    final title = displayName != null && displayName.isNotEmpty
+        ? switch (language) {
+            AppLanguage.english => 'Welcome, $displayName',
+            AppLanguage.indonesian => 'Selamat datang, $displayName',
+          }
+        : context.localize(_WelcomeTexts.title);
 
     return AuthPageLayout(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
@@ -50,7 +61,7 @@ class _WelcomeViewState extends State<WelcomeView> {
           ),
           const SizedBox(height: 32),
           Text(
-            context.localize(_WelcomeTexts.title),
+            title,
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: TColor.black,
