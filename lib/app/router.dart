@@ -1,5 +1,6 @@
 // lib/app/router.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
 import '../common/app_router.dart';
@@ -13,6 +14,21 @@ import '../view/login/what_your_goal_view.dart';
 import '../view/on_boarding/on_boarding_view.dart';
 import '../view/profile/profile_view.dart';
 import 'app_state.dart';
+
+ProfileFormArguments _resolveProfileArgs(Object? extra, String routeName) {
+  if (extra case final ProfileFormArguments args) {
+    return args;
+  }
+
+  if (kDebugMode) {
+    debugPrint(
+      'GoRouter: Missing ProfileFormArguments for $routeName. '
+      'Falling back to an empty onboarding draft.',
+    );
+  }
+
+  return const ProfileFormArguments(draft: OnboardingDraft());
+}
 
 GoRouter createRouter(AppStateController appState) {
   const onboardingRoutes = {
@@ -58,24 +74,14 @@ GoRouter createRouter(AppStateController appState) {
       GoRoute(
         path: AppRoute.completeProfile,
         builder: (context, state) {
-          final args = state.extra as ProfileFormArguments?;
-          if (args == null) {
-            throw ArgumentError(
-              'CompleteProfileView requires ProfileFormArguments via state.extra.',
-            );
-          }
+          final args = _resolveProfileArgs(state.extra, AppRoute.completeProfile);
           return CompleteProfileView(args: args);
         },
       ),
       GoRoute(
         path: AppRoute.goal,
         builder: (context, state) {
-          final args = state.extra as ProfileFormArguments?;
-          if (args == null) {
-            throw ArgumentError(
-              'WhatYourGoalView requires ProfileFormArguments via state.extra.',
-            );
-          }
+          final args = _resolveProfileArgs(state.extra, AppRoute.goal);
           return WhatYourGoalView(args: args);
         },
       ),
