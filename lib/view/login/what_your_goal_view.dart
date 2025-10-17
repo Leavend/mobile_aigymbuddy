@@ -105,7 +105,6 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-    final language = context.appLanguage;
     final confirmLabel = context.localize(
       _mode == ProfileFormMode.edit ? _GoalTexts.save : _GoalTexts.confirm,
     );
@@ -169,7 +168,8 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
             const SizedBox(height: 32),
             RoundButton(
               title: confirmLabel,
-              onPressed: _saving ? null : _onConfirm,
+              // FIX: Removed the ternary operator because `isEnabled` handles the disabled state.
+              onPressed: () => _onConfirm(),
               isEnabled: !_saving,
             ),
             const SizedBox(height: 12),
@@ -236,11 +236,14 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   int _goalIndexFor(domain.FitnessGoal? goal) {
     if (goal == null) return 0;
     return WhatYourGoalView._goals
-            .indexWhere((element) => element.goal == goal)
+        .indexWhere((element) => element.goal == goal)
         .clamp(0, WhatYourGoalView._goals.length - 1);
   }
 
   Future<void> _onConfirm() async {
+    // Return early if already saving to prevent multiple submissions.
+    if (_saving) return;
+
     final deps = AppDependencies.of(context);
     final profileRepository = deps.profileRepository;
     final trackingRepository = deps.trackingRepository;
@@ -267,8 +270,8 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
           await trackingRepository.addBodyWeight(weight);
         }
         await AuthService.instance.setHasCredentials(true);
-        AppStateScope.of(context).updateHasProfile(true);
         if (!mounted) return;
+        AppStateScope.of(context).updateHasProfile(true);
         context.go(
           AppRoute.welcome,
           extra: WelcomeArgs(displayName: updatedDraft.displayName),

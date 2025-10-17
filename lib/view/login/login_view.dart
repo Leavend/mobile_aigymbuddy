@@ -136,8 +136,8 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _attemptLogin() async {
-    final repository = _profileRepository ??
-        AppDependencies.of(context).profileRepository;
+    final repository =
+        _profileRepository ?? AppDependencies.of(context).profileRepository;
 
     setState(() => _isSubmitting = true);
     try {
@@ -147,13 +147,18 @@ class _LoginViewState extends State<LoginView> {
       if (profile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Profil belum tersedia. Silakan daftar terlebih dahulu.'),
+            content:
+                Text('Profil belum tersedia. Silakan daftar terlebih dahulu.'),
           ),
         );
+        // Make sure to stop execution here.
+        setState(() => _isSubmitting = false);
         return;
       }
 
       await AuthService.instance.setHasCredentials(true);
+      // FIX: Add a mounted check before using the context.
+      if (!mounted) return;
       AppStateScope.of(context).updateHasProfile(true);
 
       if (!mounted) return;
