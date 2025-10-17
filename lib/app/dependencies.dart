@@ -45,8 +45,7 @@ class AppDependencies extends InheritedWidget {
         database.exerciseDao,
       ),
       mealPlannerRepository: mealPlannerRepository,
-      workoutRepository:
-          DriftWorkoutRepository(database, database.workoutDao),
+      workoutRepository: DriftWorkoutRepository(database, database.workoutDao),
       child: child,
     );
   }

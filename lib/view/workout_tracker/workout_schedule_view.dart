@@ -220,8 +220,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
 
                 if (events.isEmpty) {
                   return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                     child: Text(
                       _emptyScheduleMessage.resolve(language),
                       style: TextStyle(color: TColor.gray, fontSize: 12),

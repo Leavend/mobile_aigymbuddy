@@ -16,13 +16,9 @@ class WorkoutLocalizations {
             ? 'Lose Weight'
             : 'Turunkan Berat Badan';
       case WorkoutGoal.buildMuscle:
-        return language == AppLanguage.english
-            ? 'Build Muscle'
-            : 'Bangun Otot';
+        return language == AppLanguage.english ? 'Build Muscle' : 'Bangun Otot';
       case WorkoutGoal.endurance:
-        return language == AppLanguage.english
-            ? 'Endurance'
-            : 'Daya Tahan';
+        return language == AppLanguage.english ? 'Endurance' : 'Daya Tahan';
     }
   }
 
@@ -51,7 +47,9 @@ class WorkoutLocalizations {
 
   static String exerciseCount(AppLanguage language, int? count) {
     if (count == null || count == 0) {
-      return language == AppLanguage.english ? 'No exercises' : 'Belum ada latihan';
+      return language == AppLanguage.english
+          ? 'No exercises'
+          : 'Belum ada latihan';
     }
 
     final label = language == AppLanguage.english ? 'Exercises' : 'Latihan';
@@ -78,7 +76,9 @@ class WorkoutLocalizations {
 
   static String upcomingTimeLabel(AppLanguage language, DateTime? time) {
     if (time == null) {
-      return language == AppLanguage.english ? 'Flexible schedule' : 'Jadwal fleksibel';
+      return language == AppLanguage.english
+          ? 'Flexible schedule'
+          : 'Jadwal fleksibel';
     }
 
     final format = language == AppLanguage.english

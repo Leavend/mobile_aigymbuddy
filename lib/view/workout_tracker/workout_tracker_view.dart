@@ -72,8 +72,10 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
   );
 
   static const _noUpcoming = LocalizedText(
-    english: 'No workouts scheduled yet. Plan your next session to stay on track.',
-    indonesian: 'Belum ada latihan terjadwal. Jadwalkan sesi berikutnya untuk tetap konsisten.',
+    english:
+        'No workouts scheduled yet. Plan your next session to stay on track.',
+    indonesian:
+        'Belum ada latihan terjadwal. Jadwalkan sesi berikutnya untuk tetap konsisten.',
   );
 
   static const _noRecommendations = LocalizedText(
@@ -444,7 +446,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
   }
 
   List<LineChartBarData> _buildLineBars() {
-    return const [
+    return [
       LineChartBarData(
         isCurved: true,
         color: TColor.white,

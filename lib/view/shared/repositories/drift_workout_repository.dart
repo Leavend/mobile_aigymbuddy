@@ -6,8 +6,6 @@ import '../../../common/date_time_utils.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/db/daos/dao_utils.dart';
 import '../../../data/db/daos/workout_dao.dart';
-import '../../../data/db/tables/workout_exercises.dart';
-import '../../../data/db/tables/workouts.dart';
 import '../models/workout.dart';
 import 'workout_repository.dart';
 
@@ -42,8 +40,8 @@ class DriftWorkoutRepository implements WorkoutRepository {
       final aggregated = _aggregateWorkouts(rows);
       aggregated.sort(
         (a, b) => (a.scheduledFor ?? DateTime.fromMillisecondsSinceEpoch(0))
-            .compareTo(b.scheduledFor ??
-                DateTime.fromMillisecondsSinceEpoch(0)),
+            .compareTo(
+                b.scheduledFor ?? DateTime.fromMillisecondsSinceEpoch(0)),
       );
       return aggregated.take(limit).toList(growable: false);
     });
@@ -113,8 +111,7 @@ class DriftWorkoutRepository implements WorkoutRepository {
 
   @override
   Future<void> completeWorkout(int workoutId) {
-    return (_db.update(_db.workouts)
-          ..where((tbl) => tbl.id.equals(workoutId)))
+    return (_db.update(_db.workouts)..where((tbl) => tbl.id.equals(workoutId)))
         .write(const WorkoutsCompanion(scheduledFor: Value(null)));
   }
 

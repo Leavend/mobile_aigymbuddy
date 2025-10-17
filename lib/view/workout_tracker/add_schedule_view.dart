@@ -299,7 +299,10 @@ class _AddScheduleViewState extends State<AddScheduleView> {
             const Spacer(),
             RoundButton(
               title: _saveLabel.resolve(language),
-              onPressed: _isSaving ? null : _handleSave,
+              onPressed: () {
+                if (_isSaving) return;
+                _handleSave();
+              },
             ),
             const SizedBox(height: 20),
           ],

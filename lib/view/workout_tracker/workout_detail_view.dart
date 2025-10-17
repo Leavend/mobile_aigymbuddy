@@ -121,8 +121,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _repository = AppDependencies.of(context).workoutRepository;
-    _detailFuture ??=
-        _repository.loadWorkoutDetail(widget.args.workoutId);
+    _detailFuture ??= _repository.loadWorkoutDetail(widget.args.workoutId);
   }
 
   @override
@@ -484,7 +483,8 @@ class _WorkoutDetailScaffold extends StatelessWidget {
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
-                      if (isLoading) const LinearProgressIndicator(minHeight: 2),
+                      if (isLoading)
+                        const LinearProgressIndicator(minHeight: 2),
                       SizedBox(height: media.width * 0.05),
                       _buildWorkoutHeader(),
                       SizedBox(height: media.width * 0.05),
@@ -494,7 +494,8 @@ class _WorkoutDetailScaffold extends StatelessWidget {
                             .resolve(language),
                         time: _scheduleLabel(),
                         color: TColor.primaryColor2.withValues(alpha: 0.3),
-                        onPressed: () => context.pushNamed(AppRoute.workoutScheduleName),
+                        onPressed: () =>
+                            context.pushNamed(AppRoute.workoutScheduleName),
                       ),
                       SizedBox(height: media.width * 0.02),
                       IconTitleNextRow(
