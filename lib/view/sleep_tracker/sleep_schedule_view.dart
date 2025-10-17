@@ -5,6 +5,7 @@ import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 
 import '../../common/color_extension.dart';
@@ -24,6 +25,8 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
   final CalendarAgendaController _calendarController =
       CalendarAgendaController();
 
+  static const double _tonightSleepRatio = 0.96;
+
   late DateTime _selectedDate;
 
   late final List<SleepScheduleEntry> _todaySchedule;
@@ -32,7 +35,13 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
-    _todaySchedule = mockTodaySleepSchedule;
+    _todaySchedule = List.unmodifiable(mockTodaySleepSchedule);
+  }
+
+  @override
+  void dispose() {
+    _calendarController.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,15 +82,24 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                   ),
                 ),
               ),
-              _buildCalendar(context, language),
+              _Calendar(
+                controller: _calendarController,
+                onDateSelected: (date) => setState(() => _selectedDate = date),
+                language: language,
+              ),
               SizedBox(height: media.width * 0.03),
-              _buildScheduleList(),
+              _ScheduleList(schedules: _todaySchedule),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 10,
                   horizontal: 20,
                 ),
-                child: _buildSleepSummary(context, media, localize),
+                child: _SleepSummaryCard(
+                  localize: localize,
+                  media: media,
+                  ratio: _tonightSleepRatio,
+                  localeName: language.code,
+                ),
               ),
             ],
           ),
@@ -218,9 +236,23 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
     );
   }
 
-  Widget _buildCalendar(BuildContext context, AppLanguage language) {
+}
+
+class _Calendar extends StatelessWidget {
+  const _Calendar({
+    required this.controller,
+    required this.onDateSelected,
+    required this.language,
+  });
+
+  final CalendarAgendaController controller;
+  final ValueChanged<DateTime> onDateSelected;
+  final AppLanguage language;
+
+  @override
+  Widget build(BuildContext context) {
     return CalendarAgenda(
-      controller: _calendarController,
+      controller: controller,
       appbar: false,
       selectedDayPosition: SelectedDayPosition.center,
       weekDay: WeekDay.short,
@@ -234,29 +266,47 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       calendarEventColor: TColor.primaryColor2,
       firstDate: DateTime.now().subtract(const Duration(days: 140)),
       lastDate: DateTime.now().add(const Duration(days: 60)),
-      onDateSelected: (date) {
-        setState(() => _selectedDate = date);
-      },
+      onDateSelected: onDateSelected,
     );
   }
+}
 
-  Widget _buildScheduleList() {
+class _ScheduleList extends StatelessWidget {
+  const _ScheduleList({required this.schedules});
+
+  final List<SleepScheduleEntry> schedules;
+
+  @override
+  Widget build(BuildContext context) {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: _todaySchedule.length,
+      itemCount: schedules.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) =>
-          TodaySleepScheduleRow(schedule: _todaySchedule[index]),
+      itemBuilder: (_, index) => TodaySleepScheduleRow(schedule: schedules[index]),
     );
   }
+}
 
-  Widget _buildSleepSummary(
-    BuildContext context,
-    Size media,
-    String Function(LocalizedText) localize,
-  ) {
+class _SleepSummaryCard extends StatelessWidget {
+  const _SleepSummaryCard({
+    required this.localize,
+    required this.media,
+    required this.ratio,
+    required this.localeName,
+  });
+
+  final String Function(LocalizedText) localize;
+  final Size media;
+  final double ratio;
+  final String localeName;
+
+  @override
+  Widget build(BuildContext context) {
+    final percentFormat = NumberFormat.percentPattern(localeName);
+    final safeRatio = ratio.clamp(0, 1);
+    final percentageLabel = percentFormat.format(safeRatio);
     return Container(
       width: double.maxFinite,
       padding: const EdgeInsets.all(20),
@@ -285,7 +335,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 width: media.width - 80,
                 backgroundColor: Colors.grey.shade100,
                 foregroundColor: Colors.purple,
-                ratio: 0.96,
+                ratio: safeRatio.toDouble(),
                 direction: Axis.horizontal,
                 curve: Curves.fastLinearToSlowEaseIn,
                 duration: const Duration(seconds: 3),
@@ -296,7 +346,10 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                   end: Alignment.centerRight,
                 ),
               ),
-              Text('96%', style: TextStyle(color: TColor.black, fontSize: 12)),
+              Text(
+                percentageLabel,
+                style: TextStyle(color: TColor.black, fontSize: 12),
+              ),
             ],
           ),
         ],
