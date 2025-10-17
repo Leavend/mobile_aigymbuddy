@@ -78,7 +78,11 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.args.draft != widget.args.draft) {
       _controller.updateDraft(widget.args.draft);
-      _carouselController.jumpToPage(_controller.goalIndex);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _carouselController.jumpToPage(_controller.goalIndex);
+        }
+      });
     }
   }
 
