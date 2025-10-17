@@ -257,23 +257,20 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
       },
     );
 
-    if (picked != null) {
-      setState(() => _bedTime = picked);
-    }
+    if (!mounted || picked == null) return;
+    setState(() => _bedTime = picked);
   }
 
   Future<void> _handleSleepDurationTap() async {
     final duration = await _showDurationPicker();
-    if (duration != null && duration.inMinutes > 0) {
-      setState(() => _sleepDuration = duration);
-    }
+    if (!mounted || duration == null || duration.inMinutes <= 0) return;
+    setState(() => _sleepDuration = duration);
   }
 
   Future<void> _handleRepeatSelection() async {
     final selection = await _showRepeatPicker();
-    if (selection != null) {
-      setState(() => _repeatWeekdays = selection);
-    }
+    if (!mounted || selection == null) return;
+    setState(() => _repeatWeekdays = selection);
   }
 
   Future<Duration?> _showDurationPicker() {
