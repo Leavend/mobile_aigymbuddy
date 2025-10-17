@@ -5,23 +5,30 @@ import 'package:aigymbuddy/common/localization/app_language.dart';
 enum MealPeriod { breakfast, lunch, snack, dinner }
 
 extension MealPeriodX on MealPeriod {
-  String get id => name;
+  static const Map<MealPeriod, String> _ids = {
+    MealPeriod.breakfast: 'breakfast',
+    MealPeriod.lunch: 'lunch',
+    MealPeriod.snack: 'snack',
+    MealPeriod.dinner: 'dinner',
+  };
 
-  LocalizedText get label => switch (this) {
-        MealPeriod.breakfast =>
-          const LocalizedText(english: 'Breakfast', indonesian: 'Sarapan'),
-        MealPeriod.lunch =>
-          const LocalizedText(english: 'Lunch', indonesian: 'Makan Siang'),
-        MealPeriod.snack =>
-          const LocalizedText(english: 'Snack', indonesian: 'Camilan'),
-        MealPeriod.dinner =>
-          const LocalizedText(english: 'Dinner', indonesian: 'Makan Malam'),
-      };
+  static const Map<MealPeriod, LocalizedText> _labels = {
+    MealPeriod.breakfast:
+        const LocalizedText(english: 'Breakfast', indonesian: 'Sarapan'),
+    MealPeriod.lunch:
+        const LocalizedText(english: 'Lunch', indonesian: 'Makan Siang'),
+    MealPeriod.snack:
+        const LocalizedText(english: 'Snack', indonesian: 'Camilan'),
+    MealPeriod.dinner:
+        const LocalizedText(english: 'Dinner', indonesian: 'Makan Malam'),
+  };
 
-  static MealPeriod? fromId(String id) {
-    for (final period in MealPeriod.values) {
-      if (period.id == id) return period;
-    }
-    return null;
-  }
+  static final Map<String, MealPeriod> _reverseIds =
+      {for (final entry in _ids.entries) entry.value: entry.key};
+
+  String get id => _ids[this]!;
+
+  LocalizedText get label => _labels[this]!;
+
+  static MealPeriod? fromId(String id) => _reverseIds[id];
 }

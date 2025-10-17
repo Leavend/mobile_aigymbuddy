@@ -28,15 +28,15 @@ class DriftProfileRepository implements ProfileRepository {
   Future<void> saveProfile(domain.UserProfile profile) {
     return _dao.upsert(
       db.UserProfilesCompanion(
-        id: profile.id == null ? const Value.absent() : Value(profile.id!),
+        id: _valueOrAbsent(profile.id),
         name: Value(profile.name),
         age: Value(profile.age),
         heightCm: Value(profile.heightCm),
         weightKg: Value(profile.weightKg),
-        gender: Value(domain.genderToDb(profile.gender)),
-        goal: Value(domain.goalToDb(profile.goal)),
-        level: Value(domain.levelToDb(profile.level)),
-        preferredMode: Value(domain.modeToDb(profile.mode)),
+        gender: Value(profile.gender.dbValue),
+        goal: Value(profile.goal.dbValue),
+        level: Value(profile.level.dbValue),
+        preferredMode: Value(profile.mode.dbValue),
         updatedAt: Value(DateTime.now().toUtc()),
       ),
     );
@@ -54,10 +54,14 @@ class DriftProfileRepository implements ProfileRepository {
       age: row.age,
       heightCm: row.heightCm,
       weightKg: row.weightKg,
-      gender: domain.genderFromDb(row.gender),
-      goal: domain.goalFromDb(row.goal),
-      level: domain.levelFromDb(row.level),
-      mode: domain.modeFromDb(row.preferredMode),
+      gender: domain.GenderDbMapper.fromDb(row.gender),
+      goal: domain.FitnessGoalMapper.fromDb(row.goal),
+      level: domain.ExperienceLevelMapper.fromDb(row.level),
+      mode: domain.WorkoutModeMapper.fromDb(row.preferredMode),
     );
+  }
+
+  Value<T> _valueOrAbsent<T>(T? value) {
+    return value == null ? const Value.absent() : Value(value);
   }
 }
