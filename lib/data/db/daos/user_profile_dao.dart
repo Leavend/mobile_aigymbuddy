@@ -12,6 +12,7 @@ part 'user_profile_dao.g.dart';
 @DriftAccessor(tables: [UserProfiles])
 class UserProfileDao extends DatabaseAccessor<AppDatabase>
     with _$UserProfileDaoMixin {
+  // ignore: use_super_parameters
   UserProfileDao(AppDatabase db, {UtcNow now = defaultUtcNow})
       : _now = now,
         super(db);

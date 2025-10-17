@@ -29,8 +29,7 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase>
 
     if (normalizedMode != null && normalizedMode.isNotEmpty) {
       query.where(
-        (tbl) =>
-            tbl.mode.equals(normalizedMode) | tbl.mode.equals('both'),
+        (tbl) => tbl.mode.equals(normalizedMode) | tbl.mode.equals('both'),
       );
     }
 

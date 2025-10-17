@@ -63,6 +63,7 @@ class RecentSetLogRow {
 )
 class TrackingDao extends DatabaseAccessor<AppDatabase>
     with _$TrackingDaoMixin {
+  // ignore: use_super_parameters
   TrackingDao(AppDatabase db, {UtcNow now = defaultUtcNow})
       : _now = now,
         super(db);
