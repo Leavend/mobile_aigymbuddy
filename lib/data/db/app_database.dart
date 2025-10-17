@@ -45,9 +45,11 @@ class AppDatabase extends _$AppDatabase {
         onCreate: (Migrator migrator) async {
           await migrator.createAll();
           await _enableForeignKeys();
+          await _createMealPlannerTables();
         },
         beforeOpen: (_) async {
           await _enableForeignKeys();
+          await _createMealPlannerTables();
         },
         onUpgrade: (Migrator migrator, int from, int to) async {
           if (from == to) {
@@ -55,10 +57,85 @@ class AppDatabase extends _$AppDatabase {
           }
 
           await _enableForeignKeys();
+          await _createMealPlannerTables();
         },
       );
 
   Future<void> _enableForeignKeys() {
     return customStatement('PRAGMA foreign_keys = ON');
+  }
+
+  Future<void> _createMealPlannerTables() async {
+    await customStatement('''
+CREATE TABLE IF NOT EXISTS meal_categories (
+  id INTEGER PRIMARY KEY,
+  name_en TEXT NOT NULL,
+  name_id TEXT NOT NULL,
+  image_asset TEXT NOT NULL
+);
+''');
+    await customStatement('''
+CREATE TABLE IF NOT EXISTS meals (
+  id INTEGER PRIMARY KEY,
+  category_id INTEGER NOT NULL REFERENCES meal_categories(id) ON DELETE CASCADE,
+  name_en TEXT NOT NULL,
+  name_id TEXT NOT NULL,
+  description_en TEXT NOT NULL,
+  description_id TEXT NOT NULL,
+  image_asset TEXT NOT NULL,
+  hero_image_asset TEXT NOT NULL,
+  period TEXT NOT NULL,
+  prep_minutes INTEGER NOT NULL,
+  calories INTEGER,
+  difficulty TEXT
+);
+''');
+    await customStatement('''
+CREATE TABLE IF NOT EXISTS meal_nutrition_facts (
+  id INTEGER PRIMARY KEY,
+  meal_id INTEGER NOT NULL REFERENCES meals(id) ON DELETE CASCADE,
+  image_asset TEXT NOT NULL,
+  title_en TEXT NOT NULL,
+  title_id TEXT NOT NULL,
+  value_en TEXT NOT NULL,
+  value_id TEXT NOT NULL
+);
+''');
+    await customStatement('''
+CREATE TABLE IF NOT EXISTS meal_ingredients (
+  id INTEGER PRIMARY KEY,
+  meal_id INTEGER NOT NULL REFERENCES meals(id) ON DELETE CASCADE,
+  image_asset TEXT NOT NULL,
+  name_en TEXT NOT NULL,
+  name_id TEXT NOT NULL,
+  amount_en TEXT NOT NULL,
+  amount_id TEXT NOT NULL
+);
+''');
+    await customStatement('''
+CREATE TABLE IF NOT EXISTS meal_instructions (
+  id INTEGER PRIMARY KEY,
+  meal_id INTEGER NOT NULL REFERENCES meals(id) ON DELETE CASCADE,
+  step_order INTEGER NOT NULL,
+  title_en TEXT,
+  title_id TEXT,
+  description_en TEXT NOT NULL,
+  description_id TEXT NOT NULL
+);
+''');
+    await customStatement('''
+CREATE TABLE IF NOT EXISTS meal_schedule_entries (
+  id INTEGER PRIMARY KEY,
+  meal_id INTEGER NOT NULL REFERENCES meals(id) ON DELETE CASCADE,
+  scheduled_at TEXT NOT NULL
+);
+''');
+    await customStatement('''
+CREATE TABLE IF NOT EXISTS meal_nutrition_progress_entries (
+  id INTEGER PRIMARY KEY,
+  day TEXT NOT NULL,
+  completion REAL NOT NULL
+);
+''');
   }
 }

@@ -36,23 +36,22 @@ class ExerciseStepsArgs {
 
 @immutable
 class MealFoodDetailsArgs {
-  const MealFoodDetailsArgs({required this.food});
+  const MealFoodDetailsArgs({required this.categoryId});
 
-  final Map<String, dynamic> food;
+  final int categoryId;
 
   @override
-  String toString() => 'MealFoodDetailsArgs(food: $food)';
+  String toString() => 'MealFoodDetailsArgs(categoryId: $categoryId)';
 }
 
 @immutable
 class FoodInfoArgs {
-  const FoodInfoArgs({required this.meal, required this.food});
+  const FoodInfoArgs({required this.mealId});
 
-  final Map<String, dynamic> meal;
-  final Map<String, dynamic> food;
+  final int mealId;
 
   @override
-  String toString() => 'FoodInfoArgs(meal: $meal, food: $food)';
+  String toString() => 'FoodInfoArgs(mealId: $mealId)';
 }
 
 @immutable

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -10,6 +12,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/dependencies.dart';
+import '../shared/models/meal/meal_category.dart';
+import '../shared/models/meal/meal_nutrition_progress.dart';
+import '../shared/models/meal/meal_period.dart';
+import '../shared/models/meal/meal_period_summary.dart';
+import '../shared/models/meal/meal_schedule_entry.dart';
+import 'controllers/meal_planner_controller.dart';
+
 class MealPlannerView extends StatefulWidget {
   const MealPlannerView({super.key});
 
@@ -18,89 +28,113 @@ class MealPlannerView extends StatefulWidget {
 }
 
 class _MealPlannerViewState extends State<MealPlannerView> {
-  static const List<_TodayMealData> _todayMeals = [
-    _TodayMealData(
-      name: LocalizedText(
-        english: 'Salmon Nigiri',
-        indonesian: 'Salmon Nigiri',
-      ),
-      image: 'assets/img/m_1.png',
-      timeLabel: '28/05/2023 07:00 AM',
-    ),
-    _TodayMealData(
-      name: LocalizedText(
-        english: 'Lowfat Milk',
-        indonesian: 'Susu Rendah Lemak',
-      ),
-      image: 'assets/img/m_2.png',
-      timeLabel: '28/05/2023 08:00 AM',
-    ),
-  ];
+  late final MealPlannerController _controller;
+  bool _dependenciesResolved = false;
 
-  static const List<_FoodCategoryData> _foodCategories = [
-    _FoodCategoryData(
-      title: _MealPlannerStrings.breakfastLabel,
-      subtitle: _MealPlannerStrings.foodsCount120,
-      image: 'assets/img/m_3.png',
-    ),
-    _FoodCategoryData(
-      title: _MealPlannerStrings.lunchLabel,
-      subtitle: _MealPlannerStrings.foodsCount130,
-      image: 'assets/img/m_4.png',
-    ),
-  ];
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_dependenciesResolved) return;
+    final repository = AppDependencies.of(context).mealPlannerRepository;
+    _controller = MealPlannerController(repository);
+    _dependenciesResolved = true;
+    unawaited(_controller.initialise());
+  }
 
-  static const List<_DropdownOption> _nutritionPeriods = [
-    _DropdownOption('weekly', _MealPlannerStrings.weeklyOption),
-    _DropdownOption('monthly', _MealPlannerStrings.monthlyOption),
-  ];
-
-  static const List<_DropdownOption> _mealFilters = [
-    _DropdownOption('breakfast', _MealPlannerStrings.breakfastLabel),
-    _DropdownOption('lunch', _MealPlannerStrings.lunchLabel),
-    _DropdownOption('dinner', _MealPlannerStrings.dinnerLabel),
-    _DropdownOption('snack', _MealPlannerStrings.snackLabel),
-    _DropdownOption('dessert', _MealPlannerStrings.dessertLabel),
-  ];
-
-  _DropdownOption _selectedNutritionPeriod = _nutritionPeriods.first;
-  _DropdownOption _selectedMealFilter = _mealFilters.first;
+  @override
+  void dispose() {
+    if (_dependenciesResolved) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
-    final language = context.appLanguage;
+    if (!_dependenciesResolved) {
+      return const SizedBox.shrink();
+    }
 
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      backgroundColor: TColor.white,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildNutritionHeader(context, language),
-                  SizedBox(height: media.width * 0.05),
-                  _buildLineChart(media, language),
-                  SizedBox(height: media.width * 0.05),
-                  _buildDailyScheduleCard(context),
-                  SizedBox(height: media.width * 0.05),
-                  _buildTodayMealsHeader(context, language),
-                  SizedBox(height: media.width * 0.05),
-                  _buildTodayMealsList(language),
-                ],
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final media = MediaQuery.of(context).size;
+        final language = context.appLanguage;
+        final data = _controller.data;
+        final isLoading = _controller.isLoading && data == null;
+        final hasError = _controller.hasError && data == null;
+
+        Widget body;
+        if (isLoading) {
+          body = const Center(child: CircularProgressIndicator());
+        } else if (hasError || data == null) {
+          body = _ErrorMessage(
+            message: context.localize(_MealPlannerStrings.failedToLoad),
+            onRetry: () => unawaited(_controller.refresh()),
+          );
+        } else {
+          final weeklyProgress = data.weeklyProgress;
+          final periodSummaries = data.periodSummaries;
+          final categories = data.categories;
+          final filteredSchedule = _controller.filteredSchedule;
+
+          body = Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildNutritionHeader(context, language),
+                          SizedBox(height: media.width * 0.05),
+                          _NutritionChart(points: weeklyProgress),
+                          SizedBox(height: media.width * 0.05),
+                          _buildDailyScheduleCard(context),
+                          SizedBox(height: media.width * 0.05),
+                          _buildTodayMealsHeader(context, language),
+                          SizedBox(height: media.width * 0.05),
+                          _buildTodayMealsList(
+                            context,
+                            language,
+                            filteredSchedule,
+                          ),
+                        ],
+                      ),
+                    ),
+                    _buildFindSomethingToEatHeader(context),
+                    _buildFindSomethingToEatList(
+                      context,
+                      media,
+                      language,
+                      categories,
+                    ),
+                    const SizedBox(height: 16),
+                    _PeriodSummaryList(periods: periodSummaries),
+                  ],
+                ),
               ),
-            ),
-            _buildFindSomethingToEatHeader(context),
-            _buildFindSomethingToEatList(context, media, language),
-          ],
-        ),
-      ),
+              if (_controller.isLoading)
+                const Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  child: LinearProgressIndicator(minHeight: 2),
+                ),
+            ],
+          );
+        }
+
+        return Scaffold(
+          appBar: _buildAppBar(context),
+          backgroundColor: TColor.white,
+          body: body,
+        );
+      },
     );
   }
 
@@ -142,103 +176,15 @@ class _MealPlannerViewState extends State<MealPlannerView> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        _GradientDropdown(
-          value: _selectedNutritionPeriod,
-          options: _nutritionPeriods,
+        _NutritionRangeDropdown(
+          value: _controller.selectedRange,
           language: language,
-          onChanged: (value) {
-            if (value == null || value == _selectedNutritionPeriod) return;
-            setState(() => _selectedNutritionPeriod = value);
+          onChanged: (range) {
+            if (range == null) return;
+            _controller.selectRange(range);
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildLineChart(Size media, AppLanguage language) {
-    return Container(
-      padding: const EdgeInsets.only(left: 15),
-      height: media.width * 0.5,
-      width: double.infinity,
-      child: LineChart(
-        LineChartData(
-          lineTouchData: LineTouchData(
-            enabled: true,
-            handleBuiltInTouches: false,
-            touchCallback: (_, __) {},
-            mouseCursorResolver: (event, response) {
-              final spots = response?.lineBarSpots;
-              if (spots == null || spots.isEmpty) {
-                return SystemMouseCursors.basic;
-              }
-              return SystemMouseCursors.click;
-            },
-            getTouchedSpotIndicator: (_, indexes) {
-              return indexes
-                  .map(
-                    (_) => TouchedSpotIndicatorData(
-                      const FlLine(color: Colors.transparent),
-                      FlDotData(
-                        show: true,
-                        getDotPainter: (spot, percent, barData, index) =>
-                            FlDotCirclePainter(
-                          radius: 3,
-                          color: Colors.white,
-                          strokeWidth: 3,
-                          strokeColor: TColor.secondaryColor1,
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList();
-            },
-            touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (_) => TColor.secondaryColor1,
-              getTooltipItems: (spots) {
-                return spots
-                    .map(
-                      (spot) => LineTooltipItem(
-                        _MealPlannerStrings.minutesAgo(
-                          language,
-                          spot.x.toInt(),
-                        ),
-                        const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )
-                    .toList();
-              },
-            ),
-          ),
-          lineBarsData: _lineBars,
-          minY: -0.5,
-          maxY: 110,
-          titlesData: FlTitlesData(
-            show: true,
-            leftTitles: const AxisTitles(),
-            topTitles: const AxisTitles(),
-            bottomTitles: AxisTitles(sideTitles: _buildBottomTitles(language)),
-            rightTitles: AxisTitles(sideTitles: _rightTitles),
-          ),
-          gridData: FlGridData(
-            show: true,
-            drawHorizontalLine: true,
-            horizontalInterval: 25,
-            drawVerticalLine: false,
-            getDrawingHorizontalLine: (value) => FlLine(
-              color: TColor.gray.withValues(alpha: 0.15),
-              strokeWidth: 2,
-            ),
-          ),
-          borderData: FlBorderData(
-            show: true,
-            border: Border.all(color: Colors.transparent),
-          ),
-        ),
-      ),
     );
   }
 
@@ -288,28 +234,41 @@ class _MealPlannerViewState extends State<MealPlannerView> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        _GradientDropdown(
-          value: _selectedMealFilter,
-          options: _mealFilters,
-          language: language,
+        _MealPeriodDropdown(
+          selected: _controller.selectedMealPeriod,
           onChanged: (value) {
-            if (value == null || value == _selectedMealFilter) return;
-            setState(() => _selectedMealFilter = value);
+            if (value == null) return;
+            _controller.selectMealPeriod(value);
           },
         ),
       ],
     );
   }
 
-  Widget _buildTodayMealsList(AppLanguage language) {
+  Widget _buildTodayMealsList(
+    BuildContext context,
+    AppLanguage language,
+    List<MealScheduleEntry> entries,
+  ) {
+    if (entries.isEmpty) {
+      return Text(
+        context.localize(_MealPlannerStrings.noMealsPlanned),
+        style: TextStyle(color: TColor.gray, fontSize: 12),
+      );
+    }
+
     return ListView.builder(
       padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: _todayMeals.length,
+      itemCount: entries.length,
       itemBuilder: (context, index) {
-        final meal = _todayMeals[index].toLocalizedMap(language);
-        return TodayMealRow.fromMap(meal);
+        final meal = entries[index];
+        return TodayMealRow(
+          name: meal.meal.localizedName(language),
+          imageAsset: meal.meal.imageAsset,
+          scheduledAt: meal.scheduledAt,
+        );
       },
     );
   }
@@ -332,7 +291,18 @@ class _MealPlannerViewState extends State<MealPlannerView> {
     BuildContext context,
     Size media,
     AppLanguage language,
+    List<MealCategorySummary> categories,
   ) {
+    if (categories.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Text(
+          context.localize(_MealPlannerStrings.noCategoriesAvailable),
+          style: TextStyle(color: TColor.gray, fontSize: 12),
+        ),
+      );
+    }
+
     final buttonLabel = context.localize(_MealPlannerStrings.selectButton);
 
     return SizedBox(
@@ -340,14 +310,19 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         scrollDirection: Axis.horizontal,
-        itemCount: _foodCategories.length,
+        itemCount: categories.length,
         itemBuilder: (context, index) {
-          final category = _foodCategories[index];
-          final localized = category.localized(language);
+          final category = categories[index];
+          final title = category.localizedTitle(language);
+          final subtitle = _MealPlannerStrings.categorySubtitle(
+            language,
+            category.totalMeals,
+          );
+
           void navigateToDetails() {
             context.push(
               AppRoute.mealFoodDetails,
-              extra: MealFoodDetailsArgs(food: category.toArgsMap()),
+              extra: MealFoodDetailsArgs(categoryId: category.id),
             );
           }
 
@@ -355,9 +330,9 @@ class _MealPlannerViewState extends State<MealPlannerView> {
             onTap: navigateToDetails,
             child: FindEatCell(
               index: index,
-              title: localized.title,
-              subtitle: localized.subtitle,
-              imageAsset: category.image,
+              title: title,
+              subtitle: subtitle,
+              imageAsset: category.imageAsset,
               buttonLabel: buttonLabel,
               onSelect: navigateToDetails,
             ),
@@ -366,39 +341,103 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       ),
     );
   }
+}
 
-  List<LineChartBarData> get _lineBars => [
-        LineChartBarData(
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [TColor.primaryColor2, TColor.primaryColor1],
-          ),
-          barWidth: 2,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: true,
-            getDotPainter: (spot, percent, barData, index) =>
-                FlDotCirclePainter(
-              radius: 3,
-              color: Colors.white,
-              strokeWidth: 1,
-              strokeColor: TColor.primaryColor2,
+class _NutritionChart extends StatelessWidget {
+  const _NutritionChart({required this.points});
+
+  final List<MealNutritionProgressPoint> points;
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context).size;
+    final language = context.appLanguage;
+
+    if (points.isEmpty) {
+      return Container(
+        height: media.width * 0.5,
+        alignment: Alignment.center,
+        child: Text(
+          context.localize(_MealPlannerStrings.noProgressData),
+          style: TextStyle(color: TColor.gray, fontSize: 12),
+        ),
+      );
+    }
+
+    final spots = points
+        .asMap()
+        .entries
+        .map((entry) => FlSpot((entry.key + 1).toDouble(), entry.value.completion))
+        .toList();
+
+    return SizedBox(
+      height: media.width * 0.5,
+      width: double.infinity,
+      child: LineChart(
+        LineChartData(
+          lineTouchData: LineTouchData(
+            enabled: true,
+            handleBuiltInTouches: true,
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipColor: (_) => TColor.secondaryColor1,
+              getTooltipItems: (spots) => spots
+                  .map(
+                    (spot) => LineTooltipItem(
+                      _MealPlannerStrings.minutesAgo(
+                        language,
+                        spot.x.toInt(),
+                      ),
+                      const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
-          belowBarData: BarAreaData(show: false),
-          spots: const [
-            FlSpot(1, 35),
-            FlSpot(2, 70),
-            FlSpot(3, 40),
-            FlSpot(4, 80),
-            FlSpot(5, 25),
-            FlSpot(6, 70),
-            FlSpot(7, 35),
+          lineBarsData: [
+            LineChartBarData(
+              isCurved: true,
+              spots: spots,
+              gradient: LinearGradient(
+                colors: [TColor.primaryColor2, TColor.primaryColor1],
+              ),
+              barWidth: 2,
+              isStrokeCapRound: true,
+              dotData: FlDotData(show: false),
+              belowBarData: BarAreaData(show: false),
+            ),
           ],
+          minY: 0,
+          maxY: 100,
+          titlesData: FlTitlesData(
+            show: true,
+            leftTitles: const AxisTitles(),
+            topTitles: const AxisTitles(),
+            bottomTitles: AxisTitles(
+              sideTitles: _buildBottomTitles(points, language),
+            ),
+            rightTitles: AxisTitles(sideTitles: _rightTitles),
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawHorizontalLine: true,
+            horizontalInterval: 25,
+            drawVerticalLine: false,
+            getDrawingHorizontalLine: (value) => FlLine(
+              color: TColor.gray.withValues(alpha: 0.15),
+              strokeWidth: 2,
+            ),
+          ),
+          borderData: FlBorderData(show: false),
         ),
-      ];
+      ),
+    );
+  }
 
-  SideTitles get _rightTitles => SideTitles(
+  static SideTitles get _rightTitles => SideTitles(
         showTitles: true,
         interval: 20,
         reservedSize: 40,
@@ -416,17 +455,21 @@ class _MealPlannerViewState extends State<MealPlannerView> {
         },
       );
 
-  SideTitles _buildBottomTitles(AppLanguage language) {
+  static SideTitles _buildBottomTitles(
+    List<MealNutritionProgressPoint> points,
+    AppLanguage language,
+  ) {
     return SideTitles(
       showTitles: true,
       reservedSize: 32,
       interval: 1,
       getTitlesWidget: (value, meta) {
         final index = value.toInt() - 1;
-        final label = (index >= 0 &&
-                index < _MealPlannerStrings.weekdayAbbreviations.length)
-            ? _MealPlannerStrings.weekdayAbbreviations[index].resolve(language)
-            : '';
+        if (index < 0 || index >= points.length) {
+          return const SizedBox.shrink();
+        }
+        final weekday = points[index].day.weekday;
+        final label = _MealPlannerStrings.weekdayLabel(language, weekday);
         return SideTitleWidget(
           meta: meta,
           space: 10,
@@ -440,17 +483,79 @@ class _MealPlannerViewState extends State<MealPlannerView> {
   }
 }
 
-class _GradientDropdown extends StatelessWidget {
-  const _GradientDropdown({
+class _PeriodSummaryList extends StatelessWidget {
+  const _PeriodSummaryList({required this.periods});
+
+  final List<MealPeriodSummary> periods;
+
+  @override
+  Widget build(BuildContext context) {
+    if (periods.isEmpty) return const SizedBox.shrink();
+    final language = context.appLanguage;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        children: periods
+            .map(
+              (summary) => _PeriodSummaryChip(
+                title: summary.localizedTitle(language),
+                subtitle: summary.localizedSubtitle(language),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+class _PeriodSummaryChip extends StatelessWidget {
+  const _PeriodSummaryChip({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: TColor.primaryG),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: TColor.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: TextStyle(color: TColor.gray, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NutritionRangeDropdown extends StatelessWidget {
+  const _NutritionRangeDropdown({
     required this.value,
-    required this.options,
     required this.onChanged,
     required this.language,
   });
 
-  final _DropdownOption value;
-  final List<_DropdownOption> options;
-  final ValueChanged<_DropdownOption?> onChanged;
+  final MealNutritionRange value;
+  final ValueChanged<MealNutritionRange?> onChanged;
   final AppLanguage language;
 
   @override
@@ -463,16 +568,54 @@ class _GradientDropdown extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       child: DropdownButtonHideUnderline(
-        child: DropdownButton<_DropdownOption>(
+        child: DropdownButton<MealNutritionRange>(
           value: value,
           onChanged: onChanged,
           icon: Icon(Icons.expand_more, color: TColor.white),
-          items: options
+          items: MealNutritionRange.values
               .map(
-                (option) => DropdownMenuItem<_DropdownOption>(
-                  value: option,
+                (range) => DropdownMenuItem<MealNutritionRange>(
+                  value: range,
                   child: Text(
-                    option.label.resolve(language),
+                    _MealPlannerStrings.rangeLabel(language, range),
+                    style: TextStyle(color: TColor.gray, fontSize: 14),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class _MealPeriodDropdown extends StatelessWidget {
+  const _MealPeriodDropdown({required this.selected, required this.onChanged});
+
+  final MealPeriod selected;
+  final ValueChanged<MealPeriod?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final language = context.appLanguage;
+    return Container(
+      height: 30,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: TColor.primaryG),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<MealPeriod>(
+          value: selected,
+          onChanged: onChanged,
+          icon: Icon(Icons.expand_more, color: TColor.white),
+          items: MealPeriod.values
+              .map(
+                (period) => DropdownMenuItem<MealPeriod>(
+                  value: period,
+                  child: Text(
+                    period.label.resolve(language),
                     style: TextStyle(color: TColor.gray, fontSize: 14),
                   ),
                 ),
@@ -515,57 +658,28 @@ class _SquareIconButton extends StatelessWidget {
   }
 }
 
-class _DropdownOption {
-  const _DropdownOption(this.id, this.label);
+class _ErrorMessage extends StatelessWidget {
+  const _ErrorMessage({required this.message, required this.onRetry});
 
-  final String id;
-  final LocalizedText label;
-}
+  final String message;
+  final VoidCallback onRetry;
 
-class _TodayMealData {
-  const _TodayMealData({
-    required this.name,
-    required this.image,
-    required this.timeLabel,
-  });
-
-  final LocalizedText name;
-  final String image;
-  final String timeLabel;
-
-  Map<String, String> toLocalizedMap(AppLanguage language) {
-    return {'name': name.resolve(language), 'image': image, 'time': timeLabel};
-  }
-}
-
-class _FoodCategoryData {
-  const _FoodCategoryData({
-    required this.title,
-    required this.subtitle,
-    required this.image,
-  });
-
-  final LocalizedText title;
-  final LocalizedText subtitle;
-  final String image;
-
-  _LocalizedCategory localized(AppLanguage language) {
-    return _LocalizedCategory(
-      title: title.resolve(language),
-      subtitle: subtitle.resolve(language),
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(message, style: TextStyle(color: TColor.gray, fontSize: 12)),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: onRetry,
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
     );
   }
-
-  Map<String, dynamic> toArgsMap() {
-    return {'name': title, 'number': subtitle, 'image': image};
-  }
-}
-
-class _LocalizedCategory {
-  const _LocalizedCategory({required this.title, required this.subtitle});
-
-  final String title;
-  final String subtitle;
 }
 
 class _MealPlannerStrings {
@@ -614,55 +728,52 @@ class _MealPlannerStrings {
     indonesian: 'Bulanan',
   );
 
-  static const breakfastLabel = LocalizedText(
-    english: 'Breakfast',
-    indonesian: 'Sarapan',
+  static const noMealsPlanned = LocalizedText(
+    english: 'No meals planned for this period.',
+    indonesian: 'Tidak ada rencana makan untuk periode ini.',
   );
 
-  static const lunchLabel = LocalizedText(
-    english: 'Lunch',
-    indonesian: 'Makan Siang',
+  static const noCategoriesAvailable = LocalizedText(
+    english: 'No categories available yet.',
+    indonesian: 'Belum ada kategori tersedia.',
   );
 
-  static const dinnerLabel = LocalizedText(
-    english: 'Dinner',
-    indonesian: 'Makan Malam',
+  static const noProgressData = LocalizedText(
+    english: 'No progress data available.',
+    indonesian: 'Belum ada data progres.',
   );
 
-  static const snackLabel = LocalizedText(
-    english: 'Snack',
-    indonesian: 'Camilan',
+  static const failedToLoad = LocalizedText(
+    english: 'Unable to load meal planner data.',
+    indonesian: 'Tidak dapat memuat data perencana makan.',
   );
 
-  static const dessertLabel = LocalizedText(
-    english: 'Dessert',
-    indonesian: 'Pencuci Mulut',
-  );
-
-  static const foodsCount120 = LocalizedText(
-    english: '120+ Foods',
-    indonesian: '120+ Menu',
-  );
-
-  static const foodsCount130 = LocalizedText(
-    english: '130+ Foods',
-    indonesian: '130+ Menu',
-  );
-
-  static const weekdayAbbreviations = <LocalizedText>[
-    LocalizedText(english: 'Sun', indonesian: 'Min'),
-    LocalizedText(english: 'Mon', indonesian: 'Sen'),
-    LocalizedText(english: 'Tue', indonesian: 'Sel'),
-    LocalizedText(english: 'Wed', indonesian: 'Rab'),
-    LocalizedText(english: 'Thu', indonesian: 'Kam'),
-    LocalizedText(english: 'Fri', indonesian: 'Jum'),
-    LocalizedText(english: 'Sat', indonesian: 'Sab'),
-  ];
+  static String categorySubtitle(AppLanguage language, int count) {
+    final suffix = language == AppLanguage.indonesian ? 'Menu' : 'Foods';
+    return '$count $suffix';
+  }
 
   static String minutesAgo(AppLanguage language, int minutes) {
     if (language == AppLanguage.indonesian) {
       return '$minutes menit lalu';
     }
     return '$minutes mins ago';
+  }
+
+  static String weekdayLabel(AppLanguage language, int weekday) {
+    const english = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const indonesian = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+    final index = (weekday - 1).clamp(0, 6);
+    return language == AppLanguage.indonesian
+        ? indonesian[index]
+        : english[index];
+  }
+
+  static String rangeLabel(AppLanguage language, MealNutritionRange range) {
+    final text = switch (range) {
+      MealNutritionRange.weekly => weeklyOption,
+      MealNutritionRange.monthly => monthlyOption,
+    };
+    return text.resolve(language);
   }
 }
