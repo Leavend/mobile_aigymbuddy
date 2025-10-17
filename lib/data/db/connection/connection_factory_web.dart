@@ -1,24 +1,24 @@
 // lib/data/db/connection/connection_factory_web.dart
 import 'package:drift/drift.dart';
-
 import 'package:drift/wasm.dart';
 import 'package:flutter/foundation.dart';
 
-
-const _defaultSqlite3Path = 'sqlite3.wasm';
-const _defaultWorkerPath = 'drift_worker.dart.js';
+const _sqlite3AssetPath = 'assets/packages/sqlite3/wasm/sqlite3.wasm';
+const _driftWorkerAssetPath = 'assets/packages/drift/wasm/drift_worker.dart.js';
 
 Uri _resolveUri(String path) {
   return Uri.base.resolve(path);
 }
 
 QueryExecutor createDriftExecutorImpl() {
-
   return LazyDatabase(() async {
+    final sqliteUri = _resolveUri(_sqlite3AssetPath);
+    final workerUri = _resolveUri(_driftWorkerAssetPath);
+
     final result = await WasmDatabase.open(
       databaseName: 'ai_gym_buddy',
-      sqlite3Uri: _resolveUri(_defaultSqlite3Path),
-      driftWorkerUri: _resolveUri(_defaultWorkerPath),
+      sqlite3Uri: sqliteUri,
+      driftWorkerUri: workerUri,
     );
 
     if (kDebugMode && result.missingFeatures.isNotEmpty) {
