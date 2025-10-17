@@ -1,9 +1,9 @@
 import '../../../data/db/daos/exercise_dao.dart';
 import '../../../data/db/daos/tracking_dao.dart';
-import '../../profile/domain/profile_repository.dart';
-import '../../profile/domain/user_profile.dart' as profile_domain;
-import '../domain/models.dart';
-import '../domain/tracking_repository.dart';
+import '../models/tracking.dart';
+import '../models/user_profile.dart' as profile_domain;
+import 'profile_repository.dart';
+import 'tracking_repository.dart';
 
 class DriftTrackingRepository implements TrackingRepository {
   DriftTrackingRepository(

@@ -1,15 +1,17 @@
-import 'package:aigymbuddy/common/app_router.dart';
-import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/common_widget/workout_row.dart';
-import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
-import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
+import 'package:intl/intl.dart';
+
+import '../../app/dependencies.dart';
+import '../../common/app_router.dart';
+import '../shared/models/exercise.dart';
+import '../shared/models/tracking.dart' as tracking_models;
+import '../shared/models/user_profile.dart' as profile_domain;
+import '../shared/repositories/exercise_repository.dart';
+import '../shared/repositories/profile_repository.dart';
+import '../shared/repositories/tracking_repository.dart';
+import '../login/models/onboarding_draft.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -19,1137 +21,582 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  static const List<_PeriodOption> _periodOptions = [
-    _PeriodOption(
-      key: 'weekly',
-      label: LocalizedText(english: 'Weekly', indonesian: 'Mingguan'),
-    ),
-    _PeriodOption(
-      key: 'monthly',
-      label: LocalizedText(english: 'Monthly', indonesian: 'Bulanan'),
-    ),
-  ];
+  late final ProfileRepository _profileRepository;
+  late final TrackingRepository _trackingRepository;
+  late final ExerciseRepository _exerciseRepository;
 
-  static const List<_WorkoutConfig> _lastWorkoutList = [
-    _WorkoutConfig(
-      name: LocalizedText(
-        english: 'Full Body Workout',
-        indonesian: 'Latihan Seluruh Tubuh',
-      ),
-      image: 'assets/img/Workout1.png',
-      calories: '180',
-      minutes: '20',
-      progress: 0.3,
-    ),
-    _WorkoutConfig(
-      name: LocalizedText(
-        english: 'Lower Body Workout',
-        indonesian: 'Latihan Tubuh Bagian Bawah',
-      ),
-      image: 'assets/img/Workout2.png',
-      calories: '200',
-      minutes: '30',
-      progress: 0.4,
-    ),
-    _WorkoutConfig(
-      name: LocalizedText(english: 'Ab Workout', indonesian: 'Latihan Perut'),
-      image: 'assets/img/Workout3.png',
-      calories: '300',
-      minutes: '40',
-      progress: 0.7,
-    ),
-  ];
+  final _weightController = TextEditingController();
+  final _setIndexController = TextEditingController(text: '1');
+  final _repsController = TextEditingController();
+  final _loadController = TextEditingController();
+  final _noteController = TextEditingController();
 
-  static const List<_WaterIntakeEntry> _waterSchedule = [
-    _WaterIntakeEntry('6am - 8am', '600ml'),
-    _WaterIntakeEntry('9am - 11am', '500ml'),
-    _WaterIntakeEntry('11am - 2pm', '1000ml'),
-    _WaterIntakeEntry('2pm - 4pm', '700ml'),
-    _WaterIntakeEntry('4pm - now', '900ml'),
-  ];
-
-  static const List<FlSpot> _heartRateSpots = [
-    FlSpot(0, 20),
-    FlSpot(1, 25),
-    FlSpot(2, 40),
-    FlSpot(3, 50),
-    FlSpot(4, 35),
-    FlSpot(5, 40),
-    FlSpot(6, 30),
-    FlSpot(7, 20),
-    FlSpot(8, 25),
-    FlSpot(9, 40),
-    FlSpot(10, 50),
-    FlSpot(11, 35),
-    FlSpot(12, 50),
-    FlSpot(13, 60),
-    FlSpot(14, 40),
-    FlSpot(15, 50),
-    FlSpot(16, 20),
-    FlSpot(17, 25),
-    FlSpot(18, 40),
-    FlSpot(19, 50),
-    FlSpot(20, 35),
-    FlSpot(21, 80),
-    FlSpot(22, 30),
-    FlSpot(23, 20),
-    FlSpot(24, 25),
-    FlSpot(25, 40),
-    FlSpot(26, 50),
-    FlSpot(27, 35),
-    FlSpot(28, 50),
-    FlSpot(29, 60),
-    FlSpot(30, 40),
-  ];
-
-  final List<int> _heartRateTooltipSpots = [21];
-  final List<int> _workoutTooltipSpots = [];
-
-  late final ValueNotifier<double> _calorieProgressNotifier;
-  _PeriodOption _selectedWorkoutPeriod = _periodOptions.first;
+  bool _initialised = false;
+  bool _addingWeight = false;
+  bool _loggingSet = false;
+  List<ExerciseSummary> _exercises = const [];
+  ExerciseSummary? _selectedExercise;
+  late Future<List<tracking_models.WeeklyVolumePoint>> _weeklyVolumeFuture;
 
   @override
-  void initState() {
-    super.initState();
-    _calorieProgressNotifier = ValueNotifier<double>(50);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialised) return;
+    final deps = AppDependencies.of(context);
+    _profileRepository = deps.profileRepository;
+    _trackingRepository = deps.trackingRepository;
+    _exerciseRepository = deps.exerciseRepository;
+    _weeklyVolumeFuture = _trackingRepository.loadWeeklyVolume();
+    _loadExercises();
+    _initialised = true;
   }
 
   @override
   void dispose() {
-    _calorieProgressNotifier.dispose();
+    _weightController.dispose();
+    _setIndexController.dispose();
+    _repsController.dispose();
+    _loadController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
-  LineChartBarData get _heartRateLine => LineChartBarData(
-        showingIndicators: _heartRateTooltipSpots,
-        spots: _heartRateSpots,
-        isCurved: true,
-        barWidth: 3,
-        gradient: LinearGradient(colors: TColor.primaryG),
-        belowBarData: BarAreaData(
-          show: true,
-          gradient: LinearGradient(
-            colors: [
-              TColor.primaryColor2.withValues(alpha: .2),
-              TColor.primaryColor1.withValues(alpha: .05),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        dotData: const FlDotData(show: false),
-      );
+  Future<void> _loadExercises() async {
+    final exercises = await _exerciseRepository.listExercises();
+    if (!mounted) return;
+    setState(() {
+      _exercises = exercises;
+      if (_selectedExercise == null && exercises.isNotEmpty) {
+        _selectedExercise = exercises.first;
+      }
+    });
+  }
 
-  LineChartBarData get _workoutLine1 => LineChartBarData(
-        isCurved: true,
-        gradient: LinearGradient(
-          colors: [
-            TColor.primaryColor2.withValues(alpha: .5),
-            TColor.primaryColor1.withValues(alpha: .5),
-          ],
-        ),
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        spots: const [
-          FlSpot(1, 35),
-          FlSpot(2, 70),
-          FlSpot(3, 40),
-          FlSpot(4, 80),
-          FlSpot(5, 25),
-          FlSpot(6, 70),
-          FlSpot(7, 35),
-        ],
-      );
+  Future<void> _addWeight() async {
+    final value = double.tryParse(_weightController.text.trim());
+    if (value == null || value <= 0) {
+      _showMessage('Masukkan berat badan yang valid.');
+      return;
+    }
 
-  LineChartBarData get _workoutLine2 => LineChartBarData(
-        isCurved: true,
-        gradient: LinearGradient(
-          colors: [
-            TColor.secondaryColor2.withValues(alpha: .5),
-            TColor.secondaryColor1.withValues(alpha: .5),
-          ],
-        ),
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        spots: const [
-          FlSpot(1, 80),
-          FlSpot(2, 50),
-          FlSpot(3, 90),
-          FlSpot(4, 40),
-          FlSpot(5, 80),
-          FlSpot(6, 35),
-          FlSpot(7, 60),
-        ],
-      );
+    setState(() => _addingWeight = true);
+    try {
+      await _trackingRepository.addBodyWeight(value);
+      _weightController.clear();
+      _showMessage('Berat badan tersimpan.');
+    } catch (error) {
+      _showMessage('Gagal menyimpan berat badan: $error');
+    } finally {
+      if (mounted) {
+        setState(() => _addingWeight = false);
+      }
+    }
+  }
 
-  TextStyle get _sectionTitleStyle =>
-      TextStyle(color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700);
+  Future<void> _logSet() async {
+    final exercise = _selectedExercise;
+    if (exercise == null) {
+      _showMessage('Data latihan belum siap.');
+      return;
+    }
 
-  BoxDecoration get _cardDecoration => BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+    final setIndex = int.tryParse(_setIndexController.text.trim());
+    if (setIndex == null || setIndex <= 0) {
+      _showMessage('Index set harus lebih dari 0.');
+      return;
+    }
+
+    final repsText = _repsController.text.trim();
+    final loadText = _loadController.text.trim();
+    final reps = repsText.isEmpty ? null : int.tryParse(repsText);
+    final weight = loadText.isEmpty ? null : double.tryParse(loadText);
+
+    if (repsText.isNotEmpty && reps == null) {
+      _showMessage('Reps harus berupa angka.');
+      return;
+    }
+    if (loadText.isNotEmpty && weight == null) {
+      _showMessage('Beban harus berupa angka.');
+      return;
+    }
+
+    setState(() => _loggingSet = true);
+    try {
+      await _trackingRepository.logManualSet(
+        exerciseId: exercise.id,
+        setIndex: setIndex,
+        reps: reps,
+        weight: weight,
+        note: _noteController.text.trim().isEmpty
+            ? null
+            : _noteController.text.trim(),
       );
+      _repsController.clear();
+      _loadController.clear();
+      _noteController.clear();
+      _setIndexController.text = '1';
+      setState(() {
+        _weeklyVolumeFuture = _trackingRepository.loadWeeklyVolume();
+      });
+      _showMessage('Catatan latihan tersimpan.');
+    } catch (error) {
+      _showMessage('Gagal menyimpan latihan: $error');
+    } finally {
+      if (mounted) {
+        setState(() => _loggingSet = false);
+      }
+    }
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _startEdit(profile_domain.UserProfile profile) {
+    final draft = OnboardingDraft.fromProfile(profile);
+    final args = ProfileFormArguments(
+      draft: draft,
+      mode: ProfileFormMode.edit,
+    );
+    context.push(AppRoute.completeProfile, extra: args);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TColor.white,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(context),
-                  const SizedBox(height: 16),
-                  _BmiCard(
-                    showingSections: _buildBmiSections(),
-                    title: _HomeStrings.bmiTitle,
-                    subtitle: _HomeStrings.bmiSubtitle,
-                    buttonText: _HomeStrings.viewMore,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTodayTarget(context),
-                  const SizedBox(height: 16),
-                  Text(
-                    context.localize(_HomeStrings.activityStatus),
-                    style: _sectionTitleStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildHeartRateCard(context),
-                  const SizedBox(height: 16),
-                  _buildHydrationAndRest(context),
-                  const SizedBox(height: 24),
-                  _buildWorkoutProgress(context),
-                  const SizedBox(height: 16),
-                  _buildLatestWorkout(context),
-                  const SizedBox(height: 32),
-                ],
+      appBar: AppBar(title: const Text('AI Gym Buddy')),
+      body: StreamBuilder<profile_domain.UserProfile?>(
+        stream: _profileRepository.watchProfile(),
+        builder: (context, snapshot) {
+          final profile = snapshot.data;
+
+          return ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              _ProfileSummaryCard(profile: profile, onEdit: profile == null ? null : () => _startEdit(profile)),
+              const SizedBox(height: 24),
+              _WeightChartCard(
+                weightStream: _trackingRepository.watchBodyWeight(),
+                controller: _weightController,
+                onAddWeight: _addWeight,
+                isSaving: _addingWeight,
               ),
-            ),
-          ),
-        ),
+              const SizedBox(height: 24),
+              _LogSetCard(
+                exercises: _exercises,
+                selectedExercise: _selectedExercise,
+                onExerciseChanged: (exercise) => setState(() => _selectedExercise = exercise),
+                setIndexController: _setIndexController,
+                repsController: _repsController,
+                loadController: _loadController,
+                noteController: _noteController,
+                onSubmit: _loggingSet ? null : _logSet,
+                isSaving: _loggingSet,
+              ),
+              const SizedBox(height: 24),
+              _RecentSetsCard(stream: _trackingRepository.watchRecentSetLogs()),
+              const SizedBox(height: 24),
+              _WeeklyVolumeCard(future: _weeklyVolumeFuture),
+            ],
+          );
+        },
       ),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context) {
-    final localize = context.localize;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
+class _ProfileSummaryCard extends StatelessWidget {
+  const _ProfileSummaryCard({required this.profile, required this.onEdit});
+
+  final profile_domain.UserProfile? profile;
+  final VoidCallback? onEdit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: profile == null
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Selamat datang! Lengkapi profilmu untuk rekomendasi yang lebih akurat.',
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton(
+                    onPressed: () => context.go(AppRoute.onboarding),
+                    child: const Text('Mulai Lengkapi Profil'),
+                  ),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    profile.name ?? 'Gym Buddy',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${profile_domain.describeGoal(profile.goal)} • ${profile_domain.describeLevel(profile.level)}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: Colors.grey[700]),
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: onEdit,
+                    icon: const Icon(Icons.edit),
+                    label: const Text('Edit Profil'),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+class _WeightChartCard extends StatelessWidget {
+  const _WeightChartCard({
+    required this.weightStream,
+    required this.controller,
+    required this.onAddWeight,
+    required this.isSaving,
+  });
+
+  final Stream<List<tracking_models.BodyWeightEntry>> weightStream;
+  final TextEditingController controller;
+  final VoidCallback onAddWeight;
+  final bool isSaving;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              localize(_HomeStrings.welcomeBack),
-              style: TextStyle(color: TColor.gray, fontSize: 12),
+              'Perkembangan Berat Badan',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-            Text(
-              localize(_HomeStrings.userName),
-              style: TextStyle(
-                color: TColor.black,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 200,
+              child: StreamBuilder<List<tracking_models.BodyWeightEntry>>(
+                stream: weightStream,
+                builder: (context, snapshot) {
+                  final entries = snapshot.data ?? const [];
+                  if (entries.isEmpty) {
+                    return const Center(
+                      child: Text('Belum ada data berat badan.'),
+                    );
+                  }
+
+                  final spots = _mapToSpots(entries);
+                  final minY = entries.map((e) => e.weightKg).reduce((a, b) => a < b ? a : b) - 1;
+                  final maxY = entries.map((e) => e.weightKg).reduce((a, b) => a > b ? a : b) + 1;
+
+                  return LineChart(
+                    LineChartData(
+                      minY: minY,
+                      maxY: maxY,
+                      titlesData: FlTitlesData(
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: true, reservedSize: 42),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            interval: 1,
+                            getTitlesWidget: (value, meta) {
+                              final index = value.toInt();
+                              if (index < 0 || index >= entries.length) {
+                                return const SizedBox.shrink();
+                              }
+                              final entry = entries[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(DateFormat('dd/MM').format(entry.timestamp.toLocal())),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: spots,
+                          isCurved: true,
+                          barWidth: 3,
+                          color: Theme.of(context).colorScheme.primary,
+                          dotData: const FlDotData(show: false),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      labelText: 'Berat badan (kg)',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                FilledButton(
+                  onPressed: isSaving ? null : onAddWeight,
+                  child: isSaving
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Simpan'),
+                ),
+              ],
             ),
           ],
         ),
-        IconButton(
-          onPressed: () => context.push(AppRoute.notification),
-          icon: Image.asset(
-            'assets/img/notification_active.png',
-            width: 24,
-            height: 24,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTodayTarget(BuildContext context) {
-    final localize = context.localize;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      decoration: BoxDecoration(
-        color: TColor.primaryColor2.withValues(alpha: .15),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Text(
-              localize(_HomeStrings.todayTarget),
-              style: TextStyle(
-                color: TColor.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 95,
-            height: 36,
-            child: RoundButton(
-              title: localize(_HomeStrings.check),
-              type: RoundButtonType.bgGradient,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              onPressed: () => context.push(AppRoute.activityTracker),
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildHeartRateCard(BuildContext context) {
-    final heartRateLine = _heartRateLine;
-    final localize = context.localize;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      decoration: BoxDecoration(
-        color: TColor.primaryColor2.withValues(alpha: .15),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            localize(_HomeStrings.heartRate),
-            style: TextStyle(
-              color: TColor.black,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 4),
-          _buildGradientText('78 BPM', fontSize: 18),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 160,
-            width: double.infinity,
-            child: LineChart(
-              LineChartData(
-                showingTooltipIndicators: _heartRateTooltipSpots
-                    .map(
-                      (i) => ShowingTooltipIndicators([
-                        LineBarSpot(heartRateLine, 0, heartRateLine.spots[i]),
-                      ]),
-                    )
-                    .toList(),
-                lineTouchData: LineTouchData(
-                  enabled: true,
-                  handleBuiltInTouches: false,
-                  touchCallback: (event, response) {
-                    if (response?.lineBarSpots == null) {
-                      return;
-                    }
-                    if (event is FlTapUpEvent) {
-                      setState(() {
-                        _heartRateTooltipSpots
-                          ..clear()
-                          ..add(response!.lineBarSpots!.first.spotIndex);
-                      });
-                    }
-                  },
-                  getTouchedSpotIndicator: (_, indices) => indices
-                      .map(
-                        (index) => TouchedSpotIndicatorData(
-                          const FlLine(color: Colors.transparent),
-                          FlDotData(
-                            show: true,
-                            getDotPainter:
-                                (spot, percent, barData, spotIndex) =>
-                                    _buildIndicatorPainter(
-                              spot: spot,
-                              percent: percent,
-                              barData: barData,
-                              spotIndex: spotIndex,
-                              baseOpacity: 0.6,
-                              opacityScale: 0.3,
-                              maxSpotValue: 100,
-                              oddStrokeWidth: 2,
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (_) => TColor.secondaryColor1,
-                    getTooltipItems: (_) => [
-                      LineTooltipItem(
-                        localize(_HomeStrings.nowLabel),
-                        const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                lineBarsData: [heartRateLine],
-                minY: 0,
-                maxY: 130,
-                titlesData: const FlTitlesData(show: false),
-                gridData: const FlGridData(show: false),
-                borderData: FlBorderData(show: false),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  List<FlSpot> _mapToSpots(List<tracking_models.BodyWeightEntry> entries) {
+    return entries.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.weightKg);
+    }).toList();
   }
+}
 
-  Widget _buildHydrationAndRest(BuildContext context) {
-    final localize = context.localize;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-            decoration: _cardDecoration,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+class _LogSetCard extends StatelessWidget {
+  const _LogSetCard({
+    required this.exercises,
+    required this.selectedExercise,
+    required this.onExerciseChanged,
+    required this.setIndexController,
+    required this.repsController,
+    required this.loadController,
+    required this.noteController,
+    required this.onSubmit,
+    required this.isSaving,
+  });
+
+  final List<ExerciseSummary> exercises;
+  final ExerciseSummary? selectedExercise;
+  final ValueChanged<ExerciseSummary?> onExerciseChanged;
+  final TextEditingController setIndexController;
+  final TextEditingController repsController;
+  final TextEditingController loadController;
+  final TextEditingController noteController;
+  final VoidCallback? onSubmit;
+  final bool isSaving;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Catat Latihan Manual',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<ExerciseSummary>(
+              value: selectedExercise,
+              decoration: const InputDecoration(labelText: 'Pilih latihan'),
+              items: exercises
+                  .map(
+                    (exercise) => DropdownMenuItem<ExerciseSummary>(
+                      value: exercise,
+                      child: Text(exercise.name),
+                    ),
+                  )
+                  .toList(),
+              onChanged: onExerciseChanged,
+            ),
+            const SizedBox(height: 12),
+            Row(
               children: [
-                SimpleAnimationProgressBar(
-                  height: 160,
-                  width: 12,
-                  backgroundColor: Colors.grey.shade100,
-                  foregroundColor: Colors.purple,
-                  ratio: .5,
-                  direction: Axis.vertical,
-                  duration: const Duration(seconds: 2),
-                  curve: Curves.easeInOut,
-                  borderRadius: BorderRadius.circular(12),
+                Expanded(
+                  child: TextField(
+                    controller: setIndexController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Set ke'),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        localize(_HomeStrings.waterIntake),
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        localize(_HomeStrings.realTimeUpdates),
-                        style: TextStyle(color: TColor.gray, fontSize: 12),
-                      ),
-                      const SizedBox(height: 8),
-                      ..._waterSchedule.map(
-                        (entry) => _WaterRow(
-                          entry: entry,
-                          isLast: entry == _waterSchedule.last,
-                        ),
-                      ),
-                    ],
+                  child: TextField(
+                    controller: repsController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Reps'),
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 16,
-                ),
-                decoration: _cardDecoration,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      localize(_HomeStrings.sleep),
-                      style: TextStyle(
-                        color: TColor.black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    _buildGradientText('8h 20m'),
-                    const SizedBox(height: 12),
-                    Image.asset(
-                      'assets/img/sleep_grap.png',
-                      width: double.infinity,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 16,
-                ),
-                decoration: _cardDecoration,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      localize(_HomeStrings.calories),
-                      style: TextStyle(
-                        color: TColor.black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    _buildGradientText('760 kCal'),
-                    const SizedBox(height: 12),
-                    Center(
-                      child: SizedBox(
-                        width: 120,
-                        height: 120,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              width: 90,
-                              height: 90,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: TColor.primaryG,
-                                ),
-                                borderRadius: BorderRadius.circular(45),
-                              ),
-                              child: Text(
-                                localize(_HomeStrings.caloriesLeft),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            SimpleCircularProgressBar(
-                              progressStrokeWidth: 10,
-                              backStrokeWidth: 10,
-                              progressColors: TColor.primaryG,
-                              backColor: Colors.grey.shade100,
-                              valueNotifier: _calorieProgressNotifier,
-                              startAngle: -180,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildWorkoutProgress(BuildContext context) {
-    final line1 = _workoutLine1;
-    final line2 = _workoutLine2;
-    final localize = context.localize;
-    final language = context.appLanguage;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              localize(_HomeStrings.workoutProgress),
-              style: _sectionTitleStyle,
+            const SizedBox(height: 12),
+            TextField(
+              controller: loadController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(labelText: 'Beban (kg)'),
             ),
-            Container(
-              height: 32,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: TColor.primaryG),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<_PeriodOption>(
-                  value: _selectedWorkoutPeriod,
-                  icon: Icon(Icons.expand_more, color: TColor.white),
-                  items: _periodOptions
-                      .map(
-                        (option) => DropdownMenuItem<_PeriodOption>(
-                          value: option,
-                          child: Text(
-                            option.label.resolve(language),
-                            style: TextStyle(color: TColor.gray),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null || value == _selectedWorkoutPeriod) {
-                      return;
-                    }
-                    setState(() => _selectedWorkoutPeriod = value);
-                  },
-                  dropdownColor: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  style: TextStyle(color: TColor.gray),
-                ),
-              ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: noteController,
+              decoration: const InputDecoration(labelText: 'Catatan (opsional)'),
             ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 220,
-          child: LineChart(
-            LineChartData(
-              showingTooltipIndicators: _workoutTooltipSpots
-                  .map(
-                    (i) => ShowingTooltipIndicators([
-                      LineBarSpot(line1, 0, line1.spots[i]),
-                    ]),
-                  )
-                  .toList(),
-              lineTouchData: LineTouchData(
-                enabled: true,
-                handleBuiltInTouches: false,
-                touchCallback: (event, response) {
-                  if (response?.lineBarSpots == null) {
-                    return;
-                  }
-                  if (event is FlTapUpEvent) {
-                    setState(() {
-                      _workoutTooltipSpots
-                        ..clear()
-                        ..add(response!.lineBarSpots!.first.spotIndex);
-                    });
-                  }
-                },
-                getTouchedSpotIndicator: (_, indices) => indices
-                    .map(
-                      (index) => TouchedSpotIndicatorData(
-                        const FlLine(color: Colors.transparent),
-                        FlDotData(
-                          show: true,
-                          getDotPainter: (spot, percent, barData, spotIndex) =>
-                              _buildIndicatorPainter(
-                            spot: spot,
-                            percent: percent,
-                            barData: barData,
-                            spotIndex: spotIndex,
-                            baseOpacity: 0.5,
-                            opacityScale: 0.4,
-                            maxSpotValue: 120,
-                            oddStrokeWidth: 2.5,
-                          ),
-                        ),
-                      ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: onSubmit,
+              child: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                    .toList(),
-                touchTooltipData: LineTouchTooltipData(
-                  getTooltipColor: (_) => TColor.secondaryColor1,
-                  getTooltipItems: (_) => [
-                    LineTooltipItem(
-                      localize(_HomeStrings.nowLabel),
-                      const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              lineBarsData: [line1, line2],
-              minY: 0,
-              maxY: 100,
-              titlesData: FlTitlesData(
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 28,
-                    interval: 1,
-                    getTitlesWidget: (value, meta) {
-                      final labels = _HomeStrings.weekdayAbbreviations;
-                      final index = value.toInt() - 1;
-                      final text = (index >= 0 && index < labels.length)
-                          ? labels[index].resolve(language)
-                          : '';
-                      return SideTitleWidget(
-                        meta: meta,
-                        space: 8,
-                        child: Text(
-                          text,
-                          style: TextStyle(color: TColor.gray, fontSize: 12),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    interval: 20,
-                    getTitlesWidget: (value, _) {
-                      const labels = ['0%', '20%', '40%', '60%', '80%', '100%'];
-                      final index = (value ~/ 20).clamp(0, labels.length - 1);
-                      return Text(
-                        labels[index],
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF8E8E93),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              gridData: FlGridData(
-                show: true,
-                drawVerticalLine: false,
-                horizontalInterval: 25,
-                getDrawingHorizontalLine: (value) => FlLine(
-                  color: TColor.gray.withValues(alpha: .15),
-                  strokeWidth: 2,
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLatestWorkout(BuildContext context) {
-    final localize = context.localize;
-    final language = context.appLanguage;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              localize(_HomeStrings.latestWorkout),
-              style: _sectionTitleStyle,
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                localize(_HomeStrings.seeMore),
-                style: TextStyle(
-                  color: TColor.gray,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+                  : const Text('Simpan Latihan'),
             ),
           ],
         ),
-        ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: _lastWorkoutList.length,
-          separatorBuilder: (_, index) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            final config = _lastWorkoutList[index];
-            final workout = config.toSummaryItem(language);
-            return WorkoutRow(
-              workout: workout,
-              onTap: () => context.push(AppRoute.finishedWorkout),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  List<PieChartSectionData> _buildBmiSections() => [
-        PieChartSectionData(
-          color: TColor.secondaryColor1,
-          value: 33,
-          title: '',
-          radius: 55,
-          badgeWidget: const Text(
-            '20,1',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        PieChartSectionData(
-            color: Colors.white, value: 75, title: '', radius: 45),
-      ];
-
-  Widget _buildGradientText(
-    String text, {
-    double fontSize = 14,
-    FontWeight fontWeight = FontWeight.w700,
-    List<Color>? colors,
-  }) {
-    final gradientColors = colors ?? TColor.primaryG;
-    return ShaderMask(
-      blendMode: BlendMode.srcIn,
-      shaderCallback: (rect) =>
-          LinearGradient(colors: gradientColors).createShader(rect),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: TColor.white,
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-        ),
       ),
-    );
-  }
-
-  FlDotCirclePainter _buildIndicatorPainter({
-    required FlSpot spot,
-    required double percent,
-    required LineChartBarData barData,
-    required int spotIndex,
-    required double baseOpacity,
-    required double opacityScale,
-    required double maxSpotValue,
-    double oddStrokeWidth = 2,
-  }) {
-    final normalizedPercent = percent.clamp(0.0, 1.0);
-    final accentColor =
-        barData.gradient?.colors.first ?? TColor.secondaryColor1;
-    final fillOpacity =
-        (baseOpacity + (spot.y / maxSpotValue).clamp(0.0, 1.0) * opacityScale)
-            .clamp(0.0, 1.0);
-
-    final strokeWidth = spotIndex.isEven ? 3.0 : oddStrokeWidth;
-
-    return FlDotCirclePainter(
-      radius: 3 + normalizedPercent * 2,
-      color: accentColor.withValues(alpha: fillOpacity),
-      strokeWidth: strokeWidth,
-      strokeColor: accentColor,
     );
   }
 }
 
-class _BmiCard extends StatelessWidget {
-  final List<PieChartSectionData> showingSections;
-  final LocalizedText title;
-  final LocalizedText subtitle;
-  final LocalizedText buttonText;
+class _RecentSetsCard extends StatelessWidget {
+  const _RecentSetsCard({required this.stream});
 
-  const _BmiCard({
-    required this.showingSections,
-    required this.title,
-    required this.subtitle,
-    required this.buttonText,
-  });
+  final Stream<List<tracking_models.WorkoutSetLog>> stream;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: TColor.primaryG),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/img/bg_dots.png',
-              fit: BoxFit.cover,
-              opacity: const AlwaysStoppedAnimation(.2),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Riwayat Latihan Terakhir',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        context.localize(title),
-                        style: TextStyle(
-                          color: TColor.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        context.localize(subtitle),
-                        style: TextStyle(
-                          color: TColor.white.withValues(alpha: .8),
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        width: 120,
-                        height: 36,
-                        child: RoundButton(
-                          title: context.localize(buttonText),
-                          type: RoundButtonType.bgSGradient,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          onPressed: () {},
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: PieChart(
-                    PieChartData(
-                      startDegreeOffset: 250,
-                      borderData: FlBorderData(show: false),
-                      sections: showingSections,
-                      sectionsSpace: 1,
-                      centerSpaceRadius: 0,
-                    ),
-                  ),
-                ),
-              ],
+            const SizedBox(height: 12),
+            StreamBuilder<List<tracking_models.WorkoutSetLog>>(
+              stream: stream,
+              builder: (context, snapshot) {
+                final logs = snapshot.data ?? const [];
+                if (logs.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Belum ada catatan latihan.'),
+                  );
+                }
+
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: logs.length,
+                  separatorBuilder: (_, __) => const Divider(height: 12),
+                  itemBuilder: (context, index) {
+                    final log = logs[index];
+                    final subtitle = _buildSubtitle(log);
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(log.exerciseName),
+                      subtitle: Text(subtitle),
+                      trailing: Text(DateFormat('dd MMM').format(log.performedAt.toLocal())),
+                    );
+                  },
+                );
+              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
+  String _buildSubtitle(tracking_models.WorkoutSetLog log) {
+    final buffer = StringBuffer('Set ${log.setIndex}');
+    if (log.reps != null) {
+      buffer.write(' • ${log.reps} reps');
+    }
+    if (log.weight != null) {
+      buffer.write(' @ ${log.weight} kg');
+    }
+    if (log.note != null && log.note!.isNotEmpty) {
+      buffer.write(' — ${log.note}');
+    }
+    return buffer.toString();
+  }
 }
 
-class _WaterRow extends StatelessWidget {
-  final _WaterIntakeEntry entry;
-  final bool isLast;
-  const _WaterRow({required this.entry, required this.isLast});
+class _WeeklyVolumeCard extends StatelessWidget {
+  const _WeeklyVolumeCard({required this.future});
+
+  final Future<List<tracking_models.WeeklyVolumePoint>> future;
 
   @override
   Widget build(BuildContext context) {
-    final indicatorColor = TColor.secondaryColor1.withValues(alpha: .5);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            children: [
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: indicatorColor,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              if (!isLast)
-                DottedDashedLine(
-                  height: 28,
-                  width: 0,
-                  dashColor: indicatorColor,
-                  axis: Axis.vertical,
-                ),
-            ],
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                entry.timeRange,
-                style: TextStyle(color: TColor.gray, fontSize: 10),
-              ),
-              ShaderMask(
-                blendMode: BlendMode.srcIn,
-                shaderCallback: (rect) => LinearGradient(
-                  colors: TColor.secondaryG,
-                ).createShader(rect),
-                child: Text(
-                  entry.amount,
-                  style: TextStyle(
-                    color: TColor.white.withValues(alpha: .8),
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Volume Latihan Mingguan',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            FutureBuilder<List<tracking_models.WeeklyVolumePoint>>(
+              future: future,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final points = snapshot.data ?? const [];
+                if (points.isEmpty) {
+                  return const Text('Belum ada data volume latihan.');
+                }
+
+                return Column(
+                  children: points.map((point) {
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text('Minggu ${point.weekKey}'),
+                      trailing: Text(point.totalVolume.toStringAsFixed(1)),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
-  }
-}
-
-class _WaterIntakeEntry {
-  final String timeRange;
-  final String amount;
-  const _WaterIntakeEntry(this.timeRange, this.amount);
-}
-
-class _PeriodOption {
-  const _PeriodOption({required this.key, required this.label});
-
-  final String key;
-  final LocalizedText label;
-}
-
-class _WorkoutConfig {
-  const _WorkoutConfig({
-    required this.name,
-    required this.image,
-    required this.calories,
-    required this.minutes,
-    required this.progress,
-  });
-
-  final LocalizedText name;
-  final String image;
-  final String calories;
-  final String minutes;
-  final double progress;
-
-  WorkoutSummaryItem toSummaryItem(AppLanguage language) {
-    return WorkoutSummaryItem(
-      imageAsset: image,
-      name: name.resolve(language),
-      calories: calories,
-      durationMinutes: minutes,
-      progress: progress,
-      subtitle: _HomeStrings.workoutDetail(language, calories, minutes),
-    );
-  }
-}
-
-class _HomeStrings {
-  static const welcomeBack = LocalizedText(
-    english: 'Welcome Back,',
-    indonesian: 'Selamat Datang Kembali,',
-  );
-
-  static const userName = LocalizedText(
-    english: 'GYM Buddy',
-    indonesian: 'GYM Buddy',
-  );
-
-  static const todayTarget = LocalizedText(
-    english: 'Today Target',
-    indonesian: 'Target Hari Ini',
-  );
-
-  static const check = LocalizedText(english: 'Check', indonesian: 'Periksa');
-
-  static const activityStatus = LocalizedText(
-    english: 'Activity Status',
-    indonesian: 'Status Aktivitas',
-  );
-
-  static const heartRate = LocalizedText(
-    english: 'Heart Rate',
-    indonesian: 'Detak Jantung',
-  );
-
-  static const nowLabel = LocalizedText(english: 'now', indonesian: 'sekarang');
-
-  static const waterIntake = LocalizedText(
-    english: 'Water Intake',
-    indonesian: 'Asupan Air',
-  );
-
-  static const realTimeUpdates = LocalizedText(
-    english: 'Real time updates',
-    indonesian: 'Pembaruan waktu nyata',
-  );
-
-  static const sleep = LocalizedText(english: 'Sleep', indonesian: 'Tidur');
-
-  static const calories = LocalizedText(
-    english: 'Calories',
-    indonesian: 'Kalori',
-  );
-
-  static const caloriesLeft = LocalizedText(
-    english: '230kCal\nleft',
-    indonesian: '230kKal\ntersisa',
-  );
-
-  static const latestWorkout = LocalizedText(
-    english: 'Latest Workout',
-    indonesian: 'Latihan Terbaru',
-  );
-
-  static const seeMore = LocalizedText(
-    english: 'See More',
-    indonesian: 'Lihat Semua',
-  );
-
-  static const workoutProgress = LocalizedText(
-    english: 'Workout Progress',
-    indonesian: 'Progres Latihan',
-  );
-
-  static const bmiTitle = LocalizedText(
-    english: 'BMI (Body Mass Index)',
-    indonesian: 'BMI (Indeks Massa Tubuh)',
-  );
-
-  static const bmiSubtitle = LocalizedText(
-    english: 'You have a normal weight',
-    indonesian: 'Berat badanmu normal',
-  );
-
-  static const viewMore = LocalizedText(
-    english: 'View More',
-    indonesian: 'Lihat Detail',
-  );
-
-  static const List<LocalizedText> weekdayAbbreviations = [
-    LocalizedText(english: 'Sun', indonesian: 'Min'),
-    LocalizedText(english: 'Mon', indonesian: 'Sen'),
-    LocalizedText(english: 'Tue', indonesian: 'Sel'),
-    LocalizedText(english: 'Wed', indonesian: 'Rab'),
-    LocalizedText(english: 'Thu', indonesian: 'Kam'),
-    LocalizedText(english: 'Fri', indonesian: 'Jum'),
-    LocalizedText(english: 'Sat', indonesian: 'Sab'),
-  ];
-
-  static String workoutDetail(
-    AppLanguage language,
-    String calories,
-    String minutes,
-  ) {
-    return switch (language) {
-      AppLanguage.english => '$calories Calories Burned | $minutes minutes',
-      AppLanguage.indonesian => '$calories Kalori Terbakar | $minutes menit',
-    };
   }
 }

@@ -29,27 +29,56 @@ Future<dynamic> _openWasmDatabase({
   );
 }
 
+Future<dynamic> _attemptOpen(String label, Future<dynamic> Function() opener) async {
+  try {
+    return await opener();
+  } on Object catch (error, stackTrace) {
+    if (kDebugMode) {
+      debugPrint('Failed to open Drift wasm database using $label assets: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    }
+    rethrow;
+  }
+}
+
+Future<dynamic> _openPreferredDatabase() async {
+  final attempts = <({String label, Future<dynamic> Function() create})>[
+    (
+      label: 'CDN-hosted',
+      create: () => _openWasmDatabase(
+            sqlite3Uri: _remoteSqlite3Uri,
+            driftWorkerUri: _remoteDriftWorkerUri,
+          ),
+    ),
+    (
+      label: 'locally bundled',
+      create: () => _openWasmDatabase(
+            sqlite3Uri: _resolveUri(_localSqlite3AssetPath),
+            driftWorkerUri: _resolveUri(_localDriftWorkerAssetPath),
+          ),
+    ),
+  ];
+
+  Object? lastError;
+  StackTrace? lastStackTrace;
+
+  for (final attempt in attempts) {
+    try {
+      return await _attemptOpen(attempt.label, attempt.create);
+    } on Object catch (error, stackTrace) {
+      lastError = error;
+      lastStackTrace = stackTrace;
+    }
+  }
+
+  final error = lastError ??
+      StateError('Unable to open Drift wasm database from CDN or local assets.');
+  Error.throwWithStackTrace(error, lastStackTrace ?? StackTrace.current);
+}
+
 QueryExecutor createDriftExecutorImpl() {
   return LazyDatabase(() async {
-    dynamic result;
-    try {
-      result = await _openWasmDatabase(
-        sqlite3Uri: _resolveUri(_localSqlite3AssetPath),
-        driftWorkerUri: _resolveUri(_localDriftWorkerAssetPath),
-      );
-    } on Object catch (error, stackTrace) {
-      if (kDebugMode) {
-        debugPrint(
-          'Falling back to CDN-hosted Drift wasm assets: $error',
-        );
-        debugPrintStack(stackTrace: stackTrace);
-      }
-
-      result = await _openWasmDatabase(
-        sqlite3Uri: _remoteSqlite3Uri,
-        driftWorkerUri: _remoteDriftWorkerUri,
-      );
-    }
+    final result = await _openPreferredDatabase();
 
     if (kDebugMode && result.missingFeatures.isNotEmpty) {
       debugPrint(

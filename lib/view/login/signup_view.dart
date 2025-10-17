@@ -8,6 +8,7 @@ import 'package:aigymbuddy/common_widget/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'models/onboarding_draft.dart';
 import 'widgets/auth_page_layout.dart';
 import 'widgets/auth_validators.dart';
 
@@ -158,7 +159,13 @@ class _SignUpViewState extends State<SignUpView> {
     });
 
     if ((_formKey.currentState?.validate() ?? false) && _isTermsAccepted) {
-      context.push(AppRoute.completeProfile);
+      final draft = OnboardingDraft(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        email: _emailController.text.trim(),
+      );
+      final args = ProfileFormArguments(draft: draft);
+      context.push(AppRoute.completeProfile, extra: args);
     }
   }
 

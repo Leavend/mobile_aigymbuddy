@@ -1,4 +1,4 @@
-import 'models.dart';
+import '../models/tracking.dart';
 
 abstract class TrackingRepository {
   Future<void> addBodyWeight(double weightKg);
