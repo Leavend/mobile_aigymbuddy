@@ -1,162 +1,143 @@
+import 'dart:async';
+
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/ingredient.dart';
 import 'package:aigymbuddy/common/models/instruction_step.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:aigymbuddy/common/models/nutrition_info.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:readmore/readmore.dart';
 
+import '../../app/dependencies.dart';
 import '../../common_widget/food_step_detail_row.dart';
+import '../shared/models/meal/meal_detail.dart';
+import 'controllers/food_info_details_controller.dart';
 
-class FoodInfoDetailsView extends StatelessWidget {
-  const FoodInfoDetailsView({
-    super.key,
-    required this.detail,
-    required this.meal,
-  });
+class FoodInfoDetailsView extends StatefulWidget {
+  const FoodInfoDetailsView({super.key, required this.args});
 
-  final Map<String, dynamic> meal;
-  final Map<String, dynamic> detail;
+  final FoodInfoArgs args;
+
+  @override
+  State<FoodInfoDetailsView> createState() => _FoodInfoDetailsViewState();
+}
+
+class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
+  late final FoodInfoDetailsController _controller;
+  bool _dependenciesResolved = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_dependenciesResolved) return;
+    final repository = AppDependencies.of(context).mealPlannerRepository;
+    _controller = FoodInfoDetailsController(repository, widget.args.mealId);
+    _dependenciesResolved = true;
+    unawaited(_controller.initialise());
+  }
+
+  @override
+  void dispose() {
+    if (_dependenciesResolved) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
-    final language = context.appLanguage;
-    final localize = context.localize;
+    if (!_dependenciesResolved) {
+      return const SizedBox.shrink();
+    }
 
-    final nutritionItems = _FoodInfoContent.nutrition(language);
-    final ingredients = _FoodInfoContent.ingredients(language);
-    final steps = _FoodInfoContent.steps(language);
-    final description = localize(_FoodInfoStrings.description);
+    final media = MediaQuery.of(context).size;
 
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: TColor.primaryG),
       ),
-      child: NestedScrollView(
-        headerSliverBuilder: (_, __) => [
-          _buildTopAppBar(context),
-          _buildHeroAppBar(media, language),
-        ],
-        body: Container(
-          decoration: BoxDecoration(
-            color: TColor.white,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(
-              children: [
-                _buildContent(
-                  context,
-                  media,
-                  language,
-                  nutritionItems,
-                  ingredients,
-                  steps,
-                  description,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          final detail = _controller.detail;
+          final isLoading = _controller.isLoading && detail == null;
+
+          if (isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (detail == null) {
+            return _ErrorView(onRetry: () => unawaited(_controller.reload()));
+          }
+
+          final language = context.appLanguage;
+          final title = detail.localizedName(language);
+          final description = detail.localizedDescription(language);
+
+          return NestedScrollView(
+            headerSliverBuilder: (_, __) => [
+              _TopAppBar(onBack: () => context.pop()),
+              _HeroAppBar(media: media, imageAsset: detail.heroImageAsset),
+            ],
+            body: Container(
+              decoration: BoxDecoration(
+                color: TColor.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
                 ),
-                _buildBottomAction(context, language),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return SliverAppBar(
-      backgroundColor: Colors.transparent,
-      centerTitle: true,
-      elevation: 0,
-      leading: InkWell(
-        onTap: () => context.pop(),
-        child: Container(
-          margin: const EdgeInsets.all(8),
-          height: 40,
-          width: 40,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: TColor.lightGray,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Image.asset(
-            'assets/img/black_btn.png',
-            width: 15,
-            height: 15,
-            fit: BoxFit.contain,
-          ),
-        ),
-      ),
-      actions: const [
-        Padding(padding: EdgeInsets.only(right: 8), child: _MoreButton()),
-      ],
-    );
-  }
-
-  Widget _buildHeroAppBar(Size media, AppLanguage language) {
-    final heroImage = _resolveLocalized(
-      detail['b_image'],
-      language,
-      fallback: detail['image']?.toString(),
-    );
-
-    return SliverAppBar(
-      backgroundColor: Colors.transparent,
-      centerTitle: true,
-      elevation: 0,
-      leadingWidth: 0,
-      leading: const SizedBox.shrink(),
-      expandedHeight: media.width * 0.5,
-      flexibleSpace: ClipRect(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Transform.scale(
-              scale: 1.25,
-              child: Container(
-                width: media.width * 0.55,
-                height: media.width * 0.55,
-                decoration: BoxDecoration(
-                  color: Colors.white24,
-                  borderRadius: BorderRadius.circular(media.width * 0.275),
+              ),
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Stack(
+                  children: [
+                    _FoodDetailContent(
+                      media: media,
+                      detail: detail,
+                      title: title,
+                      description: description,
+                    ),
+                    _BottomAction(detail: detail),
+                    if (_controller.isLoading)
+                      const Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: LinearProgressIndicator(minHeight: 2),
+                      ),
+                  ],
                 ),
               ),
             ),
-            Transform.scale(
-              scale: 1.25,
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Image.asset(
-                  heroImage,
-                  width: media.width * 0.5,
-                  height: media.width * 0.5,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
+}
 
-  Widget _buildContent(
-    BuildContext context,
-    Size media,
-    AppLanguage language,
-    List<NutritionInfo> nutritionItems,
-    List<Ingredient> ingredients,
-    List<InstructionStep> steps,
-    String description,
-  ) {
+class _FoodDetailContent extends StatelessWidget {
+  const _FoodDetailContent({
+    required this.media,
+    required this.detail,
+    required this.title,
+    required this.description,
+  });
+
+  final Size media;
+  final MealDetail detail;
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    final language = context.appLanguage;
+    final author = context.localize(_FoodInfoStrings.byAuthor);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,66 +154,72 @@ class FoodInfoDetailsView extends StatelessWidget {
             ),
           ),
           SizedBox(height: media.width * 0.05),
-          _buildTitleSection(context, language),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: TColor.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        author,
+                        style: TextStyle(color: TColor.gray, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    'assets/img/fav.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: media.width * 0.05),
-          _buildNutritionSection(context, nutritionItems),
+          _NutritionSection(items: detail.nutrition),
           SizedBox(height: media.width * 0.05),
-          _buildDescriptionSection(context, description),
+          _DescriptionSection(description: description),
           const SizedBox(height: 15),
-          _buildIngredientSection(context, media, ingredients, language),
-          _buildStepsSection(context, steps, language),
+          _IngredientsSection(ingredients: detail.ingredients, media: media),
+          _StepsSection(steps: detail.instructions),
           SizedBox(height: media.width * 0.25),
         ],
       ),
     );
   }
+}
 
-  Widget _buildTitleSection(BuildContext context, AppLanguage language) {
-    final title = _resolveLocalized(detail['name'], language);
-    final author = context.localize(_FoodInfoStrings.byAuthor);
+class _NutritionSection extends StatelessWidget {
+  const _NutritionSection({required this.items});
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: TColor.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  author,
-                  style: TextStyle(color: TColor.gray, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-          TextButton(
-            onPressed: () {},
-            child: Image.asset(
-              'assets/img/fav.png',
-              width: 15,
-              height: 15,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  final List<NutritionInfo> items;
 
-  Widget _buildNutritionSection(
-    BuildContext context,
-    List<NutritionInfo> nutritionItems,
-  ) {
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Text(
+          context.localize(_FoodInfoStrings.noNutritionData),
+          style: TextStyle(color: TColor.gray, fontSize: 12),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -248,13 +235,13 @@ class FoodInfoDetailsView extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 50,
+          height: 60,
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             scrollDirection: Axis.horizontal,
-            itemCount: nutritionItems.length,
+            itemCount: items.length,
             itemBuilder: (_, index) {
-              final nutrition = nutritionItems[index];
+              final nutrition = items[index];
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -302,8 +289,15 @@ class FoodInfoDetailsView extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildDescriptionSection(BuildContext context, String description) {
+class _DescriptionSection extends StatelessWidget {
+  const _DescriptionSection({required this.description});
+
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
     final moreLabel = context.localize(_FoodInfoStrings.readMoreLabel);
     final lessLabel = context.localize(_FoodInfoStrings.readLessLabel);
 
@@ -341,17 +335,29 @@ class FoodInfoDetailsView extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildIngredientSection(
-    BuildContext context,
-    Size media,
-    List<Ingredient> ingredients,
-    AppLanguage language,
-  ) {
-    final totalLabel = _FoodInfoStrings.ingredientsCount(
-      language,
-      ingredients.length,
-    );
+class _IngredientsSection extends StatelessWidget {
+  const _IngredientsSection({required this.ingredients, required this.media});
+
+  final List<Ingredient> ingredients;
+  final Size media;
+
+  @override
+  Widget build(BuildContext context) {
+    final language = context.appLanguage;
+    final totalLabel =
+        _FoodInfoStrings.ingredientsCount(language, ingredients.length);
+
+    if (ingredients.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Text(
+          context.localize(_FoodInfoStrings.noIngredients),
+          style: TextStyle(color: TColor.gray, fontSize: 12),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,20 +405,26 @@ class FoodInfoDetailsView extends StatelessWidget {
                       height: media.width * 0.23,
                       decoration: BoxDecoration(
                         color: TColor.lightGray,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                       alignment: Alignment.center,
                       child: Image.asset(
                         ingredient.image,
-                        width: 45,
-                        height: 45,
+                        width: media.width * 0.15,
+                        height: media.width * 0.15,
                         fit: BoxFit.contain,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       ingredient.name,
-                      style: TextStyle(color: TColor.black, fontSize: 12),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: TColor.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     Text(
                       ingredient.amount,
@@ -427,68 +439,164 @@ class FoodInfoDetailsView extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildStepsSection(
-    BuildContext context,
-    List<InstructionStep> steps,
-    AppLanguage language,
-  ) {
-    final totalLabel = _FoodInfoStrings.stepsCount(language, steps.length);
+class _StepsSection extends StatelessWidget {
+  const _StepsSection({required this.steps});
+
+  final List<InstructionStep> steps;
+
+  @override
+  Widget build(BuildContext context) {
+    if (steps.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Text(
+          context.localize(_FoodInfoStrings.noSteps),
+          style: TextStyle(color: TColor.gray, fontSize: 12),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                context.localize(_FoodInfoStrings.stepsTitle),
-                style: TextStyle(
-                  color: TColor.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  totalLabel,
-                  style: TextStyle(color: TColor.gray, fontSize: 12),
-                ),
-              ),
-            ],
+          child: Text(
+            context.localize(_FoodInfoStrings.stepsTitle),
+            style: TextStyle(
+              color: TColor.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 15),
           shrinkWrap: true,
           itemCount: steps.length,
-          itemBuilder: (_, index) => FoodStepDetailRow(
-            step: steps[index],
-            isLast: index == steps.length - 1,
-          ),
+          itemBuilder: (_, index) {
+            final step = steps[index];
+            return FoodStepDetailRow(
+              step: index + 1,
+              title: step.title ??
+                  context.localize(_FoodInfoStrings.stepLabel(index + 1)),
+              description: step.description,
+            );
+          },
         ),
       ],
     );
   }
+}
 
-  Widget _buildBottomAction(BuildContext context, AppLanguage language) {
-    final mealName = _resolveLocalized(meal['name'], language);
-    final buttonLabel = _FoodInfoStrings.addToMeal(language, mealName);
+class _BottomAction extends StatelessWidget {
+  const _BottomAction({required this.detail});
 
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: RoundButton(title: buttonLabel, onPressed: () {}),
+  final MealDetail detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final language = context.appLanguage;
+    final buttonLabel =
+        _FoodInfoStrings.addToMeal(language, detail.period.label.resolve(language));
+
+    return Positioned(
+      left: 20,
+      right: 20,
+      bottom: 30,
+      child: RoundButton(
+        title: buttonLabel,
+        type: RoundButtonType.bgGradient,
+        onPressed: () {},
+      ),
+    );
+  }
+}
+
+class _TopAppBar extends StatelessWidget {
+  const _TopAppBar({required this.onBack});
+
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      backgroundColor: Colors.transparent,
+      centerTitle: true,
+      elevation: 0,
+      leading: InkWell(
+        onTap: onBack,
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          height: 40,
+          width: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: TColor.lightGray,
+            borderRadius: BorderRadius.circular(10),
           ),
-        ],
+          child: Image.asset(
+            'assets/img/black_btn.png',
+            width: 15,
+            height: 15,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+      actions: const [
+        Padding(padding: EdgeInsets.only(right: 8), child: _MoreButton()),
+      ],
+    );
+  }
+}
+
+class _HeroAppBar extends StatelessWidget {
+  const _HeroAppBar({required this.media, required this.imageAsset});
+
+  final Size media;
+  final String imageAsset;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      backgroundColor: Colors.transparent,
+      centerTitle: true,
+      elevation: 0,
+      leadingWidth: 0,
+      leading: const SizedBox.shrink(),
+      expandedHeight: media.width * 0.5,
+      flexibleSpace: ClipRect(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Transform.scale(
+              scale: 1.25,
+              child: Container(
+                width: media.width * 0.55,
+                height: media.width * 0.55,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(media.width * 0.275),
+                ),
+              ),
+            ),
+            Transform.scale(
+              scale: 1.25,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Image.asset(
+                  imageAsset,
+                  width: media.width * 0.5,
+                  height: media.width * 0.5,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -500,7 +608,6 @@ class _MoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(10),
       onTap: () {},
       child: Container(
         margin: const EdgeInsets.all(8),
@@ -522,105 +629,36 @@ class _MoreButton extends StatelessWidget {
   }
 }
 
-class _FoodInfoContent {
-  static List<NutritionInfo> nutrition(AppLanguage language) {
-    final calorieUnit = language == AppLanguage.indonesian ? 'kKal' : 'kCal';
+class _ErrorView extends StatelessWidget {
+  const _ErrorView({required this.onRetry});
 
-    return [
-      NutritionInfo(
-        image: 'assets/img/burn.png',
-        title: _FoodInfoStrings.caloriesTitle.resolve(language),
-        value: '180 $calorieUnit',
-      ),
-      NutritionInfo(
-        image: 'assets/img/egg.png',
-        title: _FoodInfoStrings.fatsTitle.resolve(language),
-        value: '30 g',
-      ),
-      NutritionInfo(
-        image: 'assets/img/proteins.png',
-        title: _FoodInfoStrings.proteinsTitle.resolve(language),
-        value: '20 g',
-      ),
-      NutritionInfo(
-        image: 'assets/img/carbo.png',
-        title: _FoodInfoStrings.carboTitle.resolve(language),
-        value: '50 g',
-      ),
-    ];
-  }
+  final VoidCallback onRetry;
 
-  static List<Ingredient> ingredients(AppLanguage language) {
-    return [
-      Ingredient(
-        image: 'assets/img/flour.png',
-        name: _FoodInfoStrings.flourName.resolve(language),
-        amount: '100 gr',
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            context.localize(_FoodInfoStrings.failedToLoad),
+            style: TextStyle(color: TColor.gray, fontSize: 12),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: onRetry,
+            child: const Text('Retry'),
+          ),
+        ],
       ),
-      Ingredient(
-        image: 'assets/img/sugar.png',
-        name: _FoodInfoStrings.sugarName.resolve(language),
-        amount: language == AppLanguage.indonesian ? '3 sdm' : '3 tbsp',
-      ),
-      Ingredient(
-        image: 'assets/img/baking_soda.png',
-        name: _FoodInfoStrings.bakingSodaName.resolve(language),
-        amount: language == AppLanguage.indonesian ? '2 sdt' : '2 tsp',
-      ),
-      Ingredient(
-        image: 'assets/img/eggs.png',
-        name: _FoodInfoStrings.eggsName.resolve(language),
-        amount: language == AppLanguage.indonesian ? '2 butir' : '2 items',
-      ),
-    ];
-  }
-
-  static List<InstructionStep> steps(AppLanguage language) {
-    return [
-      InstructionStep(
-        number: '1',
-        title: _FoodInfoStrings.stepTitle(1).resolve(language),
-        description: _FoodInfoStrings.stepDescription1.resolve(language),
-      ),
-      InstructionStep(
-        number: '2',
-        title: _FoodInfoStrings.stepTitle(2).resolve(language),
-        description: _FoodInfoStrings.stepDescription2.resolve(language),
-      ),
-      InstructionStep(
-        number: '3',
-        title: _FoodInfoStrings.stepTitle(3).resolve(language),
-        description: _FoodInfoStrings.stepDescription3.resolve(language),
-      ),
-      InstructionStep(
-        number: '4',
-        title: _FoodInfoStrings.stepTitle(4).resolve(language),
-        description: _FoodInfoStrings.stepDescription4.resolve(language),
-      ),
-      InstructionStep(
-        number: '5',
-        title: _FoodInfoStrings.stepTitle(5).resolve(language),
-        description: _FoodInfoStrings.stepDescription5.resolve(language),
-      ),
-    ];
+    );
   }
 }
 
 class _FoodInfoStrings {
-  static const description = LocalizedText(
-    english:
-        "Pancakes are some people's favorite breakfast, who doesn't like pancakes? "
-        "Especially with the real honey splash on top of the pancakes, of course everyone loves that! "
-        "Besides being delicious, pancakes can be a quick treat for a busy morning.",
-    indonesian:
-        'Pancake adalah sarapan favorit banyak orang. Siapa sih yang tidak suka? '
-        'Apalagi dengan siraman madu asli di atasnya, pasti semua orang suka! '
-        'Selain lezat, pancake juga bisa menjadi hidangan cepat di pagi hari yang sibuk.',
-  );
-
   static const byAuthor = LocalizedText(
-    english: 'by James Ruth',
-    indonesian: 'oleh James Ruth',
+    english: 'By AI Gym Buddy',
+    indonesian: 'Oleh AI Gym Buddy',
   );
 
   static const nutritionTitle = LocalizedText(
@@ -629,126 +667,64 @@ class _FoodInfoStrings {
   );
 
   static const descriptionTitle = LocalizedText(
-    english: 'Descriptions',
+    english: 'Description',
     indonesian: 'Deskripsi',
   );
 
   static const readMoreLabel = LocalizedText(
-    english: 'Read More ...',
-    indonesian: 'Baca Selengkapnya ...',
+    english: 'Read more',
+    indonesian: 'Selengkapnya',
   );
 
   static const readLessLabel = LocalizedText(
-    english: 'Read Less',
-    indonesian: 'Sembunyikan',
+    english: 'Read less',
+    indonesian: 'Lebih sedikit',
   );
 
   static const ingredientsTitle = LocalizedText(
-    english: 'Ingredients That You\nWill Need',
-    indonesian: 'Bahan yang Kamu\nButuhkan',
+    english: 'Ingredients',
+    indonesian: 'Bahan',
   );
 
   static const stepsTitle = LocalizedText(
-    english: 'Step by Step',
-    indonesian: 'Langkah demi Langkah',
+    english: 'Steps',
+    indonesian: 'Langkah',
   );
 
-  static const caloriesTitle = LocalizedText(
-    english: 'Calories',
-    indonesian: 'Kalori',
+  static const failedToLoad = LocalizedText(
+    english: 'Unable to load meal details.',
+    indonesian: 'Tidak dapat memuat detail menu.',
   );
 
-  static const fatsTitle = LocalizedText(english: 'Fats', indonesian: 'Lemak');
-
-  static const proteinsTitle = LocalizedText(
-    english: 'Proteins',
-    indonesian: 'Protein',
+  static const noNutritionData = LocalizedText(
+    english: 'Nutrition data not available.',
+    indonesian: 'Data nutrisi belum tersedia.',
   );
 
-  static const carboTitle = LocalizedText(
-    english: 'Carbo',
-    indonesian: 'Karbo',
+  static const noIngredients = LocalizedText(
+    english: 'Ingredients not available yet.',
+    indonesian: 'Bahan belum tersedia.',
   );
 
-  static const flourName = LocalizedText(
-    english: 'Wheat Flour',
-    indonesian: 'Tepung Terigu',
+  static const noSteps = LocalizedText(
+    english: 'Preparation steps not available.',
+    indonesian: 'Langkah persiapan belum tersedia.',
   );
 
-  static const sugarName = LocalizedText(english: 'Sugar', indonesian: 'Gula');
-
-  static const bakingSodaName = LocalizedText(
-    english: 'Baking Soda',
-    indonesian: 'Soda Kue',
-  );
-
-  static const eggsName = LocalizedText(english: 'Eggs', indonesian: 'Telur');
-
-  static LocalizedText stepTitle(int number) {
-    return LocalizedText(
-      english: 'Step $number',
-      indonesian: 'Langkah $number',
-    );
+  static String ingredientsCount(AppLanguage language, int total) {
+    final suffix = language == AppLanguage.indonesian ? 'Bahan' : 'Ingredients';
+    return '$total $suffix';
   }
 
-  static const stepDescription1 = LocalizedText(
-    english: 'Prepare all of the ingredients that are needed.',
-    indonesian: 'Siapkan semua bahan yang diperlukan.',
-  );
-
-  static const stepDescription2 = LocalizedText(
-    english: 'Mix flour, sugar, salt, and baking powder.',
-    indonesian: 'Campurkan tepung, gula, garam, dan baking powder.',
-  );
-
-  static const stepDescription3 = LocalizedText(
-    english: 'Mix the eggs and milk until blended in a separate bowl.',
-    indonesian: 'Kocok telur dan susu hingga tercampur rata dalam wadah lain.',
-  );
-
-  static const stepDescription4 = LocalizedText(
-    english: 'Combine the wet mixture with the dry ingredients and stir well.',
-    indonesian:
-        'Masukkan campuran telur dan susu ke bahan kering lalu aduk rata.',
-  );
-
-  static const stepDescription5 = LocalizedText(
-    english: 'Cook until golden brown and serve while warm.',
-    indonesian: 'Masak hingga berwarna keemasan dan sajikan selagi hangat.',
-  );
-
-  static String ingredientsCount(AppLanguage language, int count) {
-    if (language == AppLanguage.indonesian) {
-      return '$count Bahan';
-    }
-    return '$count Items';
-  }
-
-  static String stepsCount(AppLanguage language, int count) {
-    if (language == AppLanguage.indonesian) {
-      return '$count Langkah';
-    }
-    return '$count Steps';
-  }
+  static LocalizedText stepLabel(int number) => LocalizedText(
+        english: 'Step $number',
+        indonesian: 'Langkah $number',
+      );
 
   static String addToMeal(AppLanguage language, String mealName) {
     if (language == AppLanguage.indonesian) {
-      return 'Tambahkan ke Menu $mealName';
+      return 'Tambahkan ke $mealName';
     }
-    return 'Add to $mealName Meal';
+    return 'Add to $mealName';
   }
-}
-
-String _resolveLocalized(
-  Object? value,
-  AppLanguage language, {
-  String? fallback,
-}) {
-  if (value is LocalizedText) {
-    return value.resolve(language);
-  }
-  if (value == null) {
-    return fallback ?? '';
-  }
-  return value.toString();
 }
