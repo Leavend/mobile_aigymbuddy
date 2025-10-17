@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../../view/shared/models/workout.dart';
+
 /// Collection of strongly typed navigation argument models used by [GoRouter].
 ///
 /// Using dedicated data classes instead of loosely typed `Map` extras helps us
@@ -16,12 +18,17 @@ class AddScheduleArgs {
 
 @immutable
 class WorkoutDetailArgs {
-  const WorkoutDetailArgs({required this.workout});
+  const WorkoutDetailArgs({
+    required this.workoutId,
+    this.fallbackOverview,
+  });
 
-  final Map<String, dynamic> workout;
+  final int workoutId;
+  final WorkoutOverview? fallbackOverview;
 
   @override
-  String toString() => 'WorkoutDetailArgs(workout: $workout)';
+  String toString() =>
+      'WorkoutDetailArgs(workoutId: $workoutId, fallback: $fallbackOverview)';
 }
 
 @immutable

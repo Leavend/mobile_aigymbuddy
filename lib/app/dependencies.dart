@@ -8,10 +8,12 @@ import '../data/db/daos/meal_planner_dao.dart';
 import '../view/shared/repositories/drift_meal_planner_repository.dart';
 import '../view/shared/repositories/drift_profile_repository.dart';
 import '../view/shared/repositories/drift_tracking_repository.dart';
+import '../view/shared/repositories/drift_workout_repository.dart';
 import '../view/shared/repositories/exercise_repository.dart';
 import '../view/shared/repositories/meal_planner_repository.dart';
 import '../view/shared/repositories/profile_repository.dart';
 import '../view/shared/repositories/tracking_repository.dart';
+import '../view/shared/repositories/workout_repository.dart';
 
 /// Aggregates repositories and exposes them through the widget tree.
 class AppDependencies extends InheritedWidget {
@@ -21,6 +23,7 @@ class AppDependencies extends InheritedWidget {
     required this.exerciseRepository,
     required this.trackingRepository,
     required this.mealPlannerRepository,
+    required this.workoutRepository,
     required super.child,
   });
 
@@ -42,6 +45,8 @@ class AppDependencies extends InheritedWidget {
         database.exerciseDao,
       ),
       mealPlannerRepository: mealPlannerRepository,
+      workoutRepository:
+          DriftWorkoutRepository(database, database.workoutDao),
       child: child,
     );
   }
@@ -50,6 +55,7 @@ class AppDependencies extends InheritedWidget {
   final ExerciseRepository exerciseRepository;
   final TrackingRepository trackingRepository;
   final MealPlannerRepository mealPlannerRepository;
+  final WorkoutRepository workoutRepository;
 
   static AppDependencies of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<AppDependencies>();
