@@ -27,8 +27,9 @@ class CompleteProfileController extends ChangeNotifier {
   OnboardingDraft get draft => _draft;
   UiGender? get selectedGender => _selectedGender;
 
-  AutovalidateMode get autovalidateMode =>
-      _autoValidate ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled;
+  AutovalidateMode get autovalidateMode => _autoValidate
+      ? AutovalidateMode.onUserInteraction
+      : AutovalidateMode.disabled;
 
   bool get isFormComplete =>
       _selectedGender != null &&

@@ -42,8 +42,9 @@ class SignUpFormController extends ChangeNotifier {
   bool _isRegisterEnabled = false;
   bool _showTermsError = false;
 
-  AutovalidateMode get autovalidateMode =>
-      _autoValidate ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled;
+  AutovalidateMode get autovalidateMode => _autoValidate
+      ? AutovalidateMode.onUserInteraction
+      : AutovalidateMode.disabled;
 
   bool get isPasswordVisible => _isPasswordVisible;
 
@@ -119,12 +120,11 @@ class SignUpFormController extends ChangeNotifier {
   }
 
   void _updateRegisterEnabled() {
-    final canSubmit =
-        firstNameController.text.trim().isNotEmpty &&
-            lastNameController.text.trim().isNotEmpty &&
-            AuthValidators.isValidEmail(emailController.text) &&
-            passwordController.text.length >= 8 &&
-            _isTermsAccepted;
+    final canSubmit = firstNameController.text.trim().isNotEmpty &&
+        lastNameController.text.trim().isNotEmpty &&
+        AuthValidators.isValidEmail(emailController.text) &&
+        passwordController.text.length >= 8 &&
+        _isTermsAccepted;
     final shouldShowTermsError = _showTermsError && !_isTermsAccepted;
     if (canSubmit == _isRegisterEnabled &&
         shouldShowTermsError == _showTermsError) {

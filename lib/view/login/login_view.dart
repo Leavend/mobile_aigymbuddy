@@ -318,20 +318,16 @@ class _LoginViewState extends State<LoginView> {
         AppStateScope.of(context).updateHasProfile(true);
         if (!mounted) return;
         context.go(AppRoute.main);
-        break;
       case LoginStatus.validationError:
       case LoginStatus.inProgress:
-        break;
       case LoginStatus.missingProfile:
         _showSnack(context.localize(_LoginTexts.missingProfile));
-        break;
       case LoginStatus.failure:
         final errorText = result.error?.toString();
         final message = errorText == null || errorText.isEmpty
             ? context.localize(_LoginTexts.genericError)
             : '${context.localize(_LoginTexts.genericError)}\n$errorText';
         _showSnack(message);
-        break;
     }
   }
 

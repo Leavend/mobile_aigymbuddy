@@ -63,7 +63,7 @@ class WhatYourGoalView extends StatefulWidget {
 
 class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   late final GoalSelectionController _controller;
-  final _carouselController = CarouselController();
+  final _carouselController = CarouselSliderController();
 
   ProfileFormMode get _mode => widget.args.mode;
 
@@ -145,7 +145,8 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildSectionTitle(context.localize(_GoalTexts.experienceSection)),
+                _buildSectionTitle(
+                    context.localize(_GoalTexts.experienceSection)),
                 const SizedBox(height: 8),
                 _buildLevelChips(),
                 const SizedBox(height: 24),
@@ -232,15 +233,14 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
           AppRoute.welcome,
           extra: WelcomeArgs(displayName: result.draft?.displayName),
         );
-        break;
       case GoalSubmissionStatus.profileUpdated:
         context.go(AppRoute.profile);
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
-            SnackBar(content: Text(context.localize(_GoalTexts.profileUpdated))),
+            SnackBar(
+                content: Text(context.localize(_GoalTexts.profileUpdated))),
           );
-        break;
       case GoalSubmissionStatus.failure:
         final errorText = result.error?.toString();
         final message = (errorText != null && errorText.trim().isNotEmpty)
@@ -249,7 +249,6 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(message)));
-        break;
     }
   }
 }

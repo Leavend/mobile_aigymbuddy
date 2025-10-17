@@ -47,8 +47,9 @@ class LoginFormController extends ChangeNotifier {
   bool _isSubmitting = false;
   bool _canSubmit = false;
 
-  AutovalidateMode get autovalidateMode =>
-      _autoValidate ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled;
+  AutovalidateMode get autovalidateMode => _autoValidate
+      ? AutovalidateMode.onUserInteraction
+      : AutovalidateMode.disabled;
 
   bool get isPasswordVisible => _isPasswordVisible;
 
