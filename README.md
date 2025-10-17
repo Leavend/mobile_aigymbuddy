@@ -35,6 +35,6 @@ untuk fitur sinkronisasi dan integrasi AI di kemudian hari.
   bawah untuk menghasilkan file lokal kemudian salin ke folder `web/`:
   ```bash
   flutter pub run drift_dev wasm
-  cp .dart_tool/drift_dev/wasm/sqlite3.wasm web/
-  cp .dart_tool/drift_dev/wasm/drift_worker.dart.js web/
+  cp .dart_tool/pub/bin/drift_dev/wasm/sqlite3.wasm web/
+  cp .dart_tool/pub/bin/drift_dev/wasm/drift_worker.dart.js web/
   ```
