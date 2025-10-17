@@ -55,18 +55,19 @@ class _AiGymBuddyAppState extends State<AiGymBuddyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = _createAppTheme();
     return FutureBuilder<AppBootstrapData>(
       future: _bootstrapFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return _buildLoadingApp();
+          return _buildLoadingApp(theme);
         }
 
         if (snapshot.hasError || snapshot.data == null) {
           final errorMessage = snapshot.hasError
               ? 'Gagal memulai aplikasi. ${snapshot.error}'
               : 'Gagal memulai aplikasi. Silakan coba lagi.';
-          return _buildErrorApp(errorMessage);
+          return _buildErrorApp(theme, errorMessage);
         }
 
         final router = snapshot.data!.router;
@@ -77,10 +78,7 @@ class _AiGymBuddyAppState extends State<AiGymBuddyApp> {
             child: MaterialApp.router(
               debugShowCheckedModeBanner: false,
               title: 'AI Gym Buddy',
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                useMaterial3: true,
-              ),
+              theme: theme,
               routerConfig: router,
             ),
           ),
@@ -89,18 +87,28 @@ class _AiGymBuddyAppState extends State<AiGymBuddyApp> {
     );
   }
 
-  Widget _buildLoadingApp() {
-    return const MaterialApp(
+  ThemeData _createAppTheme() {
+    return ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      useMaterial3: true,
+      fontFamily: 'Poppins',
+    );
+  }
+
+  Widget _buildLoadingApp(ThemeData theme) {
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
+      theme: theme,
+      home: const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       ),
     );
   }
 
-  Widget _buildErrorApp(String message) {
+  Widget _buildErrorApp(ThemeData theme, String message) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: theme,
       home: Scaffold(
         body: Center(
           child: Padding(
