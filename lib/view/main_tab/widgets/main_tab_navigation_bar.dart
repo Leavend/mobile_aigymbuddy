@@ -62,7 +62,8 @@ class MainTabNavigationBar extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(metrics.containerRadius),
+                    borderRadius:
+                        BorderRadius.circular(metrics.containerRadius),
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
