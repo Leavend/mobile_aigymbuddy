@@ -437,8 +437,7 @@ class _LogSetCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<ExerciseSummary>(
-              // FIX: `value` is deprecated, use `initialValue` instead.
-              initialValue: selectedExercise,
+              value: selectedExercise,
               decoration: const InputDecoration(labelText: 'Pilih latihan'),
               items: exercises
                   .map(
