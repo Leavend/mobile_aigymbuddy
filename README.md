@@ -25,15 +25,16 @@ untuk fitur sinkronisasi dan integrasi AI di kemudian hari.
 
 ### Catatan Platform Web
 
-- Backend Drift memakai WebAssembly resmi dengan penyimpanan IndexedDB. Modul
-  SQLite (`sqlite3.wasm`) dan worker (`drift_worker.js`) telah didaftarkan pada
-  `pubspec.yaml` melalui entri `packages/sqlite3/...` dan
-  `packages/drift/...` sehingga Flutter otomatis menyalinnya ke jalur
-  `assets/packages/<package>/...` saat build. Tidak perlu menyalin berkas
-  secara manual.
-- Jika ingin meng-host file sendiri (misal untuk lingkungan tanpa akses
-  internet), setel variabel kompilasi berikut saat build:
+- Backend Drift memanfaatkan WebAssembly resmi yang menyimpan data pada
+  IndexedDB. Aplikasi terlebih dahulu mencoba memuat `sqlite3.wasm` dan
+  `drift_worker.dart.js` dari root host (`web/`). Jika berkas tersebut belum
+  dihasilkan, build akan otomatis jatuh ke versi CDN sehingga pengembangan
+  tetap dapat berjalan.
+- Untuk lingkungan produksi disarankan menyediakan sendiri kedua berkas wasm
+  tersebut agar tidak bergantung pada koneksi internet. Gunakan perintah di
+  bawah untuk menghasilkan file lokal kemudian salin ke folder `web/`:
   ```bash
-  flutter run -d chrome --dart-define=DRIFT_SQLITE3_WASM_URI=/path/sqlite3.wasm \
-                               --dart-define=DRIFT_WORKER_URI=/path/drift_worker.js
+  flutter pub run drift_dev wasm
+  cp .dart_tool/drift_dev/wasm/sqlite3.wasm web/
+  cp .dart_tool/drift_dev/wasm/drift_worker.dart.js web/
   ```
