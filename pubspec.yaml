@@ -81,8 +81,8 @@ flutter:
   assets:
     - assets/img/
     - assets/seed/seed_exercises.json
-    - packages/sqlite3/wasm/sqlite3.wasm
-    - packages/drift/wasm/drift_worker.dart.js
+    # - packages/sqlite3/wasm/sqlite3.wasm
+    # - packages/drift/wasm/drift_worker.dart.js
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
