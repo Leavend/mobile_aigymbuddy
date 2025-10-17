@@ -5,13 +5,13 @@ import 'package:intl/intl.dart';
 
 import '../../app/dependencies.dart';
 import '../../common/app_router.dart';
+import '../login/models/onboarding_draft.dart';
 import '../shared/models/exercise.dart';
 import '../shared/models/tracking.dart' as tracking_models;
 import '../shared/models/user_profile.dart' as profile_domain;
-import '../shared/repositories/exercise_repository.dart';
-import '../shared/repositories/profile_repository.dart';
-import '../shared/repositories/tracking_repository.dart';
-import '../login/models/onboarding_draft.dart';
+import 'home_action_result.dart';
+import 'home_controller.dart';
+import 'home_state.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -21,38 +21,28 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  late final ProfileRepository _profileRepository;
-  late final TrackingRepository _trackingRepository;
-  late final ExerciseRepository _exerciseRepository;
-
   final _weightController = TextEditingController();
   final _setIndexController = TextEditingController(text: '1');
   final _repsController = TextEditingController();
   final _loadController = TextEditingController();
   final _noteController = TextEditingController();
 
-  bool _initialised = false;
-  bool _addingWeight = false;
-  bool _loggingSet = false;
-  List<ExerciseSummary> _exercises = const [];
-  ExerciseSummary? _selectedExercise;
-  late Future<List<tracking_models.WeeklyVolumePoint>> _weeklyVolumeFuture;
+  late HomeController _controller;
+  bool _controllerInitialised = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_initialised) return;
+    if (_controllerInitialised) return;
     final deps = AppDependencies.of(context);
-    _profileRepository = deps.profileRepository;
-    _trackingRepository = deps.trackingRepository;
-    _exerciseRepository = deps.exerciseRepository;
-    _weeklyVolumeFuture = _trackingRepository.loadWeeklyVolume();
-    _loadExercises();
-    _initialised = true;
+    _controller = HomeController.fromContext(deps);
+    _controller.initialize();
+    _controllerInitialised = true;
   }
 
   @override
   void dispose() {
+    _controller.dispose();
     _weightController.dispose();
     _setIndexController.dispose();
     _repsController.dispose();
@@ -61,97 +51,36 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
-  Future<void> _loadExercises() async {
-    final exercises = await _exerciseRepository.listExercises();
+  Future<void> _handleAddWeight() async {
+    final HomeActionResult result =
+        await _controller.addBodyWeight(_weightController.text);
     if (!mounted) return;
-    setState(() {
-      _exercises = exercises;
-      if (_selectedExercise == null && exercises.isNotEmpty) {
-        _selectedExercise = exercises.first;
-      }
-    });
-  }
-
-  Future<void> _addWeight() async {
-    final value = double.tryParse(_weightController.text.trim());
-    if (value == null || value <= 0) {
-      _showMessage('Masukkan berat badan yang valid.');
-      return;
-    }
-
-    setState(() => _addingWeight = true);
-    try {
-      await _trackingRepository.addBodyWeight(value);
+    _showMessage(result.message);
+    if (result.shouldResetForm) {
       _weightController.clear();
-      _showMessage('Berat badan tersimpan.');
-    } catch (error) {
-      _showMessage('Gagal menyimpan berat badan: $error');
-    } finally {
-      if (mounted) {
-        setState(() => _addingWeight = false);
-      }
     }
   }
 
-  Future<void> _logSet() async {
-    final exercise = _selectedExercise;
-    if (exercise == null) {
-      _showMessage('Data latihan belum siap.');
-      return;
-    }
-
-    final setIndex = int.tryParse(_setIndexController.text.trim());
-    if (setIndex == null || setIndex <= 0) {
-      _showMessage('Index set harus lebih dari 0.');
-      return;
-    }
-
-    final repsText = _repsController.text.trim();
-    final loadText = _loadController.text.trim();
-    final reps = repsText.isEmpty ? null : int.tryParse(repsText);
-    final weight = loadText.isEmpty ? null : double.tryParse(loadText);
-
-    if (repsText.isNotEmpty && reps == null) {
-      _showMessage('Reps harus berupa angka.');
-      return;
-    }
-    if (loadText.isNotEmpty && weight == null) {
-      _showMessage('Beban harus berupa angka.');
-      return;
-    }
-
-    setState(() => _loggingSet = true);
-    try {
-      await _trackingRepository.logManualSet(
-        exerciseId: exercise.id,
-        setIndex: setIndex,
-        reps: reps,
-        weight: weight,
-        note: _noteController.text.trim().isEmpty
-            ? null
-            : _noteController.text.trim(),
-      );
+  Future<void> _handleLogSet() async {
+    final HomeActionResult result = await _controller.logManualSet(
+      setIndex: _setIndexController.text,
+      reps: _repsController.text,
+      weight: _loadController.text,
+      note: _noteController.text,
+    );
+    if (!mounted) return;
+    _showMessage(result.message);
+    if (result.shouldResetForm) {
       _repsController.clear();
       _loadController.clear();
       _noteController.clear();
       _setIndexController.text = '1';
-      setState(() {
-        _weeklyVolumeFuture = _trackingRepository.loadWeeklyVolume();
-      });
-      _showMessage('Catatan latihan tersimpan.');
-    } catch (error) {
-      _showMessage('Gagal menyimpan latihan: $error');
-    } finally {
-      if (mounted) {
-        setState(() => _loggingSet = false);
-      }
     }
   }
 
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _startEdit(profile_domain.UserProfile profile) {
@@ -165,47 +94,66 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('AI Gym Buddy')),
-      body: StreamBuilder<profile_domain.UserProfile?>(
-        stream: _profileRepository.watchProfile(),
-        builder: (context, snapshot) {
-          final profile = snapshot.data;
+    if (!_controllerInitialised) {
+      return const SizedBox.shrink();
+    }
 
-          return ListView(
-            padding: const EdgeInsets.all(24),
-            children: [
-              _ProfileSummaryCard(
-                  profile: profile,
-                  onEdit: profile == null ? null : () => _startEdit(profile)),
-              const SizedBox(height: 24),
-              _WeightChartCard(
-                weightStream: _trackingRepository.watchBodyWeight(),
-                controller: _weightController,
-                onAddWeight: _addWeight,
-                isSaving: _addingWeight,
-              ),
-              const SizedBox(height: 24),
-              _LogSetCard(
-                exercises: _exercises,
-                selectedExercise: _selectedExercise,
-                onExerciseChanged: (exercise) =>
-                    setState(() => _selectedExercise = exercise),
-                setIndexController: _setIndexController,
-                repsController: _repsController,
-                loadController: _loadController,
-                noteController: _noteController,
-                onSubmit: _loggingSet ? null : _logSet,
-                isSaving: _loggingSet,
-              ),
-              const SizedBox(height: 24),
-              _RecentSetsCard(stream: _trackingRepository.watchRecentSetLogs()),
-              const SizedBox(height: 24),
-              _WeeklyVolumeCard(future: _weeklyVolumeFuture),
-            ],
-          );
-        },
-      ),
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final HomeState state = _controller.state;
+        return Scaffold(
+          appBar: AppBar(title: const Text('AI Gym Buddy')),
+          body: RefreshIndicator(
+            onRefresh: _controller.refreshData,
+            child: StreamBuilder<profile_domain.UserProfile?>(
+              stream: _controller.profileRepository.watchProfile(),
+              builder: (context, snapshot) {
+                final profile = snapshot.data;
+
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(24),
+                  children: [
+                    _ProfileSummaryCard(
+                      profile: profile,
+                      onEdit:
+                          profile == null ? null : () => _startEdit(profile),
+                    ),
+                    const SizedBox(height: 24),
+                    _WeightChartCard(
+                      weightStream:
+                          _controller.trackingRepository.watchBodyWeight(),
+                      controller: _weightController,
+                      onAddWeight:
+                          state.isAddingWeight ? null : _handleAddWeight,
+                      isSaving: state.isAddingWeight,
+                    ),
+                    const SizedBox(height: 24),
+                    _LogSetCard(
+                      exercises: state.exercises,
+                      selectedExercise: state.selectedExercise,
+                      onExerciseChanged: _controller.selectExercise,
+                      setIndexController: _setIndexController,
+                      repsController: _repsController,
+                      loadController: _loadController,
+                      noteController: _noteController,
+                      onSubmit: state.isLoggingSet ? null : _handleLogSet,
+                      isSaving: state.isLoggingSet,
+                    ),
+                    const SizedBox(height: 24),
+                    _RecentSetsCard(
+                      stream: _controller.trackingRepository.watchRecentSetLogs(),
+                    ),
+                    const SizedBox(height: 24),
+                    _WeeklyVolumeCard(future: state.weeklyVolumeFuture),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -218,14 +166,12 @@ class _ProfileSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // FIX: Create a local variable to allow type promotion for null safety.
     final p = profile;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
-        // Use the local variable `p` for the null check.
         child: p == null
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,7 +190,6 @@ class _ProfileSummaryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    // Now you can safely access properties on `p`.
                     p.name ?? 'Gym Buddy',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
@@ -279,7 +224,7 @@ class _WeightChartCard extends StatelessWidget {
 
   final Stream<List<tracking_models.BodyWeightEntry>> weightStream;
   final TextEditingController controller;
-  final VoidCallback onAddWeight;
+  final Future<void> Function()? onAddWeight;
   final bool isSaving;
 
   @override
@@ -375,7 +320,11 @@ class _WeightChartCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 FilledButton(
-                  onPressed: isSaving ? null : onAddWeight,
+                  onPressed: isSaving
+                      ? null
+                      : () {
+                          onAddWeight?.call();
+                        },
                   child: isSaving
                       ? const SizedBox(
                           width: 16,
@@ -419,8 +368,10 @@ class _LogSetCard extends StatelessWidget {
   final TextEditingController repsController;
   final TextEditingController loadController;
   final TextEditingController noteController;
-  final VoidCallback? onSubmit;
+  final Future<void> Function()? onSubmit;
   final bool isSaving;
+
+  bool get _isFormEnabled => exercises.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -437,17 +388,16 @@ class _LogSetCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<ExerciseSummary>(
-              initialValue: selectedExercise,
+              value: _isFormEnabled ? selectedExercise : null,
               decoration: const InputDecoration(labelText: 'Pilih latihan'),
+              disabledHint: const Text('Latihan belum tersedia'),
               items: exercises
-                  .map(
-                    (exercise) => DropdownMenuItem<ExerciseSummary>(
-                      value: exercise,
-                      child: Text(exercise.name),
-                    ),
-                  )
+                  .map((exercise) => DropdownMenuItem(
+                        value: exercise,
+                        child: Text(exercise.name),
+                      ))
                   .toList(),
-              onChanged: onExerciseChanged,
+              onChanged: _isFormEnabled ? onExerciseChanged : null,
             ),
             const SizedBox(height: 12),
             Row(
@@ -456,7 +406,8 @@ class _LogSetCard extends StatelessWidget {
                   child: TextField(
                     controller: setIndexController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Set ke'),
+                    decoration: const InputDecoration(labelText: 'Set ke-'),
+                    enabled: _isFormEnabled,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -465,6 +416,7 @@ class _LogSetCard extends StatelessWidget {
                     controller: repsController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: 'Reps'),
+                    enabled: _isFormEnabled,
                   ),
                 ),
               ],
@@ -475,23 +427,33 @@ class _LogSetCard extends StatelessWidget {
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(labelText: 'Beban (kg)'),
+              enabled: _isFormEnabled,
             ),
             const SizedBox(height: 12),
             TextField(
               controller: noteController,
-              decoration:
-                  const InputDecoration(labelText: 'Catatan (opsional)'),
+              decoration: const InputDecoration(labelText: 'Catatan tambahan'),
+              enabled: _isFormEnabled,
+              minLines: 1,
+              maxLines: 3,
             ),
             const SizedBox(height: 16),
-            FilledButton(
-              onPressed: onSubmit,
-              child: isSaving
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Simpan Latihan'),
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton(
+                onPressed: !_isFormEnabled || isSaving
+                    ? null
+                    : () {
+                        onSubmit?.call();
+                      },
+                child: isSaving
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Simpan Catatan'),
+              ),
             ),
           ],
         ),
