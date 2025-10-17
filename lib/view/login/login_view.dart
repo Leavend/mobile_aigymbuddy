@@ -1,3 +1,5 @@
+// lib/view/login/login_view.dart
+
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/app/app_state.dart';

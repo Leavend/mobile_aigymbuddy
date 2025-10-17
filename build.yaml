@@ -1,6 +1,8 @@
 targets:
   $default:
     builders:
-      drift_dev:
+      flutter_tools|web_dev_server:
         options:
-          store_date_time_values_as_text: true
+          headers:
+            Cross-Origin-Opener-Policy: "same-origin"
+            Cross-Origin-Embedder-Policy: "require-corp"
