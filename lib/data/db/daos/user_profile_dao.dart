@@ -35,11 +35,17 @@ class UserProfileDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// Updates the weight for the profile identified by [id].
-  Future<void> updateWeight(int id, double weightKg) {
-    return (update(userProfiles)..where((tbl) => tbl.id.equals(id))).write(
+  Future<void> updateWeight(int id, double weightKg) async {
+    if (weightKg <= 0) {
+      throw ArgumentError.value(weightKg, 'weightKg', 'Must be greater than 0');
+    }
+
+    final timestamp = ensureUtc(_now());
+
+    await (update(userProfiles)..where((tbl) => tbl.id.equals(id))).write(
       UserProfilesCompanion(
         weightKg: Value(weightKg),
-        updatedAt: Value(_now()),
+        updatedAt: Value(timestamp),
       ),
     );
   }

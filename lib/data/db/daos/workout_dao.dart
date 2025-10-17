@@ -6,6 +6,7 @@ import '../app_database.dart';
 import '../tables/exercises.dart';
 import '../tables/workout_exercises.dart';
 import '../tables/workouts.dart';
+import 'dao_utils.dart';
 
 part 'workout_dao.g.dart';
 
@@ -60,7 +61,11 @@ class WorkoutDao extends DatabaseAccessor<AppDatabase> with _$WorkoutDaoMixin {
     required List<WorkoutItemInput> items,
   }) {
     return transaction(() async {
-      final scheduledUtc = scheduledFor?.toUtc();
+      if (items.any((item) => item.sets <= 0)) {
+        throw ArgumentError('Each workout item must contain at least one set.');
+      }
+
+      final scheduledUtc = scheduledFor != null ? ensureUtc(scheduledFor) : null;
       final workoutId = await into(workouts).insert(
         WorkoutsCompanion.insert(
           title: title,

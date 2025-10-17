@@ -63,6 +63,32 @@ class RecentSetLogRow {
 )
 class TrackingDao extends DatabaseAccessor<AppDatabase>
     with _$TrackingDaoMixin {
+  static const String _weeklyVolumeQuery = '''
+SELECT strftime('%Y-%W', sessions.started_at) AS week_key,
+       SUM(COALESCE(set_logs.reps, 0) * COALESCE(set_logs.weight, 0)) AS total_volume
+FROM set_logs
+INNER JOIN sessions ON sessions.id = set_logs.session_id
+WHERE sessions.started_at >= ?
+GROUP BY week_key
+ORDER BY week_key ASC
+''';
+
+  static const String _recentSetLogsQuery = '''
+SELECT set_logs.id AS set_log_id,
+       set_logs.set_index AS set_index,
+       set_logs.reps AS reps,
+       set_logs.weight AS weight,
+       set_logs.note AS note,
+       sessions.started_at AS started_at,
+       exercises.name AS exercise_name
+FROM set_logs
+INNER JOIN sessions ON sessions.id = set_logs.session_id
+INNER JOIN workout_exercises ON workout_exercises.id = set_logs.workout_exercise_id
+INNER JOIN exercises ON exercises.id = workout_exercises.exercise_id
+ORDER BY sessions.started_at DESC, set_logs.set_index DESC
+LIMIT ?
+''';
+
   // ignore: use_super_parameters
   TrackingDao(AppDatabase db, {UtcNow now = defaultUtcNow})
       : _now = now,
@@ -70,7 +96,7 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
 
   final UtcNow _now;
 
-  DateTime get _utcNow => _now();
+  DateTime get _utcNow => ensureUtc(_now());
 
   /// Inserts a manual workout, session and set log for ad-hoc tracking.
   Future<void> insertManualSet({
@@ -123,7 +149,7 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
 
   /// Creates a session for the given [workoutId].
   Future<int> startSession(int workoutId, {DateTime? startedAt}) {
-    final timestamp = startedAt ?? _utcNow;
+    final timestamp = ensureUtc(startedAt ?? _utcNow);
     return into(sessions).insert(
       SessionsCompanion.insert(
         workoutId: workoutId,
@@ -146,6 +172,10 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
     double? weight,
     String? note,
   }) {
+    if (setIndex <= 0) {
+      throw ArgumentError.value(setIndex, 'setIndex', 'Must be greater than 0');
+    }
+
     return _insertSetLog(
       sessionId: sessionId,
       workoutExerciseId: workoutExerciseId,
@@ -158,6 +188,10 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
 
   /// Records a body weight entry at the current timestamp.
   Future<int> insertBodyWeight(double weightKg) {
+    if (weightKg <= 0) {
+      throw ArgumentError.value(weightKg, 'weightKg', 'Must be greater than 0');
+    }
+
     return into(bodyWeightEntries).insert(
       BodyWeightEntriesCompanion.insert(
         weightKg: weightKg,
@@ -175,15 +209,7 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
     final fromDate = subtractDays(_now, weeks * 7);
 
     final rows = await customSelect(
-      '''
-SELECT strftime('%Y-%W', sessions.started_at) AS week_key,
-       SUM(COALESCE(set_logs.reps, 0) * COALESCE(set_logs.weight, 0)) AS total_volume
-FROM set_logs
-INNER JOIN sessions ON sessions.id = set_logs.session_id
-WHERE sessions.started_at >= ?
-GROUP BY week_key
-ORDER BY week_key ASC
-''',
+      _weeklyVolumeQuery,
       variables: [Variable<DateTime>(fromDate)],
       readsFrom: {setLogs, sessions},
     ).get();
@@ -241,21 +267,7 @@ ORDER BY week_key ASC
   Stream<List<RecentSetLogRow>> watchRecentSetLogs({int limit = 20}) {
     final resolvedLimit = resolvePositiveLimit(limit, fallback: 20);
     final selectable = customSelect(
-      '''
-SELECT set_logs.id AS set_log_id,
-       set_logs.set_index AS set_index,
-       set_logs.reps AS reps,
-       set_logs.weight AS weight,
-       set_logs.note AS note,
-       sessions.started_at AS started_at,
-       exercises.name AS exercise_name
-FROM set_logs
-INNER JOIN sessions ON sessions.id = set_logs.session_id
-INNER JOIN workout_exercises ON workout_exercises.id = set_logs.workout_exercise_id
-INNER JOIN exercises ON exercises.id = workout_exercises.exercise_id
-ORDER BY sessions.started_at DESC, set_logs.set_index DESC
-LIMIT ?
-''',
+      _recentSetLogsQuery,
       variables: [Variable<int>(resolvedLimit)],
       readsFrom: {setLogs, sessions, workoutExercises, exercises},
     );
@@ -289,7 +301,7 @@ LIMIT ?
         goal: goal,
         level: level,
         mode: mode,
-        scheduledFor: Value(scheduledFor),
+        scheduledFor: Value(ensureUtc(scheduledFor)),
       ),
     );
   }
@@ -311,7 +323,7 @@ LIMIT ?
 
   Future<void> _completeSession(int sessionId, {required DateTime endedAt}) {
     return (update(sessions)..where((tbl) => tbl.id.equals(sessionId))).write(
-      SessionsCompanion(endedAt: Value(endedAt)),
+      SessionsCompanion(endedAt: Value(ensureUtc(endedAt))),
     );
   }
 
@@ -323,7 +335,7 @@ LIMIT ?
     return into(sessions).insert(
       SessionsCompanion.insert(
         workoutId: workoutId,
-        startedAt: Value(startedAt),
+        startedAt: Value(ensureUtc(startedAt)),
         note: Value(note),
       ),
     );
