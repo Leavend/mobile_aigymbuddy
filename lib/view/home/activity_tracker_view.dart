@@ -15,21 +15,10 @@ class ActivityTrackerView extends StatefulWidget {
 }
 
 class _ActivityTrackerViewState extends State<ActivityTrackerView> {
-  static const List<_TrackerPeriodOption> _periodOptions = [
-    _TrackerPeriodOption(
-      value: 'weekly',
-      label: LocalizedText(english: 'Weekly', indonesian: 'Mingguan'),
-    ),
-    _TrackerPeriodOption(
-      value: 'monthly',
-      label: LocalizedText(english: 'Monthly', indonesian: 'Bulanan'),
-    ),
-  ];
-
   int _touchedBarIndex = -1;
-  _TrackerPeriodOption _selectedPeriod = _periodOptions.first;
+  _TrackerPeriod _selectedPeriod = _TrackerPeriod.weekly;
 
-  final List<_ActivityLog> _latestActivities = const [
+  static const List<_ActivityLog> _latestActivities = [
     _ActivityLog(
       image: 'assets/img/pic_4.png',
       title: LocalizedText(
@@ -52,6 +41,16 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
         indonesian: 'Sekitar 3 jam lalu',
       ),
     ),
+  ];
+
+  static const List<_ActivityBarData> _weeklyBarData = [
+    _ActivityBarData(value: 5, gradient: TColor.primaryG),
+    _ActivityBarData(value: 10.5, gradient: TColor.secondaryG),
+    _ActivityBarData(value: 5, gradient: TColor.primaryG),
+    _ActivityBarData(value: 7.5, gradient: TColor.secondaryG),
+    _ActivityBarData(value: 15, gradient: TColor.primaryG),
+    _ActivityBarData(value: 5.5, gradient: TColor.secondaryG),
+    _ActivityBarData(value: 8.5, gradient: TColor.primaryG),
   ];
 
   @override
@@ -198,25 +197,20 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             borderRadius: BorderRadius.circular(15),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<_TrackerPeriodOption>(
+            child: DropdownButton<_TrackerPeriod>(
               value: _selectedPeriod,
-              items: _periodOptions
+              items: _TrackerPeriod.values
                   .map(
-                    (option) => DropdownMenuItem<_TrackerPeriodOption>(
-                      value: option,
+                    (period) => DropdownMenuItem<_TrackerPeriod>(
+                      value: period,
                       child: Text(
-                        option.label.resolve(language),
+                        period.label.resolve(language),
                         style: TextStyle(color: TColor.gray, fontSize: 14),
                       ),
                     ),
                   )
                   .toList(),
-              onChanged: (value) {
-                if (value == null || value == _selectedPeriod) {
-                  return;
-                }
-                setState(() => _selectedPeriod = value);
-              },
+              onChanged: _onPeriodChanged,
               icon: Icon(Icons.expand_more, color: TColor.white),
               dropdownColor: Colors.white,
             ),
@@ -224,6 +218,13 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
         ),
       ],
     );
+  }
+
+  void _onPeriodChanged(_TrackerPeriod? period) {
+    if (period == null || period == _selectedPeriod) {
+      return;
+    }
+    setState(() => _selectedPeriod = period);
   }
 
   Widget _buildBarChart(BuildContext context, Size media) {
@@ -369,61 +370,29 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     );
   }
 
-  List<BarChartGroupData> _buildBarGroups() => List.generate(7, (index) {
-        switch (index) {
-          case 0:
-            return _buildGroupData(
-              0,
-              5,
-              TColor.primaryG,
-              isTouched: index == _touchedBarIndex,
-            );
-          case 1:
-            return _buildGroupData(
-              1,
-              10.5,
-              TColor.secondaryG,
-              isTouched: index == _touchedBarIndex,
-            );
-          case 2:
-            return _buildGroupData(
-              2,
-              5,
-              TColor.primaryG,
-              isTouched: index == _touchedBarIndex,
-            );
-          case 3:
-            return _buildGroupData(
-              3,
-              7.5,
-              TColor.secondaryG,
-              isTouched: index == _touchedBarIndex,
-            );
-          case 4:
-            return _buildGroupData(
-              4,
-              15,
-              TColor.primaryG,
-              isTouched: index == _touchedBarIndex,
-            );
-          case 5:
-            return _buildGroupData(
-              5,
-              5.5,
-              TColor.secondaryG,
-              isTouched: index == _touchedBarIndex,
-            );
-          case 6:
-            return _buildGroupData(
-              6,
-              8.5,
-              TColor.primaryG,
-              isTouched: index == _touchedBarIndex,
-            );
-          default:
-            throw StateError('Invalid index $index');
-        }
-      });
+  List<BarChartGroupData> _buildBarGroups() {
+    final data = _currentBarData;
+    return List.generate(data.length, (index) {
+      final entry = data[index];
+      final isTouched = index == _touchedBarIndex;
+      return _buildGroupData(
+        index,
+        entry.value,
+        entry.gradient,
+        isTouched: isTouched,
+        showTooltips: isTouched ? const [0] : const [],
+      );
+    });
+  }
+
+  List<_ActivityBarData> get _currentBarData {
+    switch (_selectedPeriod) {
+      case _TrackerPeriod.weekly:
+        return _weeklyBarData;
+      case _TrackerPeriod.monthly:
+        return _weeklyBarData; // TODO: provide real monthly aggregation when available.
+    }
+  }
 
   BarChartGroupData _buildGroupData(
     int x,
@@ -459,11 +428,11 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
   }
 }
 
-class _TrackerPeriodOption {
-  const _TrackerPeriodOption({required this.value, required this.label});
+class _ActivityBarData {
+  const _ActivityBarData({required this.value, required this.gradient});
 
-  final String value;
-  final LocalizedText label;
+  final double value;
+  final List<Color> gradient;
 }
 
 class _ActivityLog {
@@ -483,6 +452,25 @@ class _ActivityLog {
       title: title.resolve(language),
       timeLabel: time.resolve(language),
     );
+  }
+}
+
+enum _TrackerPeriod { weekly, monthly }
+
+extension _TrackerPeriodLabel on _TrackerPeriod {
+  LocalizedText get label {
+    switch (this) {
+      case _TrackerPeriod.weekly:
+        return const LocalizedText(
+          english: 'Weekly',
+          indonesian: 'Mingguan',
+        );
+      case _TrackerPeriod.monthly:
+        return const LocalizedText(
+          english: 'Monthly',
+          indonesian: 'Bulanan',
+        );
+    }
   }
 }
 
