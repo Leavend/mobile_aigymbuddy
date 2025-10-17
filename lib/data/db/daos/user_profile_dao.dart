@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 
 import '../app_database.dart';
 import '../tables/user_profiles.dart';
+import 'dao_utils.dart';
 
 part 'user_profile_dao.g.dart';
 
@@ -11,7 +12,11 @@ part 'user_profile_dao.g.dart';
 @DriftAccessor(tables: [UserProfiles])
 class UserProfileDao extends DatabaseAccessor<AppDatabase>
     with _$UserProfileDaoMixin {
-  UserProfileDao(super.db);
+  UserProfileDao(AppDatabase db, {UtcNow now = defaultUtcNow})
+      : _now = now,
+        super(db);
+
+  final UtcNow _now;
 
   /// Upserts the provided [UserProfilesCompanion].
   Future<int> upsert(UserProfilesCompanion entry) {
@@ -33,7 +38,7 @@ class UserProfileDao extends DatabaseAccessor<AppDatabase>
     return (update(userProfiles)..where((tbl) => tbl.id.equals(id))).write(
       UserProfilesCompanion(
         weightKg: Value(weightKg),
-        updatedAt: Value(DateTime.now().toUtc()),
+        updatedAt: Value(_now()),
       ),
     );
   }
