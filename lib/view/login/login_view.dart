@@ -1,3 +1,5 @@
+// lib/view/login/login_view.dart
+
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/app/app_state.dart';
@@ -134,8 +136,8 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _attemptLogin() async {
-    final repository = _profileRepository ??
-        AppDependencies.of(context).profileRepository;
+    final repository =
+        _profileRepository ?? AppDependencies.of(context).profileRepository;
 
     setState(() => _isSubmitting = true);
     try {
@@ -145,17 +147,18 @@ class _LoginViewState extends State<LoginView> {
       if (profile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Profil belum tersedia. Silakan daftar terlebih dahulu.'),
+            content:
+                Text('Profil belum tersedia. Silakan daftar terlebih dahulu.'),
           ),
         );
-        return;
+        // We add a return in finally to ensure _isSubmitting is set to false
+      } else {
+        await AuthService.instance.setHasCredentials(true);
+        // FIX: Add a mounted check immediately after the await call
+        if (!mounted) return;
+        AppStateScope.of(context).updateHasProfile(true);
+        context.go(AppRoute.main);
       }
-
-      await AuthService.instance.setHasCredentials(true);
-      AppStateScope.of(context).updateHasProfile(true);
-
-      if (!mounted) return;
-      context.go(AppRoute.main);
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

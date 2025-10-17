@@ -1,5 +1,4 @@
-import 'package:aigymbuddy/features/profile/domain/user_profile.dart'
-    as domain;
+import 'package:aigymbuddy/features/profile/domain/user_profile.dart' as domain;
 
 enum ProfileFormMode { onboarding, edit }
 
@@ -147,8 +146,8 @@ class OnboardingDraft {
   static int _calculateAge(DateTime dob) {
     final today = DateTime.now();
     var age = today.year - dob.year;
-    final hasHadBirthdayThisYear =
-        today.month > dob.month || (today.month == dob.month && today.day >= dob.day);
+    final hasHadBirthdayThisYear = today.month > dob.month ||
+        (today.month == dob.month && today.day >= dob.day);
     if (!hasHadBirthdayThisYear) {
       age -= 1;
     }
@@ -165,7 +164,8 @@ class ProfileFormArguments {
   final OnboardingDraft draft;
   final ProfileFormMode mode;
 
-  ProfileFormArguments copyWith({OnboardingDraft? draft, ProfileFormMode? mode}) {
+  ProfileFormArguments copyWith(
+      {OnboardingDraft? draft, ProfileFormMode? mode}) {
     return ProfileFormArguments(
       draft: draft ?? this.draft,
       mode: mode ?? this.mode,

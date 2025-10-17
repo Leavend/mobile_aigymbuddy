@@ -1,3 +1,5 @@
+// lib/view/login/what_your_goal_view.dart
+
 import 'package:aigymbuddy/app/app_state.dart';
 import 'package:aigymbuddy/app/dependencies.dart';
 import 'package:aigymbuddy/common/app_router.dart';
@@ -105,7 +107,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-    final language = context.appLanguage;
+    // final language = context.appLanguage; // FIX: Removed unused variable
     final confirmLabel = context.localize(
       _mode == ProfileFormMode.edit ? _GoalTexts.save : _GoalTexts.confirm,
     );
@@ -169,7 +171,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
             const SizedBox(height: 32),
             RoundButton(
               title: confirmLabel,
-              onPressed: _saving ? null : _onConfirm,
+              onPressed: () => _onConfirm(),
               isEnabled: !_saving,
             ),
             const SizedBox(height: 12),
@@ -236,7 +238,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   int _goalIndexFor(domain.FitnessGoal? goal) {
     if (goal == null) return 0;
     return WhatYourGoalView._goals
-            .indexWhere((element) => element.goal == goal)
+        .indexWhere((element) => element.goal == goal)
         .clamp(0, WhatYourGoalView._goals.length - 1);
   }
 
@@ -267,13 +269,15 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
           await trackingRepository.addBodyWeight(weight);
         }
         await AuthService.instance.setHasCredentials(true);
+        if (!mounted) return; // Guard before using BuildContext
         AppStateScope.of(context).updateHasProfile(true);
-        if (!mounted) return;
+        if (!mounted) return; // Guard before using BuildContext
         context.go(
           AppRoute.welcome,
           extra: WelcomeArgs(displayName: updatedDraft.displayName),
         );
       } else {
+        // FIX: Added mounted check before using BuildContext
         if (!mounted) return;
         context.go(AppRoute.profile);
         ScaffoldMessenger.of(context).showSnackBar(
