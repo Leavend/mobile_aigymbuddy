@@ -437,7 +437,7 @@ class _LogSetCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<ExerciseSummary>(
-              value: selectedExercise,
+              initialValue: selectedExercise,
               decoration: const InputDecoration(labelText: 'Pilih latihan'),
               items: exercises
                   .map(
