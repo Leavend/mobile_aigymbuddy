@@ -1,4 +1,5 @@
-import 'package:meta/meta.dart';
+// lib/view/shared/models/exercise.dart
+import 'package:flutter/foundation.dart';
 
 /// Lightweight projection of an exercise used across multiple features.
 @immutable

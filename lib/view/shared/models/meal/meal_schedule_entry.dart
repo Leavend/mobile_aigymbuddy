@@ -2,7 +2,7 @@
 
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:intl/intl.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 import 'meal_period.dart';
 import 'meal_summary.dart';

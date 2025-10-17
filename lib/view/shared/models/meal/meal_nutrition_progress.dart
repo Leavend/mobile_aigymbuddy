@@ -1,6 +1,6 @@
 // lib/view/shared/models/meal/meal_nutrition_progress.dart
 
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 /// Represents the daily completion percentage for nutrition targets.
 @immutable

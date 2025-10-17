@@ -1,7 +1,7 @@
 import '../../../data/db/daos/exercise_dao.dart';
 import '../../../data/db/daos/tracking_dao.dart';
 import '../models/tracking.dart';
-import '../models/user_profile.dart' as profile_domain;
+import '../models/user_profile.dart';
 import 'profile_repository.dart';
 import 'tracking_repository.dart';
 
@@ -59,9 +59,9 @@ class DriftTrackingRepository implements TrackingRepository {
     await _dao.insertManualSet(
       exerciseId: exerciseId,
       setIndex: setIndex,
-      goal: profile_domain.goalToDb(profile.goal),
-      level: profile_domain.levelToDb(profile.level),
-      mode: profile_domain.modeToDb(profile.mode),
+      goal: profile.goal.dbValue,
+      level: profile.level.dbValue,
+      mode: profile.mode.dbValue,
       reps: reps,
       weight: weight,
       note: note,

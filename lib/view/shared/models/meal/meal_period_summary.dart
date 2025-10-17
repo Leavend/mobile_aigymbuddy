@@ -1,7 +1,7 @@
 // lib/view/shared/models/meal/meal_period_summary.dart
 
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 import 'meal_period.dart';
 
@@ -24,7 +24,8 @@ class MealPeriodSummary {
   }
 
   @override
-  String toString() => 'MealPeriodSummary(period: ${period.name}, totalMeals: $totalMeals)';
+  String toString() =>
+      'MealPeriodSummary(period: ${period.name}, totalMeals: $totalMeals)';
 
   @override
   bool operator ==(Object other) {

@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 @immutable
 class BodyWeightEntry {
@@ -21,7 +21,8 @@ class BodyWeightEntry {
   int get hashCode => Object.hash(timestamp, weightKg);
 
   @override
-  String toString() => 'BodyWeightEntry(timestamp: $timestamp, weightKg: $weightKg)';
+  String toString() =>
+      'BodyWeightEntry(timestamp: $timestamp, weightKg: $weightKg)';
 }
 
 @immutable

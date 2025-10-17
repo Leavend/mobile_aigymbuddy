@@ -1,7 +1,7 @@
 // lib/view/shared/models/meal/meal_category.dart
 
 import 'package:aigymbuddy/common/localization/app_language.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 /// Aggregated representation for a meal category.
 @immutable

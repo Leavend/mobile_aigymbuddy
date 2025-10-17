@@ -273,7 +273,8 @@ class DriftMealPlannerRepository implements MealPlannerRepository {
   }
 
   Stream<T> _watchAfterReady<T>(Stream<T> Function() streamFactory) {
-    return Stream.fromFuture(_ensureReady()).asyncExpand((_) => streamFactory());
+    return Stream.fromFuture(_ensureReady())
+        .asyncExpand((_) => streamFactory());
   }
 
   static const Map<String, String> _nutritionIcons = {

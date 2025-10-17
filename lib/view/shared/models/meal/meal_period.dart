@@ -14,17 +14,17 @@ extension MealPeriodX on MealPeriod {
 
   static const Map<MealPeriod, LocalizedText> _labels = {
     MealPeriod.breakfast:
-        const LocalizedText(english: 'Breakfast', indonesian: 'Sarapan'),
+        LocalizedText(english: 'Breakfast', indonesian: 'Sarapan'),
     MealPeriod.lunch:
-        const LocalizedText(english: 'Lunch', indonesian: 'Makan Siang'),
-    MealPeriod.snack:
-        const LocalizedText(english: 'Snack', indonesian: 'Camilan'),
+        LocalizedText(english: 'Lunch', indonesian: 'Makan Siang'),
+    MealPeriod.snack: LocalizedText(english: 'Snack', indonesian: 'Camilan'),
     MealPeriod.dinner:
-        const LocalizedText(english: 'Dinner', indonesian: 'Makan Malam'),
+        LocalizedText(english: 'Dinner', indonesian: 'Makan Malam'),
   };
 
-  static final Map<String, MealPeriod> _reverseIds =
-      {for (final entry in _ids.entries) entry.value: entry.key};
+  static final Map<String, MealPeriod> _reverseIds = {
+    for (final entry in _ids.entries) entry.value: entry.key
+  };
 
   String get id => _ids[this]!;
 

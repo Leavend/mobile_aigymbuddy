@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 enum Gender { male, female, other }
 
@@ -172,7 +172,8 @@ extension ExperienceLevelMapper on ExperienceLevel {
     return _dbValues.entries
         .firstWhere(
           (entry) => entry.value == value,
-          orElse: () => const MapEntry(ExperienceLevel.intermediate, 'intermediate'),
+          orElse: () =>
+              const MapEntry(ExperienceLevel.intermediate, 'intermediate'),
         )
         .key;
   }

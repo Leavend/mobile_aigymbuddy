@@ -4,8 +4,7 @@ import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/models/ingredient.dart';
 import 'package:aigymbuddy/common/models/instruction_step.dart';
 import 'package:aigymbuddy/common/models/nutrition_info.dart';
-import 'package:collection/collection.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 import 'meal_period.dart';
 
@@ -26,10 +25,6 @@ class MealDetail {
   })  : nutrition = List.unmodifiable(nutrition),
         ingredients = List.unmodifiable(ingredients),
         instructions = List.unmodifiable(instructions);
-
-  static const _nutritionEquality = ListEquality<NutritionInfo>();
-  static const _ingredientEquality = ListEquality<Ingredient>();
-  static const _instructionEquality = ListEquality<InstructionStep>();
 
   final int id;
   final LocalizedText name;
@@ -59,9 +54,9 @@ class MealDetail {
             heroImageAsset == other.heroImageAsset &&
             period == other.period &&
             prepMinutes == other.prepMinutes &&
-            _nutritionEquality.equals(nutrition, other.nutrition) &&
-            _ingredientEquality.equals(ingredients, other.ingredients) &&
-            _instructionEquality.equals(instructions, other.instructions);
+            listEquals(nutrition, other.nutrition) &&
+            listEquals(ingredients, other.ingredients) &&
+            listEquals(instructions, other.instructions);
   }
 
   @override
@@ -73,8 +68,8 @@ class MealDetail {
         heroImageAsset,
         period,
         prepMinutes,
-        _nutritionEquality.hash(nutrition),
-        _ingredientEquality.hash(ingredients),
-        _instructionEquality.hash(instructions),
+        Object.hashAll(nutrition),
+        Object.hashAll(ingredients),
+        Object.hashAll(instructions),
       );
 }

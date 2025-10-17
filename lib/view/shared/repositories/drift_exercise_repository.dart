@@ -1,5 +1,7 @@
-import '../../../data/db/daos/exercise_dao.dart';
-import '../../../data/db/tables/exercises.dart';
+// lib/view/shared/repositories/drift_exercise_repository.dart
+
+import 'package:aigymbuddy/data/db/daos/exercise_dao.dart';
+import 'package:aigymbuddy/data/db/app_database.dart' show Exercise;
 import '../models/exercise.dart';
 import 'exercise_repository.dart';
 
