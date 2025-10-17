@@ -74,7 +74,8 @@ GoRouter createRouter(AppStateController appState) {
       GoRoute(
         path: AppRoute.completeProfile,
         builder: (context, state) {
-          final args = _resolveProfileArgs(state.extra, AppRoute.completeProfile);
+          final args =
+              _resolveProfileArgs(state.extra, AppRoute.completeProfile);
           return CompleteProfileView(args: args);
         },
       ),

@@ -157,7 +157,7 @@ class _LoginViewState extends State<LoginView> {
       }
 
       await AuthService.instance.setHasCredentials(true);
-      
+
       // FIX: Add a mounted check before using the context.
       if (!mounted) return;
       AppStateScope.of(context).updateHasProfile(true);
