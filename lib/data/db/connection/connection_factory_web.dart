@@ -29,12 +29,14 @@ Future<dynamic> _openWasmDatabase({
   );
 }
 
-Future<dynamic> _attemptOpen(String label, Future<dynamic> Function() opener) async {
+Future<dynamic> _attemptOpen(
+    String label, Future<dynamic> Function() opener) async {
   try {
     return await opener();
   } on Object catch (error, stackTrace) {
     if (kDebugMode) {
-      debugPrint('Failed to open Drift wasm database using $label assets: $error');
+      debugPrint(
+          'Failed to open Drift wasm database using $label assets: $error');
       debugPrintStack(stackTrace: stackTrace);
     }
     rethrow;
@@ -72,7 +74,8 @@ Future<dynamic> _openPreferredDatabase() async {
   }
 
   final error = lastError ??
-      StateError('Unable to open Drift wasm database from CDN or local assets.');
+      StateError(
+          'Unable to open Drift wasm database from CDN or local assets.');
   Error.throwWithStackTrace(error, lastStackTrace ?? StackTrace.current);
 }
 
