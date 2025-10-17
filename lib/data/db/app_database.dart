@@ -30,24 +30,35 @@ part 'app_database.g.dart';
   daos: [UserProfileDao, ExerciseDao, WorkoutDao, TrackingDao],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(createDriftExecutor());
+  AppDatabase({QueryExecutor? executor})
+      : super(executor ?? createDriftExecutor());
 
   AppDatabase.forTesting(super.executor);
 
+  static const int _schemaVersion = 1;
+
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => _schemaVersion;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (Migrator m) async {
-          await m.createAll();
-          await customStatement('PRAGMA foreign_keys = ON');
+        onCreate: (Migrator migrator) async {
+          await migrator.createAll();
+          await _enableForeignKeys();
         },
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
+        beforeOpen: (_) async {
+          await _enableForeignKeys();
         },
-        onUpgrade: (Migrator m, int from, int to) async {
-          // Handle schema migrations when upgrading versions.
+        onUpgrade: (Migrator migrator, int from, int to) async {
+          if (from == to) {
+            return;
+          }
+
+          // TODO: Add schema migrations when bumping [_schemaVersion].
         },
       );
+
+  Future<void> _enableForeignKeys() {
+    return customStatement('PRAGMA foreign_keys = ON');
+  }
 }

@@ -13,5 +13,9 @@ QueryExecutor createDriftExecutorImpl() => LazyDatabase(() async {
       final directory = await getApplicationDocumentsDirectory();
       final file = File(p.join(directory.path, kDatabaseFileName));
 
+      if (!await file.parent.exists()) {
+        await file.parent.create(recursive: true);
+      }
+
       return NativeDatabase.createInBackground(file);
     });
