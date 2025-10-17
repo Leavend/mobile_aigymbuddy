@@ -40,14 +40,16 @@ class HomeController extends ChangeNotifier {
   Future<void> initialize() async {
     if (_isInitialized) return;
     _isInitialized = true;
-    _updateWeeklyVolume();
-    await _loadExercises();
+    await Future.wait([
+      _updateWeeklyVolume(),
+      _loadExercises(),
+    ]);
   }
 
   Future<void> refreshData() async {
     await Future.wait([
-      _loadExercises(),
       _updateWeeklyVolume(),
+      _loadExercises(),
     ]);
   }
 
@@ -159,6 +161,7 @@ class HomeController extends ChangeNotifier {
   Future<void> _updateWeeklyVolume() async {
     final future = _trackingRepository.loadWeeklyVolume();
     _updateState(_state.copyWith(weeklyVolumeFuture: future));
+    await future;
   }
 
   void _updateState(HomeState newState) {
