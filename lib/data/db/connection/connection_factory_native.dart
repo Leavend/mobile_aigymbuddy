@@ -7,8 +7,11 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import 'connection_constants.dart';
+
 QueryExecutor createDriftExecutorImpl() => LazyDatabase(() async {
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dir.path, 'ai_gym_buddy.sqlite'));
-      return NativeDatabase.createInBackground(file);
-    });
+  final directory = await getApplicationDocumentsDirectory();
+  final file = File(p.join(directory.path, kDatabaseFileName));
+
+  return NativeDatabase.createInBackground(file);
+});
