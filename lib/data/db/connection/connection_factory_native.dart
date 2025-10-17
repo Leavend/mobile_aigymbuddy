@@ -10,8 +10,8 @@ import 'package:path_provider/path_provider.dart';
 import 'connection_constants.dart';
 
 QueryExecutor createDriftExecutorImpl() => LazyDatabase(() async {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File(p.join(directory.path, kDatabaseFileName));
+  final directory = await getApplicationDocumentsDirectory();
+  final file = File(p.join(directory.path, kDatabaseFileName));
 
-      return NativeDatabase.createInBackground(file);
-    });
+  return NativeDatabase.createInBackground(file);
+});

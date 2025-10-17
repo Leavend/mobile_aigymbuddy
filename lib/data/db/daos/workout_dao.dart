@@ -60,33 +60,33 @@ class WorkoutDao extends DatabaseAccessor<AppDatabase> with _$WorkoutDaoMixin {
     required List<WorkoutItemInput> items,
   }) {
     return transaction(() async {
+      final scheduledUtc = scheduledFor?.toUtc();
       final workoutId = await into(workouts).insert(
         WorkoutsCompanion.insert(
           title: title,
           goal: goal,
           level: level,
           mode: mode,
-          scheduledFor: Value(scheduledFor),
+          scheduledFor: Value(scheduledUtc),
         ),
       );
 
       if (items.isNotEmpty) {
+        final rows = items
+            .map(
+              (item) => WorkoutExercisesCompanion.insert(
+                workoutId: workoutId,
+                exerciseId: item.exerciseId,
+                sets: item.sets,
+                reps: Value(item.reps),
+                durationSec: Value(item.durationSec),
+                restSec: Value(item.restSec),
+              ),
+            )
+            .toList(growable: false);
+
         await batch((batch) {
-          batch.insertAll(
-            workoutExercises,
-            items
-                .map(
-                  (item) => WorkoutExercisesCompanion.insert(
-                    workoutId: workoutId,
-                    exerciseId: item.exerciseId,
-                    sets: item.sets,
-                    reps: Value(item.reps),
-                    durationSec: Value(item.durationSec),
-                    restSec: Value(item.restSec),
-                  ),
-                )
-                .toList(),
-          );
+          batch.insertAll(workoutExercises, rows);
         });
       }
 
@@ -105,9 +105,9 @@ class WorkoutDao extends DatabaseAccessor<AppDatabase> with _$WorkoutDaoMixin {
       return null;
     }
 
-    final joined = await (select(
-      workoutExercises,
-    )..where((tbl) => tbl.workoutId.equals(workoutId)))
+    final joined = await (select(workoutExercises)
+          ..where((tbl) => tbl.workoutId.equals(workoutId))
+          ..orderBy([(tbl) => OrderingTerm.asc(tbl.id)]))
         .join([
       innerJoin(
         exercises,

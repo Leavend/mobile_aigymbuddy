@@ -10,6 +10,7 @@ part 'exercise_dao.g.dart';
 class ExerciseDao extends DatabaseAccessor<AppDatabase>
     with _$ExerciseDaoMixin {
   ExerciseDao(super.db);
+
   Future<void> insertMany(List<ExercisesCompanion> entries) async {
     if (entries.isEmpty) return;
 
@@ -20,15 +21,21 @@ class ExerciseDao extends DatabaseAccessor<AppDatabase>
 
   /// Mengambil daftar exercise yang difilter berdasarkan [mode] dan/atau [difficulty].
   Future<List<Exercise>> list({String? mode, String? difficulty}) {
+    final normalizedMode = mode?.trim();
+    final normalizedDifficulty = difficulty?.trim();
+
     final query = select(exercises)
       ..orderBy([(tbl) => OrderingTerm.asc(tbl.name)]);
 
-    if (mode != null) {
-      query.where((tbl) => tbl.mode.equals(mode) | tbl.mode.equals('both'));
+    if (normalizedMode != null && normalizedMode.isNotEmpty) {
+      query.where(
+        (tbl) =>
+            tbl.mode.equals(normalizedMode) | tbl.mode.equals('both'),
+      );
     }
 
-    if (difficulty != null) {
-      query.where((tbl) => tbl.difficulty.equals(difficulty));
+    if (normalizedDifficulty != null && normalizedDifficulty.isNotEmpty) {
+      query.where((tbl) => tbl.difficulty.equals(normalizedDifficulty));
     }
 
     return query.get();

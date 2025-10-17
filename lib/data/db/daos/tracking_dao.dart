@@ -9,6 +9,7 @@ import '../tables/sessions.dart';
 import '../tables/set_logs.dart';
 import '../tables/workout_exercises.dart';
 import '../tables/workouts.dart';
+import 'dao_utils.dart';
 
 part 'tracking_dao.g.dart';
 
@@ -62,7 +63,13 @@ class RecentSetLogRow {
 )
 class TrackingDao extends DatabaseAccessor<AppDatabase>
     with _$TrackingDaoMixin {
-  TrackingDao(super.db);
+  TrackingDao(AppDatabase db, {UtcNow now = defaultUtcNow})
+      : _now = now,
+        super(db);
+
+  final UtcNow _now;
+
+  DateTime get _utcNow => _now();
 
   /// Inserts a manual workout, session and set log for ad-hoc tracking.
   Future<void> insertManualSet({
@@ -75,64 +82,58 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
     double? weight,
     String? note,
   }) {
+    if (setIndex <= 0) {
+      throw ArgumentError.value(setIndex, 'setIndex', 'Must be greater than 0');
+    }
+
     return transaction(() async {
-      final now = DateTime.now().toUtc();
-      final workoutId = await into(workouts).insert(
-        WorkoutsCompanion.insert(
-          title: 'Manual Log',
-          goal: goal,
-          level: level,
-          mode: mode,
-          scheduledFor: Value(now),
-        ),
+      final now = _utcNow;
+      final workoutId = await _insertManualWorkout(
+        goal: goal,
+        level: level,
+        mode: mode,
+        scheduledFor: now,
       );
 
-      final workoutExerciseId = await into(workoutExercises).insert(
-        WorkoutExercisesCompanion.insert(
-          workoutId: workoutId,
-          exerciseId: exerciseId,
-          sets: 1,
-          reps: Value(reps),
-        ),
+      final workoutExerciseId = await _insertManualWorkoutExercise(
+        workoutId: workoutId,
+        exerciseId: exerciseId,
+        reps: reps,
       );
 
-      final sessionId = await into(sessions).insert(
-        SessionsCompanion.insert(
-          workoutId: workoutId,
-          startedAt: Value(now),
-          note: Value(note),
-        ),
+      final sessionId = await _startSession(
+        workoutId,
+        startedAt: now,
+        note: note,
       );
 
-      await into(setLogs).insert(
-        SetLogsCompanion.insert(
-          sessionId: sessionId,
-          workoutExerciseId: workoutExerciseId,
-          setIndex: setIndex,
-          reps: Value(reps),
-          weight: Value(weight),
-          note: Value(note),
-        ),
+      await _insertSetLog(
+        sessionId: sessionId,
+        workoutExerciseId: workoutExerciseId,
+        setIndex: setIndex,
+        reps: reps,
+        weight: weight,
+        note: note,
       );
 
-      await (update(sessions)..where((tbl) => tbl.id.equals(sessionId))).write(
-        SessionsCompanion(endedAt: Value(now)),
-      );
+      await _completeSession(sessionId, endedAt: now);
     });
   }
 
   /// Creates a session for the given [workoutId].
-  Future<int> startSession(int workoutId) {
-    return into(
-      sessions,
-    ).insert(SessionsCompanion.insert(workoutId: workoutId));
+  Future<int> startSession(int workoutId, {DateTime? startedAt}) {
+    final timestamp = startedAt ?? _utcNow;
+    return into(sessions).insert(
+      SessionsCompanion.insert(
+        workoutId: workoutId,
+        startedAt: Value(timestamp),
+      ),
+    );
   }
 
   /// Sets the session [endedAt] timestamp to now.
   Future<void> endSession(int sessionId) {
-    return (update(sessions)..where((tbl) => tbl.id.equals(sessionId))).write(
-      SessionsCompanion(endedAt: Value(DateTime.now().toUtc())),
-    );
+    return _completeSession(sessionId, endedAt: _utcNow);
   }
 
   /// Inserts a log for the performed set.
@@ -144,23 +145,24 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
     double? weight,
     String? note,
   }) {
-    return into(setLogs).insert(
-      SetLogsCompanion.insert(
-        sessionId: sessionId,
-        workoutExerciseId: workoutExerciseId,
-        setIndex: setIndex,
-        reps: Value(reps),
-        weight: Value(weight),
-        note: Value(note),
-      ),
+    return _insertSetLog(
+      sessionId: sessionId,
+      workoutExerciseId: workoutExerciseId,
+      setIndex: setIndex,
+      reps: reps,
+      weight: weight,
+      note: note,
     );
   }
 
   /// Records a body weight entry at the current timestamp.
   Future<int> insertBodyWeight(double weightKg) {
-    return into(
-      bodyWeightEntries,
-    ).insert(BodyWeightEntriesCompanion.insert(weightKg: weightKg));
+    return into(bodyWeightEntries).insert(
+      BodyWeightEntriesCompanion.insert(
+        weightKg: weightKg,
+        recordedAt: Value(_utcNow),
+      ),
+    );
   }
 
   /// Calculates aggregated weekly training volume for the last [weeks].
@@ -169,7 +171,7 @@ class TrackingDao extends DatabaseAccessor<AppDatabase>
       return const [];
     }
 
-    final fromDate = DateTime.now().toUtc().subtract(Duration(days: weeks * 7));
+    final fromDate = subtractDays(_now, weeks * 7);
 
     final rows = await customSelect(
       '''
@@ -181,7 +183,7 @@ WHERE sessions.started_at >= ?
 GROUP BY week_key
 ORDER BY week_key ASC
 ''',
-      variables: [Variable<String>(fromDate.toIso8601String())],
+      variables: [Variable<DateTime>(fromDate)],
       readsFrom: {setLogs, sessions},
     ).get();
 
@@ -197,7 +199,7 @@ ORDER BY week_key ASC
 
   /// Retrieves weight entries ordered ascending by date within the last [days].
   Future<List<WeightPoint>> getWeightSeries({int days = 30}) async {
-    final fromDate = DateTime.now().toUtc().subtract(Duration(days: days));
+    final fromDate = subtractDays(_now, days);
 
     final results = await (select(bodyWeightEntries)
           ..where((tbl) => tbl.recordedAt.isBiggerOrEqualValue(fromDate))
@@ -216,7 +218,7 @@ ORDER BY week_key ASC
 
   /// Watches weight entries ordered ascending by date within the last [days].
   Stream<List<WeightPoint>> watchWeightSeries({int days = 30}) {
-    final fromDate = DateTime.now().toUtc().subtract(Duration(days: days));
+    final fromDate = subtractDays(_now, days);
     final query = (select(bodyWeightEntries)
           ..where((tbl) => tbl.recordedAt.isBiggerOrEqualValue(fromDate))
           ..orderBy([(tbl) => OrderingTerm.asc(tbl.recordedAt)]))
@@ -236,6 +238,7 @@ ORDER BY week_key ASC
 
   /// Watches the latest set logs with exercise information.
   Stream<List<RecentSetLogRow>> watchRecentSetLogs({int limit = 20}) {
+    final resolvedLimit = resolvePositiveLimit(limit, fallback: 20);
     final selectable = customSelect(
       '''
 SELECT set_logs.id AS set_log_id,
@@ -252,7 +255,7 @@ INNER JOIN exercises ON exercises.id = workout_exercises.exercise_id
 ORDER BY sessions.started_at DESC, set_logs.set_index DESC
 LIMIT ?
 ''',
-      variables: [Variable<int>(limit)],
+      variables: [Variable<int>(resolvedLimit)],
       readsFrom: {setLogs, sessions, workoutExercises, exercises},
     );
 
@@ -271,5 +274,77 @@ LIMIT ?
               )
               .toList(),
         );
+  }
+
+  Future<int> _insertManualWorkout({
+    required String goal,
+    required String level,
+    required String mode,
+    required DateTime scheduledFor,
+  }) {
+    return into(workouts).insert(
+      WorkoutsCompanion.insert(
+        title: 'Manual Log',
+        goal: goal,
+        level: level,
+        mode: mode,
+        scheduledFor: Value(scheduledFor),
+      ),
+    );
+  }
+
+  Future<int> _insertManualWorkoutExercise({
+    required int workoutId,
+    required int exerciseId,
+    int? reps,
+  }) {
+    return into(workoutExercises).insert(
+      WorkoutExercisesCompanion.insert(
+        workoutId: workoutId,
+        exerciseId: exerciseId,
+        sets: 1,
+        reps: Value(reps),
+      ),
+    );
+  }
+
+  Future<void> _completeSession(int sessionId, {required DateTime endedAt}) {
+    return (update(sessions)..where((tbl) => tbl.id.equals(sessionId))).write(
+      SessionsCompanion(endedAt: Value(endedAt)),
+    );
+  }
+
+  Future<int> _startSession(
+    int workoutId, {
+    required DateTime startedAt,
+    String? note,
+  }) {
+    return into(sessions).insert(
+      SessionsCompanion.insert(
+        workoutId: workoutId,
+        startedAt: Value(startedAt),
+        note: Value(note),
+      ),
+    );
+  }
+
+  Future<int> _insertSetLog({
+    required int sessionId,
+    required int workoutExerciseId,
+    required int setIndex,
+    int? reps,
+    double? weight,
+    String? note,
+  }) {
+    return into(setLogs).insert(
+      SetLogsCompanion.insert(
+        sessionId: sessionId,
+        workoutExerciseId: workoutExerciseId,
+        setIndex: setIndex,
+        reps: Value(reps),
+        weight: Value(weight),
+        note: Value(note),
+      ),
+    );
   }
 }
