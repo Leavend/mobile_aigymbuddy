@@ -10,9 +10,11 @@ class CompleteProfileController extends ChangeNotifier {
         dobController = TextEditingController(),
         weightController = TextEditingController(),
         heightController = TextEditingController() {
+    dobController.addListener(_onDobChanged);
     weightController.addListener(_syncMeasurements);
     heightController.addListener(_syncMeasurements);
     _applyDraft();
+    _updateFormCompletion();
   }
 
   final formKey = GlobalKey<FormState>();
@@ -31,11 +33,7 @@ class CompleteProfileController extends ChangeNotifier {
       ? AutovalidateMode.onUserInteraction
       : AutovalidateMode.disabled;
 
-  bool get isFormComplete =>
-      _selectedGender != null &&
-      dobController.text.isNotEmpty &&
-      weightController.text.isNotEmpty &&
-      heightController.text.isNotEmpty;
+  bool get isFormComplete => _isFormComplete;
 
   static const double minWeightKg = 20;
   static const double maxWeightKg = 500;
@@ -50,8 +48,11 @@ class CompleteProfileController extends ChangeNotifier {
     LengthLimitingTextInputFormatter(6),
   ];
 
+  bool _isFormComplete = false;
+
   @override
   void dispose() {
+    dobController.removeListener(_onDobChanged);
     weightController.removeListener(_syncMeasurements);
     heightController.removeListener(_syncMeasurements);
     dobController.dispose();
@@ -63,7 +64,7 @@ class CompleteProfileController extends ChangeNotifier {
   void enableAutovalidate() {
     if (_autoValidate) return;
     _autoValidate = true;
-    notifyListeners();
+    _emitStateChanged(force: true);
   }
 
   void updateGender(UiGender? gender) {
@@ -72,19 +73,19 @@ class CompleteProfileController extends ChangeNotifier {
     if (gender != null) {
       _draft = _draft.copyWith(gender: _mapUiGenderToDomain(gender));
     }
-    notifyListeners();
+    _emitStateChanged(force: true);
   }
 
   void updateDob(DateTime dob) {
     dobController.text = formatDate(dob);
     _draft = _draft.updateWithDob(dob);
-    notifyListeners();
+    _emitStateChanged(force: true);
   }
 
   void updateDraft(OnboardingDraft draft) {
     _draft = draft;
     _applyDraft();
-    notifyListeners();
+    _emitStateChanged(force: true);
   }
 
   OnboardingDraft? buildNextDraft() {
@@ -142,6 +143,7 @@ class CompleteProfileController extends ChangeNotifier {
     weightController.text = weight != null ? formatNumber(weight) : '';
     final height = _draft.heightCm;
     heightController.text = height != null ? formatNumber(height) : '';
+    _updateFormCompletion();
   }
 
   void _syncMeasurements() {
@@ -153,6 +155,30 @@ class CompleteProfileController extends ChangeNotifier {
     if (height != null) {
       _draft = _draft.copyWith(heightCm: height);
     }
+    _emitStateChanged();
+  }
+
+  void _onDobChanged() {
+    _emitStateChanged();
+  }
+
+  void _emitStateChanged({bool force = false}) {
+    final hasFormStateChanged = _updateFormCompletion();
+    if (force || hasFormStateChanged) {
+      notifyListeners();
+    }
+  }
+
+  bool _updateFormCompletion() {
+    final isComplete = _selectedGender != null &&
+        dobController.text.trim().isNotEmpty &&
+        weightController.text.trim().isNotEmpty &&
+        heightController.text.trim().isNotEmpty;
+    if (isComplete == _isFormComplete) {
+      return false;
+    }
+    _isFormComplete = isComplete;
+    return true;
   }
 }
 
