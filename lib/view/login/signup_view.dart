@@ -1,3 +1,4 @@
+import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -10,7 +11,6 @@ import 'package:go_router/go_router.dart';
 
 import 'widgets/auth_page_layout.dart';
 import 'widgets/auth_validators.dart';
-import 'package:aigymbuddy/common/models/navigation_args.dart';
 
 abstract final class _SignUpTexts {
   static const greeting = LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
@@ -112,8 +112,8 @@ class _SignUpViewState extends State<SignUpView> {
       final data = SignUpData(
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
-        email: _emailController.text.trim(),
-        password: _passwordController.text, // hash saat commit DB
+        email: _emailController.text.trim().toLowerCase(),
+        password: _passwordController.text,
       );
       context.push(AppRoute.completeProfile, extra: data);
     }

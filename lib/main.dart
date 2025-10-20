@@ -1,11 +1,13 @@
 // lib/main.dart
 
+import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/database/app_db.dart';
+import 'package:aigymbuddy/database/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:aigymbuddy/database/app_db.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,8 +46,18 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return AppLanguageScope(
       controller: _languageController,
-      child: Provider<AppDatabase>.value(
-        value: widget.db,
+      child: MultiProvider(
+        providers: [
+          Provider<AppDatabase>.value(value: widget.db),
+          Provider<AuthRepository>(
+            create: (_) => AuthRepository(widget.db),
+          ),
+          ChangeNotifierProvider<AuthController>(
+            create: (context) => AuthController(
+              repository: context.read<AuthRepository>(),
+            ),
+          ),
+        ],
         child: MaterialApp.router(
           title: 'AI Gym Buddy',
           debugShowCheckedModeBanner: false,

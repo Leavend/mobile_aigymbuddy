@@ -28,6 +28,7 @@ class RoundButton extends StatelessWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: 24),
     this.borderRadius = const BorderRadius.all(Radius.circular(25)),
     this.isEnabled = true,
+    this.isLoading = false,
     this.textStyle,
   }) : assert(height > 0, 'height must be greater than zero'),
        assert(fontSize > 0, 'fontSize must be greater than zero'),
@@ -43,10 +44,13 @@ class RoundButton extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final BorderRadius borderRadius;
   final bool isEnabled;
+  final bool isLoading;
   final TextStyle? textStyle;
 
   bool get _usesGradientBackground =>
       type == RoundButtonType.bgGradient || type == RoundButtonType.bgSGradient;
+
+  bool get _effectiveEnabled => isEnabled && !isLoading;
 
   List<Color> get _backgroundColors =>
       type == RoundButtonType.bgSGradient ? TColor.secondaryG : TColor.primaryG;
@@ -92,6 +96,27 @@ class RoundButton extends StatelessWidget {
   }
 
   Widget _buildContent(TextStyle style) {
+    if (isLoading) {
+      final indicatorColor =
+          _usesGradientBackground ? TColor.white : TColor.primaryColor1;
+      return Padding(
+        padding: padding,
+        child: SizedBox(
+          height: height,
+          child: Center(
+            child: SizedBox(
+              width: height * 0.4,
+              height: height * 0.4,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(indicatorColor),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: padding,
       child: SizedBox(
@@ -103,7 +128,7 @@ class RoundButton extends StatelessWidget {
 
   Widget _wrapWithInkWell(Widget child) {
     return InkWell(
-      onTap: isEnabled ? onPressed : null,
+      onTap: _effectiveEnabled ? onPressed : null,
       borderRadius: borderRadius,
       child: child,
     );
@@ -137,7 +162,7 @@ class RoundButton extends StatelessWidget {
   }
 
   Widget _applyStateDecoration(Widget child) {
-    if (isEnabled) {
+    if (_effectiveEnabled) {
       return child;
     }
 
@@ -153,7 +178,7 @@ class RoundButton extends StatelessWidget {
 
     return Semantics(
       button: true,
-      enabled: isEnabled,
+      enabled: _effectiveEnabled,
       label: title,
       child: ConstrainedBox(
         constraints: const BoxConstraints(minWidth: double.infinity),
