@@ -10,86 +10,37 @@ import 'package:go_router/go_router.dart';
 
 import 'widgets/auth_page_layout.dart';
 import 'widgets/auth_validators.dart';
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 
 abstract final class _SignUpTexts {
-  static const greeting = LocalizedText(
-    english: 'Hey there,',
-    indonesian: 'Hai,',
-  );
-  static const createAccount = LocalizedText(
-    english: 'Create an Account',
-    indonesian: 'Buat Akun',
-  );
-  static const firstNameHint = LocalizedText(
-    english: 'First Name',
-    indonesian: 'Nama Depan',
-  );
-  static const lastNameHint = LocalizedText(
-    english: 'Last Name',
-    indonesian: 'Nama Belakang',
-  );
+  static const greeting = LocalizedText(english: 'Hey there,', indonesian: 'Hai,');
+  static const createAccount = LocalizedText(english: 'Create an Account', indonesian: 'Buat Akun');
+  static const firstNameHint = LocalizedText(english: 'First Name', indonesian: 'Nama Depan');
+  static const lastNameHint = LocalizedText(english: 'Last Name', indonesian: 'Nama Belakang');
   static const emailHint = LocalizedText(english: 'Email', indonesian: 'Email');
-  static const passwordHint = LocalizedText(
-    english: 'Password',
-    indonesian: 'Kata Sandi',
-  );
+  static const passwordHint = LocalizedText(english: 'Password', indonesian: 'Kata Sandi');
   static const termsText = LocalizedText(
     english: 'By continuing you accept our Privacy Policy and\nTerm of Use',
-    indonesian:
-        'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
+    indonesian: 'Dengan melanjutkan kamu menyetujui Kebijakan Privasi dan\nSyarat Penggunaan kami',
   );
-  static const registerButton = LocalizedText(
-    english: 'Register',
-    indonesian: 'Daftar',
-  );
+  static const registerButton = LocalizedText(english: 'Register', indonesian: 'Daftar');
   static const divider = LocalizedText(english: 'Or', indonesian: 'Atau');
-  static const footerQuestion = LocalizedText(
-    english: 'Already have an account? ',
-    indonesian: 'Sudah punya akun? ',
-  );
-  static const footerAction = LocalizedText(
-    english: 'Login',
-    indonesian: 'Masuk',
-  );
+  static const footerQuestion = LocalizedText(english: 'Already have an account? ', indonesian: 'Sudah punya akun? ');
+  static const footerAction = LocalizedText(english: 'Login', indonesian: 'Masuk');
 
-  static const socialProviders = [
-    'assets/img/google.png',
-    'assets/img/facebook.png',
-  ];
+  static const socialProviders = ['assets/img/google.png', 'assets/img/facebook.png'];
 
-  static const firstNameRequired = LocalizedText(
-    english: 'First name is required',
-    indonesian: 'Nama depan wajib diisi',
-  );
-  static const lastNameRequired = LocalizedText(
-    english: 'Last name is required',
-    indonesian: 'Nama belakang wajib diisi',
-  );
-  static const emailRequired = LocalizedText(
-    english: 'Email is required',
-    indonesian: 'Email wajib diisi',
-  );
-  static const emailInvalid = LocalizedText(
-    english: 'Enter a valid email address',
-    indonesian: 'Masukkan alamat email yang valid',
-  );
-  static const passwordRequired = LocalizedText(
-    english: 'Password is required',
-    indonesian: 'Kata sandi wajib diisi',
-  );
-  static const passwordLength = LocalizedText(
-    english: 'Password must be at least 8 characters',
-    indonesian: 'Kata sandi minimal 8 karakter',
-  );
-  static const termsRequired = LocalizedText(
-    english: 'Please accept the terms to continue',
-    indonesian: 'Silakan setujui syarat dan ketentuan terlebih dahulu',
-  );
+  static const firstNameRequired = LocalizedText(english: 'First name is required', indonesian: 'Nama depan wajib diisi');
+  static const lastNameRequired = LocalizedText(english: 'Last name is required', indonesian: 'Nama belakang wajib diisi');
+  static const emailRequired = LocalizedText(english: 'Email is required', indonesian: 'Email wajib diisi');
+  static const emailInvalid = LocalizedText(english: 'Enter a valid email address', indonesian: 'Masukkan alamat email yang valid');
+  static const passwordRequired = LocalizedText(english: 'Password is required', indonesian: 'Kata sandi wajib diisi');
+  static const passwordLength = LocalizedText(english: 'Password must be at least 8 characters', indonesian: 'Kata sandi minimal 8 karakter');
+  static const termsRequired = LocalizedText(english: 'Please accept the terms to continue', indonesian: 'Silakan setujui syarat dan ketentuan terlebih dahulu');
 }
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
-
   @override
   State<SignUpView> createState() => _SignUpViewState();
 }
@@ -158,43 +109,41 @@ class _SignUpViewState extends State<SignUpView> {
     });
 
     if ((_formKey.currentState?.validate() ?? false) && _isTermsAccepted) {
-      context.push(AppRoute.completeProfile);
+      final data = SignUpData(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text, // hash saat commit DB
+      );
+      context.push(AppRoute.completeProfile, extra: data);
     }
   }
 
-  String? _validateFirstName(String? value) {
-    return AuthValidators.validateRequired(
-      context: context,
-      value: value,
-      emptyMessage: _SignUpTexts.firstNameRequired,
-    );
-  }
+  String? _validateFirstName(String? value) => AuthValidators.validateRequired(
+        context: context,
+        value: value,
+        emptyMessage: _SignUpTexts.firstNameRequired,
+      );
 
-  String? _validateLastName(String? value) {
-    return AuthValidators.validateRequired(
-      context: context,
-      value: value,
-      emptyMessage: _SignUpTexts.lastNameRequired,
-    );
-  }
+  String? _validateLastName(String? value) => AuthValidators.validateRequired(
+        context: context,
+        value: value,
+        emptyMessage: _SignUpTexts.lastNameRequired,
+      );
 
-  String? _validateEmail(String? value) {
-    return AuthValidators.validateEmail(
-      context: context,
-      value: value,
-      emptyMessage: _SignUpTexts.emailRequired,
-      invalidMessage: _SignUpTexts.emailInvalid,
-    );
-  }
+  String? _validateEmail(String? value) => AuthValidators.validateEmail(
+        context: context,
+        value: value,
+        emptyMessage: _SignUpTexts.emailRequired,
+        invalidMessage: _SignUpTexts.emailInvalid,
+      );
 
-  String? _validatePassword(String? value) {
-    return AuthValidators.validatePassword(
-      context: context,
-      value: value,
-      emptyMessage: _SignUpTexts.passwordRequired,
-      lengthMessage: _SignUpTexts.passwordLength,
-    );
-  }
+  String? _validatePassword(String? value) => AuthValidators.validatePassword(
+        context: context,
+        value: value,
+        emptyMessage: _SignUpTexts.passwordRequired,
+        lengthMessage: _SignUpTexts.passwordLength,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -345,9 +294,7 @@ class _SignUpViewState extends State<SignUpView> {
           onChanged: (value) {
             setState(() {
               _isTermsAccepted = value ?? false;
-              if (_isTermsAccepted) {
-                _showTermsError = false;
-              }
+              if (_isTermsAccepted) _showTermsError = false;
             });
             _validateForm();
           },
@@ -368,25 +315,12 @@ class _SignUpViewState extends State<SignUpView> {
   Widget _buildDivider(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: Container(
-            height: 1,
-            color: TColor.gray.withValues(alpha: 0.3),
-          ),
-        ),
+        Expanded(child: Container(height: 1, color: TColor.gray.withValues(alpha: 0.3))),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            context.localize(_SignUpTexts.divider),
-            style: const TextStyle(color: TColor.black, fontSize: 12),
-          ),
+          child: Text(context.localize(_SignUpTexts.divider), style: const TextStyle(color: TColor.black, fontSize: 12)),
         ),
-        Expanded(
-          child: Container(
-            height: 1,
-            color: TColor.gray.withValues(alpha: 0.3),
-          ),
-        ),
+        Expanded(child: Container(height: 1, color: TColor.gray.withValues(alpha: 0.3))),
       ],
     );
   }
@@ -397,8 +331,7 @@ class _SignUpViewState extends State<SignUpView> {
       children: [
         for (var i = 0; i < _SignUpTexts.socialProviders.length; i++) ...[
           SocialAuthButton(assetPath: _SignUpTexts.socialProviders[i]),
-          if (i < _SignUpTexts.socialProviders.length - 1)
-            const SizedBox(width: 16),
+          if (i < _SignUpTexts.socialProviders.length - 1) const SizedBox(width: 16),
         ],
       ],
     );
@@ -411,17 +344,10 @@ class _SignUpViewState extends State<SignUpView> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            context.localize(_SignUpTexts.footerQuestion),
-            style: const TextStyle(color: TColor.black, fontSize: 14),
-          ),
+          Text(context.localize(_SignUpTexts.footerQuestion), style: const TextStyle(color: TColor.black, fontSize: 14)),
           Text(
             context.localize(_SignUpTexts.footerAction),
-            style: const TextStyle(
-              color: TColor.black,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(color: TColor.black, fontSize: 14, fontWeight: FontWeight.w700),
           ),
         ],
       ),
