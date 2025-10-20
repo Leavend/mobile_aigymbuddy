@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/view/login/models/onboarding_draft.dart';
@@ -118,7 +120,7 @@ class GoalSelectionController extends ChangeNotifier {
     }
   }
 
-  static List<GoalCardData> get cards => goalCards;
+  static UnmodifiableListView<GoalCardData> get cards => goalCards;
 
   void _setSaving(bool value) {
     if (_isSaving == value) return;
@@ -147,7 +149,7 @@ class GoalCardData {
   final LocalizedText subtitle;
 }
 
-const goalCards = [
+const _goalCardData = [
   GoalCardData(
     goal: domain.FitnessGoal.buildMuscle,
     image: 'assets/img/goal_1.png',
@@ -191,3 +193,6 @@ const goalCards = [
     ),
   ),
 ];
+
+final UnmodifiableListView<GoalCardData> goalCards =
+    UnmodifiableListView(_goalCardData);

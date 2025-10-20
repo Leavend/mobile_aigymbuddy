@@ -79,7 +79,10 @@ abstract final class _CompleteProfileTexts {
 }
 
 class CompleteProfileView extends StatefulWidget {
-  const CompleteProfileView({super.key, required this.args});
+  const CompleteProfileView({
+    super.key,
+    ProfileFormArguments? args,
+  }) : args = args ?? const ProfileFormArguments(draft: OnboardingDraft());
 
   final ProfileFormArguments args;
 
@@ -112,66 +115,79 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
+    final viewInsets = MediaQuery.of(context).viewInsets;
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, _) {
         return AuthPageLayout(
-          child: Form(
-            key: _controller.formKey,
-            autovalidateMode: _controller.autovalidateMode,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 16),
-                Image.asset(
-                  'assets/img/complete_profile.png',
-                  width: media.width * 0.65,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(height: 24),
-                _Header(
-                  title: context.localize(_CompleteProfileTexts.title),
-                  subtitle: context.localize(_CompleteProfileTexts.subtitle),
-                ),
-                const SizedBox(height: 24),
-                _buildGenderField(),
-                const SizedBox(height: 16),
-                _buildDobField(),
-                const SizedBox(height: 16),
-                _buildMeasurementField(
-                  controller: _controller.weightController,
-                  hint: _CompleteProfileTexts.weightHint,
-                  iconAsset: 'assets/img/weight.png',
-                  unit: 'KG',
-                  validator: (value) => _validateMeasurement(
-                    value: value,
-                    min: CompleteProfileController.minWeightKg,
-                    max: CompleteProfileController.maxWeightKg,
-                    outOfRangeError: _CompleteProfileTexts.weightOutOfRange,
+          child: AnimatedPadding(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            padding: EdgeInsets.only(bottom: viewInsets.bottom),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final imageWidth = constraints.maxWidth * 0.65;
+                return Form(
+                  key: _controller.formKey,
+                  autovalidateMode: _controller.autovalidateMode,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 16),
+                      Center(
+                        child: Image.asset(
+                          'assets/img/complete_profile.png',
+                          width: imageWidth,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      _Header(
+                        title: context.localize(_CompleteProfileTexts.title),
+                        subtitle: context.localize(_CompleteProfileTexts.subtitle),
+                      ),
+                      const SizedBox(height: 24),
+                      _buildGenderField(),
+                      const SizedBox(height: 16),
+                      _buildDobField(),
+                      const SizedBox(height: 16),
+                      _buildMeasurementField(
+                        controller: _controller.weightController,
+                        hint: _CompleteProfileTexts.weightHint,
+                        iconAsset: 'assets/img/weight.png',
+                        unit: 'KG',
+                        validator: (value) => _validateMeasurement(
+                          value: value,
+                          min: CompleteProfileController.minWeightKg,
+                          max: CompleteProfileController.maxWeightKg,
+                          outOfRangeError: _CompleteProfileTexts.weightOutOfRange,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildMeasurementField(
+                        controller: _controller.heightController,
+                        hint: _CompleteProfileTexts.heightHint,
+                        iconAsset: 'assets/img/hight.png',
+                        unit: 'CM',
+                        validator: (value) => _validateMeasurement(
+                          value: value,
+                          min: CompleteProfileController.minHeightCm,
+                          max: CompleteProfileController.maxHeightCm,
+                          outOfRangeError: _CompleteProfileTexts.heightOutOfRange,
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      RoundButton(
+                        title: context.localize(_CompleteProfileTexts.nextButton),
+                        onPressed: _onNextPressed,
+                        isEnabled: _controller.isFormComplete,
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                _buildMeasurementField(
-                  controller: _controller.heightController,
-                  hint: _CompleteProfileTexts.heightHint,
-                  iconAsset: 'assets/img/hight.png',
-                  unit: 'CM',
-                  validator: (value) => _validateMeasurement(
-                    value: value,
-                    min: CompleteProfileController.minHeightCm,
-                    max: CompleteProfileController.maxHeightCm,
-                    outOfRangeError: _CompleteProfileTexts.heightOutOfRange,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                RoundButton(
-                  title: context.localize(_CompleteProfileTexts.nextButton),
-                  onPressed: _onNextPressed,
-                  isEnabled: _controller.isFormComplete,
-                ),
-              ],
+                );
+              },
             ),
           ),
         );

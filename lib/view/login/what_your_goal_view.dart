@@ -53,7 +53,10 @@ abstract final class _GoalTexts {
 }
 
 class WhatYourGoalView extends StatefulWidget {
-  const WhatYourGoalView({super.key, required this.args});
+  const WhatYourGoalView({
+    super.key,
+    ProfileFormArguments? args,
+  }) : args = args ?? const ProfileFormArguments(draft: OnboardingDraft());
 
   final ProfileFormArguments args;
 
@@ -95,6 +98,8 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final layoutWidth = media.width < 420 ? media.width : 420;
+    final viewInsets = MediaQuery.of(context).viewInsets;
     final confirmLabel = context.localize(
       _mode == ProfileFormMode.edit ? _GoalTexts.save : _GoalTexts.confirm,
     );
@@ -104,8 +109,12 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
       builder: (context, _) {
         return AuthPageLayout(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: SingleChildScrollView(
+          child: AnimatedPadding(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            padding: EdgeInsets.only(bottom: viewInsets.bottom),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 16),
@@ -125,28 +134,12 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
                   style: const TextStyle(color: TColor.gray, fontSize: 12),
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  height: media.height * 0.5,
-                  child: CarouselSlider.builder(
-                    carouselController: _carouselController,
-                    itemCount: GoalSelectionController.cards.length,
-                    itemBuilder: (context, index, _) {
-                      final goal = GoalSelectionController.cards[index];
-                      return _GoalCard(
-                        goal: goal,
-                        imageWidth: media.width * 0.5,
-                      );
-                    },
-                    options: CarouselOptions(
-                      enlargeCenterPage: true,
-                      viewportFraction: 0.75,
-                      aspectRatio: 3 / 4,
-                      enlargeStrategy: CenterPageEnlargeStrategy.height,
-                      initialPage: _controller.goalIndex,
-                      onPageChanged: (index, _) =>
-                          _controller.updateGoalIndex(index),
-                    ),
-                  ),
+                _CarouselSection(
+                  controller: _carouselController,
+                  goalIndex: _controller.goalIndex,
+                  imageWidth: layoutWidth * 0.5,
+                  maxHeight: media.height * 0.5,
+                  onGoalChanged: _controller.updateGoalIndex,
                 ),
                 const SizedBox(height: 24),
                 _buildSectionTitle(
@@ -254,6 +247,52 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(message)));
     }
+  }
+}
+
+class _CarouselSection extends StatelessWidget {
+  const _CarouselSection({
+    required this.controller,
+    required this.goalIndex,
+    required this.imageWidth,
+    required this.maxHeight,
+    required this.onGoalChanged,
+  });
+
+  static const _maxCarouselHeight = 420.0;
+
+  final CarouselSliderController controller;
+  final int goalIndex;
+  final double imageWidth;
+  final double maxHeight;
+  final ValueChanged<int> onGoalChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final resolvedHeight =
+        maxHeight.clamp(280.0, _maxCarouselHeight).toDouble();
+    return SizedBox(
+      height: resolvedHeight,
+      child: CarouselSlider.builder(
+        carouselController: controller,
+        itemCount: GoalSelectionController.cards.length,
+        itemBuilder: (context, index, _) {
+          final goal = GoalSelectionController.cards[index];
+          return _GoalCard(
+            goal: goal,
+            imageWidth: imageWidth,
+          );
+        },
+        options: CarouselOptions(
+          enlargeCenterPage: true,
+          viewportFraction: 0.75,
+          aspectRatio: 3 / 4,
+          enlargeStrategy: CenterPageEnlargeStrategy.height,
+          initialPage: goalIndex,
+          onPageChanged: (index, _) => onGoalChanged(index),
+        ),
+      ),
+    );
   }
 }
 
