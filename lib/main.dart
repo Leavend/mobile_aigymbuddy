@@ -1,3 +1,5 @@
+// lib/main.dart
+
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';

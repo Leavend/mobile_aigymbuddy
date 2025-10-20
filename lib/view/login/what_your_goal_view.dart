@@ -1,3 +1,5 @@
+// lib/view/login/what_your_goal_view.dart
+
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -75,7 +77,7 @@ class WhatYourGoalView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Text(
             context.localize(_GoalTexts.title),
             textAlign: TextAlign.center,
@@ -93,7 +95,7 @@ class WhatYourGoalView extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           SizedBox(
-            height: media.height * 0.55,
+            height: media.height * 0.65,
             child: CarouselSlider.builder(
               itemCount: _goals.length,
               itemBuilder: (context, index, _) {
@@ -108,7 +110,7 @@ class WhatYourGoalView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 90),
           RoundButton(
             title: context.localize(_GoalTexts.confirm),
             onPressed: () => context.push(AppRoute.welcome),
