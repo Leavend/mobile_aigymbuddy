@@ -6,15 +6,22 @@ part of '../app_db.dart';
 class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
   UsersDao(super.db);
 
-  Future<void> upsertUser({
+  Future<User?> findByEmail(String email) {
+    return (select(users)..where((tbl) => tbl.email.equals(email)))
+        .getSingleOrNull();
+  }
+
+  Future<User> createUser({
     required String email,
     required String passwordHash,
   }) async {
-    await into(users).insertOnConflictUpdate(UsersCompanion(
-      email: Value(email),
-      passwordHash: Value(passwordHash),
+    final companion = UsersCompanion.insert(
+      email: email,
+      passwordHash: passwordHash,
       role: const Value(UserRole.user),
-    ));
+    );
+
+    return into(users).insertReturning(companion);
   }
 
   Future<(User, UserProfile?)?> getUserWithProfile(String userId) async {
@@ -30,5 +37,22 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
     }
 
     return (result.readTable(users), result.readTableOrNull(userProfiles));
+  }
+
+  Future<UserProfile?> findProfile(String userId) {
+    return (select(userProfiles)..where((tbl) => tbl.userId.equals(userId)))
+        .getSingleOrNull();
+  }
+
+  Future<void> upsertProfile(UserProfilesCompanion companion) {
+    return into(userProfiles).insertOnConflictUpdate(companion);
+  }
+
+  Future<void> updateGoal({
+    required String userId,
+    required Goal goal,
+  }) {
+    return (update(userProfiles)..where((tbl) => tbl.userId.equals(userId)))
+        .write(UserProfilesCompanion(goal: Value(goal)));
   }
 }

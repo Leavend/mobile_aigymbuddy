@@ -5,6 +5,9 @@ import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
+import 'package:aigymbuddy/common/di/app_scope.dart';
+import 'package:aigymbuddy/features/auth/application/models/sign_up_flow_state.dart';
+import 'package:aigymbuddy/features/auth/domain/errors/auth_failures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -85,6 +88,14 @@ abstract final class _SignUpTexts {
     english: 'Please accept the terms to continue',
     indonesian: 'Silakan setujui syarat dan ketentuan terlebih dahulu',
   );
+  static const emailInUse = LocalizedText(
+    english: 'An account with this email already exists',
+    indonesian: 'Akun dengan email ini sudah terdaftar',
+  );
+  static const genericError = LocalizedText(
+    english: 'Unable to create an account. Please try again.',
+    indonesian: 'Tidak dapat membuat akun. Silakan coba lagi.',
+  );
 }
 
 class SignUpView extends StatefulWidget {
@@ -111,6 +122,7 @@ class _SignUpViewState extends State<SignUpView> {
   bool _isRegisterEnabled = false;
   bool _autoValidate = false;
   bool _showTermsError = false;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -149,7 +161,7 @@ class _SignUpViewState extends State<SignUpView> {
         _isTermsAccepted;
   }
 
-  void _onRegisterPressed() {
+  Future<void> _onRegisterPressed() async {
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -157,9 +169,49 @@ class _SignUpViewState extends State<SignUpView> {
       _showTermsError = !_isTermsAccepted;
     });
 
-    if ((_formKey.currentState?.validate() ?? false) && _isTermsAccepted) {
-      context.push(AppRoute.completeProfile);
+    if (!(_formKey.currentState?.validate() ?? false) || !_isTermsAccepted) {
+      return;
     }
+
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final SignUpFlowState flow = await context.authController.register(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+      );
+      if (!mounted) return;
+      context.push(AppRoute.completeProfile, extra: flow);
+    } on AuthFailure catch (error) {
+      _showError(_mapFailureToMessage(error));
+    } catch (_) {
+      _showError(context.localize(_SignUpTexts.genericError));
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _mapFailureToMessage(AuthFailure failure) {
+    final localized = switch (failure) {
+      EmailAlreadyInUseFailure() => _SignUpTexts.emailInUse,
+      _ => _SignUpTexts.genericError,
+    };
+    return context.localize(localized);
   }
 
   String? _validateFirstName(String? value) {
@@ -229,9 +281,15 @@ class _SignUpViewState extends State<SignUpView> {
           RoundButton(
             title: context.localize(_SignUpTexts.registerButton),
             onPressed: _onRegisterPressed,
-            isEnabled: _isRegisterEnabled,
+            isEnabled: _isRegisterEnabled && !_isSubmitting,
           ),
-          const SizedBox(height: 16),
+          if (_isSubmitting) ...[
+            const SizedBox(height: 16),
+            const Center(child: CircularProgressIndicator()),
+            const SizedBox(height: 12),
+          ] else ...[
+            const SizedBox(height: 16),
+          ],
           _buildDivider(context),
           const SizedBox(height: 16),
           _buildSocialRow(),
@@ -314,7 +372,11 @@ class _SignUpViewState extends State<SignUpView> {
             obscureText: !_isPasswordVisible,
             textInputAction: TextInputAction.done,
             validator: _validatePassword,
-            onFieldSubmitted: (_) => _onRegisterPressed(),
+            onFieldSubmitted: (_) {
+              if (_isRegisterEnabled && !_isSubmitting) {
+                _onRegisterPressed();
+              }
+            },
             rightIcon: IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),

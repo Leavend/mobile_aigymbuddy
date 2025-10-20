@@ -1,9 +1,13 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/di/app_scope.dart';
+import 'package:aigymbuddy/common/domain/enums.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
+import 'package:aigymbuddy/features/auth/application/models/sign_up_flow_state.dart';
+import 'package:aigymbuddy/features/auth/domain/errors/auth_failures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -75,10 +79,16 @@ abstract final class _CompleteProfileTexts {
     english: 'Height must be between 50 and 300 CM.',
     indonesian: 'Tinggi badan harus antara 50 dan 300 CM.',
   );
+  static const submitError = LocalizedText(
+    english: 'We could not save your profile. Please try again.',
+    indonesian: 'Profil Anda belum tersimpan. Silakan coba lagi.',
+  );
 }
 
 class CompleteProfileView extends StatefulWidget {
-  const CompleteProfileView({super.key});
+  const CompleteProfileView({super.key, required this.flow});
+
+  final SignUpFlowState flow;
 
   @override
   State<CompleteProfileView> createState() => _CompleteProfileViewState();
@@ -90,8 +100,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
 
-  _Gender? _selectedGender;
+  Gender? _selectedGender;
   bool _autoValidate = false;
+  bool _isSubmitting = false;
 
   static const _decimalKeyboard = TextInputType.numberWithOptions(
     decimal: true,
@@ -126,13 +137,47 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     setState(() {});
   }
 
-  void _onNextPressed() {
+  Future<void> _onNextPressed() async {
     FocusScope.of(context).unfocus();
     setState(() => _autoValidate = true);
 
-    if (_formKey.currentState?.validate() ?? false) {
-      context.push(AppRoute.goal);
+    if (!(_formKey.currentState?.validate() ?? false) ||
+        _selectedGender == null) {
+      return;
     }
+
+    final dobText = _dobController.text.trim();
+    final dob = dobText.isEmpty ? null : DateTime.tryParse(dobText);
+    final weight = double.parse(_weightController.text.trim());
+    final height = double.parse(_heightController.text.trim());
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      await context.authController.saveProfile(
+        flow: widget.flow,
+        gender: _selectedGender!,
+        dob: dob,
+        heightCm: height,
+        weightKg: weight,
+      );
+      if (!mounted) return;
+      context.push(AppRoute.goal, extra: widget.flow);
+    } on AuthFailure {
+      _showError(context.localize(_CompleteProfileTexts.submitError));
+    } catch (_) {
+      _showError(context.localize(_CompleteProfileTexts.submitError));
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _pickDob(FormFieldState<String> state) async {
@@ -278,6 +323,10 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
               onPressed: _onNextPressed,
               isEnabled: _isFormComplete,
             ),
+            if (_isSubmitting) ...[
+              const SizedBox(height: 16),
+              const Center(child: CircularProgressIndicator()),
+            ],
           ],
         ),
       ),
@@ -288,11 +337,12 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     return _selectedGender != null &&
         _dobController.text.isNotEmpty &&
         _weightController.text.isNotEmpty &&
-        _heightController.text.isNotEmpty;
+        _heightController.text.isNotEmpty &&
+        !_isSubmitting;
   }
 
   Widget _buildGenderField(AutovalidateMode autovalidateMode) {
-    return FormField<_Gender>(
+    return FormField<Gender>(
       autovalidateMode: autovalidateMode,
       initialValue: _selectedGender,
       validator: (value) => value == null
@@ -320,7 +370,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton<_Gender>(
+                      child: DropdownButton<Gender>(
                         isExpanded: true,
                         value: state.value,
                         hint: Text(
@@ -334,12 +384,12 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                           Icons.keyboard_arrow_down_rounded,
                           color: TColor.gray,
                         ),
-                        items: _Gender.values
+                        items: Gender.values
                             .map(
-                              (gender) => DropdownMenuItem<_Gender>(
+                              (gender) => DropdownMenuItem<Gender>(
                                 value: gender,
                                 child: Text(
-                                  context.localize(gender.label),
+                                  context.localize(gender.localizedLabel),
                                   style: const TextStyle(
                                     color: TColor.gray,
                                     fontSize: 14,
@@ -519,14 +569,13 @@ class _Header extends StatelessWidget {
   }
 }
 
-enum _Gender { male, female }
-
-extension on _Gender {
-  LocalizedText get label => switch (this) {
-    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
-    _Gender.female => const LocalizedText(
-      english: 'Female',
-      indonesian: 'Wanita',
-    ),
-  };
+extension GenderLocalization on Gender {
+  LocalizedText get localizedLabel => switch (this) {
+        Gender.male =>
+          const LocalizedText(english: 'Male', indonesian: 'Pria'),
+        Gender.female =>
+          const LocalizedText(english: 'Female', indonesian: 'Wanita'),
+        Gender.other =>
+          const LocalizedText(english: 'Other', indonesian: 'Lainnya'),
+      };
 }

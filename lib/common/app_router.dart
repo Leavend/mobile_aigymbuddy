@@ -36,6 +36,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'models/navigation_args.dart';
+import 'package:aigymbuddy/features/auth/application/models/sign_up_flow_state.dart';
 
 class AppRoute {
   static const String launch = '/';
@@ -115,13 +116,25 @@ class AppRouter {
         path: AppRoute.signUp,
         builder: (context) => const SignUpView(),
       ),
-      _simpleRoute(
+      GoRoute(
         path: AppRoute.completeProfile,
-        builder: (context) => const CompleteProfileView(),
+        redirect: (context, state) {
+          return state.extra is SignUpFlowState ? null : AppRoute.signUp;
+        },
+        builder: (context, state) {
+          final flow = state.extra as SignUpFlowState;
+          return CompleteProfileView(flow: flow);
+        },
       ),
-      _simpleRoute(
+      GoRoute(
         path: AppRoute.goal,
-        builder: (context) => const WhatYourGoalView(),
+        redirect: (context, state) {
+          return state.extra is SignUpFlowState ? null : AppRoute.signUp;
+        },
+        builder: (context, state) {
+          final flow = state.extra as SignUpFlowState;
+          return WhatYourGoalView(flow: flow);
+        },
       ),
       _simpleRoute(
         path: AppRoute.welcome,

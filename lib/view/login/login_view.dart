@@ -5,6 +5,8 @@ import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
+import 'package:aigymbuddy/common/di/app_scope.dart';
+import 'package:aigymbuddy/features/auth/domain/errors/auth_failures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -64,6 +66,14 @@ abstract final class _LoginTexts {
     english: 'Password must be at least 8 characters',
     indonesian: 'Kata sandi minimal 8 karakter',
   );
+  static const invalidCredentials = LocalizedText(
+    english: 'Email or password is incorrect',
+    indonesian: 'Email atau kata sandi salah',
+  );
+  static const genericError = LocalizedText(
+    english: 'Unable to login right now. Please try again.',
+    indonesian: 'Tidak dapat masuk saat ini. Silakan coba lagi.',
+  );
 }
 
 class LoginView extends StatefulWidget {
@@ -83,6 +93,7 @@ class _LoginViewState extends State<LoginView> {
   bool _isPasswordVisible = false;
   bool _isLoginEnabled = false;
   bool _autoValidate = false;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -107,14 +118,47 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
-  void _onLoginPressed() {
+  Future<void> _onLoginPressed() async {
     FocusScope.of(context).unfocus();
 
     setState(() => _autoValidate = true);
 
-    if (_formKey.currentState?.validate() ?? false) {
-      context.push(AppRoute.completeProfile);
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
     }
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      await context.authController.login(email: email, password: password);
+      if (!mounted) return;
+      context.go(AppRoute.main);
+    } on AuthFailure catch (error) {
+      _showError(_mapFailureToMessage(error));
+    } catch (_) {
+      _showError(context.localize(_LoginTexts.genericError));
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _mapFailureToMessage(AuthFailure failure) {
+    final localized = switch (failure) {
+      InvalidCredentialsFailure() => _LoginTexts.invalidCredentials,
+      _ => _LoginTexts.genericError,
+    };
+    return context.localize(localized);
   }
 
   void _onForgotPasswordPressed() {
@@ -173,9 +217,15 @@ class _LoginViewState extends State<LoginView> {
           RoundButton(
             title: context.localize(_LoginTexts.loginButton),
             onPressed: _onLoginPressed,
-            isEnabled: _isLoginEnabled,
+            isEnabled: _isLoginEnabled && !_isSubmitting,
           ),
-          const SizedBox(height: 28),
+          if (_isSubmitting) ...[
+            const SizedBox(height: 16),
+            const Center(child: CircularProgressIndicator()),
+            const SizedBox(height: 12),
+          ] else ...[
+            const SizedBox(height: 28),
+          ],
           _buildDivider(context),
           const SizedBox(height: 24),
           _buildSocialRow(),
@@ -231,7 +281,11 @@ class _LoginViewState extends State<LoginView> {
       obscureText: !_isPasswordVisible,
       textInputAction: TextInputAction.done,
       validator: _validatePassword,
-      onFieldSubmitted: (_) => _onLoginPressed(),
+      onFieldSubmitted: (_) {
+        if (_isLoginEnabled && !_isSubmitting) {
+          _onLoginPressed();
+        }
+      },
       rightIcon: IconButton(
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),

@@ -1,9 +1,9 @@
 // lib/view/splash/launch_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/di/app_scope.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,8 +20,6 @@ class _LaunchViewState extends State<LaunchView> {
     indonesian: 'Menyiapkan pengalaman Anda…',
   );
 
-  final AuthService _authService = AuthService.instance;
-
   @override
   void initState() {
     super.initState();
@@ -29,10 +27,14 @@ class _LaunchViewState extends State<LaunchView> {
   }
 
   Future<void> _handleBootstrap() async {
-    final hasCredentials = await _authService.hasSavedCredentials();
+    final authController = context.authController;
+    final hasActiveUser = await authController.hasActiveUser();
+    final onboardingComplete = await authController.isOnboardingComplete();
     if (!mounted) return;
 
-    final destination = hasCredentials ? AppRoute.main : AppRoute.onboarding;
+    final destination = hasActiveUser && onboardingComplete
+        ? AppRoute.main
+        : AppRoute.onboarding;
     context.go(destination);
   }
 

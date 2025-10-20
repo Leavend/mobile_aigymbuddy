@@ -1,8 +1,8 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/di/app_scope.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -76,7 +76,7 @@ class _WelcomeViewState extends State<WelcomeView> {
 
   Future<void> _goToHome() async {
     final router = GoRouter.of(context);
-    await AuthService.instance.setHasCredentials(true);
+    await context.authController.markOnboardingComplete();
     if (!mounted) return;
     router.go(AppRoute.main);
   }
