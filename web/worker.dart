@@ -1,9 +1,8 @@
+// web/worker.dart
 import 'package:drift/wasm.dart';
 
-/// This Dart program is the entrypoint of a web worker that will be compiled to
-/// JavaScript by running `build_runner build`. The resulting JavaScript file
-/// (`shared_worker.dart.js`) is part of the build result and will be shipped
-/// with the rest of the application when running or building a Flutter web app.
-void main() {
-  return WasmDatabase.workerMainForOpen();
-}
+/// Entry point web worker untuk Drift Web (WASM).
+/// Setelah dibuat, KOMPILASILAH file ini ke JS:
+///   dart compile js -O4 web/worker.dart -o web/worker.dart.js
+/// Hasilnya (worker.dart.js) HARUS ada di folder web/ (sejajar index.html).
+void main() => WasmDatabase.workerMainForOpen();
