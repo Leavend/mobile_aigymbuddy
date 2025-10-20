@@ -7,9 +7,11 @@ class Exercises extends Table {
 
   TextColumn get name => text().unique()();
   TextColumn get description => text()();
-  BoolColumn get isBodyWeight => boolean().named('is_body_weight').withDefault(const Constant(false))();
+  BoolColumn get isBodyWeight =>
+      boolean().named('is_body_weight').withDefault(const Constant(false))();
   TextColumn get videoUrl => text().named('video_url').nullable()();
-  IntColumn get defaultRestSec => integer().named('default_rest_sec').withDefault(const Constant(60))();
+  IntColumn get defaultRestSec =>
+      integer().named('default_rest_sec').withDefault(const Constant(60))();
 
   @override
   Set<Column> get primaryKey => {id};

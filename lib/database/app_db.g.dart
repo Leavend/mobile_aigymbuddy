@@ -486,7 +486,8 @@ class $UserProfilesTable extends UserProfiles
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES users(id) ON DELETE CASCADE UNIQUE',
+    $customConstraints:
+        'NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE',
   );
   static const VerificationMeta _displayNameMeta = const VerificationMeta(
     'displayName',
@@ -1445,7 +1446,7 @@ class $BodyMetricsTable extends BodyMetrics
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES users(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES users(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _loggedAtMeta = const VerificationMeta(
     'loggedAt',
@@ -2100,7 +2101,7 @@ class $ExerciseMusclesTable extends ExerciseMuscles
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES exercises(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES exercises(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _muscleIdMeta = const VerificationMeta(
     'muscleId',
@@ -2112,7 +2113,7 @@ class $ExerciseMusclesTable extends ExerciseMuscles
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES muscles(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES muscles(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _priorityMeta = const VerificationMeta(
     'priority',
@@ -2577,7 +2578,7 @@ class $ExerciseEquipmentTable extends ExerciseEquipment
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES exercises(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES exercises(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _equipmentIdMeta = const VerificationMeta(
     'equipmentId',
@@ -2589,7 +2590,7 @@ class $ExerciseEquipmentTable extends ExerciseEquipment
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES equipment(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES equipment(id) ON DELETE CASCADE',
   );
   @override
   List<GeneratedColumn> get $columns => [exerciseId, equipmentId];
@@ -3376,7 +3377,8 @@ class $WorkoutPlanDaysTable extends WorkoutPlanDays
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES workout_plans(id) ON DELETE CASCADE',
+    $customConstraints:
+        'NOT NULL REFERENCES workout_plans(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _dayIndexMeta = const VerificationMeta(
     'dayIndex',
@@ -3683,7 +3685,8 @@ class $WorkoutPlanExercisesTable extends WorkoutPlanExercises
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES workout_plan_days(id) ON DELETE CASCADE',
+    $customConstraints:
+        'NOT NULL REFERENCES workout_plan_days(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
     'exerciseId',
@@ -3695,7 +3698,7 @@ class $WorkoutPlanExercisesTable extends WorkoutPlanExercises
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES exercises(id) ON DELETE RESTRICT',
+    $customConstraints: 'NOT NULL REFERENCES exercises(id) ON DELETE RESTRICT',
   );
   static const VerificationMeta _orderIndexMeta = const VerificationMeta(
     'orderIndex',
@@ -4345,7 +4348,7 @@ class $WorkoutSessionsTable extends WorkoutSessions
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES users(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES users(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _planIdMeta = const VerificationMeta('planId');
   @override
@@ -4858,7 +4861,8 @@ class $SessionExercisesTable extends SessionExercises
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES workout_sessions(id) ON DELETE CASCADE',
+    $customConstraints:
+        'NOT NULL REFERENCES workout_sessions(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
     'exerciseId',
@@ -4870,7 +4874,7 @@ class $SessionExercisesTable extends SessionExercises
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES exercises(id) ON DELETE RESTRICT',
+    $customConstraints: 'NOT NULL REFERENCES exercises(id) ON DELETE RESTRICT',
   );
   static const VerificationMeta _orderIndexMeta = const VerificationMeta(
     'orderIndex',
@@ -5225,7 +5229,7 @@ class $SessionSetsTable extends SessionSets
         type: DriftSqlType.string,
         requiredDuringInsert: true,
         $customConstraints:
-            'REFERENCES session_exercises(id) ON DELETE CASCADE',
+            'NOT NULL REFERENCES session_exercises(id) ON DELETE CASCADE',
       );
   static const VerificationMeta _setNumberMeta = const VerificationMeta(
     'setNumber',
@@ -5806,7 +5810,7 @@ class $AiChatMessagesTable extends AiChatMessages
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'REFERENCES users(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES users(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _roleMeta = const VerificationMeta('role');
   @override

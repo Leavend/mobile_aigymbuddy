@@ -9,13 +9,11 @@ class PlanDayWithExercises {
   PlanDayWithExercises(this.day, this.items);
 }
 
-@DriftAccessor(tables: [
-  WorkoutPlans,
-  WorkoutPlanDays,
-  WorkoutPlanExercises,
-  Exercises,
-])
-class WorkoutPlansDao extends DatabaseAccessor<AppDatabase> with _$WorkoutPlansDaoMixin {
+@DriftAccessor(
+  tables: [WorkoutPlans, WorkoutPlanDays, WorkoutPlanExercises, Exercises],
+)
+class WorkoutPlansDao extends DatabaseAccessor<AppDatabase>
+    with _$WorkoutPlansDaoMixin {
   WorkoutPlansDao(super.db);
 
   // Method ini sudah benar
@@ -25,23 +23,27 @@ class WorkoutPlansDao extends DatabaseAccessor<AppDatabase> with _$WorkoutPlansD
         .getSingleOrNull();
   }
 
-  Future<List<PlanDayWithExercises>> getPlanDaysWithExercises(String planId) async {
-    final query = select(workoutPlanDays).join([
-      innerJoin(
-        workoutPlanExercises,
-        workoutPlanExercises.planDayId.equalsExp(workoutPlanDays.id),
-      ),
-      innerJoin(
-        exercises,
-        exercises.id.equalsExp(workoutPlanExercises.exerciseId),
-      ),
-    ])
-      ..where(workoutPlanDays.planId.equals(planId))
-      ..orderBy([OrderingTerm.asc(workoutPlanDays.dayIndex)]);
+  Future<List<PlanDayWithExercises>> getPlanDaysWithExercises(
+    String planId,
+  ) async {
+    final query =
+        select(workoutPlanDays).join([
+            innerJoin(
+              workoutPlanExercises,
+              workoutPlanExercises.planDayId.equalsExp(workoutPlanDays.id),
+            ),
+            innerJoin(
+              exercises,
+              exercises.id.equalsExp(workoutPlanExercises.exerciseId),
+            ),
+          ])
+          ..where(workoutPlanDays.planId.equals(planId))
+          ..orderBy([OrderingTerm.asc(workoutPlanDays.dayIndex)]);
 
     final rows = await query.get();
 
-    final groupedData = <WorkoutPlanDay, List<(WorkoutPlanExercise, Exercise)>>{};
+    final groupedData =
+        <WorkoutPlanDay, List<(WorkoutPlanExercise, Exercise)>>{};
 
     for (final row in rows) {
       final day = row.readTable(workoutPlanDays);
@@ -51,7 +53,7 @@ class WorkoutPlansDao extends DatabaseAccessor<AppDatabase> with _$WorkoutPlansD
       final list = groupedData.putIfAbsent(day, () => []);
       list.add((planExercise, exercise));
     }
-    
+
     return groupedData.entries
         .map((entry) => PlanDayWithExercises(entry.key, entry.value))
         .toList();

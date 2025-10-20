@@ -30,7 +30,7 @@ import 'package:aigymbuddy/view/workout_tracker/workout_detail_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_schedule_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_tracker_view.dart';
 
-import 'package:aigymbuddy/view/test/drift_test_view.dart';
+// import 'package:aigymbuddy/view/test/drift_test_view.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -78,7 +78,7 @@ class AppRoute {
   static const String profile = '/profile';
   static const String select = '/select';
 
-  static const String testDrift = '/test-drift';
+  // static const String testDrift = '/test-drift';
 }
 
 class AppRouter {
@@ -97,7 +97,8 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: AppRoute.testDrift,
+    // initialLocation: AppRoute.testDrift,'
+    initialLocation: AppRoute.launch,
     routes: [
       _simpleRoute(
         path: AppRoute.launch,
@@ -195,12 +196,6 @@ class AppRouter {
   }
 
   static List<RouteBase> get _standaloneRoutes => [
-
-    _simpleRoute(
-      path: AppRoute.testDrift,
-      builder: (context) => const DriftTestView(),
-      parentNavigatorKey: rootNavigatorKey,
-    ),
     _simpleRoute(
       path: AppRoute.activityTracker,
       builder: (context) => const ActivityTrackerView(),

@@ -5,12 +5,25 @@ import 'package:drift/drift.dart';
 
 // ===== ENUMS =====
 enum UserRole { user, admin }
+
 enum Gender { male, female, other }
+
 enum Level { beginner, intermediate, advanced }
+
 enum Goal { fatLoss, muscleGain, maintain }
+
 enum LocationPref { home, gym }
+
 enum Difficulty { beginner, intermediate, advanced }
-enum SuggestionType { motivation, quickWorkout, nutritionTip, formCue, planChange }
+
+enum SuggestionType {
+  motivation,
+  quickWorkout,
+  nutritionTip,
+  formCue,
+  planChange,
+}
+
 enum MuscleGroup { chest, back, shoulders, arms, legs, core, fullBody }
 
 // ===== TYPE CONVERTERS =====

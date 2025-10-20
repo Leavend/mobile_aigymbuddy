@@ -10,18 +10,19 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
     required String email,
     required String passwordHash,
   }) async {
-    await into(users).insertOnConflictUpdate(UsersCompanion(
-      email: Value(email),
-      passwordHash: Value(passwordHash),
-      role: const Value(UserRole.user),
-    ));
+    await into(users).insertOnConflictUpdate(
+      UsersCompanion(
+        email: Value(email),
+        passwordHash: Value(passwordHash),
+        role: const Value(UserRole.user),
+      ),
+    );
   }
 
   Future<(User, UserProfile?)?> getUserWithProfile(String userId) async {
     final query = select(users).join([
-      leftOuterJoin(userProfiles, userProfiles.userId.equalsExp(users.id))
-    ])
-      ..where(users.id.equals(userId));
+      leftOuterJoin(userProfiles, userProfiles.userId.equalsExp(users.id)),
+    ])..where(users.id.equals(userId));
 
     final result = await query.getSingleOrNull();
 
