@@ -1,3 +1,6 @@
+import 'dart:developer' as developer;
+
+import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -5,8 +8,10 @@ import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
+import 'package:aigymbuddy/database/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/auth_page_layout.dart';
 import 'widgets/auth_validators.dart';
@@ -64,6 +69,14 @@ abstract final class _LoginTexts {
     english: 'Password must be at least 8 characters',
     indonesian: 'Kata sandi minimal 8 karakter',
   );
+  static const invalidCredentials = LocalizedText(
+    english: 'Incorrect email or password.',
+    indonesian: 'Email atau kata sandi salah.',
+  );
+  static const loginFailed = LocalizedText(
+    english: 'Unable to login. Please try again later.',
+    indonesian: 'Tidak dapat masuk. Silakan coba lagi nanti.',
+  );
 }
 
 class LoginView extends StatefulWidget {
@@ -107,13 +120,28 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
-  void _onLoginPressed() {
+  Future<void> _onLoginPressed() async {
     FocusScope.of(context).unfocus();
 
     setState(() => _autoValidate = true);
 
-    if (_formKey.currentState?.validate() ?? false) {
-      context.push(AppRoute.completeProfile);
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    final controller = context.read<AuthController>();
+    final email = _emailController.text.trim().toLowerCase();
+    final password = _passwordController.text;
+
+    try {
+      await controller.login(email: email, password: password);
+      if (!mounted) return;
+      context.go(AppRoute.main);
+    } on InvalidCredentials {
+      _showErrorMessage(_LoginTexts.invalidCredentials);
+    } catch (error, stackTrace) {
+      developer.log('Login failed', error: error, stackTrace: stackTrace);
+      _showErrorMessage(_LoginTexts.loginFailed);
     }
   }
 
@@ -145,6 +173,16 @@ class _LoginViewState extends State<LoginView> {
         _passwordController.text.length >= 8;
   }
 
+  void _showErrorMessage(LocalizedText text) {
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(context.localize(text))),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AuthPageLayout(child: _buildContent(context));
@@ -170,10 +208,16 @@ class _LoginViewState extends State<LoginView> {
           const SizedBox(height: 16),
           _buildForgotPasswordButton(context),
           const SizedBox(height: 28),
-          RoundButton(
-            title: context.localize(_LoginTexts.loginButton),
-            onPressed: _onLoginPressed,
-            isEnabled: _isLoginEnabled,
+          Consumer<AuthController>(
+            builder: (context, controller, _) {
+              final isProcessing = controller.isLoading;
+              return RoundButton(
+                title: context.localize(_LoginTexts.loginButton),
+                onPressed: () => _onLoginPressed(),
+                isEnabled: _isLoginEnabled && !isProcessing,
+                isLoading: isProcessing,
+              );
+            },
           ),
           const SizedBox(height: 28),
           _buildDivider(context),

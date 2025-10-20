@@ -62,28 +62,3 @@ class SleepAddAlarmArgs {
   String toString() => 'SleepAddAlarmArgs(date: $date)';
 }
 
-/// ==== DATA CARRIER SIGN-UP FLOW ====
-class SignUpData {
-  String firstName;
-  String lastName;
-  String email;
-  String password; // sementara; hash saat commit ke DB
-
-  // Diisi di CompleteProfile
-  String? gender;        // 'male' | 'female'
-  DateTime? dob;
-  double? weightKg;
-  double? heightCm;
-
-  // Diisi di Goal
-  String? level;         // 'beginner' | 'intermediate' | 'advanced'
-  String? goal;          // 'fat_loss' | 'muscle_gain' | 'maintain'
-  String? location;      // 'home' | 'gym'
-
-  SignUpData({
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.password,
-  });
-}

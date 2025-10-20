@@ -1,15 +1,16 @@
+import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
+import 'package:aigymbuddy/database/type_converters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'widgets/auth_page_layout.dart';
-import 'package:aigymbuddy/common/models/navigation_args.dart';
 
 abstract final class _CompleteProfileTexts {
   static const title = LocalizedText(english: 'Let’s complete your profile', indonesian: 'Lengkapi profil Anda');
@@ -81,13 +82,18 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     setState(() => _autoValidate = true);
 
     if (_formKey.currentState?.validate() ?? false) {
+      final gender = switch (_selectedGender) {
+        _Gender.male => Gender.male,
+        _Gender.female => Gender.female,
+        _ => null,
+      };
+
       widget.signUpData
-        ..gender   = _selectedGender == _Gender.male ? 'male' : 'female'
-        ..dob      = DateTime.parse(_dobController.text)
+        ..gender = gender
+        ..dob = DateTime.parse(_dobController.text)
         ..weightKg = double.parse(_weightController.text)
         ..heightCm = double.parse(_heightController.text);
 
-      // Teruskan data ke Goal
       context.push(AppRoute.goal, extra: widget.signUpData);
     }
   }

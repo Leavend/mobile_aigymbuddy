@@ -1,3 +1,4 @@
+import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/view/home/activity_tracker_view.dart';
 import 'package:aigymbuddy/view/home/finished_workout_view.dart';
 import 'package:aigymbuddy/view/home/home_view.dart';
