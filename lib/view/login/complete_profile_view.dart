@@ -13,22 +13,70 @@ import 'package:go_router/go_router.dart';
 import 'widgets/auth_page_layout.dart';
 
 abstract final class _CompleteProfileTexts {
-  static const title = LocalizedText(english: 'Let’s complete your profile', indonesian: 'Lengkapi profil Anda');
-  static const subtitle = LocalizedText(english: 'It will help us to know more about you!', indonesian: 'Ini membantu kami mengenal Anda lebih baik!');
-  static const genderHint = LocalizedText(english: 'Choose Gender', indonesian: 'Pilih Jenis Kelamin');
-  static const dobHint = LocalizedText(english: 'Date of Birth', indonesian: 'Tanggal Lahir');
-  static const dobHelpText = LocalizedText(english: 'Select Date of Birth', indonesian: 'Pilih Tanggal Lahir');
-  static const weightHint = LocalizedText(english: 'Your Weight', indonesian: 'Berat Badan');
-  static const heightHint = LocalizedText(english: 'Your Height', indonesian: 'Tinggi Badan');
-  static const nextButton = LocalizedText(english: 'Next >', indonesian: 'Berikutnya >');
-  static const genderRequired = LocalizedText(english: 'Please select your gender.', indonesian: 'Silakan pilih jenis kelamin Anda.');
-  static const dobRequired = LocalizedText(english: 'Please select your date of birth.', indonesian: 'Silakan pilih tanggal lahir Anda.');
-  static const dobInvalid = LocalizedText(english: 'Please choose a valid date of birth.', indonesian: 'Silakan pilih tanggal lahir yang valid.');
-  static const dobAgeRestriction = LocalizedText(english: 'You must be at least 13 years old.', indonesian: 'Anda harus berusia minimal 13 tahun.');
-  static const measurementRequired = LocalizedText(english: 'This field is required.', indonesian: 'Kolom ini wajib diisi.');
-  static const measurementInvalid = LocalizedText(english: 'Enter a valid number.', indonesian: 'Masukkan angka yang valid.');
-  static const weightOutOfRange = LocalizedText(english: 'Weight must be between 20 and 500 KG.', indonesian: 'Berat badan harus antara 20 dan 500 KG.');
-  static const heightOutOfRange = LocalizedText(english: 'Height must be between 50 and 300 CM.', indonesian: 'Tinggi badan harus antara 50 dan 300 CM.');
+  static const title = LocalizedText(
+    english: 'Let’s complete your profile',
+    indonesian: 'Lengkapi profil Anda',
+  );
+  static const subtitle = LocalizedText(
+    english: 'It will help us to know more about you!',
+    indonesian: 'Ini membantu kami mengenal Anda lebih baik!',
+  );
+  static const genderHint = LocalizedText(
+    english: 'Choose Gender',
+    indonesian: 'Pilih Jenis Kelamin',
+  );
+  static const dobHint = LocalizedText(
+    english: 'Date of Birth',
+    indonesian: 'Tanggal Lahir',
+  );
+  static const dobHelpText = LocalizedText(
+    english: 'Select Date of Birth',
+    indonesian: 'Pilih Tanggal Lahir',
+  );
+  static const weightHint = LocalizedText(
+    english: 'Your Weight',
+    indonesian: 'Berat Badan',
+  );
+  static const heightHint = LocalizedText(
+    english: 'Your Height',
+    indonesian: 'Tinggi Badan',
+  );
+  static const nextButton = LocalizedText(
+    english: 'Next >',
+    indonesian: 'Berikutnya >',
+  );
+  static const genderRequired = LocalizedText(
+    english: 'Please select your gender.',
+    indonesian: 'Silakan pilih jenis kelamin Anda.',
+  );
+  static const dobRequired = LocalizedText(
+    english: 'Please select your date of birth.',
+    indonesian: 'Silakan pilih tanggal lahir Anda.',
+  );
+  static const dobInvalid = LocalizedText(
+    english: 'Please choose a valid date of birth.',
+    indonesian: 'Silakan pilih tanggal lahir yang valid.',
+  );
+  static const dobAgeRestriction = LocalizedText(
+    english: 'You must be at least 13 years old.',
+    indonesian: 'Anda harus berusia minimal 13 tahun.',
+  );
+  static const measurementRequired = LocalizedText(
+    english: 'This field is required.',
+    indonesian: 'Kolom ini wajib diisi.',
+  );
+  static const measurementInvalid = LocalizedText(
+    english: 'Enter a valid number.',
+    indonesian: 'Masukkan angka yang valid.',
+  );
+  static const weightOutOfRange = LocalizedText(
+    english: 'Weight must be between 20 and 500 KG.',
+    indonesian: 'Berat badan harus antara 20 dan 500 KG.',
+  );
+  static const heightOutOfRange = LocalizedText(
+    english: 'Height must be between 50 and 300 CM.',
+    indonesian: 'Tinggi badan harus antara 50 dan 300 CM.',
+  );
 }
 
 class CompleteProfileView extends StatefulWidget {
@@ -48,7 +96,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   _Gender? _selectedGender;
   bool _autoValidate = false;
 
-  static const _decimalKeyboard = TextInputType.numberWithOptions(decimal: true);
+  static const _decimalKeyboard = TextInputType.numberWithOptions(
+    decimal: true,
+  );
   static const double _minWeightKg = 20;
   static const double _maxWeightKg = 500;
   static const double _minHeightCm = 50;
@@ -121,7 +171,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     );
 
     if (picked != null) {
-      final formatted = '${picked.year.toString().padLeft(4, '0')}-'
+      final formatted =
+          '${picked.year.toString().padLeft(4, '0')}-'
           '${picked.month.toString().padLeft(2, '0')}-'
           '${picked.day.toString().padLeft(2, '0')}';
       _dobController.text = formatted;
@@ -131,13 +182,19 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
 
   String? _validateDob(String? value) {
     final text = value?.trim() ?? '';
-    if (text.isEmpty) return context.localize(_CompleteProfileTexts.dobRequired);
+    if (text.isEmpty) {
+      return context.localize(_CompleteProfileTexts.dobRequired);
+    }
 
     final parsed = DateTime.tryParse(text);
-    if (parsed == null) return context.localize(_CompleteProfileTexts.dobInvalid);
+    if (parsed == null) {
+      return context.localize(_CompleteProfileTexts.dobInvalid);
+    }
 
     final now = DateTime.now();
-    if (parsed.isAfter(now)) return context.localize(_CompleteProfileTexts.dobInvalid);
+    if (parsed.isAfter(now)) {
+      return context.localize(_CompleteProfileTexts.dobInvalid);
+    }
 
     final ageThreshold = DateTime(now.year - _minAgeYears, now.month, now.day);
     if (parsed.isAfter(ageThreshold)) {
@@ -153,12 +210,18 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     required LocalizedText outOfRangeError,
   }) {
     final text = value?.trim() ?? '';
-    if (text.isEmpty) return context.localize(_CompleteProfileTexts.measurementRequired);
+    if (text.isEmpty) {
+      return context.localize(_CompleteProfileTexts.measurementRequired);
+    }
 
     final parsed = double.tryParse(text);
-    if (parsed == null) return context.localize(_CompleteProfileTexts.measurementInvalid);
+    if (parsed == null) {
+      return context.localize(_CompleteProfileTexts.measurementInvalid);
+    }
 
-    if (parsed < min || parsed > max) return context.localize(outOfRangeError);
+    if (parsed < min || parsed > max) {
+      return context.localize(outOfRangeError);
+    }
 
     return null;
   }
@@ -166,7 +229,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-    final autovalidateMode = _autoValidate ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled;
+    final autovalidateMode = _autoValidate
+        ? AutovalidateMode.onUserInteraction
+        : AutovalidateMode.disabled;
 
     return AuthPageLayout(
       child: Form(
@@ -177,7 +242,11 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 16),
-            Image.asset('assets/img/complete_profile.png', width: media.width * 0.65, fit: BoxFit.contain),
+            Image.asset(
+              'assets/img/complete_profile.png',
+              width: media.width * 0.65,
+              fit: BoxFit.contain,
+            ),
             const SizedBox(height: 24),
             _Header(
               title: context.localize(_CompleteProfileTexts.title),
@@ -237,8 +306,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     return FormField<_Gender>(
       autovalidateMode: autovalidateMode,
       initialValue: _selectedGender,
-      validator: (value) =>
-          value == null ? context.localize(_CompleteProfileTexts.genderRequired) : null,
+      validator: (value) => value == null
+          ? context.localize(_CompleteProfileTexts.genderRequired)
+          : null,
       builder: (state) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,10 +316,18 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
             Container(
               height: 50,
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(color: TColor.lightGray, borderRadius: BorderRadius.circular(15)),
+              decoration: BoxDecoration(
+                color: TColor.lightGray,
+                borderRadius: BorderRadius.circular(15),
+              ),
               child: Row(
                 children: [
-                  Image.asset('assets/img/gender.png', width: 20, height: 20, color: TColor.gray),
+                  Image.asset(
+                    'assets/img/gender.png',
+                    width: 20,
+                    height: 20,
+                    color: TColor.gray,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: DropdownButtonHideUnderline(
@@ -258,16 +336,25 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                         value: state.value,
                         hint: Text(
                           context.localize(_CompleteProfileTexts.genderHint),
-                          style: const TextStyle(color: TColor.gray, fontSize: 12),
+                          style: const TextStyle(
+                            color: TColor.gray,
+                            fontSize: 12,
+                          ),
                         ),
-                        icon: const Icon(Icons.keyboard_arrow_down_rounded, color: TColor.gray),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: TColor.gray,
+                        ),
                         items: _Gender.values
                             .map(
                               (gender) => DropdownMenuItem<_Gender>(
                                 value: gender,
                                 child: Text(
                                   context.localize(gender.label),
-                                  style: const TextStyle(color: TColor.gray, fontSize: 14),
+                                  style: const TextStyle(
+                                    color: TColor.gray,
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             )
@@ -395,9 +482,18 @@ class _UnitTag extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: TColor.secondaryG),
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 12, offset: const Offset(0, 6))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      child: Text(text, style: const TextStyle(color: TColor.white, fontSize: 12)),
+      child: Text(
+        text,
+        style: const TextStyle(color: TColor.white, fontSize: 12),
+      ),
     );
   }
 }
@@ -411,9 +507,21 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(title, textAlign: TextAlign.center, style: const TextStyle(color: TColor.black, fontSize: 22, fontWeight: FontWeight.w700)),
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: TColor.black,
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         const SizedBox(height: 6),
-        Text(subtitle, textAlign: TextAlign.center, style: const TextStyle(color: TColor.gray, fontSize: 12)),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: TColor.gray, fontSize: 12),
+        ),
       ],
     );
   }
@@ -423,7 +531,10 @@ enum _Gender { male, female }
 
 extension on _Gender {
   LocalizedText get label => switch (this) {
-        _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
-        _Gender.female => const LocalizedText(english: 'Female', indonesian: 'Wanita'),
-      };
+    _Gender.male => const LocalizedText(english: 'Male', indonesian: 'Pria'),
+    _Gender.female => const LocalizedText(
+      english: 'Female',
+      indonesian: 'Wanita',
+    ),
+  };
 }

@@ -61,4 +61,3 @@ class SleepAddAlarmArgs {
   @override
   String toString() => 'SleepAddAlarmArgs(date: $date)';
 }
-

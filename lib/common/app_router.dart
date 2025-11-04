@@ -91,10 +91,11 @@ class AppRouter {
   static final GlobalKey<NavigatorState> _profileNavigatorKey =
       GlobalKey<NavigatorState>(debugLabel: 'profileBranch');
 
-  static final GoRouter router = GoRouter(
-    navigatorKey: rootNavigatorKey,
-    initialLocation: AppRoute.launch,
-    routes: [
+  static GoRouter createRouter({required String initialLocation}) {
+    return GoRouter(
+      navigatorKey: rootNavigatorKey,
+      initialLocation: initialLocation,
+      routes: [
       _simpleRoute(
         path: AppRoute.launch,
         builder: (context) => const LaunchView(),
@@ -132,7 +133,8 @@ class AppRouter {
       _buildMainShell(),
       ..._standaloneRoutes,
     ],
-  );
+    );
+  }
 
   static RouteBase _buildMainShell() {
     return StatefulShellRoute.indexedStack(
@@ -197,104 +199,102 @@ class AppRouter {
   }
 
   static List<RouteBase> get _standaloneRoutes => [
-        _simpleRoute(
-          path: AppRoute.activityTracker,
-          builder: (context) => const ActivityTrackerView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _simpleRoute(
-          path: AppRoute.notification,
-          builder: (context) => const NotificationView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _simpleRoute(
-          path: AppRoute.finishedWorkout,
-          builder: (context) => const FinishedWorkoutView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _simpleRoute(
-          path: AppRoute.workoutTracker,
-          name: AppRoute.workoutTrackerName,
-          builder: (context) => const WorkoutTrackerView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _simpleRoute(
-          path: AppRoute.workoutSchedule,
-          name: AppRoute.workoutScheduleName,
-          builder: (context) => const WorkoutScheduleView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _extraRoute<AddScheduleArgs>(
-          path: AppRoute.addWorkoutSchedule,
-          name: AppRoute.addWorkoutScheduleName,
-          parentNavigatorKey: rootNavigatorKey,
-          missingExtraMessage:
-              'AddScheduleView requires AddScheduleArgs as extra.',
-          builder: (context, args) => AddScheduleView(date: args.date),
-        ),
-        _extraRoute<WorkoutDetailArgs>(
-          path: AppRoute.workoutDetail,
-          name: AppRoute.workoutDetailName,
-          parentNavigatorKey: rootNavigatorKey,
-          missingExtraMessage:
-              'WorkoutDetailView requires WorkoutDetailArgs as extra.',
-          builder: (context, args) => WorkoutDetailView(workout: args.workout),
-        ),
-        _extraRoute<ExerciseStepsArgs>(
-          path: AppRoute.exerciseSteps,
-          name: AppRoute.exerciseStepsName,
-          parentNavigatorKey: rootNavigatorKey,
-          missingExtraMessage:
-              'ExercisesStepDetails requires ExerciseStepsArgs as extra.',
-          builder: (context, args) =>
-              ExercisesStepDetails(exercise: args.exercise),
-        ),
-        _simpleRoute(
-          path: AppRoute.mealPlanner,
-          builder: (context) => const MealPlannerView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _simpleRoute(
-          path: AppRoute.mealSchedule,
-          builder: (context) => const MealScheduleView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _extraRoute<MealFoodDetailsArgs>(
-          path: AppRoute.mealFoodDetails,
-          parentNavigatorKey: rootNavigatorKey,
-          missingExtraMessage:
-              'MealFoodDetailsView requires MealFoodDetailsArgs as extra.',
-          builder: (context, args) => MealFoodDetailsView(eObj: args.food),
-        ),
-        _extraRoute<FoodInfoArgs>(
-          path: AppRoute.foodInfo,
-          parentNavigatorKey: rootNavigatorKey,
-          missingExtraMessage:
-              'FoodInfoDetailsView requires FoodInfoArgs as extra.',
-          builder: (context, args) =>
-              FoodInfoDetailsView(meal: args.meal, detail: args.food),
-        ),
-        _simpleRoute(
-          path: AppRoute.sleepTracker,
-          name: AppRoute.sleepTrackerName,
-          builder: (context) => const SleepTrackerView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _simpleRoute(
-          path: AppRoute.sleepSchedule,
-          name: AppRoute.sleepScheduleName,
-          builder: (context) => const SleepScheduleView(),
-          parentNavigatorKey: rootNavigatorKey,
-        ),
-        _extraRoute<SleepAddAlarmArgs>(
-          path: AppRoute.sleepAddAlarm,
-          name: AppRoute.sleepAddAlarmName,
-          parentNavigatorKey: rootNavigatorKey,
-          missingExtraMessage:
-              'SleepAddAlarmView requires SleepAddAlarmArgs as extra.',
-          builder: (context, args) => SleepAddAlarmView(date: args.date),
-        ),
-      ];
+    _simpleRoute(
+      path: AppRoute.activityTracker,
+      builder: (context) => const ActivityTrackerView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _simpleRoute(
+      path: AppRoute.notification,
+      builder: (context) => const NotificationView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _simpleRoute(
+      path: AppRoute.finishedWorkout,
+      builder: (context) => const FinishedWorkoutView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _simpleRoute(
+      path: AppRoute.workoutTracker,
+      name: AppRoute.workoutTrackerName,
+      builder: (context) => const WorkoutTrackerView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _simpleRoute(
+      path: AppRoute.workoutSchedule,
+      name: AppRoute.workoutScheduleName,
+      builder: (context) => const WorkoutScheduleView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _extraRoute<AddScheduleArgs>(
+      path: AppRoute.addWorkoutSchedule,
+      name: AppRoute.addWorkoutScheduleName,
+      parentNavigatorKey: rootNavigatorKey,
+      missingExtraMessage: 'AddScheduleView requires AddScheduleArgs as extra.',
+      builder: (context, args) => AddScheduleView(date: args.date),
+    ),
+    _extraRoute<WorkoutDetailArgs>(
+      path: AppRoute.workoutDetail,
+      name: AppRoute.workoutDetailName,
+      parentNavigatorKey: rootNavigatorKey,
+      missingExtraMessage:
+          'WorkoutDetailView requires WorkoutDetailArgs as extra.',
+      builder: (context, args) => WorkoutDetailView(workout: args.workout),
+    ),
+    _extraRoute<ExerciseStepsArgs>(
+      path: AppRoute.exerciseSteps,
+      name: AppRoute.exerciseStepsName,
+      parentNavigatorKey: rootNavigatorKey,
+      missingExtraMessage:
+          'ExercisesStepDetails requires ExerciseStepsArgs as extra.',
+      builder: (context, args) => ExercisesStepDetails(exercise: args.exercise),
+    ),
+    _simpleRoute(
+      path: AppRoute.mealPlanner,
+      builder: (context) => const MealPlannerView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _simpleRoute(
+      path: AppRoute.mealSchedule,
+      builder: (context) => const MealScheduleView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _extraRoute<MealFoodDetailsArgs>(
+      path: AppRoute.mealFoodDetails,
+      parentNavigatorKey: rootNavigatorKey,
+      missingExtraMessage:
+          'MealFoodDetailsView requires MealFoodDetailsArgs as extra.',
+      builder: (context, args) => MealFoodDetailsView(eObj: args.food),
+    ),
+    _extraRoute<FoodInfoArgs>(
+      path: AppRoute.foodInfo,
+      parentNavigatorKey: rootNavigatorKey,
+      missingExtraMessage:
+          'FoodInfoDetailsView requires FoodInfoArgs as extra.',
+      builder: (context, args) =>
+          FoodInfoDetailsView(meal: args.meal, detail: args.food),
+    ),
+    _simpleRoute(
+      path: AppRoute.sleepTracker,
+      name: AppRoute.sleepTrackerName,
+      builder: (context) => const SleepTrackerView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _simpleRoute(
+      path: AppRoute.sleepSchedule,
+      name: AppRoute.sleepScheduleName,
+      builder: (context) => const SleepScheduleView(),
+      parentNavigatorKey: rootNavigatorKey,
+    ),
+    _extraRoute<SleepAddAlarmArgs>(
+      path: AppRoute.sleepAddAlarm,
+      name: AppRoute.sleepAddAlarmName,
+      parentNavigatorKey: rootNavigatorKey,
+      missingExtraMessage:
+          'SleepAddAlarmView requires SleepAddAlarmArgs as extra.',
+      builder: (context, args) => SleepAddAlarmView(date: args.date),
+    ),
+  ];
 
   // Builder tanpa akses state (untuk screen biasa)
   static GoRoute _simpleRoute({

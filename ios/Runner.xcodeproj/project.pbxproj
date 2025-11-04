@@ -186,7 +186,8 @@
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
-				7B38800C25B664C7673EE2C4 /* [CP] Embed Pods Frameworks */,
+				B9F3FADA2C0A4C2D00F5A8DD /* Remove Extended Attributes */,
+				4C7003A63B31543629C058C3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -296,21 +297,21 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
 		};
-		7B38800C25B664C7673EE2C4 /* [CP] Embed Pods Frameworks */ = {
+		4C7003A63B31543629C058C3 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
@@ -327,6 +328,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+		};
+		B9F3FADA2C0A4C2D00F5A8DD /* Remove Extended Attributes */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Remove Extended Attributes";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif [ -n \"${FLUTTER_ROOT:-}\" ]; then\n  ENGINE_DIR=\"${FLUTTER_ROOT}/bin/cache/artifacts/engine\"\n  for variant in ios ios-profile ios-release; do\n    if [ -d \"${ENGINE_DIR}/${variant}/Flutter.xcframework\" ]; then\n      /usr/bin/xattr -cr \"${ENGINE_DIR}/${variant}/Flutter.xcframework\" || true\n    fi\n  done\nfi\nif [ -d \"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\" ]; then\n  /usr/bin/xattr -cr \"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\" || true\nfi\nif [ -n \"${WRAPPER_NAME:-}\" ] && [ -d \"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\" ]; then\n  /usr/bin/xattr -cr \"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\" || true\nfi\nif [ -n \"${PROJECT_DIR:-}\" ]; then\n  BUILD_ROOT=\"${PROJECT_DIR}/../${FLUTTER_BUILD_DIR:-build}/ios\"\n  if [ -d \"${BUILD_ROOT}\" ]; then\n    /usr/bin/xattr -cr \"${BUILD_ROOT}\" || true\n  fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -414,6 +430,8 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				EXTERNAL_BUILD_ARTIFACTS_DIR = "${PROJECT_DIR}/../build/ios";
+				EXTERNAL_BUILD_LOCATIONS_ALLOWED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -537,6 +555,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				EXTERNAL_BUILD_ARTIFACTS_DIR = "${PROJECT_DIR}/../build/ios";
+				EXTERNAL_BUILD_LOCATIONS_ALLOWED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -596,6 +616,8 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				EXTERNAL_BUILD_ARTIFACTS_DIR = "${PROJECT_DIR}/../build/ios";
+				EXTERNAL_BUILD_LOCATIONS_ALLOWED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

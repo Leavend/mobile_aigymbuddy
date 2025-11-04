@@ -97,8 +97,9 @@ class RoundButton extends StatelessWidget {
 
   Widget _buildContent(TextStyle style) {
     if (isLoading) {
-      final indicatorColor =
-          _usesGradientBackground ? TColor.white : TColor.primaryColor1;
+      final indicatorColor = _usesGradientBackground
+          ? TColor.white
+          : TColor.primaryColor1;
       return Padding(
         padding: padding,
         child: SizedBox(

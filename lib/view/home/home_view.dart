@@ -1,3 +1,5 @@
+// lib/view/home/home_view.dart
+
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -112,6 +114,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     _calorieProgressNotifier = ValueNotifier<double>(50);
+    debugPrint('HomeView initialized');
   }
 
   @override

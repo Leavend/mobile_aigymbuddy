@@ -1,14 +1,10 @@
 // lib/database/app_db.dart
 
-// import 'dart:io';
 import 'package:drift/drift.dart';
 
 import 'connection/connection.dart'
     if (dart.library.html) 'connection/web.dart'
     if (dart.library.io) 'connection/native.dart';
-// import 'package:drift/native.dart';
-// import 'package:path/path.dart' as p;
-// import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'type_converters.dart';
@@ -35,8 +31,6 @@ part 'daos/workout_plans_dao.dart';
 
 part 'app_db.g.dart';
 
-// Anotasi @DriftDatabase untuk memberitahu generator
-// tabel/dao mana saja yang harus disertakan.
 @DriftDatabase(
   tables: [
     Users,
@@ -58,17 +52,64 @@ part 'app_db.g.dart';
   daos: [UsersDao, BodyMetricsDao, WorkoutPlansDao],
 )
 class AppDatabase extends _$AppDatabase {
-  // Constructor
-  AppDatabase() : super(openConnection());
+  // Singleton pattern untuk testing
+  static AppDatabase? _instance;
+  bool _isClosed = false;
+
+  AppDatabase._internal()
+      : super(openConnection()) {
+    _isClosed = false;
+  }
+
+  factory AppDatabase() {
+    _instance ??= AppDatabase._internal();
+    return _instance!;
+  }
+
+  // Fix: Use super parameter
+  AppDatabase.forTesting(super.connection) {
+    _isClosed = false;
+  }
 
   @override
   int get schemaVersion => 1;
-}
 
-// LazyDatabase _openConnection() {
-//   return LazyDatabase(() async {
-//     final dbFolder = await getApplicationDocumentsDirectory();
-//     final file = File(p.join(dbFolder.path, 'gym_buddy.db'));
-//     return NativeDatabase(file);
-//   });
-// }
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      // Migration logic ketika schema berubah
+    },
+    beforeOpen: (details) async {
+      // Enable foreign keys
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
+
+  // Method untuk menutup database - diperlukan untuk testing
+  Future<void> closeDb() async {
+    if (_instance != null) {
+      await _instance!.close();
+      _instance = null;
+    }
+  }
+
+  // Method untuk dispose instance - berguna untuk testing
+  static void dispose() {
+    _instance = null;
+  }
+
+  bool get isClosed => _isClosed;
+
+  @override
+  Future<void> close() async {
+    if (_isClosed) {
+      return;
+    }
+
+    _isClosed = true;
+    await super.close();
+  }
+}

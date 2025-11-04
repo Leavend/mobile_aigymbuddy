@@ -1,13 +1,16 @@
 // lib/main.dart
 
+import 'dart:async';
 import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/database/app_db.dart';
-import 'package:aigymbuddy/database/auth_repository.dart';
+import 'package:aigymbuddy/database/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,12 +24,23 @@ Future<void> main() async {
     debugPrint("Error verifying database connection: $e");
   }
 
-  runApp(MyApp(db: db));
+  final hasCredentials = await AuthService.instance.hasSavedCredentials();
+  final initialLocation = hasCredentials
+      ? AppRoute.main
+      : AppRoute.onboarding;
+
+  debugPrint(
+    'AI Gym Buddy starting with initialLocation=$initialLocation '
+    '(hasCredentials=$hasCredentials)',
+  );
+
+  runApp(MyApp(db: db, initialLocation: initialLocation));
 }
 
 class MyApp extends StatefulWidget {
   final AppDatabase db;
-  const MyApp({super.key, required this.db});
+  final String initialLocation;
+  const MyApp({super.key, required this.db, required this.initialLocation});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -34,10 +48,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AppLanguageController _languageController = AppLanguageController();
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _router = AppRouter.createRouter(initialLocation: widget.initialLocation);
+  }
 
   @override
   void dispose() {
-    widget.db.close();
+    unawaited(widget.db.closeDb());
+    _router.dispose();
     _languageController.dispose();
     super.dispose();
   }
@@ -49,13 +71,10 @@ class _MyAppState extends State<MyApp> {
       child: MultiProvider(
         providers: [
           Provider<AppDatabase>.value(value: widget.db),
-          Provider<AuthRepository>(
-            create: (_) => AuthRepository(widget.db),
-          ),
+          Provider<AuthRepository>(create: (_) => AuthRepository(widget.db)),
           ChangeNotifierProvider<AuthController>(
-            create: (context) => AuthController(
-              repository: context.read<AuthRepository>(),
-            ),
+            create: (context) =>
+                AuthController(repository: context.read<AuthRepository>()),
           ),
         ],
         child: MaterialApp.router(
@@ -65,7 +84,7 @@ class _MyAppState extends State<MyApp> {
             primaryColor: TColor.primaryColor1,
             fontFamily: 'Poppins',
           ),
-          routerConfig: AppRouter.router,
+          routerConfig: _router,
         ),
       ),
     );

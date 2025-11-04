@@ -24,10 +24,7 @@ class AuthUser {
   final Goal? goal;
   final LocationPref? locationPref;
 
-  factory AuthUser.fromData({
-    required User user,
-    UserProfile? profile,
-  }) {
+  factory AuthUser.fromData({required User user, UserProfile? profile}) {
     return AuthUser(
       id: user.id,
       email: user.email,

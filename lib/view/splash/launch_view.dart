@@ -4,6 +4,7 @@ import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/services/auth_service.dart';
+import 'package:aigymbuddy/common/services/error_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,11 +30,28 @@ class _LaunchViewState extends State<LaunchView> {
   }
 
   Future<void> _handleBootstrap() async {
-    final hasCredentials = await _authService.hasSavedCredentials();
-    if (!mounted) return;
+    try {
+      ErrorService.logDebug('LaunchView', 'Checking saved credentials');
+      final hasCredentials = await _authService.hasSavedCredentials();
+      if (!mounted) return;
 
-    final destination = hasCredentials ? AppRoute.main : AppRoute.onboarding;
-    context.go(destination);
+      final destination = hasCredentials ? AppRoute.main : AppRoute.onboarding;
+      ErrorService.logDebug(
+        'LaunchView',
+        'Navigating to '
+            'destination=$destination (hasCredentials=$hasCredentials)',
+      );
+      context.go(destination);
+    } catch (error, stackTrace) {
+      ErrorService.logError('Launch bootstrap', error, stackTrace);
+      if (!mounted) return;
+
+      ErrorService.logDebug(
+        'LaunchView',
+        'Navigation fallback to onboarding after bootstrap error',
+      );
+      context.go(AppRoute.onboarding);
+    }
   }
 
   @override

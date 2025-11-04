@@ -8,7 +8,7 @@ import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
-import 'package:aigymbuddy/database/auth_repository.dart';
+import 'package:aigymbuddy/database/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -178,9 +178,7 @@ class _LoginViewState extends State<LoginView> {
     final messenger = ScaffoldMessenger.of(context);
     messenger
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text(context.localize(text))),
-      );
+      ..showSnackBar(SnackBar(content: Text(context.localize(text))));
   }
 
   @override

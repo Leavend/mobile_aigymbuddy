@@ -1,3 +1,5 @@
+// lib/view/login/what_your_goal_view.dart
+
 import 'dart:developer' as developer;
 
 import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
@@ -7,7 +9,7 @@ import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/database/auth_repository.dart';
+import 'package:aigymbuddy/database/repositories/auth_repository.dart';
 import 'package:aigymbuddy/database/type_converters.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +19,30 @@ import 'package:provider/provider.dart';
 import 'widgets/auth_page_layout.dart';
 
 abstract final class _GoalTexts {
-  static const title = LocalizedText(english: 'What is your goal?', indonesian: 'Apa tujuanmu?');
-  static const subtitle = LocalizedText(english: 'It will help us to choose a best program for you', indonesian: 'Ini membantu kami memilih program terbaik untukmu');
-  static const confirm = LocalizedText(english: 'Confirm', indonesian: 'Konfirmasi');
-  static const emailInUse = LocalizedText(english: 'This email address is already registered.', indonesian: 'Alamat email ini sudah terdaftar.');
-  static const incompleteProfile = LocalizedText(english: 'Please complete your profile details before continuing.', indonesian: 'Lengkapi detail profil Anda sebelum melanjutkan.');
-  static const genericError = LocalizedText(english: 'We could not create your account. Please try again.', indonesian: 'Kami tidak dapat membuat akun Anda. Silakan coba lagi.');
+  static const title = LocalizedText(
+    english: 'What is your goal?',
+    indonesian: 'Apa tujuanmu?',
+  );
+  static const subtitle = LocalizedText(
+    english: 'It will help us to choose a best program for you',
+    indonesian: 'Ini membantu kami memilih program terbaik untukmu',
+  );
+  static const confirm = LocalizedText(
+    english: 'Confirm',
+    indonesian: 'Konfirmasi',
+  );
+  static const emailInUse = LocalizedText(
+    english: 'This email address is already registered.',
+    indonesian: 'Alamat email ini sudah terdaftar.',
+  );
+  static const incompleteProfile = LocalizedText(
+    english: 'Please complete your profile details before continuing.',
+    indonesian: 'Lengkapi detail profil Anda sebelum melanjutkan.',
+  );
+  static const genericError = LocalizedText(
+    english: 'We could not create your account. Please try again.',
+    indonesian: 'Kami tidak dapat membuat akun Anda. Silakan coba lagi.',
+  );
 }
 
 class WhatYourGoalView extends StatefulWidget {
@@ -37,20 +57,30 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
   static const _goals = [
     _GoalCardData(
       image: 'assets/img/goal_1.png',
-      title: LocalizedText(english: 'Improve Shape', indonesian: 'Bentuk Tubuh Ideal'),
+      title: LocalizedText(
+        english: 'Improve Shape',
+        indonesian: 'Bentuk Tubuh Ideal',
+      ),
       subtitle: LocalizedText(
-        english: 'I have a low amount of body fat and\nneed / want to build more muscle',
-        indonesian: 'Lemak tubuhku rendah dan aku ingin\nmembangun lebih banyak otot',
+        english:
+            'I have a low amount of body fat and\nneed / want to build more muscle',
+        indonesian:
+            'Lemak tubuhku rendah dan aku ingin\nmembangun lebih banyak otot',
       ),
       goal: Goal.muscleGain,
       defaultLocation: LocationPref.gym,
     ),
     _GoalCardData(
       image: 'assets/img/goal_2.png',
-      title: LocalizedText(english: 'Lean & Tone', indonesian: 'Badan Ramping & Kencang'),
+      title: LocalizedText(
+        english: 'Lean & Tone',
+        indonesian: 'Badan Ramping & Kencang',
+      ),
       subtitle: LocalizedText(
-        english: 'I’m “skinny fat”, look thin but have\nno shape. I want to add lean muscle\nin the right way',
-        indonesian: 'Tubuhku tampak kurus tapi kurang berisi.\nAku ingin menambah otot tanpa lemak\ndengan cara tepat',
+        english:
+            'I’m “skinny fat”, look thin but have\nno shape. I want to add lean muscle\nin the right way',
+        indonesian:
+            'Tubuhku tampak kurus tapi kurang berisi.\nAku ingin menambah otot tanpa lemak\ndengan cara tepat',
       ),
       goal: Goal.maintain,
       defaultLocation: LocationPref.home,
@@ -59,8 +89,10 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
       image: 'assets/img/goal_3.png',
       title: LocalizedText(english: 'Lose a Fat', indonesian: 'Turunkan Lemak'),
       subtitle: LocalizedText(
-        english: 'I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle mass',
-        indonesian: 'Aku perlu menurunkan banyak lemak\ndan ingin menambah massa otot',
+        english:
+            'I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle mass',
+        indonesian:
+            'Aku perlu menurunkan banyak lemak\ndan ingin menambah massa otot',
       ),
       goal: Goal.fatLoss,
       defaultLocation: LocationPref.home,
@@ -87,7 +119,11 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
     } on IncompleteSignUpData {
       _showErrorMessage(_GoalTexts.incompleteProfile);
     } catch (error, stackTrace) {
-      developer.log('Failed to register user', error: error, stackTrace: stackTrace);
+      developer.log(
+        'Failed to register user',
+        error: error,
+        stackTrace: stackTrace,
+      );
       _showErrorMessage(_GoalTexts.genericError);
     }
   }
@@ -97,9 +133,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
     final messenger = ScaffoldMessenger.of(context);
     messenger
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text(context.localize(text))),
-      );
+      ..showSnackBar(SnackBar(content: Text(context.localize(text))));
   }
 
   @override
@@ -116,7 +150,11 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
           Text(
             context.localize(_GoalTexts.title),
             textAlign: TextAlign.center,
-            style: const TextStyle(color: TColor.black, fontSize: 22, fontWeight: FontWeight.w700),
+            style: const TextStyle(
+              color: TColor.black,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -138,7 +176,8 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
                 viewportFraction: 0.75,
                 aspectRatio: 3 / 4,
                 enlargeStrategy: CenterPageEnlargeStrategy.height,
-                onPageChanged: (index, reason) => setState(() => _currentIndex = index),
+                onPageChanged: (index, reason) =>
+                    setState(() => _currentIndex = index),
               ),
             ),
           ),
@@ -181,7 +220,11 @@ class _GoalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: TColor.primaryG, begin: Alignment.topLeft, end: Alignment.bottomRight),
+        gradient: LinearGradient(
+          colors: TColor.primaryG,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(25),
       ),
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
@@ -193,7 +236,11 @@ class _GoalCard extends StatelessWidget {
           Text(
             context.localize(goal.title),
             textAlign: TextAlign.center,
-            style: const TextStyle(color: TColor.white, fontSize: 16, fontWeight: FontWeight.w700),
+            style: const TextStyle(
+              color: TColor.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 6),
           Container(width: 40, height: 1, color: TColor.white),

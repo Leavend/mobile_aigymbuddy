@@ -26,6 +26,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     super.initState();
     _pageController = PageController();
     _pages = _buildOnBoardingPages();
+    debugPrint('OnBoardingView initialized with ${_pages.length} pages');
   }
 
   @override

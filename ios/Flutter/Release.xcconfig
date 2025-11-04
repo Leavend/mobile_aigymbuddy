@@ -1,2 +1,4 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
+EXTERNAL_BUILD_ARTIFACTS_DIR=$(PROJECT_DIR)/../build/ios
+EXTERNAL_BUILD_LOCATIONS_ALLOWED=YES

@@ -1,15 +1,13 @@
 import 'package:aigymbuddy/auth/models/auth_user.dart';
 import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/common/services/auth_service.dart';
-import 'package:aigymbuddy/database/auth_repository.dart';
+import 'package:aigymbuddy/database/repositories/auth_repository.dart';
 import 'package:flutter/foundation.dart';
 
 class AuthController extends ChangeNotifier {
-  AuthController({
-    required AuthRepository repository,
-    AuthService? authService,
-  })  : _repository = repository,
-        _authService = authService ?? AuthService.instance;
+  AuthController({required AuthRepository repository, AuthService? authService})
+    : _repository = repository,
+      _authService = authService ?? AuthService.instance;
 
   final AuthRepository _repository;
   final AuthService _authService;
