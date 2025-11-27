@@ -1,22 +1,22 @@
 // lib/common/services/database_service.dart
 
-import 'package:aigymbuddy/database/app_db.dart';
-import 'package:aigymbuddy/database/repositories/user_repository.dart';
+import '../../database/app_db.dart';
+import '../../database/repositories/user_repository.dart';
 
 class DatabaseService {
-
-  factory DatabaseService() {
-    _instance ??= DatabaseService._internal();
-    return _instance!;
-  }
+  static DatabaseService? _instance;
+  late final AppDatabase _database;
+  late final UserRepository _userRepository;
 
   DatabaseService._internal() {
     _database = AppDatabase();
     _userRepository = UserRepository(_database);
   }
-  static DatabaseService? _instance;
-  late final AppDatabase _database;
-  late final UserRepository _userRepository;
+
+  factory DatabaseService() {
+    _instance ??= DatabaseService._internal();
+    return _instance!;
+  }
 
   AppDatabase get database => _database;
   UserRepository get userRepository => _userRepository;

@@ -1,7 +1,7 @@
 // lib/common_widget/meal_category_cell.dart
 
-import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
+import '../common/color_extension.dart';
 
 @immutable
 class MealCategoryItem {
@@ -20,7 +20,9 @@ class MealCategoryItem {
 
 class MealCategoryCell extends StatelessWidget {
   const MealCategoryCell({
-    required this.index, required this.category, super.key,
+    super.key,
+    required this.index,
+    required this.category,
     this.onTap,
   });
 
@@ -66,7 +68,7 @@ class MealCategoryCell extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(17.5),
-            child: DecoratedBox(
+            child: Container(
               decoration: BoxDecoration(
                 color: TColor.white,
                 borderRadius: BorderRadius.circular(17.5),
@@ -85,7 +87,7 @@ class MealCategoryCell extends StatelessWidget {
               category.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,

@@ -1,4 +1,5 @@
 // lib/main.dart
+
 import 'dart:async';
 
 import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
@@ -13,8 +14,8 @@ import 'package:aigymbuddy/database/app_db.dart';
 import 'package:aigymbuddy/database/database_service.dart';
 import 'package:aigymbuddy/database/repositories/user_profile_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +25,8 @@ Future<void> main() async {
   try {
     await serviceLocator.initialize();
   } catch (e, stackTrace) {
-    debugPrint('Critical error initializing ServiceLocator: $e');
-    debugPrint('Stack trace: $stackTrace');
+    debugPrint("Critical error initializing ServiceLocator: $e");
+    debugPrint("Stack trace: $stackTrace");
     // Continue with minimal functionality if ServiceLocator fails
   }
 
@@ -36,19 +37,19 @@ Future<void> main() async {
 
     // Verify database connection with enhanced logging
     await db.customSelect('SELECT 1').getSingle();
-    debugPrint('Database connection verified successfully.');
+    debugPrint("Database connection verified successfully.");
 
     // Check database integrity
     final isValid = await ServiceLocator().databaseService
         .checkDatabaseIntegrity();
     if (isValid) {
-      debugPrint('Database integrity check passed.');
+      debugPrint("Database integrity check passed.");
     } else {
-      debugPrint('Database integrity check failed - proceeding with caution.');
+      debugPrint("Database integrity check failed - proceeding with caution.");
     }
   } catch (e) {
-    debugPrint('Error verifying database connection: $e');
-    debugPrint('App will continue with limited functionality.');
+    debugPrint("Error verifying database connection: $e");
+    debugPrint("App will continue with limited functionality.");
   }
 
   final hasCredentials = await AuthService.instance.hasSavedCredentials();
@@ -64,15 +65,15 @@ Future<void> main() async {
     runApp(MyApp(db: db, initialLocation: initialLocation));
   } else {
     // Fallback app without database functionality
-    runApp(const ErrorApp(error: 'Database initialization failed'));
+    runApp(ErrorApp(error: "Database initialization failed"));
   }
 }
 
 /// Fallback widget to display when database fails to initialize
 class ErrorApp extends StatelessWidget {
-
-  const ErrorApp({required this.error, super.key});
   final String error;
+
+  const ErrorApp({super.key, required this.error});
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +82,7 @@ class ErrorApp extends StatelessWidget {
         backgroundColor: const Color(0xFF1E1E1E),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -125,16 +126,10 @@ class ErrorApp extends StatelessWidget {
   }
 }
 
-/// Main application widget
 class MyApp extends StatefulWidget {
-  const MyApp({
-    required this.db,
-    super.key,
-    this.initialLocation,
-  });
-
   final AppDatabase db;
-  final String? initialLocation;
+  final String initialLocation;
+  const MyApp({super.key, required this.db, required this.initialLocation});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -147,13 +142,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _router = AppRouter.createRouter(
-      initialLocation: widget.initialLocation ?? AppRoute.onboarding,
-    );
-    
-    // TODO: Add session expiry listener when app context is properly initialized
-    // This requires refactoring to avoid accessing AuthService.instance before
-    // ServiceLocator is initialized
+    _router = AppRouter.createRouter(initialLocation: widget.initialLocation);
   }
 
   @override
@@ -173,39 +162,11 @@ class _MyAppState extends State<MyApp> {
       // Dispose service locator
       unawaited(ServiceLocator().dispose());
     } catch (e, stackTrace) {
-      debugPrint('Error during app disposal: $e');
-      debugPrint('Stack trace: $stackTrace');
+      debugPrint("Error during app disposal: $e");
+      debugPrint("Stack trace: $stackTrace");
     }
 
     super.dispose();
-  }
-
-  void _handleSessionExpired() {
-    // Navigate to login
-    _router.go(AppRoute.login);
-    
-    // Show dialog if widget is still mounted
-    if (mounted) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          unawaited(showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Session Expired'),
-              content: const Text(
-                'Your session has expired. Please log in again.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-        }
-      });
-    }
   }
 
   @override

@@ -26,7 +26,9 @@ class MealScheduleItem {
 
 class MealFoodScheduleRow extends StatelessWidget {
   const MealFoodScheduleRow({
-    required this.index, required this.schedule, super.key,
+    super.key,
+    required this.index,
+    required this.schedule,
     this.onTap,
   });
 
@@ -84,7 +86,7 @@ class MealFoodScheduleRow extends StatelessWidget {
                 children: [
                   Text(
                     schedule.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: TColor.black,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
@@ -94,7 +96,7 @@ class MealFoodScheduleRow extends StatelessWidget {
                   ),
                   Text(
                     schedule.timeLabel,
-                    style: const TextStyle(color: TColor.gray, fontSize: 10),
+                    style: TextStyle(color: TColor.gray, fontSize: 10),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

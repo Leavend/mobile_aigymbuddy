@@ -17,7 +17,7 @@ class DateTimeUtils {
     }
 
     final formatter = DateFormat(pattern);
-    final dateTime = DateTime(1970).add(Duration(minutes: minutes));
+    final dateTime = DateTime(1970, 1, 1).add(Duration(minutes: minutes));
 
     return formatter.format(dateTime);
   }

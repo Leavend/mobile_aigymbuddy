@@ -1,10 +1,14 @@
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/common/date_time_utils.dart';
 import 'package:flutter/material.dart';
+
+import '../common/date_time_utils.dart';
 
 class TodayMealRow extends StatelessWidget {
   const TodayMealRow({
-    required this.name, required this.imageAsset, required this.scheduledAt, super.key,
+    super.key,
+    required this.name,
+    required this.imageAsset,
+    required this.scheduledAt,
     this.onReminderTap,
   });
 
@@ -58,7 +62,7 @@ class TodayMealRow extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: TColor.black,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -66,7 +70,7 @@ class TodayMealRow extends StatelessWidget {
                 ),
                 Text(
                   '$relativeDay | $formattedTime',
-                  style: const TextStyle(color: TColor.gray, fontSize: 10),
+                  style: TextStyle(color: TColor.gray, fontSize: 10),
                 ),
               ],
             ),

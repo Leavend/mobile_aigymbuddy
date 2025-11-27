@@ -5,17 +5,18 @@ import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/constants/ui_constants.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/view/base/base_view.dart';
-import 'package:aigymbuddy/view/home/controllers/home_controller.dart';
-import 'package:aigymbuddy/view/home/widgets/bmi_card.dart';
-import 'package:aigymbuddy/view/home/widgets/heart_rate_card.dart';
-import 'package:aigymbuddy/view/home/widgets/hydration_rest_section.dart';
-import 'package:aigymbuddy/view/home/widgets/latest_workout_section.dart';
-import 'package:aigymbuddy/view/home/widgets/today_target_card.dart';
-import 'package:aigymbuddy/view/home/widgets/workout_progress_section.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:aigymbuddy/view/base/base_view.dart';
+import 'package:aigymbuddy/view/home/controllers/home_controller.dart';
 import 'package:provider/provider.dart';
+
+import 'widgets/bmi_card.dart';
+import 'widgets/heart_rate_card.dart';
+import 'widgets/hydration_rest_section.dart';
+import 'widgets/latest_workout_section.dart';
+import 'widgets/today_target_card.dart';
+import 'widgets/workout_progress_section.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -50,20 +51,20 @@ class _HomeContent extends BaseView<HomeController> {
                 children: [
                   _buildHeader(context),
                   const SizedBox(height: UIConstants.spacingMedium),
-                  const BmiCard(
+                  BmiCard(
                     title: _HomeStrings.bmiTitle,
                     subtitle: _HomeStrings.bmiSubtitle,
                     buttonText: _HomeStrings.viewMore,
                   ),
                   const SizedBox(height: UIConstants.spacingMedium),
-                  const TodayTargetCard(
+                  TodayTargetCard(
                     title: _HomeStrings.todayTarget,
                     buttonText: _HomeStrings.check,
                   ),
                   const SizedBox(height: UIConstants.spacingMedium),
                   Text(
                     context.localize(_HomeStrings.activityStatus),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: TColor.black,
                       fontSize: UIConstants.fontSizeMedium,
                       fontWeight: FontWeight.w700,
@@ -86,7 +87,7 @@ class _HomeContent extends BaseView<HomeController> {
                     calorieProgressNotifier: controller.calorieProgressNotifier,
                   ),
                   const SizedBox(height: UIConstants.spacingLarge),
-                  const WorkoutProgressSection(
+                  WorkoutProgressSection(
                     title: _HomeStrings.workoutProgress,
                     periodOptions: _periodOptions,
                     nowLabel: _HomeStrings.nowLabel,
@@ -129,11 +130,11 @@ class _HomeContent extends BaseView<HomeController> {
           children: [
             Text(
               localize(_HomeStrings.welcomeBack),
-              style: const TextStyle(color: TColor.gray, fontSize: 12),
+              style: TextStyle(color: TColor.gray, fontSize: 12),
             ),
             Text(
               localize(_HomeStrings.userName),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,

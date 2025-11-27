@@ -6,15 +6,19 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class PeriodOption {
-
-  const PeriodOption({required this.key, required this.label});
   final String key;
   final LocalizedText label;
+
+  const PeriodOption({required this.key, required this.label});
 }
 
 class WorkoutProgressSection extends StatefulWidget {
   const WorkoutProgressSection({
-    required this.title, required this.periodOptions, required this.nowLabel, required this.weekdayAbbreviations, super.key,
+    super.key,
+    required this.title,
+    required this.periodOptions,
+    required this.nowLabel,
+    required this.weekdayAbbreviations,
   });
 
   final LocalizedText title;
@@ -66,6 +70,7 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
         TColor.secondaryColor1.withValues(alpha: .5),
       ],
     ),
+    barWidth: 2,
     isStrokeCapRound: true,
     dotData: const FlDotData(show: false),
     spots: const [
@@ -91,7 +96,7 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
           children: [
             Text(
               localize(widget.title),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: UIConstants.fontSizeMedium,
                 fontWeight: FontWeight.w700,
@@ -101,20 +106,20 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
               height: 32,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: TColor.primaryG),
+                gradient: LinearGradient(colors: TColor.primaryG),
                 borderRadius: BorderRadius.circular(UIConstants.radiusLarge),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<PeriodOption>(
                   value: _selectedWorkoutPeriod,
-                  icon: const Icon(Icons.expand_more, color: TColor.white),
+                  icon: Icon(Icons.expand_more, color: TColor.white),
                   items: widget.periodOptions
                       .map(
                         (option) => DropdownMenuItem<PeriodOption>(
                           value: option,
                           child: Text(
                             option.label.resolve(language),
-                            style: const TextStyle(color: TColor.gray),
+                            style: TextStyle(color: TColor.gray),
                           ),
                         ),
                       )
@@ -127,7 +132,7 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
                   },
                   dropdownColor: Colors.white,
                   borderRadius: BorderRadius.circular(UIConstants.radiusLarge),
-                  style: const TextStyle(color: TColor.gray),
+                  style: TextStyle(color: TColor.gray),
                 ),
               ),
             ),
@@ -146,6 +151,7 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
                   )
                   .toList(),
               lineTouchData: LineTouchData(
+                enabled: true,
                 handleBuiltInTouches: false,
                 touchCallback: (event, response) {
                   if (response?.lineBarSpots == null) {
@@ -164,6 +170,7 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
                       (index) => TouchedSpotIndicatorData(
                         const FlLine(color: Colors.transparent),
                         FlDotData(
+                          show: true,
                           getDotPainter: (spot, percent, barData, spotIndex) =>
                               FlDotCirclePainter(
                                 radius: 6,
@@ -194,10 +201,10 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
               maxY: 100,
               titlesData: FlTitlesData(
                 topTitles: const AxisTitles(
-                  
+                  sideTitles: SideTitles(showTitles: false),
                 ),
                 rightTitles: const AxisTitles(
-                  
+                  sideTitles: SideTitles(showTitles: false),
                 ),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
@@ -212,9 +219,10 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
                           : '';
                       return SideTitleWidget(
                         meta: meta,
+                        space: 8,
                         child: Text(
                           text,
-                          style: const TextStyle(color: TColor.gray, fontSize: 12),
+                          style: TextStyle(color: TColor.gray, fontSize: 12),
                         ),
                       );
                     },
@@ -240,10 +248,12 @@ class _WorkoutProgressSectionState extends State<WorkoutProgressSection> {
                 ),
               ),
               gridData: FlGridData(
+                show: true,
                 drawVerticalLine: false,
                 horizontalInterval: 25,
                 getDrawingHorizontalLine: (value) => FlLine(
                   color: TColor.gray.withValues(alpha: .15),
+                  strokeWidth: 2,
                 ),
               ),
               borderData: FlBorderData(show: false),

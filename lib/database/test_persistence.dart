@@ -1,6 +1,6 @@
-import 'package:aigymbuddy/common/services/logging_service.dart';
 import 'package:aigymbuddy/database/app_db.dart';
 import 'package:aigymbuddy/database/database_verifier.dart';
+import 'package:aigymbuddy/common/services/logging_service.dart';
 
 /// Simple test script untuk verify database persistence
 void main() async {

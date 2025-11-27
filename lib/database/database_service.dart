@@ -1,13 +1,14 @@
-import 'package:aigymbuddy/common/services/logging_service.dart';
 import 'package:aigymbuddy/database/app_db.dart';
+
+import 'package:aigymbuddy/common/services/logging_service.dart';
 
 /// Service class for managing database operations with proper transaction handling
 /// and enhanced persistence features
 class DatabaseService {
-
-  DatabaseService(this._db);
   final AppDatabase _db;
   final LoggingService _logger = LoggingService.instance;
+
+  DatabaseService(this._db);
 
   /// Executes a database operation within a transaction
   Future<T> transaction<T>(Future<T> Function() operation) async {

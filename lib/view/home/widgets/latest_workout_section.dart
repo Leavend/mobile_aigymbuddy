@@ -8,6 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class WorkoutConfig {
+  final LocalizedText name;
+  final String image;
+  final String calories;
+  final String minutes;
+  final double progress;
 
   const WorkoutConfig({
     required this.name,
@@ -16,26 +21,24 @@ class WorkoutConfig {
     required this.minutes,
     required this.progress,
   });
-  final LocalizedText name;
-  final String image;
-  final String calories;
-  final String minutes;
-  final double progress;
 
   Map<String, dynamic> toSummaryItem(AppLanguage language) {
     return {
-      'name': name.resolve(language),
-      'image': image,
-      'kcal': calories,
-      'time': minutes,
-      'progress': progress,
+      "name": name.resolve(language),
+      "image": image,
+      "kcal": calories,
+      "time": minutes,
+      "progress": progress,
     };
   }
 }
 
 class LatestWorkoutSection extends StatelessWidget {
   const LatestWorkoutSection({
-    required this.title, required this.seeMoreLabel, required this.workouts, super.key,
+    super.key,
+    required this.title,
+    required this.seeMoreLabel,
+    required this.workouts,
   });
 
   final LocalizedText title;
@@ -54,7 +57,7 @@ class LatestWorkoutSection extends StatelessWidget {
           children: [
             Text(
               localize(title),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: UIConstants.fontSizeMedium,
                 fontWeight: FontWeight.w700,
@@ -64,7 +67,7 @@ class LatestWorkoutSection extends StatelessWidget {
               onPressed: () {},
               child: Text(
                 localize(seeMoreLabel),
-                style: const TextStyle(
+                style: TextStyle(
                   color: TColor.gray,
                   fontWeight: FontWeight.w700,
                 ),

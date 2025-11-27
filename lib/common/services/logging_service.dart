@@ -12,6 +12,10 @@ class LoggingService {
       filter: _EnvironmentFilter(),
       printer: PrettyPrinter(
         methodCount: 0,
+        errorMethodCount: 8,
+        lineLength: 120,
+        colors: true,
+        printEmojis: kDebugMode,
         dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
       ),
       output: ConsoleOutput(),

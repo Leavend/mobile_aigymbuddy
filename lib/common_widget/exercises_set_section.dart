@@ -1,6 +1,7 @@
-import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/common_widget/exercises_row.dart';
 import 'package:flutter/material.dart';
+
+import '../common/color_extension.dart';
+import 'exercises_row.dart';
 
 @immutable
 class ExerciseSet {
@@ -30,7 +31,9 @@ List<ExerciseListItem> _parseExercises(Object? raw) {
 
 class ExercisesSetSection extends StatelessWidget {
   const ExercisesSetSection({
-    required this.set, required this.onPressed, super.key,
+    super.key,
+    required this.set,
+    required this.onPressed,
   });
 
   final ExerciseSet set;
@@ -44,7 +47,7 @@ class ExercisesSetSection extends StatelessWidget {
       children: [
         Text(
           set.name,
-          style: const TextStyle(
+          style: TextStyle(
             color: TColor.black,
             fontSize: 12,
             fontWeight: FontWeight.w500,

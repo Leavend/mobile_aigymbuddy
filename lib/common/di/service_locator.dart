@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
 import 'package:aigymbuddy/auth/usecases/auth_usecase.dart';
@@ -13,11 +11,11 @@ import 'package:flutter/foundation.dart';
 
 /// Service locator for managing dependencies with proper lifecycle management
 class ServiceLocator {
+  static final ServiceLocator _instance = ServiceLocator._internal();
 
   factory ServiceLocator() => _instance;
 
   ServiceLocator._internal();
-  static final ServiceLocator _instance = ServiceLocator._internal();
 
   // Services
   AppDatabase? _database;
@@ -194,38 +192,31 @@ class ServiceLocator {
 
   @visibleForTesting
   void registerAuthRepository(AuthRepositoryInterface repo) {
-    // AuthRepositoryInterface doesn't have dispose method
     _authRepository = repo;
   }
 
   @visibleForTesting
   void registerAuthUseCase(AuthUseCase useCase) {
-    // No disposal needed for use case
     _authUseCase = useCase;
   }
 
   @visibleForTesting
   void registerDatabase(AppDatabase db) {
-    unawaited(_database?.closeDb());
     _database = db;
   }
 
   @visibleForTesting
   void registerDatabaseService(DatabaseService service) {
-    // DatabaseService doesn't have dispose method
     _databaseService = service;
   }
 
   @visibleForTesting
   void registerUserProfileRepository(UserProfileRepository repo) {
-    // UserProfileRepository doesn't have dispose method
     _userProfileRepository = repo;
   }
 
   @visibleForTesting
   void registerAuthController(AuthController controller) {
-    // Dispose old controller if exists
-    _authController?.dispose();
     _authController = controller;
   }
 }

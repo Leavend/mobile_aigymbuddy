@@ -83,7 +83,7 @@ class NotificationView extends StatelessWidget {
         ),
         title: Text(
           localize(_NotificationStrings.title),
-          style: const TextStyle(
+          style: TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -132,10 +132,10 @@ class _NotificationStrings {
 }
 
 class _SquareIconButton extends StatelessWidget {
-
-  const _SquareIconButton({required this.asset, this.onTap});
   final String asset;
   final VoidCallback? onTap;
+
+  const _SquareIconButton({required this.asset, this.onTap});
 
   @override
   Widget build(BuildContext context) {

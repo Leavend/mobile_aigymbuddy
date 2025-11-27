@@ -1,43 +1,26 @@
 // AuthUseCase unit tests
-import 'package:aigymbuddy/auth/models/auth_user.dart';
-import 'package:aigymbuddy/auth/models/sign_up_data.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:aigymbuddy/auth/usecases/auth_usecase.dart';
+import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/common/exceptions/app_exceptions.dart';
 import 'package:aigymbuddy/common/services/auth_service.dart';
-import 'package:flutter_test/flutter_test.dart';
-
 import 'helpers/test_helpers.dart';
 
 class MockAuthService extends AuthService {
-
-  MockAuthService() : super(sessionManager: null);
   bool _hasCredentials = false;
-  AuthUser? _currentUser;
 
   @override
   Future<bool> hasSavedCredentials() async => _hasCredentials;
 
   @override
-  Future<void> startSession({
-    required String token,
-    required AuthUser user,
-    Duration expiresIn = const Duration(days: 7),
-  }) async {
-    _hasCredentials = true;
-    _currentUser = user;
+  Future<void> setHasCredentials(bool value) async {
+    _hasCredentials = value;
   }
 
   @override
-  Future<void> endSession() async {
+  Future<void> clearCredentials() async {
     _hasCredentials = false;
-    _currentUser = null;
   }
-
-  @override
-  Future<AuthUser?> getCurrentUser() async => _currentUser;
-
-  @override
-  Stream<void> get onSessionExpired => const Stream.empty();
 }
 
 void main() {
@@ -68,7 +51,7 @@ void main() {
     });
 
     test('login propagates repository exception', () async {
-      mockRepo.throwOnLogin = const AuthException(
+      mockRepo.throwOnLogin = AuthException(
         'Invalid credentials',
         AuthException.invalidCredentials,
       );

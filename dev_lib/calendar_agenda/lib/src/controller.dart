@@ -1,4 +1,4 @@
-import 'package:calendar_agenda/src/calendar.dart';
+import 'calendar.dart';
 
 /// Controller that enables imperative interactions with [CalendarAgenda].
 class CalendarAgendaController {

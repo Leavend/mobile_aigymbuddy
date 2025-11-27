@@ -1,15 +1,18 @@
 // lib/common_widget/title_subtitle_cell.dart
 
-import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
 
-class TitleSubtitleCell extends StatelessWidget {
+import '../common/color_extension.dart';
 
-  const TitleSubtitleCell({
-    required this.title, required this.subtitle, super.key,
-  });
+class TitleSubtitleCell extends StatelessWidget {
   final String title;
   final String subtitle;
+
+  const TitleSubtitleCell({
+    super.key,
+    required this.title,
+    required this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +28,10 @@ class TitleSubtitleCell extends StatelessWidget {
           ShaderMask(
             blendMode: BlendMode.srcIn,
             shaderCallback: (bounds) {
-              return const LinearGradient(
+              return LinearGradient(
                 colors: TColor.primaryG,
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ).createShader(Rect.fromLTRB(0, 0, bounds.width, bounds.height));
             },
             child: Text(
@@ -38,7 +43,7 @@ class TitleSubtitleCell extends StatelessWidget {
               ),
             ),
           ),
-          Text(subtitle, style: const TextStyle(color: TColor.gray, fontSize: 12)),
+          Text(subtitle, style: TextStyle(color: TColor.gray, fontSize: 12)),
         ],
       ),
     );

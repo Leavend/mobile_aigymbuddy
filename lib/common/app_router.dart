@@ -1,6 +1,4 @@
 import 'package:aigymbuddy/auth/models/sign_up_data.dart';
-// Argumen navigasi
-import 'package:aigymbuddy/common/models/navigation_args.dart';
 import 'package:aigymbuddy/view/home/activity_tracker_view.dart';
 import 'package:aigymbuddy/view/home/finished_workout_view.dart';
 import 'package:aigymbuddy/view/home/home_view.dart';
@@ -30,8 +28,12 @@ import 'package:aigymbuddy/view/workout_tracker/exercises_step_details.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_detail_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_schedule_view.dart';
 import 'package:aigymbuddy/view/workout_tracker/workout_tracker_view.dart';
+
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+
+// Argumen navigasi
+import 'package:aigymbuddy/common/models/navigation_args.dart';
 
 class AppRoute {
   static const String launch = '/';
@@ -297,8 +299,9 @@ class AppRouter {
   // Builder tanpa akses state (untuk screen biasa)
   static GoRoute _simpleRoute({
     required String path,
-    required WidgetBuilder builder, String? name,
+    String? name,
     GlobalKey<NavigatorState>? parentNavigatorKey,
+    required WidgetBuilder builder,
   }) {
     return GoRoute(
       path: path,
@@ -311,8 +314,10 @@ class AppRouter {
   // Builder dengan `extra` bertipe T
   static GoRoute _extraRoute<T extends Object>({
     required String path,
-    required String missingExtraMessage, required Widget Function(BuildContext context, T args) builder, String? name,
+    String? name,
     GlobalKey<NavigatorState>? parentNavigatorKey,
+    required String missingExtraMessage,
+    required Widget Function(BuildContext context, T args) builder,
   }) {
     return GoRoute(
       path: path,

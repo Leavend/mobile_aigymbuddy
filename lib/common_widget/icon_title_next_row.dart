@@ -1,15 +1,21 @@
-import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
 
+import '../common/color_extension.dart';
+
 class IconTitleNextRow extends StatelessWidget {
-  const IconTitleNextRow({
-    required this.icon, required this.title, required this.time, required this.onPressed, required this.color, super.key,
-  });
   final String icon;
   final String title;
   final String time;
   final VoidCallback onPressed;
   final Color color;
+  const IconTitleNextRow({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.time,
+    required this.onPressed,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +45,7 @@ class IconTitleNextRow extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(color: TColor.gray, fontSize: 12),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ),
             SizedBox(
@@ -47,7 +53,7 @@ class IconTitleNextRow extends StatelessWidget {
               child: Text(
                 time,
                 textAlign: TextAlign.right,
-                style: const TextStyle(color: TColor.gray, fontSize: 12),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ),
             const SizedBox(width: 8),
@@ -59,7 +65,7 @@ class IconTitleNextRow extends StatelessWidget {
                 height: 25,
                 alignment: Alignment.center,
                 child: Image.asset(
-                  'assets/img/p_next.png',
+                  "assets/img/p_next.png",
                   width: 12,
                   height: 12,
                   fit: BoxFit.contain,

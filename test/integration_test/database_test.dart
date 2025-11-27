@@ -1,9 +1,9 @@
 // test/integration_test/database_test.dart
 
-import 'package:aigymbuddy/database/app_db.dart';
-import 'package:drift/drift.dart' hide isNotNull, isNull;
-import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:aigymbuddy/database/app_db.dart';
+import 'package:drift/native.dart';
+import 'package:drift/drift.dart' hide isNotNull, isNull;
 
 void main() {
   group('Database Integration Tests', () {

@@ -1,10 +1,11 @@
-import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/common/models/instruction_step.dart';
 import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:flutter/material.dart';
 
+import '../common/color_extension.dart';
+import '../common/models/instruction_step.dart';
+
 class FoodStepDetailRow extends StatelessWidget {
-  const FoodStepDetailRow({required this.step, super.key, this.isLast = false});
+  const FoodStepDetailRow({super.key, required this.step, this.isLast = false});
 
   final InstructionStep step;
   final bool isLast;
@@ -15,6 +16,8 @@ class FoodStepDetailRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 20,
@@ -34,7 +37,7 @@ class FoodStepDetailRow extends StatelessWidget {
               ),
             ),
             if (!isLast)
-              const DottedDashedLine(
+              DottedDashedLine(
                 height: 50,
                 width: 0,
                 dashColor: TColor.secondaryColor1,
@@ -45,11 +48,12 @@ class FoodStepDetailRow extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 step.title ?? 'Step ${step.number}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: TColor.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -57,7 +61,7 @@ class FoodStepDetailRow extends StatelessWidget {
               ),
               Text(
                 step.description,
-                style: const TextStyle(color: TColor.gray, fontSize: 12),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ],
           ),

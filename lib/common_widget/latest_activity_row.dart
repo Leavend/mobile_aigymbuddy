@@ -23,7 +23,7 @@ class LatestActivityItem {
 }
 
 class LatestActivityRow extends StatelessWidget {
-  const LatestActivityRow({required this.activity, super.key, this.onMenuTap});
+  const LatestActivityRow({super.key, required this.activity, this.onMenuTap});
 
   factory LatestActivityRow.fromMap(
     Map<String, dynamic> data, {
@@ -60,7 +60,7 @@ class LatestActivityRow extends StatelessWidget {
               children: [
                 Text(
                   activity.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: TColor.black,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -68,7 +68,7 @@ class LatestActivityRow extends StatelessWidget {
                 ),
                 Text(
                   activity.timeLabel,
-                  style: const TextStyle(color: TColor.gray, fontSize: 10),
+                  style: TextStyle(color: TColor.gray, fontSize: 10),
                 ),
               ],
             ),

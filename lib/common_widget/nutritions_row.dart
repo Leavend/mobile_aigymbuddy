@@ -1,8 +1,9 @@
 // lib/common_widget/nutritions_row.dart
 
-import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
+
+import '../common/color_extension.dart';
 
 @immutable
 class NutritionProgress {
@@ -33,13 +34,13 @@ class NutritionProgress {
   final double maxValue;
 
   double get ratio =>
-      maxValue == 0 ? 0 : (value / maxValue).clamp(0.0, 1.0);
+      maxValue == 0 ? 0 : (value / maxValue).clamp(0.0, 1.0).toDouble();
 
   String get formattedValue => '${value.toStringAsFixed(0)} $unitName';
 }
 
 class NutritionRow extends StatelessWidget {
-  const NutritionRow({required this.progress, super.key});
+  const NutritionRow({super.key, required this.progress});
 
   factory NutritionRow.fromMap(Map<String, dynamic> map) {
     return NutritionRow(progress: NutritionProgress.fromJson(map));
@@ -58,7 +59,7 @@ class NutritionRow extends StatelessWidget {
             children: [
               Text(
                 progress.title,
-                style: const TextStyle(
+                style: TextStyle(
                   color: TColor.black,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -69,7 +70,7 @@ class NutritionRow extends StatelessWidget {
               const Spacer(),
               Text(
                 progress.formattedValue,
-                style: const TextStyle(color: TColor.gray, fontSize: 11),
+                style: TextStyle(color: TColor.gray, fontSize: 11),
               ),
             ],
           ),
@@ -84,8 +85,10 @@ class NutritionRow extends StatelessWidget {
             curve: Curves.fastLinearToSlowEaseIn,
             duration: const Duration(seconds: 3),
             borderRadius: BorderRadius.circular(7.5),
-            gradientColor: const LinearGradient(
+            gradientColor: LinearGradient(
               colors: TColor.primaryG,
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
             ),
           ),
         ],

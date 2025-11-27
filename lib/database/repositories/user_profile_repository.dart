@@ -1,6 +1,7 @@
 import 'package:aigymbuddy/auth/models/auth_user.dart';
-import 'package:aigymbuddy/database/app_db.dart';
 import 'package:drift/drift.dart';
+
+import '../app_db.dart';
 
 abstract class UserProfileRepositoryInterface {
   Future<void> updateProfile(AuthUser user);

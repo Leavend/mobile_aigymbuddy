@@ -1,16 +1,17 @@
 import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/common/date_time_utils.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
-import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../common/date_time_utils.dart';
+import '../../common_widget/icon_title_next_row.dart';
+import '../../common_widget/round_button.dart';
+
 class AddScheduleView extends StatefulWidget {
-  const AddScheduleView({required this.date, super.key});
+  const AddScheduleView({super.key, required this.date});
 
   final DateTime date;
 
@@ -165,7 +166,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
         ),
         title: Text(
           _appBarTitle.resolve(language),
-          style: const TextStyle(
+          style: TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -213,14 +214,14 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                 const SizedBox(width: 8),
                 Text(
                   _formatFullDate(widget.date, language),
-                  style: const TextStyle(color: TColor.gray, fontSize: 14),
+                  style: TextStyle(color: TColor.gray, fontSize: 14),
                 ),
               ],
             ),
             const SizedBox(height: 20),
             Text(
               _timeLabel.resolve(language),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -231,6 +232,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
               child: CupertinoDatePicker(
                 initialDateTime: _selectedDateTime,
                 use24hFormat: language == AppLanguage.indonesian,
+                minuteInterval: 1,
                 mode: CupertinoDatePickerMode.time,
                 onDateTimeChanged: _handleTimeChanged,
               ),
@@ -238,7 +240,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
             const SizedBox(height: 20),
             Text(
               _detailsLabel.resolve(language),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -334,7 +336,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
       title: _customRepetitionsLabel,
       options: options,
       currentValue: _customRepetitions,
-      labelBuilder: _localizedRepetition,
+      labelBuilder: (value, language) => _localizedRepetition(value, language),
     );
     if (selected != null) {
       setState(() => _customRepetitions = selected);
@@ -347,7 +349,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
       title: _customWeightsLabel,
       options: options,
       currentValue: _customWeight,
-      labelBuilder: _localizedWeight,
+      labelBuilder: (value, language) => _localizedWeight(value, language),
     );
     if (selected != null) {
       setState(() => _customWeight = selected);
@@ -388,7 +390,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       title.resolve(language),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: TColor.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -404,7 +406,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                   return ListTile(
                     title: Text(label),
                     trailing: isSelected
-                        ? const Icon(Icons.check, color: TColor.primaryColor2)
+                        ? Icon(Icons.check, color: TColor.primaryColor2)
                         : null,
                     onTap: () => sheetContext.pop(option),
                   );

@@ -11,11 +11,12 @@ import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/database/repositories/auth_repository.dart';
 import 'package:aigymbuddy/database/type_converters.dart';
-import 'package:aigymbuddy/view/login/widgets/auth_page_layout.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import 'widgets/auth_page_layout.dart';
 
 abstract final class _GoalTexts {
   static const title = LocalizedText(
@@ -45,7 +46,7 @@ abstract final class _GoalTexts {
 }
 
 class WhatYourGoalView extends StatefulWidget {
-  const WhatYourGoalView({required this.signUpData, super.key});
+  const WhatYourGoalView({super.key, required this.signUpData});
   final SignUpData signUpData;
 
   @override
@@ -143,6 +144,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
     return AuthPageLayout(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 24),
           Text(
@@ -182,7 +184,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
           const SizedBox(height: 90),
           RoundButton(
             title: context.localize(_GoalTexts.confirm),
-            onPressed: _onConfirm,
+            onPressed: () => _onConfirm(),
             isEnabled: !isProcessing,
             isLoading: isProcessing,
           ),
@@ -218,7 +220,7 @@ class _GoalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: TColor.primaryG,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

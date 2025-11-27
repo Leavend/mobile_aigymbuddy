@@ -5,13 +5,14 @@ import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
-import 'package:aigymbuddy/view/base/base_view.dart';
-import 'package:aigymbuddy/view/login/controllers/signup_controller.dart';
-import 'package:aigymbuddy/view/login/widgets/auth_page_layout.dart';
-import 'package:aigymbuddy/view/login/widgets/auth_validators.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:aigymbuddy/view/base/base_view.dart';
+import 'package:aigymbuddy/view/login/controllers/signup_controller.dart';
 import 'package:provider/provider.dart';
+
+import 'widgets/auth_page_layout.dart';
+import 'widgets/auth_validators.dart';
 
 abstract final class _SignUpTexts {
   static const greeting = LocalizedText(
@@ -199,7 +200,7 @@ class _SignUpFormState extends State<_SignUpForm> {
         if (controller.showTermsError && !controller.isTermsAccepted) ...[
           const SizedBox(height: 4),
           Padding(
-            padding: const EdgeInsets.only(left: 12),
+            padding: const EdgeInsets.only(left: 12.0),
             child: Text(
               context.localize(_SignUpTexts.termsRequired),
               style: TextStyle(
@@ -323,6 +324,7 @@ class _SignUpFormState extends State<_SignUpForm> {
 
   Widget _buildTermsRow(BuildContext context, SignupController controller) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Checkbox(
           value: controller.isTermsAccepted,

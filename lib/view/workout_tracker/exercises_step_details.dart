@@ -1,16 +1,17 @@
-import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
-import 'package:aigymbuddy/common/models/instruction_step.dart';
-import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/common_widget/step_detail_row.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:readmore/readmore.dart';
 
+import '../../common/color_extension.dart';
+import '../../common/models/instruction_step.dart';
+import '../../common_widget/round_button.dart';
+import '../../common_widget/step_detail_row.dart';
+
 class ExercisesStepDetails extends StatelessWidget {
-  const ExercisesStepDetails({required this.exercise, super.key});
+  const ExercisesStepDetails({super.key, required this.exercise});
 
   final Map<String, dynamic> exercise;
 
@@ -147,7 +148,7 @@ class ExercisesStepDetails extends StatelessWidget {
     final rawCalories = exercise['calories'];
     final calories = rawCalories is num
         ? rawCalories.round().toString()
-        : (rawCalories?.toString().replaceAll(RegExp('[^0-9]'), '') ?? '');
+        : (rawCalories?.toString().replaceAll(RegExp(r'[^0-9]'), '') ?? '');
     final metadataParts = <String>[];
     if (difficulty != null && difficulty.isNotEmpty) {
       metadataParts.add(difficulty);
@@ -227,7 +228,7 @@ class ExercisesStepDetails extends StatelessWidget {
             const SizedBox(height: 15),
             Text(
               exerciseTitle,
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -236,12 +237,12 @@ class ExercisesStepDetails extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               metadataText,
-              style: const TextStyle(color: TColor.gray, fontSize: 12),
+              style: TextStyle(color: TColor.gray, fontSize: 12),
             ),
             const SizedBox(height: 15),
             Text(
               _descriptionsLabel.resolve(language),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -255,7 +256,7 @@ class ExercisesStepDetails extends StatelessWidget {
               trimMode: TrimMode.Line,
               trimCollapsedText: _readMoreLabel.resolve(language),
               trimExpandedText: _readLessLabel.resolve(language),
-              style: const TextStyle(color: TColor.gray, fontSize: 12),
+              style: TextStyle(color: TColor.gray, fontSize: 12),
               moreStyle: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -267,7 +268,7 @@ class ExercisesStepDetails extends StatelessWidget {
               children: [
                 Text(
                   _howToDoLabel.resolve(language),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -279,7 +280,7 @@ class ExercisesStepDetails extends StatelessWidget {
                     _setsLabel
                         .resolve(language)
                         .replaceFirst('{count}', steps.length.toString()),
-                    style: const TextStyle(color: TColor.gray, fontSize: 12),
+                    style: TextStyle(color: TColor.gray, fontSize: 12),
                   ),
                 ),
               ],
@@ -298,7 +299,7 @@ class ExercisesStepDetails extends StatelessWidget {
             ),
             Text(
               _customRepetitionsLabel.resolve(language),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -335,7 +336,7 @@ class ExercisesStepDetails extends StatelessWidget {
           width: media.width,
           height: media.width * 0.43,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: TColor.primaryG),
+            gradient: LinearGradient(colors: TColor.primaryG),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Image.asset(
@@ -377,9 +378,11 @@ class ExercisesStepDetails extends StatelessWidget {
             border: Border(
               top: BorderSide(
                 color: TColor.gray.withValues(alpha: 0.2),
+                width: 1,
               ),
               bottom: BorderSide(
                 color: TColor.gray.withValues(alpha: 0.2),
+                width: 1,
               ),
             ),
           ),
@@ -404,11 +407,11 @@ class ExercisesStepDetails extends StatelessWidget {
               ),
               Text(
                 ' $caloriesText',
-                style: const TextStyle(color: TColor.gray, fontSize: 10),
+                style: TextStyle(color: TColor.gray, fontSize: 10),
               ),
               Text(
                 ' ${index + 1} ',
-                style: const TextStyle(
+                style: TextStyle(
                   color: TColor.gray,
                   fontSize: 24,
                   fontWeight: FontWeight.w500,
@@ -416,7 +419,7 @@ class ExercisesStepDetails extends StatelessWidget {
               ),
               Text(
                 timesText,
-                style: const TextStyle(color: TColor.gray, fontSize: 16),
+                style: TextStyle(color: TColor.gray, fontSize: 16),
               ),
             ],
           );
@@ -451,7 +454,7 @@ class ExercisesStepDetails extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   _stepSummaryTitle.resolve(language),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -469,7 +472,7 @@ class ExercisesStepDetails extends StatelessWidget {
                       ),
                       child: Text(
                         step.number,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: TColor.primaryColor2,
                           fontWeight: FontWeight.bold,
                         ),

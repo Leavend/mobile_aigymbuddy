@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 /// consistent layout and responsive behaviour on different screen sizes.
 class AuthPageLayout extends StatelessWidget {
   const AuthPageLayout({
-    required this.child, super.key,
+    super.key,
+    required this.child,
     this.padding = const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
     this.backgroundColor = TColor.white,
     this.maxWidth = 420,

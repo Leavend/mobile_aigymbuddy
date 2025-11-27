@@ -1,9 +1,9 @@
 // lib/database/connection/web_connection.dart
-import 'package:aigymbuddy/common/services/logging_service.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 // ignore: deprecated_member_use
 import 'package:drift/web.dart';
+import '../../common/services/logging_service.dart';
 
 /// Creates a web-specific database connection
 Future<DatabaseConnection> createWebConnection() async {
@@ -47,6 +47,7 @@ Future<DatabaseConnection> createWebConnection() async {
       final fallbackDb = WebDatabase.withStorage(
         DriftWebStorage.indexedDb(
           'gym_buddy_db',
+          migrateFromLocalStorage: true,
         ),
       );
       LoggingService.instance.info(

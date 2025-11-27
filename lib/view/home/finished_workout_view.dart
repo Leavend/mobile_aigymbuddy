@@ -30,7 +30,7 @@ class FinishedWorkoutView extends StatelessWidget {
               Text(
                 localize(_FinishedWorkoutStrings.congratulations),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   color: TColor.black,
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
@@ -40,13 +40,13 @@ class FinishedWorkoutView extends StatelessWidget {
               Text(
                 localize(_FinishedWorkoutStrings.quote),
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: TColor.gray, fontSize: 12),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
               const SizedBox(height: 8),
               Text(
                 localize(_FinishedWorkoutStrings.quoteAuthor),
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: TColor.gray, fontSize: 12),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
               const Spacer(),
               RoundButton(

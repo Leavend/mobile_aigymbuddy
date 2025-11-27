@@ -3,12 +3,13 @@ import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
-import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/common_widget/upcoming_workout_row.dart';
-import 'package:aigymbuddy/common_widget/what_train_row.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../common_widget/round_button.dart';
+import '../../common_widget/upcoming_workout_row.dart';
+import '../../common_widget/what_train_row.dart';
 
 class WorkoutTrackerView extends StatelessWidget {
   const WorkoutTrackerView({super.key});
@@ -136,8 +137,8 @@ class WorkoutTrackerView extends StatelessWidget {
     final media = MediaQuery.of(context).size;
     final language = context.appLanguage;
 
-    return DecoratedBox(
-      decoration: const BoxDecoration(
+    return Container(
+      decoration: BoxDecoration(
         gradient: LinearGradient(colors: TColor.primaryG),
       ),
       child: NestedScrollView(
@@ -147,9 +148,9 @@ class WorkoutTrackerView extends StatelessWidget {
         ],
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: TColor.white,
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
             ),
@@ -210,7 +211,7 @@ class WorkoutTrackerView extends StatelessWidget {
       ),
       title: Text(
         _workoutTrackerTitle.resolve(language),
-        style: const TextStyle(
+        style: TextStyle(
           color: TColor.white,
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -273,7 +274,7 @@ class WorkoutTrackerView extends StatelessWidget {
         children: [
           Text(
             _dailyScheduleTitle.resolve(language),
-            style: const TextStyle(
+            style: TextStyle(
               color: TColor.black,
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -284,6 +285,7 @@ class WorkoutTrackerView extends StatelessWidget {
             height: 36,
             child: RoundButton(
               title: _checkLabel.resolve(language),
+              type: RoundButtonType.bgGradient,
               fontSize: 12,
               fontWeight: FontWeight.w500,
               onPressed: () => _openSchedule(context),
@@ -302,7 +304,7 @@ class WorkoutTrackerView extends StatelessWidget {
           children: [
             Text(
               _upcomingTitle.resolve(language),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -312,7 +314,7 @@ class WorkoutTrackerView extends StatelessWidget {
               onPressed: () => _openSchedule(context),
               child: Text(
                 _seeMoreLabel.resolve(language),
-                style: const TextStyle(
+                style: TextStyle(
                   color: TColor.gray,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -347,7 +349,7 @@ class WorkoutTrackerView extends StatelessWidget {
           children: [
             Text(
               _trainingTitle.resolve(language),
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -383,6 +385,8 @@ class WorkoutTrackerView extends StatelessWidget {
 
     return LineChartData(
       lineTouchData: LineTouchData(
+        enabled: true,
+        handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
           getTooltipItems: (spots) => spots
               .map(
@@ -402,16 +406,19 @@ class WorkoutTrackerView extends StatelessWidget {
       minY: -0.5,
       maxY: 110,
       titlesData: FlTitlesData(
+        show: true,
         leftTitles: const AxisTitles(),
         topTitles: const AxisTitles(),
         bottomTitles: AxisTitles(sideTitles: _buildBottomTitles(language)),
         rightTitles: AxisTitles(sideTitles: _buildRightTitles()),
       ),
       gridData: FlGridData(
+        show: true,
+        drawHorizontalLine: true,
         horizontalInterval: 25,
         drawVerticalLine: false,
         getDrawingHorizontalLine: (value) =>
-            FlLine(color: TColor.white.withValues(alpha: 0.15)),
+            FlLine(color: TColor.white.withValues(alpha: 0.15), strokeWidth: 2),
       ),
       borderData: FlBorderData(
         show: true,
@@ -428,7 +435,7 @@ class WorkoutTrackerView extends StatelessWidget {
         barWidth: 4,
         isStrokeCapRound: true,
         dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(),
+        belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 35),
           FlSpot(2, 70),
@@ -442,9 +449,10 @@ class WorkoutTrackerView extends StatelessWidget {
       LineChartBarData(
         isCurved: true,
         color: TColor.white.withValues(alpha: 0.5),
+        barWidth: 2,
         isStrokeCapRound: true,
         dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(),
+        belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 80),
           FlSpot(2, 50),
@@ -477,7 +485,7 @@ class WorkoutTrackerView extends StatelessWidget {
         if (text == null) return const SizedBox.shrink();
         return Text(
           text,
-          style: const TextStyle(color: TColor.white, fontSize: 12),
+          style: TextStyle(color: TColor.white, fontSize: 12),
           textAlign: TextAlign.center,
         );
       },
@@ -494,7 +502,7 @@ class WorkoutTrackerView extends StatelessWidget {
         if (label == null) return const SizedBox.shrink();
         return Text(
           label.resolve(language),
-          style: const TextStyle(color: TColor.white, fontSize: 12),
+          style: TextStyle(color: TColor.white, fontSize: 12),
         );
       },
     );

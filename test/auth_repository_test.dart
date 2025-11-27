@@ -1,7 +1,6 @@
 // AuthRepository unit tests
-import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'helpers/test_helpers.dart';
 
 void main() {

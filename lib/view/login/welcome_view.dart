@@ -2,10 +2,12 @@ import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common/services/auth_service.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
-import 'package:aigymbuddy/view/login/widgets/auth_page_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import 'widgets/auth_page_layout.dart';
 
 abstract final class _WelcomeTexts {
   static const title = LocalizedText(
@@ -38,6 +40,7 @@ class _WelcomeViewState extends State<WelcomeView> {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 32),
           Image.asset(
@@ -73,7 +76,7 @@ class _WelcomeViewState extends State<WelcomeView> {
 
   Future<void> _goToHome() async {
     final router = GoRouter.of(context);
-    // Session already started during registration, just navigate
+    await AuthService.instance.setHasCredentials(true);
     if (!mounted) return;
     router.go(AppRoute.main);
   }

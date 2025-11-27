@@ -3,10 +3,10 @@
 part of '../app_db.dart';
 
 class PlanDayWithExercises {
-
-  PlanDayWithExercises(this.day, this.items);
   final WorkoutPlanDay day;
   final List<(WorkoutPlanExercise, Exercise)> items;
+
+  PlanDayWithExercises(this.day, this.items);
 }
 
 @DriftAccessor(
@@ -15,14 +15,6 @@ class PlanDayWithExercises {
 class WorkoutPlansDao extends DatabaseAccessor<AppDatabase>
     with _$WorkoutPlansDaoMixin {
   WorkoutPlansDao(super.db);
-
-  Future<List<WorkoutPlan>> getAllWorkoutPlans() async {
-    final result = <WorkoutPlan>[]
-      ..add(_createWorkoutPlan1())
-      ..add(_createWorkoutPlan2());
-    
-    return result;
-  }
 
   // Method ini sudah benar
   Future<WorkoutPlan?> getActivePlan(String userId) {
@@ -58,8 +50,8 @@ class WorkoutPlansDao extends DatabaseAccessor<AppDatabase>
       final planExercise = row.readTable(workoutPlanExercises);
       final exercise = row.readTable(exercises);
 
-      groupedData.putIfAbsent(day, () => [])
-        ..add((planExercise, exercise));
+      final list = groupedData.putIfAbsent(day, () => []);
+      list.add((planExercise, exercise));
     }
 
     return groupedData.entries

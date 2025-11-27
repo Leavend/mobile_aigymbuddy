@@ -17,25 +17,20 @@ abstract class AuthUseCase {
 
 /// Implementation of authentication use case
 class AuthUseCaseImpl implements AuthUseCase {
+  final AuthRepositoryInterface _repository;
+  final AuthService _authService;
 
   AuthUseCaseImpl({
     required AuthRepositoryInterface repository,
     AuthService? authService,
   }) : _repository = repository,
        _authService = authService ?? AuthService.instance;
-  final AuthRepositoryInterface _repository;
-  final AuthService _authService;
 
   @override
   Future<AuthUser> register(SignUpData data) async {
     try {
       final user = await _repository.register(data);
-      // Generate token for session
-      final token = 'token_${DateTime.now().millisecondsSinceEpoch}_${user.id}';
-      await _authService.startSession(
-        token: token,
-        user: user,
-      );
+      await _authService.setHasCredentials(true);
       return user;
     } on EmailAlreadyUsed {
       throw const AuthException(
@@ -58,12 +53,7 @@ class AuthUseCaseImpl implements AuthUseCase {
   }) async {
     try {
       final user = await _repository.login(email: email, password: password);
-      // Generate token for session
-      final token = 'token_${DateTime.now().millisecondsSinceEpoch}_${user.id}';
-      await _authService.startSession(
-        token: token,
-        user: user,
-      );
+      await _authService.setHasCredentials(true);
       return user;
     } on InvalidCredentials {
       throw const AuthException(
@@ -80,7 +70,7 @@ class AuthUseCaseImpl implements AuthUseCase {
   @override
   Future<void> logout() async {
     try {
-      await _authService.endSession();
+      await _authService.clearCredentials();
     } catch (e) {
       throw GenericAppException('Logout failed', e);
     }

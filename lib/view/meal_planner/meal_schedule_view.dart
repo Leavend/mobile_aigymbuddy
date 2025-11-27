@@ -209,7 +209,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       ),
       title: Text(
         context.localize(_MealScheduleStrings.mealScheduleTitle),
-        style: const TextStyle(
+        style: TextStyle(
           color: TColor.black,
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -249,7 +249,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
             child: Text(
               dateLabel,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 color: TColor.black,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -274,16 +274,21 @@ class _MealScheduleViewState extends State<MealScheduleView> {
   Widget _buildCalendar(BuildContext context, AppLanguage language) {
     return CalendarAgenda(
       controller: _calendarCtrl,
+      appbar: false,
       leading: IconButton(
         onPressed: _goPrevDay,
         icon: const Icon(Icons.chevron_left),
         tooltip: context.localize(_MealScheduleStrings.previousDayTooltip),
       ),
+      weekDay: WeekDay.short,
       backgroundColor: Colors.transparent,
+      calendarBackground: Colors.white,
       selectedDateColor: Colors.white,
       dateColor: Colors.black,
       locale: language.code,
+      fullCalendar: true,
       fullCalendarScroll: FullCalendarScroll.horizontal,
+      fullCalendarDay: WeekDay.short,
       selectedDayPosition: SelectedDayPosition.center,
       initialDate: _selectedDate,
       firstDate: DateTime.now().subtract(const Duration(days: 140)),
@@ -315,7 +320,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
             children: [
               Text(
                 context.localize(title),
-                style: const TextStyle(
+                style: TextStyle(
                   color: TColor.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -325,7 +330,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                 onPressed: () {},
                 child: Text(
                   subtitle,
-                  style: const TextStyle(color: TColor.gray, fontSize: 12),
+                  style: TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ),
             ],
@@ -350,7 +355,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         context.localize(_MealScheduleStrings.todayNutritionTitle),
-        style: const TextStyle(
+        style: TextStyle(
           color: TColor.black,
           fontSize: 16,
           fontWeight: FontWeight.w700,

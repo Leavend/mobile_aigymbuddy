@@ -1,10 +1,11 @@
 // lib/database/connection/connection.dart
-// Import the native connection creation function conditionally
-import 'package:aigymbuddy/database/connection/native_connection.dart' if (dart.library.html) 'web_stub.dart';
-// Import the web connection creation function conditionally
-import 'package:aigymbuddy/database/connection/web_connection_stub.dart' if (dart.library.html) 'web_connection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
+
+// Import the native connection creation function conditionally
+import 'native_connection.dart' if (dart.library.html) 'web_stub.dart';
+// Import the web connection creation function conditionally
+import 'web_connection_stub.dart' if (dart.library.html) 'web_connection.dart';
 
 /// Creates and returns a database connection for the application
 DatabaseConnection openConnection() {
@@ -13,10 +14,10 @@ DatabaseConnection openConnection() {
 
 Future<DatabaseConnection> _openConnection() async {
   if (kIsWeb) {
-    return createWebConnection();
+    return await createWebConnection();
   } else {
     // For native platforms, use the optimized native connection
-    return createNativeConnection();
+    return await createNativeConnection();
   }
 }
 

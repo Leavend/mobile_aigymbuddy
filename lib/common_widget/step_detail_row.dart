@@ -1,10 +1,11 @@
-import 'package:aigymbuddy/common/color_extension.dart';
-import 'package:aigymbuddy/common/models/instruction_step.dart';
 import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:flutter/material.dart';
 
+import '../common/color_extension.dart';
+import '../common/models/instruction_step.dart';
+
 class StepDetailRow extends StatelessWidget {
-  const StepDetailRow({required this.step, super.key, this.isLast = false});
+  const StepDetailRow({super.key, required this.step, this.isLast = false});
 
   final InstructionStep step;
   final bool isLast;
@@ -18,10 +19,12 @@ class StepDetailRow extends StatelessWidget {
           width: 25,
           child: Text(
             step.number,
-            style: const TextStyle(color: TColor.secondaryColor1, fontSize: 14),
+            style: TextStyle(color: TColor.secondaryColor1, fontSize: 14),
           ),
         ),
         Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 20,
@@ -41,7 +44,7 @@ class StepDetailRow extends StatelessWidget {
               ),
             ),
             if (!isLast)
-              const DottedDashedLine(
+              DottedDashedLine(
                 height: 80,
                 width: 0,
                 dashColor: TColor.secondaryColor1,
@@ -52,15 +55,16 @@ class StepDetailRow extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 step.title ?? 'Step ${step.number}',
-                style: const TextStyle(color: TColor.black, fontSize: 14),
+                style: TextStyle(color: TColor.black, fontSize: 14),
               ),
               Text(
                 step.description,
-                style: const TextStyle(color: TColor.gray, fontSize: 12),
+                style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ],
           ),

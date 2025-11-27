@@ -52,7 +52,7 @@ class _ComparisonViewState extends State<ComparisonView> {
         ),
         title: Text(
           localize(_ComparisonTexts.title),
-          style: const TextStyle(
+          style: TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -118,7 +118,7 @@ class _ComparisonViewState extends State<ComparisonView> {
     final selectedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(2020),
+      firstDate: DateTime(2020, 1),
       lastDate: DateTime.now(),
       helpText: helpText,
       initialDatePickerMode: DatePickerMode.year,

@@ -52,7 +52,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         leading: const SizedBox.shrink(),
         title: Text(
           localize(_PhotoProgressTexts.title),
-          style: const TextStyle(
+          style: TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -102,7 +102,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         elevation: 0,
         child: Container(
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: TColor.secondaryG),
+            gradient: LinearGradient(colors: TColor.secondaryG),
             borderRadius: BorderRadius.circular(100),
             boxShadow: const [
               BoxShadow(
@@ -161,7 +161,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                   ),
                   Text(
                     localize(_PhotoProgressTexts.reminderSubtitle),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: TColor.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
@@ -172,7 +172,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             ),
             IconButton(
               onPressed: () => setState(() => _isReminderVisible = false),
-              icon: const Icon(Icons.close, color: TColor.gray, size: 18),
+              icon: Icon(Icons.close, color: TColor.gray, size: 18),
             ),
           ],
         ),
@@ -208,7 +208,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                 const SizedBox(height: 8),
                 Text(
                   localize(_PhotoProgressTexts.educationDescription),
-                  style: const TextStyle(color: TColor.black, fontSize: 12),
+                  style: TextStyle(color: TColor.black, fontSize: 12),
                 ),
                 const Spacer(),
                 SizedBox(
@@ -247,7 +247,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         children: [
           Text(
             localize(_PhotoProgressTexts.compareTitle),
-            style: const TextStyle(
+            style: TextStyle(
               color: TColor.black,
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -258,6 +258,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             height: 32,
             child: RoundButton(
               title: localize(_PhotoProgressTexts.compareButton),
+              type: RoundButtonType.bgGradient,
               fontSize: 12,
               fontWeight: FontWeight.w500,
               onPressed: () => context.pushNamed(AppRoute.photoComparisonName),
@@ -276,7 +277,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         children: [
           Text(
             localize(_PhotoProgressTexts.galleryTitle),
-            style: const TextStyle(
+            style: TextStyle(
               color: TColor.black,
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -287,7 +288,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                 _showSnackBar(localize(_PhotoProgressTexts.galleryInfo)),
             child: Text(
               localize(_PhotoProgressTexts.seeMoreButton),
-              style: const TextStyle(color: TColor.gray),
+              style: TextStyle(color: TColor.gray),
             ),
           ),
         ],
@@ -305,7 +306,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             padding: const EdgeInsets.only(left: 4, bottom: 8, top: 8),
             child: Text(
               DateTimeUtils.formatDate(group.date, pattern: 'd MMMM'),
-              style: const TextStyle(color: TColor.gray, fontSize: 12),
+              style: TextStyle(color: TColor.gray, fontSize: 12),
             ),
           ),
           SizedBox(

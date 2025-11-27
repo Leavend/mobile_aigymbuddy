@@ -1,53 +1,28 @@
-import 'package:aigymbuddy/auth/models/auth_user.dart';
-import 'package:aigymbuddy/common/di/service_locator.dart';
-import 'package:aigymbuddy/common/services/session_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service for managing authentication state and session lifecycle
+typedef SharedPreferencesFactory = Future<SharedPreferences> Function();
+
 class AuthService {
-  AuthService({SessionManager? sessionManager})
-      : _sessionManager = sessionManager;
+  AuthService({SharedPreferencesFactory? preferencesFactory})
+    : _preferencesFactory = preferencesFactory ?? SharedPreferences.getInstance;
 
-  // Lazy singleton - initialized on first access
-  static AuthService? _instance;
-  static AuthService get instance {
-    _instance ??= AuthService(
-      sessionManager: ServiceLocator().sessionManager,
-    );
-    return _instance!;
-  }
+  static final AuthService instance = AuthService();
 
-  final SessionManager? _sessionManager;
-  
-  SessionManager get sessionManager =>
-      _sessionManager ?? ServiceLocator().sessionManager;
+  static const String _hasCredentialsKey = 'auth.hasCredentials';
 
-  /// Check if user has valid session
+  final SharedPreferencesFactory _preferencesFactory;
+
+  Future<SharedPreferences> get _prefs async => _preferencesFactory();
+
   Future<bool> hasSavedCredentials() async {
-    return sessionManager.isSessionValid();
+    final prefs = await _prefs;
+    return prefs.getBool(_hasCredentialsKey) ?? false;
   }
 
-  /// Start new session after successful login
-  Future<void> startSession({
-    required String token,
-    required AuthUser user,
-    Duration expiresIn = const Duration(days: 7),
-  }) async {
-    await sessionManager.saveToken(token, expiresIn: expiresIn);
-    await sessionManager.saveUserData(user);
-    sessionManager.startSessionMonitor();
+  Future<void> setHasCredentials(bool value) async {
+    final prefs = await _prefs;
+    await prefs.setBool(_hasCredentialsKey, value);
   }
 
-  /// End current session (logout)
-  Future<void> endSession() async {
-    sessionManager.stopSessionMonitor();
-    await sessionManager.clearSession();
-  }
-
-  /// Get current user data from session
-  Future<AuthUser?> getCurrentUser() async {
-    return sessionManager.getUserData();
-  }
-
-  /// Listen to session expiry events
-  Stream<void> get onSessionExpired => sessionManager.onSessionExpired;
+  Future<void> clearCredentials() => setHasCredentials(false);
 }

@@ -60,9 +60,9 @@ abstract final class AuthValidators {
 
     // Check password strength if required
     if (requireStrength) {
-      final hasUppercase = text.contains(RegExp('[A-Z]'));
-      final hasLowercase = text.contains(RegExp('[a-z]'));
-      final hasDigit = text.contains(RegExp('[0-9]'));
+      final hasUppercase = text.contains(RegExp(r'[A-Z]'));
+      final hasLowercase = text.contains(RegExp(r'[a-z]'));
+      final hasDigit = text.contains(RegExp(r'[0-9]'));
 
       if (!hasUppercase || !hasLowercase || !hasDigit) {
         return weakMessage != null
@@ -79,9 +79,9 @@ abstract final class AuthValidators {
     if (password.isEmpty) return PasswordStrength.empty;
     if (password.length < 8) return PasswordStrength.tooShort;
 
-    final hasUppercase = password.contains(RegExp('[A-Z]'));
-    final hasLowercase = password.contains(RegExp('[a-z]'));
-    final hasDigit = password.contains(RegExp('[0-9]'));
+    final hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    final hasLowercase = password.contains(RegExp(r'[a-z]'));
+    final hasDigit = password.contains(RegExp(r'[0-9]'));
     final hasSpecialChar = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
     final criteriaCount = [

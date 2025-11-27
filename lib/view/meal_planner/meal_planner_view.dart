@@ -115,7 +115,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       ),
       title: Text(
         context.localize(_MealPlannerStrings.mealPlannerTitle),
-        style: const TextStyle(
+        style: TextStyle(
           color: TColor.black,
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -136,7 +136,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       children: [
         Text(
           context.localize(_MealPlannerStrings.mealNutritionsTitle),
-          style: const TextStyle(
+          style: TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -163,6 +163,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       child: LineChart(
         LineChartData(
           lineTouchData: LineTouchData(
+            enabled: true,
             handleBuiltInTouches: false,
             touchCallback: (_, _) {},
             mouseCursorResolver: (event, response) {
@@ -178,6 +179,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                     (_) => TouchedSpotIndicatorData(
                       const FlLine(color: Colors.transparent),
                       FlDotData(
+                        show: true,
                         getDotPainter: (spot, percent, barData, index) =>
                             FlDotCirclePainter(
                               radius: 3,
@@ -215,16 +217,20 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           minY: -0.5,
           maxY: 110,
           titlesData: FlTitlesData(
+            show: true,
             leftTitles: const AxisTitles(),
             topTitles: const AxisTitles(),
             bottomTitles: AxisTitles(sideTitles: _buildBottomTitles(language)),
             rightTitles: AxisTitles(sideTitles: _rightTitles),
           ),
           gridData: FlGridData(
+            show: true,
+            drawHorizontalLine: true,
             horizontalInterval: 25,
             drawVerticalLine: false,
             getDrawingHorizontalLine: (value) => FlLine(
               color: TColor.gray.withValues(alpha: 0.15),
+              strokeWidth: 2,
             ),
           ),
           borderData: FlBorderData(
@@ -248,7 +254,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
         children: [
           Text(
             context.localize(_MealPlannerStrings.dailyScheduleTitle),
-            style: const TextStyle(
+            style: TextStyle(
               color: TColor.black,
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -259,6 +265,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
             height: 25,
             child: RoundButton(
               title: context.localize(_MealPlannerStrings.checkButton),
+              type: RoundButtonType.bgGradient,
               fontSize: 12,
               fontWeight: FontWeight.w400,
               onPressed: () => context.push(AppRoute.mealSchedule),
@@ -275,7 +282,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       children: [
         Text(
           context.localize(_MealPlannerStrings.todayMealsTitle),
-          style: const TextStyle(
+          style: TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -312,7 +319,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
         context.localize(_MealPlannerStrings.findSomethingTitle),
-        style: const TextStyle(
+        style: TextStyle(
           color: TColor.black,
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -363,11 +370,13 @@ class _MealPlannerViewState extends State<MealPlannerView> {
   List<LineChartBarData> get _lineBars => [
     LineChartBarData(
       isCurved: true,
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         colors: [TColor.primaryColor2, TColor.primaryColor1],
       ),
+      barWidth: 2,
       isStrokeCapRound: true,
       dotData: FlDotData(
+        show: true,
         getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
           radius: 3,
           color: Colors.white,
@@ -375,7 +384,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           strokeColor: TColor.primaryColor2,
         ),
       ),
-      belowBarData: BarAreaData(),
+      belowBarData: BarAreaData(show: false),
       spots: const [
         FlSpot(1, 35),
         FlSpot(2, 70),
@@ -400,7 +409,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
       }
       return Text(
         labels[index],
-        style: const TextStyle(color: TColor.gray, fontSize: 12),
+        style: TextStyle(color: TColor.gray, fontSize: 12),
         textAlign: TextAlign.center,
       );
     },
@@ -423,7 +432,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           space: 10,
           child: Text(
             label,
-            style: const TextStyle(color: TColor.gray, fontSize: 12),
+            style: TextStyle(color: TColor.gray, fontSize: 12),
           ),
         );
       },
@@ -450,21 +459,21 @@ class _GradientDropdown extends StatelessWidget {
       height: 30,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: TColor.primaryG),
+        gradient: LinearGradient(colors: TColor.primaryG),
         borderRadius: BorderRadius.circular(15),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<_DropdownOption>(
           value: value,
           onChanged: onChanged,
-          icon: const Icon(Icons.expand_more, color: TColor.white),
+          icon: Icon(Icons.expand_more, color: TColor.white),
           items: options
               .map(
                 (option) => DropdownMenuItem<_DropdownOption>(
                   value: option,
                   child: Text(
                     option.label.resolve(language),
-                    style: const TextStyle(color: TColor.gray, fontSize: 14),
+                    style: TextStyle(color: TColor.gray, fontSize: 14),
                   ),
                 ),
               )

@@ -1,10 +1,13 @@
-import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../common/color_extension.dart';
+
 class RoundTextField extends StatelessWidget {
   const RoundTextField({
-    required this.hintText, required this.icon, super.key,
+    super.key,
+    required this.hintText,
+    required this.icon,
     this.controller,
     this.margin,
     this.keyboardType,
@@ -56,7 +59,7 @@ class RoundTextField extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(15),
         // Added subtle border for better visual definition
-        border: Border.all(color: TColor.gray.withValues(alpha: 0.2)),
+        border: Border.all(color: TColor.gray.withValues(alpha: 0.2), width: 1),
       ),
       child: TextFormField(
         controller: controller,
@@ -77,7 +80,7 @@ class RoundTextField extends StatelessWidget {
         // Added cursor color for better UX
         cursorColor: TColor.primaryColor1,
         // Added text selection theme
-        style: const TextStyle(color: TColor.black, fontSize: 14),
+        style: TextStyle(color: TColor.black, fontSize: 14),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 15,
@@ -88,11 +91,12 @@ class RoundTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide(
               color: TColor.gray.withValues(alpha: 0.3),
+              width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: TColor.primaryColor1, width: 2),
+            borderSide: BorderSide(color: TColor.primaryColor1, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
@@ -128,7 +132,7 @@ class RoundTextField extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
-          hintStyle: const TextStyle(
+          hintStyle: TextStyle(
             color: TColor.gray,
             fontSize: 14, // Increased font size for better readability
           ),
