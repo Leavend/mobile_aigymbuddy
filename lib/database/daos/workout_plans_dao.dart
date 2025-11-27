@@ -16,6 +16,14 @@ class WorkoutPlansDao extends DatabaseAccessor<AppDatabase>
     with _$WorkoutPlansDaoMixin {
   WorkoutPlansDao(super.db);
 
+  Future<List<WorkoutPlan>> getAllWorkoutPlans() async {
+    final result = <WorkoutPlan>[]
+      ..add(_createWorkoutPlan1())
+      ..add(_createWorkoutPlan2());
+    
+    return result;
+  }
+
   // Method ini sudah benar
   Future<WorkoutPlan?> getActivePlan(String userId) {
     return (select(workoutPlans)

@@ -188,7 +188,7 @@ class _MyAppState extends State<MyApp> {
     if (mounted) {
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
-          showDialog(
+          unawaited(showDialog(
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('Session Expired'),

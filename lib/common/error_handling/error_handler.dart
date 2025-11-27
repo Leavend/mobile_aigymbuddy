@@ -91,7 +91,7 @@ class ErrorHandler {
     String message,
     VoidCallback? onRetry,
   ) {
-    showDialog(
+    unawaited(showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -188,7 +188,7 @@ class ErrorHandler {
 
   /// Show a success dialog.
   static void _showSuccessDialog(BuildContext context, String message) {
-    showDialog(
+    unawaited(showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
