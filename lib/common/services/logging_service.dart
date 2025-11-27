@@ -1,31 +1,31 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
 /// Singleton logging service for the application
 class LoggingService {
-  static LoggingService? _instance;
-  static Logger? _logger;
+  factory LoggingService() => _instance;
 
   LoggingService._internal() {
     _logger = Logger(
-      filter: _EnvironmentFilter(), // Custom filter for different environments
+      filter: _EnvironmentFilter(),
       printer: PrettyPrinter(
-        methodCount: 0, // number of method calls to be displayed
-        errorMethodCount: 8, // number of method calls if stacktrace is provided
-        lineLength: 120, // width of the output
-        colors: true, // Colorful log messages
-        printEmojis: true, // Print an emoji for each log message
-        dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart, // Updated format
+        methodCount: 0,
+        errorMethodCount: 8,
+        lineLength: 120,
+        colors: true,
+        printEmojis: kDebugMode,
+        dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
       ),
-      output: ConsoleOutput(), // Use ConsoleOutput for regular console
+      output: ConsoleOutput(),
     );
   }
 
-  static LoggingService get instance {
-    _instance ??= LoggingService._internal();
-    return _instance!;
-  }
+  static final LoggingService _instance = LoggingService._internal();
+  static Logger? _logger;
+
+  static LoggingService get instance => _instance;
 
   void debug(String message, {Object? error, StackTrace? stackTrace}) {
     _logger?.d(message, error: error, stackTrace: stackTrace);
@@ -47,7 +47,6 @@ class LoggingService {
     _logger?.t(message, error: error, stackTrace: stackTrace);
   }
 
-  /// For logging Flutter developer logs (these will appear in debug mode)
   void flutterLog(String message, {Object? error, StackTrace? stackTrace}) {
     developer.log(
       message,
@@ -58,12 +57,12 @@ class LoggingService {
   }
 }
 
-/// Custom filter to control logging based on environment
 class _EnvironmentFilter extends LogFilter {
   @override
   bool shouldLog(LogEvent event) {
-    // In production, we might want to filter out debug and trace logs
-    // For now, allow all logs
+    if (kReleaseMode) {
+      return event.level.value >= Level.warning.value;
+    }
     return true;
   }
 }
