@@ -80,16 +80,20 @@ void main() {
     );
 
     final mockAuthUseCase = MockAuthUseCase();
-    final locator = ServiceLocator();
-    locator.registerDatabase(db);
-    locator.registerDatabaseService(DatabaseService(db));
-    locator.registerAuthRepository(MockAuthRepository());
-    locator.registerAuthUseCase(mockAuthUseCase);
-    locator.registerUserProfileRepository(MockUserProfileRepository(db));
-    
-    // Register AuthController after AuthUseCase
+    final mockAuthRepo = MockAuthRepository();
+    final mockDbService = DatabaseService(db);
     final authController = AuthController(useCase: mockAuthUseCase);
-    locator.registerAuthController(authController);
+
+    await ServiceLocator().initialize();
+
+    // Register test dependencies using cascades
+    ServiceLocator()
+      ..registerDatabase(db)
+      ..registerDatabaseService(mockDbService)
+      ..registerAuthRepository(mockAuthRepo)
+      ..registerAuthUseCase(mockAuthUseCase)
+      ..registerUserProfileRepository(MockUserProfileRepository(db))
+      ..registerAuthController(authController);
 
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp(db: db, initialLocation: '/onboarding'));
