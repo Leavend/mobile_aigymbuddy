@@ -4,15 +4,12 @@ import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
 
 class TodayTargetCell extends StatelessWidget {
+  const TodayTargetCell({
+    required this.icon, required this.value, required this.title, super.key,
+  });
   final String icon;
   final String value;
   final String title;
-  const TodayTargetCell({
-    super.key,
-    required this.icon,
-    required this.value,
-    required this.title,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +32,8 @@ class TodayTargetCell extends StatelessWidget {
                 ShaderMask(
                   blendMode: BlendMode.srcIn,
                   shaderCallback: (bounds) {
-                    return LinearGradient(
+                    return const LinearGradient(
                       colors: TColor.primaryG,
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
                     ).createShader(
                       Rect.fromLTRB(0, 0, bounds.width, bounds.height),
                     );
@@ -54,7 +49,7 @@ class TodayTargetCell extends StatelessWidget {
                 ),
                 Text(
                   title,
-                  style: TextStyle(color: TColor.black, fontSize: 12),
+                  style: const TextStyle(color: TColor.black, fontSize: 12),
                 ),
               ],
             ),

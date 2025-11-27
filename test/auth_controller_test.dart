@@ -1,7 +1,8 @@
 // AuthController unit tests
-import 'package:flutter_test/flutter_test.dart';
 import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/common/exceptions/app_exceptions.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import 'helpers/test_helpers.dart';
 
 void main() {
@@ -22,7 +23,7 @@ void main() {
     });
 
     test('login failure sets error message', () async {
-      mockUseCase.throwOnLogin = AuthException(
+      mockUseCase.throwOnLogin = const AuthException(
         'Invalid credentials',
         AuthException.invalidCredentials,
       );

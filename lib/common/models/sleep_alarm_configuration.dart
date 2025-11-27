@@ -6,8 +6,7 @@ class SleepAlarmConfiguration {
   SleepAlarmConfiguration({
     required this.bedtime,
     required this.duration,
-    Iterable<int> repeatWeekdays = const <int>[],
-    required this.vibrate,
+    required this.vibrate, Iterable<int> repeatWeekdays = const <int>[],
   }) : repeatWeekdays = Set.unmodifiable(repeatWeekdays);
 
   /// Date and time when the user plans to go to bed.

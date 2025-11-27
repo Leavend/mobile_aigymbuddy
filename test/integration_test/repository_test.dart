@@ -1,10 +1,10 @@
 // test/integration_test/repository_test.dart
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:aigymbuddy/database/app_db.dart';
 import 'package:aigymbuddy/database/repositories/user_repository.dart';
-import 'package:drift/native.dart';
 import 'package:drift/drift.dart' hide isNotNull;
+import 'package:drift/native.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Repository Tests', () {
@@ -73,12 +73,12 @@ void main() {
 
       // Test that operations on closed database throw errors
       expect(
-        () async => await errorRepository.getAllUsers(),
+        () async => errorRepository.getAllUsers(),
         throwsA(isA<StateError>()),
       );
 
       expect(
-        () async => await errorRepository.createUser(
+        () async => errorRepository.createUser(
           email: 'test@error.com',
           passwordHash: 'password',
         ),

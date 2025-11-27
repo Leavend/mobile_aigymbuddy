@@ -8,10 +8,7 @@ import 'package:flutter/material.dart';
 
 class BmiCard extends StatelessWidget {
   const BmiCard({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.buttonText,
+    required this.title, required this.subtitle, required this.buttonText, super.key,
     this.onPressed,
   });
 
@@ -26,7 +23,7 @@ class BmiCard extends StatelessWidget {
     return Container(
       height: 140,
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: TColor.primaryG),
+        gradient: const LinearGradient(colors: TColor.primaryG),
         borderRadius: BorderRadius.circular(UIConstants.radiusXLarge),
       ),
       child: Stack(

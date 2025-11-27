@@ -7,13 +7,12 @@ import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
 import 'package:aigymbuddy/common/exceptions/database_exceptions.dart';
 import 'package:aigymbuddy/common/services/logging_service.dart';
+import 'package:aigymbuddy/database/app_db.dart';
+import 'package:aigymbuddy/database/database_service.dart';
+import 'package:aigymbuddy/database/type_converters.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
-
-import '../app_db.dart';
-import '../database_service.dart';
-import '../type_converters.dart';
 
 class EmailAlreadyUsed implements Exception {}
 
@@ -76,7 +75,6 @@ class AuthRepository implements AuthRepositoryInterface {
                   role: const Value(UserRole.user),
                   createdAt: Value(now),
                   updateAt: Value(now),
-                  deletedAt: const Value.absent(),
                 ),
               ),
         );
@@ -108,7 +106,6 @@ class AuthRepository implements AuthRepositoryInterface {
                     userId: userId,
                     loggedAt: Value(now),
                     weightKg: data.weightKg!,
-                    bodyFatPct: const Value.absent(),
                     notes: const Value('initial'),
                   ),
                 ),

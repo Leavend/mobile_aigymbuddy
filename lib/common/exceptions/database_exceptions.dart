@@ -1,4 +1,5 @@
 /// Database-related exceptions
+library;
 
 /// Exception thrown when database connection fails
 class DatabaseConnectionException implements Exception {

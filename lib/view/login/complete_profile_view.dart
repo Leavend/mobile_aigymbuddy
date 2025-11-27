@@ -6,11 +6,10 @@ import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/database/type_converters.dart';
+import 'package:aigymbuddy/view/login/widgets/auth_page_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-
-import 'widgets/auth_page_layout.dart';
 
 abstract final class _CompleteProfileTexts {
   static const title = LocalizedText(
@@ -80,7 +79,7 @@ abstract final class _CompleteProfileTexts {
 }
 
 class CompleteProfileView extends StatefulWidget {
-  const CompleteProfileView({super.key, required this.signUpData});
+  const CompleteProfileView({required this.signUpData, super.key});
   final SignUpData signUpData;
 
   @override
@@ -161,7 +160,6 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
               primary: TColor.primaryColor1,
-              onPrimary: TColor.white,
               onSurface: TColor.black,
             ),
           ),
@@ -480,7 +478,7 @@ class _UnitTag extends StatelessWidget {
       height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: TColor.secondaryG),
+        gradient: const LinearGradient(colors: TColor.secondaryG),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(

@@ -1,7 +1,7 @@
 // lib/database/repositories/user_repository.dart
 
-import '../base_repository.dart';
-import '../app_db.dart';
+import 'package:aigymbuddy/database/app_db.dart';
+import 'package:aigymbuddy/database/base_repository.dart';
 // import '../../common/services/error_service.dart';
 
 class UserRepository extends BaseRepository {

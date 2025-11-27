@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 /// Shared language toggle widget used across the onboarding and auth flows.
 class AppLanguageToggle extends StatelessWidget {
   const AppLanguageToggle({
-    super.key,
-    required this.selectedLanguage,
-    required this.onSelected,
+    required this.selectedLanguage, required this.onSelected, super.key,
   });
 
   final AppLanguage selectedLanguage;
@@ -46,7 +44,6 @@ class AppLanguageToggle extends StatelessWidget {
         selectedColor: TColor.white,
         fillColor: TColor.primaryColor1,
         splashColor: TColor.primaryColor2,
-        renderBorder: true,
         constraints: const BoxConstraints(minHeight: 40, minWidth: 52),
         children: AppLanguage.values
             .map(

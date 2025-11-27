@@ -1,8 +1,7 @@
 import 'dart:convert';
 
+import 'package:aigymbuddy/common/date_time_utils.dart';
 import 'package:flutter/material.dart';
-
-import '../date_time_utils.dart';
 
 /// Domain model representing a single entry in the user's sleep schedule.
 class SleepScheduleEntry {

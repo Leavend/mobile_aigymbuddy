@@ -59,8 +59,8 @@ abstract final class AppConstants {
   static const int maxHeartRate = 220;
   static const int minCalories = 0;
   static const int maxCalories = 10000;
-  static const double minWaterIntakeLiters = 0.0;
-  static const double maxWaterIntakeLiters = 10.0;
+  static const double minWaterIntakeLiters = 0;
+  static const double maxWaterIntakeLiters = 10;
   static const int minSleepHours = 0;
   static const int maxSleepHours = 24;
 
@@ -71,16 +71,16 @@ abstract final class AppConstants {
   // Above 29.9 is obese
 
   /// UI constants
-  static const double defaultPadding = 16.0;
-  static const double defaultBorderRadius = 12.0;
-  static const double buttonHeight = 50.0;
-  static const double iconSize = 24.0;
+  static const double defaultPadding = 16;
+  static const double defaultBorderRadius = 12;
+  static const double buttonHeight = 50;
+  static const double iconSize = 24;
 
   /// Chart constants
   static const int heartRateChartPoints = 30;
   static const int workoutProgressDays = 7;
-  static const double chartMinHeight = 160.0;
-  static const double chartMaxHeight = 300.0;
+  static const double chartMinHeight = 160;
+  static const double chartMaxHeight = 300;
 
   /// Error messages (fallback/default)
   static const String errorGeneric = 'Terjadi kesalahan. Silakan coba lagi.';

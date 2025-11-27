@@ -11,11 +11,11 @@ import 'package:flutter/foundation.dart';
 
 /// Service locator for managing dependencies with proper lifecycle management
 class ServiceLocator {
-  static final ServiceLocator _instance = ServiceLocator._internal();
 
   factory ServiceLocator() => _instance;
 
   ServiceLocator._internal();
+  static final ServiceLocator _instance = ServiceLocator._internal();
 
   // Services
   AppDatabase? _database;

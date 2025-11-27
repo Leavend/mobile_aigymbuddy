@@ -1,16 +1,11 @@
 // lib/common/services/error_service.dart
 
-import 'package:logger/logger.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 
 class ErrorService {
   static final Logger _logger = Logger(
     printer: PrettyPrinter(
-      methodCount: 2,
-      errorMethodCount: 8,
-      lineLength: 120,
-      colors: true,
-      printEmojis: true,
       // Fix: Replace deprecated printTime with dateTimeFormat
       dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
     ),

@@ -17,14 +17,14 @@ abstract class AuthUseCase {
 
 /// Implementation of authentication use case
 class AuthUseCaseImpl implements AuthUseCase {
-  final AuthRepositoryInterface _repository;
-  final AuthService _authService;
 
   AuthUseCaseImpl({
     required AuthRepositoryInterface repository,
     AuthService? authService,
   }) : _repository = repository,
        _authService = authService ?? AuthService.instance;
+  final AuthRepositoryInterface _repository;
+  final AuthService _authService;
 
   @override
   Future<AuthUser> register(SignUpData data) async {
@@ -35,7 +35,6 @@ class AuthUseCaseImpl implements AuthUseCase {
       await _authService.startSession(
         token: token,
         user: user,
-        expiresIn: const Duration(days: 7),
       );
       return user;
     } on EmailAlreadyUsed {
@@ -64,7 +63,6 @@ class AuthUseCaseImpl implements AuthUseCase {
       await _authService.startSession(
         token: token,
         user: user,
-        expiresIn: const Duration(days: 7),
       );
       return user;
     } on InvalidCredentials {

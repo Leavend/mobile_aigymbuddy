@@ -3,16 +3,15 @@ import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
+import 'package:aigymbuddy/common_widget/exercises_row.dart';
+import 'package:aigymbuddy/common_widget/exercises_set_section.dart';
 import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../common_widget/exercises_row.dart';
-import '../../common_widget/exercises_set_section.dart';
-
 class WorkoutDetailView extends StatefulWidget {
-  const WorkoutDetailView({super.key, required this.workout});
+  const WorkoutDetailView({required this.workout, super.key});
 
   final Map<String, dynamic> workout;
 
@@ -235,8 +234,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     final language = context.appLanguage;
     final workoutSets = _buildWorkoutSets(language);
 
-    return Container(
-      decoration: BoxDecoration(
+    return DecoratedBox(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(colors: TColor.primaryG),
       ),
       child: NestedScrollView(
@@ -246,9 +245,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
         ],
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: TColor.white,
-            borderRadius: const BorderRadius.only(
+            borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
             ),
@@ -304,7 +303,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 ),
                 SafeArea(
                   child: Column(
-                    mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       RoundButton(
@@ -383,7 +381,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
       leading: const SizedBox(),
       expandedHeight: media.width * 0.5,
       flexibleSpace: Align(
-        alignment: Alignment.center,
         child: Image.asset(
           'assets/img/detail_top.png',
           width: media.width * 0.75,
@@ -414,7 +411,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                     (language == AppLanguage.english
                         ? 'Workout Plan'
                         : 'Rencana Latihan'),
-                style: TextStyle(
+                style: const TextStyle(
                   color: TColor.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -422,7 +419,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               ),
               Text(
                 '$exercises | $time | ${_calorieSummary.resolve(language)}',
-                style: TextStyle(color: TColor.gray, fontSize: 12),
+                style: const TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ],
           ),
@@ -453,7 +450,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           children: [
             Text(
               _equipmentTitle.resolve(language),
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -463,7 +460,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               onPressed: _showEquipmentSheet,
               child: Text(
                 summary,
-                style: TextStyle(color: TColor.gray, fontSize: 12),
+                style: const TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ),
           ],
@@ -497,10 +494,10 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8),
                       child: Text(
                         item.title.resolve(language),
-                        style: TextStyle(color: TColor.black, fontSize: 12),
+                        style: const TextStyle(color: TColor.black, fontSize: 12),
                       ),
                     ),
                   ],
@@ -529,7 +526,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           children: [
             Text(
               _exercisesTitle.resolve(language),
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -539,7 +536,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               onPressed: () => _showExerciseSummary(workoutSets),
               child: Text(
                 summary,
-                style: TextStyle(color: TColor.gray, fontSize: 12),
+                style: const TextStyle(color: TColor.gray, fontSize: 12),
               ),
             ),
           ],
@@ -596,7 +593,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               children: [
                 Text(
                   _difficultyInfoTitle.resolve(language),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -605,7 +602,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 const SizedBox(height: 12),
                 Text(
                   _difficultyInfoBody.resolve(language),
-                  style: TextStyle(color: TColor.gray, fontSize: 13),
+                  style: const TextStyle(color: TColor.gray, fontSize: 13),
                 ),
                 const SizedBox(height: 12),
                 TextButton(
@@ -645,7 +642,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 const SizedBox(height: 16),
                 Text(
                   _equipmentSheetTitle.resolve(language),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -662,7 +659,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                     ),
                     title: Text(
                       item.title.resolve(language),
-                      style: TextStyle(color: TColor.black),
+                      style: const TextStyle(color: TColor.black),
                     ),
                   );
                 }),
@@ -699,7 +696,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 const SizedBox(height: 16),
                 Text(
                   _exercisesOverviewTitle.resolve(language),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -714,11 +711,11 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                   return ListTile(
                     title: Text(
                       set.name,
-                      style: TextStyle(color: TColor.black),
+                      style: const TextStyle(color: TColor.black),
                     ),
                     subtitle: Text(
                       subtitle,
-                      style: TextStyle(color: TColor.gray),
+                      style: const TextStyle(color: TColor.gray),
                     ),
                   );
                 }),

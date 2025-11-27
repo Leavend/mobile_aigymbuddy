@@ -13,8 +13,8 @@ import 'package:aigymbuddy/database/app_db.dart';
 import 'package:aigymbuddy/database/database_service.dart';
 import 'package:aigymbuddy/database/repositories/user_profile_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +24,8 @@ Future<void> main() async {
   try {
     await serviceLocator.initialize();
   } catch (e, stackTrace) {
-    debugPrint("Critical error initializing ServiceLocator: $e");
-    debugPrint("Stack trace: $stackTrace");
+    debugPrint('Critical error initializing ServiceLocator: $e');
+    debugPrint('Stack trace: $stackTrace');
     // Continue with minimal functionality if ServiceLocator fails
   }
 
@@ -36,19 +36,19 @@ Future<void> main() async {
 
     // Verify database connection with enhanced logging
     await db.customSelect('SELECT 1').getSingle();
-    debugPrint("Database connection verified successfully.");
+    debugPrint('Database connection verified successfully.');
 
     // Check database integrity
     final isValid = await ServiceLocator().databaseService
         .checkDatabaseIntegrity();
     if (isValid) {
-      debugPrint("Database integrity check passed.");
+      debugPrint('Database integrity check passed.');
     } else {
-      debugPrint("Database integrity check failed - proceeding with caution.");
+      debugPrint('Database integrity check failed - proceeding with caution.');
     }
   } catch (e) {
-    debugPrint("Error verifying database connection: $e");
-    debugPrint("App will continue with limited functionality.");
+    debugPrint('Error verifying database connection: $e');
+    debugPrint('App will continue with limited functionality.');
   }
 
   final hasCredentials = await AuthService.instance.hasSavedCredentials();
@@ -64,15 +64,15 @@ Future<void> main() async {
     runApp(MyApp(db: db, initialLocation: initialLocation));
   } else {
     // Fallback app without database functionality
-    runApp(ErrorApp(error: "Database initialization failed"));
+    runApp(const ErrorApp(error: 'Database initialization failed'));
   }
 }
 
 /// Fallback widget to display when database fails to initialize
 class ErrorApp extends StatelessWidget {
-  final String error;
 
-  const ErrorApp({super.key, required this.error});
+  const ErrorApp({required this.error, super.key});
+  final String error;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,7 @@ class ErrorApp extends StatelessWidget {
         backgroundColor: const Color(0xFF1E1E1E),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -173,8 +173,8 @@ class _MyAppState extends State<MyApp> {
       // Dispose service locator
       unawaited(ServiceLocator().dispose());
     } catch (e, stackTrace) {
-      debugPrint("Error during app disposal: $e");
-      debugPrint("Stack trace: $stackTrace");
+      debugPrint('Error during app disposal: $e');
+      debugPrint('Stack trace: $stackTrace');
     }
 
     super.dispose();

@@ -38,7 +38,7 @@ class WorkoutSummaryItem {
 }
 
 class WorkoutRow extends StatelessWidget {
-  const WorkoutRow({super.key, required this.workout, this.onTap});
+  const WorkoutRow({required this.workout, super.key, this.onTap});
 
   factory WorkoutRow.fromMap(Map<String, dynamic> map, {VoidCallback? onTap}) {
     return WorkoutRow(workout: WorkoutSummaryItem.fromJson(map), onTap: onTap);
@@ -76,12 +76,12 @@ class WorkoutRow extends StatelessWidget {
               children: [
                 Text(
                   workout.name,
-                  style: TextStyle(color: TColor.black, fontSize: 12),
+                  style: const TextStyle(color: TColor.black, fontSize: 12),
                 ),
                 Text(
                   workout.subtitle ??
                       '${workout.calories} Calories Burned | ${workout.durationMinutes} minutes',
-                  style: TextStyle(color: TColor.gray, fontSize: 10),
+                  style: const TextStyle(color: TColor.gray, fontSize: 10),
                 ),
                 const SizedBox(height: 4),
                 SimpleAnimationProgressBar(
@@ -94,10 +94,8 @@ class WorkoutRow extends StatelessWidget {
                   curve: Curves.fastLinearToSlowEaseIn,
                   duration: const Duration(seconds: 3),
                   borderRadius: BorderRadius.circular(7.5),
-                  gradientColor: LinearGradient(
+                  gradientColor: const LinearGradient(
                     colors: TColor.primaryG,
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
                   ),
                 ),
               ],

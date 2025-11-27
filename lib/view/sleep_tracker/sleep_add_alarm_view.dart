@@ -1,20 +1,19 @@
 // lib/view/sleep_tracker/sleep_add_alarm_view.dart
 
-import 'package:animated_toggle_switch/animated_toggle_switch.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
+import 'package:aigymbuddy/common/models/sleep_alarm_configuration.dart';
+import 'package:aigymbuddy/common_widget/icon_title_next_row.dart';
+import 'package:aigymbuddy/common_widget/round_button.dart';
+import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../common/color_extension.dart';
-import '../../common/models/sleep_alarm_configuration.dart';
-import '../../common_widget/icon_title_next_row.dart';
-import '../../common_widget/round_button.dart';
-
 class SleepAddAlarmView extends StatefulWidget {
-  const SleepAddAlarmView({super.key, required this.date});
+  const SleepAddAlarmView({required this.date, super.key});
 
   final DateTime date;
 
@@ -90,7 +89,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(
-              "assets/img/closed_btn.png",
+              'assets/img/closed_btn.png',
               width: 15,
               height: 15,
               fit: BoxFit.contain,
@@ -99,7 +98,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
         ),
         title: Text(
           localize(_SleepAddAlarmStrings.addAlarmTitle),
-          style: TextStyle(
+          style: const TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -119,7 +118,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Image.asset(
-                "assets/img/more_btn.png",
+                'assets/img/more_btn.png',
                 width: 15,
                 height: 15,
                 fit: BoxFit.contain,
@@ -136,7 +135,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
           children: [
             Text(
               selectedDateLabel,
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.gray,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -144,7 +143,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
             ),
             const SizedBox(height: 12),
             IconTitleNextRow(
-              icon: "assets/img/Bed_Add.png",
+              icon: 'assets/img/Bed_Add.png',
               title: localize(_SleepAddAlarmStrings.bedtime),
               time: bedtimeLabel,
               color: TColor.lightGray,
@@ -152,7 +151,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
             ),
             const SizedBox(height: 10),
             IconTitleNextRow(
-              icon: "assets/img/HoursTime.png",
+              icon: 'assets/img/HoursTime.png',
               title: localize(_SleepAddAlarmStrings.hoursOfSleep),
               time: sleepDurationLabel,
               color: TColor.lightGray,
@@ -160,7 +159,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
             ),
             const SizedBox(height: 10),
             IconTitleNextRow(
-              icon: "assets/img/Repeat.png",
+              icon: 'assets/img/Repeat.png',
               title: localize(_SleepAddAlarmStrings.repeat),
               time: repeatSummary,
               color: TColor.lightGray,
@@ -294,7 +293,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                 children: [
                   Text(
                     localize(_SleepAddAlarmStrings.hoursOfSleep),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: TColor.black,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -359,7 +358,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                     children: [
                       Text(
                         localize(_SleepAddAlarmStrings.repeat),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: TColor.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -442,7 +441,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
             height: 30,
             child: Center(
               child: Image.asset(
-                "assets/img/Vibrate.png",
+                'assets/img/Vibrate.png',
                 width: 18,
                 height: 18,
                 fit: BoxFit.contain,
@@ -453,7 +452,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
           Expanded(
             child: Text(
               label,
-              style: TextStyle(color: TColor.gray, fontSize: 12),
+              style: const TextStyle(color: TColor.gray, fontSize: 12),
             ),
           ),
           SizedBox(
@@ -463,8 +462,7 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
               child: CustomAnimatedToggleSwitch<bool>(
                 current: _vibrateEnabled,
                 values: const [false, true],
-                spacing: 0.0,
-                indicatorSize: const Size.square(30.0),
+                indicatorSize: const Size.square(30),
                 animationDuration: const Duration(milliseconds: 200),
                 animationCurve: Curves.linear,
                 onChanged: (val) => setState(() => _vibrateEnabled = val),
@@ -476,15 +474,15 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                   return Stack(
                     alignment: Alignment.center,
                     children: [
-                      Positioned(
-                        left: 10.0,
-                        right: 10.0,
-                        height: 30.0,
+                      const Positioned(
+                        left: 10,
+                        right: 10,
+                        height: 30,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(colors: TColor.secondaryG),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(50.0),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(50),
                             ),
                           ),
                         ),
@@ -496,18 +494,18 @@ class _SleepAddAlarmViewState extends State<SleepAddAlarmView> {
                 foregroundIndicatorBuilder: (context, global) {
                   return SizedBox.fromSize(
                     size: const Size(10, 10),
-                    child: DecoratedBox(
+                    child: const DecoratedBox(
                       decoration: BoxDecoration(
                         color: TColor.white,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(50.0),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(50),
                         ),
-                        boxShadow: const [
+                        boxShadow: [
                           BoxShadow(
                             color: Colors.black38,
                             spreadRadius: 0.05,
                             blurRadius: 1.1,
-                            offset: Offset(0.0, 0.8),
+                            offset: Offset(0, 0.8),
                           ),
                         ],
                       ),

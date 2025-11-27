@@ -24,8 +24,7 @@ class NotificationItem {
 
 class NotificationRow extends StatelessWidget {
   const NotificationRow({
-    super.key,
-    required this.notification,
+    required this.notification, super.key,
     this.onMenuTap,
   });
 
@@ -64,7 +63,7 @@ class NotificationRow extends StatelessWidget {
               children: [
                 Text(
                   notification.title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -72,7 +71,7 @@ class NotificationRow extends StatelessWidget {
                 ),
                 Text(
                   notification.timestampLabel,
-                  style: TextStyle(color: TColor.gray, fontSize: 10),
+                  style: const TextStyle(color: TColor.gray, fontSize: 10),
                 ),
               ],
             ),

@@ -7,10 +7,7 @@ import 'package:flutter/material.dart';
 
 class HeartRateCard extends StatefulWidget {
   const HeartRateCard({
-    super.key,
-    required this.title,
-    required this.nowLabel,
-    required this.spots,
+    required this.title, required this.nowLabel, required this.spots, super.key,
   });
 
   final LocalizedText title;
@@ -29,7 +26,7 @@ class _HeartRateCardState extends State<HeartRateCard> {
     spots: widget.spots,
     isCurved: true,
     barWidth: 3,
-    gradient: LinearGradient(colors: TColor.primaryG),
+    gradient: const LinearGradient(colors: TColor.primaryG),
     belowBarData: BarAreaData(
       show: true,
       gradient: LinearGradient(
@@ -61,7 +58,7 @@ class _HeartRateCardState extends State<HeartRateCard> {
         children: [
           Text(
             localize(widget.title),
-            style: TextStyle(
+            style: const TextStyle(
               color: TColor.black,
               fontSize: UIConstants.fontSizeBody,
               fontWeight: FontWeight.w700,
@@ -71,10 +68,8 @@ class _HeartRateCardState extends State<HeartRateCard> {
           ShaderMask(
             blendMode: BlendMode.srcIn,
             shaderCallback: (bounds) {
-              return LinearGradient(
+              return const LinearGradient(
                 colors: TColor.primaryG,
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
               ).createShader(Rect.fromLTRB(0, 0, bounds.width, bounds.height));
             },
             child: Text(
@@ -100,7 +95,6 @@ class _HeartRateCardState extends State<HeartRateCard> {
                     )
                     .toList(),
                 lineTouchData: LineTouchData(
-                  enabled: true,
                   handleBuiltInTouches: false,
                   touchCallback: (event, response) {
                     if (response?.lineBarSpots == null) {
@@ -119,7 +113,6 @@ class _HeartRateCardState extends State<HeartRateCard> {
                         (index) => TouchedSpotIndicatorData(
                           const FlLine(color: Colors.transparent),
                           FlDotData(
-                            show: true,
                             getDotPainter:
                                 (spot, percent, barData, spotIndex) =>
                                     FlDotCirclePainter(

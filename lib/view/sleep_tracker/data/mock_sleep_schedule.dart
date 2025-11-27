@@ -1,4 +1,4 @@
-import '../../../common/models/sleep_schedule_entry.dart';
+import 'package:aigymbuddy/common/models/sleep_schedule_entry.dart';
 
 /// Mock data used to render the schedule views in the demo.
 ///
@@ -7,7 +7,7 @@ import '../../../common/models/sleep_schedule_entry.dart';
 final List<SleepScheduleEntry> mockTodaySleepSchedule = List.unmodifiable([
   SleepScheduleEntry(
     title: 'Bedtime',
-    startTime: DateTime(2023, 6, 1, 21, 0),
+    startTime: DateTime(2023, 6, 1, 21),
     timeUntilStart: const Duration(hours: 6, minutes: 22),
     imageReference: 'assets/img/bed.png',
   ),

@@ -1,23 +1,17 @@
 // lib/common/services/logging_config.dart
 
-import 'package:logger/logger.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 
 class LoggingConfig {
   static Logger createLogger({required String name, Level? level}) {
     return Logger(
       filter: _LogFilter(level ?? _getDefaultLogLevel()),
       printer: PrettyPrinter(
-        methodCount: kDebugMode ? 2 : 0,
-        errorMethodCount: kDebugMode ? 8 : 3,
-        lineLength: 120,
-        colors: kDebugMode,
-        printEmojis: kDebugMode,
         // Fix: Replace deprecated printTime with dateTimeFormat
         dateTimeFormat: kDebugMode
             ? DateTimeFormat.onlyTimeAndSinceStart
             : DateTimeFormat.none,
-        noBoxingByDefault: !kDebugMode,
       ),
       output: kDebugMode ? ConsoleOutput() : _ProductionOutput(),
     );
@@ -35,9 +29,9 @@ class LoggingConfig {
 }
 
 class _LogFilter extends LogFilter {
-  final Level _level;
 
   _LogFilter(this._level);
+  final Level _level;
 
   @override
   bool shouldLog(LogEvent event) {

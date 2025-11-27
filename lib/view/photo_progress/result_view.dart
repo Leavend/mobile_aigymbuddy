@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 
 class ResultView extends StatefulWidget {
-  const ResultView({super.key, required this.date1, required this.date2});
+  const ResultView({required this.date1, required this.date2, super.key});
 
   final DateTime date1;
   final DateTime date2;
@@ -105,7 +105,7 @@ class _ResultViewState extends State<ResultView> {
         ),
         title: Text(
           localize(_ResultTexts.title),
-          style: TextStyle(
+          style: const TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -181,7 +181,7 @@ class _ResultViewState extends State<ResultView> {
               width: (media.width * 0.5) - 40,
               height: 40,
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: TColor.primaryG),
+                gradient: const LinearGradient(colors: TColor.primaryG),
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
@@ -237,7 +237,7 @@ class _ResultViewState extends State<ResultView> {
           children: [
             Text(
               localize(_ResultTexts.averageProgress),
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -267,13 +267,11 @@ class _ResultViewState extends State<ResultView> {
               curve: Curves.fastLinearToSlowEaseIn,
               duration: const Duration(seconds: 2),
               borderRadius: BorderRadius.circular(10),
-              gradientColor: LinearGradient(
+              gradientColor: const LinearGradient(
                 colors: TColor.primaryG,
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
               ),
             ),
-            Text('62%', style: TextStyle(color: TColor.white, fontSize: 12)),
+            const Text('62%', style: TextStyle(color: TColor.white, fontSize: 12)),
           ],
         ),
         const SizedBox(height: 15),
@@ -282,7 +280,7 @@ class _ResultViewState extends State<ResultView> {
           children: [
             Text(
               DateTimeUtils.formatDate(widget.date1, pattern: 'MMMM'),
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -290,7 +288,7 @@ class _ResultViewState extends State<ResultView> {
             ),
             Text(
               DateTimeUtils.formatDate(widget.date2, pattern: 'MMMM'),
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -310,7 +308,7 @@ class _ResultViewState extends State<ResultView> {
               children: [
                 Text(
                   localize(comparison.title),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.gray,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -365,19 +363,16 @@ class _ResultViewState extends State<ResultView> {
               minY: -0.5,
               maxY: 110,
               titlesData: FlTitlesData(
-                show: true,
                 leftTitles: const AxisTitles(),
                 topTitles: const AxisTitles(),
                 bottomTitles: AxisTitles(sideTitles: _bottomTitles(language)),
                 rightTitles: AxisTitles(sideTitles: _rightTitles),
               ),
               gridData: FlGridData(
-                show: true,
-                drawHorizontalLine: true,
                 horizontalInterval: 25,
                 drawVerticalLine: false,
                 getDrawingHorizontalLine: (value) =>
-                    FlLine(color: TColor.lightGray, strokeWidth: 2),
+                    const FlLine(color: TColor.lightGray),
               ),
               borderData: FlBorderData(
                 show: true,
@@ -392,7 +387,7 @@ class _ResultViewState extends State<ResultView> {
           children: [
             Text(
               DateTimeUtils.formatDate(widget.date1, pattern: 'MMMM'),
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -400,7 +395,7 @@ class _ResultViewState extends State<ResultView> {
             ),
             Text(
               DateTimeUtils.formatDate(widget.date2, pattern: 'MMMM'),
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.gray,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -420,7 +415,7 @@ class _ResultViewState extends State<ResultView> {
               children: [
                 Text(
                   localize(stat.title),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.gray,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -435,7 +430,7 @@ class _ResultViewState extends State<ResultView> {
                       child: Text(
                         '${stat.firstPercent}%',
                         textAlign: TextAlign.right,
-                        style: TextStyle(color: TColor.gray, fontSize: 12),
+                        style: const TextStyle(color: TColor.gray, fontSize: 12),
                       ),
                     ),
                     Expanded(
@@ -456,7 +451,7 @@ class _ResultViewState extends State<ResultView> {
                       child: Text(
                         '${stat.secondPercent}%',
                         textAlign: TextAlign.left,
-                        style: TextStyle(color: TColor.gray, fontSize: 12),
+                        style: const TextStyle(color: TColor.gray, fontSize: 12),
                       ),
                     ),
                   ],
@@ -531,8 +526,6 @@ class _ResultViewState extends State<ResultView> {
   }
 
   LineTouchData _lineTouchData(AppLanguage language) => LineTouchData(
-    enabled: true,
-    handleBuiltInTouches: true,
     touchTooltipData: LineTouchTooltipData(
       getTooltipItems: (spots) => spots
           .map(
@@ -552,11 +545,11 @@ class _ResultViewState extends State<ResultView> {
   List<LineChartBarData> get _lineBarsData => [
     LineChartBarData(
       isCurved: true,
-      gradient: LinearGradient(colors: TColor.primaryG),
+      gradient: const LinearGradient(colors: TColor.primaryG),
       barWidth: 3,
       isStrokeCapRound: true,
       dotData: const FlDotData(show: false),
-      belowBarData: BarAreaData(show: false),
+      belowBarData: BarAreaData(),
       spots: const [
         FlSpot(1, 35),
         FlSpot(2, 70),
@@ -575,10 +568,9 @@ class _ResultViewState extends State<ResultView> {
           TColor.secondaryColor1.withValues(alpha: 0.5),
         ],
       ),
-      barWidth: 2,
       isStrokeCapRound: true,
       dotData: const FlDotData(show: false),
-      belowBarData: BarAreaData(show: false),
+      belowBarData: BarAreaData(),
       spots: const [
         FlSpot(1, 80),
         FlSpot(2, 50),
@@ -605,7 +597,7 @@ class _ResultViewState extends State<ResultView> {
         case 100:
           return Text(
             '${value.toInt()}%',
-            style: TextStyle(color: TColor.gray, fontSize: 12),
+            style: const TextStyle(color: TColor.gray, fontSize: 12),
             textAlign: TextAlign.center,
           );
         default:
@@ -619,7 +611,7 @@ class _ResultViewState extends State<ResultView> {
     reservedSize: 32,
     interval: 1,
     getTitlesWidget: (value, meta) {
-      final style = TextStyle(color: TColor.gray, fontSize: 12);
+      const style = TextStyle(color: TColor.gray, fontSize: 12);
       final label = _ResultTexts.monthShortLabel(language, value.toInt());
       if (label == null) {
         return const SizedBox.shrink();
@@ -751,7 +743,7 @@ class _ProgressImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: TColor.lightGray,
         borderRadius: BorderRadius.circular(20),

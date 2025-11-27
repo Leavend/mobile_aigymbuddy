@@ -30,9 +30,7 @@ class ExerciseListItem {
 
 class ExercisesRow extends StatelessWidget {
   const ExercisesRow({
-    super.key,
-    required this.exercise,
-    required this.onPressed,
+    required this.exercise, required this.onPressed, super.key,
   });
 
   final ExerciseListItem exercise;
@@ -60,7 +58,7 @@ class ExercisesRow extends StatelessWidget {
               children: [
                 Text(
                   exercise.title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -68,7 +66,7 @@ class ExercisesRow extends StatelessWidget {
                 ),
                 Text(
                   exercise.subtitle,
-                  style: TextStyle(color: TColor.gray, fontSize: 12),
+                  style: const TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ],
             ),

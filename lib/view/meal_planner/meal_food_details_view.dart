@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class MealFoodDetailsView extends StatefulWidget {
-  const MealFoodDetailsView({super.key, required this.eObj});
+  const MealFoodDetailsView({required this.eObj, super.key});
 
   final Map<String, dynamic> eObj;
 
@@ -162,7 +162,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       ),
       title: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           color: TColor.black,
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -223,7 +223,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
         context.localize(title),
-        style: TextStyle(
+        style: const TextStyle(
           color: TColor.black,
           fontSize: 16,
           fontWeight: FontWeight.w700,

@@ -1,9 +1,9 @@
 /// Base exception class for the application
 abstract class AppException implements Exception {
-  final String message;
-  final dynamic details;
 
   const AppException(this.message, [this.details]);
+  final String message;
+  final dynamic details;
 
   @override
   String toString() => 'AppException: $message';

@@ -3,12 +3,11 @@
 import 'dart:convert';
 
 import 'package:calendar_agenda/calendar_agenda.dart';
+import 'package:calendar_agenda/src/fullcalendar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
-import 'fullcalendar.dart';
 
 /// Calendar header widget that exposes a compact horizontal date selector and
 /// an optional full-screen calendar modal.
@@ -16,11 +15,7 @@ class CalendarAgenda extends StatefulWidget implements PreferredSizeWidget {
   /// Creates a [CalendarAgenda] widget.
   // FIX: Removed 'const' to allow runtime checks in asserts.
   CalendarAgenda({
-    Key? key,
-    required this.initialDate,
-    required this.firstDate,
-    required this.lastDate,
-    required this.onDateSelected,
+    required this.initialDate, required this.firstDate, required this.lastDate, required this.onDateSelected, Key? key,
     this.controller,
     this.backgroundColor,
     this.selectedDayLogo,
@@ -135,7 +130,7 @@ class CalendarAgenda extends StatefulWidget implements PreferredSizeWidget {
   CalendarAgendaState createState() => CalendarAgendaState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(250.0);
+  Size get preferredSize => const Size.fromHeight(250);
 }
 
 class CalendarAgendaState extends State<CalendarAgenda>
@@ -217,10 +212,10 @@ class CalendarAgendaState extends State<CalendarAgenda>
       child: Stack(
         children: [
           Positioned(
-            top: 0.0,
+            top: 0,
             child: Container(
               width: width,
-              height: 190.0,
+              height: 190,
               color: backgroundColor,
             ),
           ),
@@ -236,21 +231,21 @@ class CalendarAgendaState extends State<CalendarAgenda>
                     _leading,
                     if (widget.fullCalendar ?? true)
                       GestureDetector(
-                        onTap: () => _showFullCalendar(),
+                        onTap: _showFullCalendar,
                         child: Row(
                           children: [
                             const Icon(
                               Icons.calendar_today,
-                              size: 18.0,
+                              size: 18,
                               color: Colors.white,
                             ),
-                            const SizedBox(width: 10.0),
+                            const SizedBox(width: 10),
                             if (_selectedDate != null)
                               Text(
                                 DateFormat.yMMMM(Locale(_locale).toString())
                                     .format(_selectedDate!),
                                 style: const TextStyle(
-                                  fontSize: 18.0,
+                                  fontSize: 18,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -265,7 +260,7 @@ class CalendarAgendaState extends State<CalendarAgenda>
             ),
           ),
           Positioned(
-            bottom: 0.0,
+            bottom: 0,
             child: _buildDayList(width),
           ),
         ],
@@ -306,17 +301,16 @@ class CalendarAgendaState extends State<CalendarAgenda>
               _resolveSelectedDayImage(isSelected);
 
           return Align(
-            alignment: Alignment.center,
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
               child: GestureDetector(
                 onTap: () => _updateSelectedDate(date),
                 child: Container(
-                  height: 100.0,
+                  height: 100,
                   width: itemWidth.clamp(0.0, double.infinity),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10),
                     color: isSelected ? Colors.white : null,
                     boxShadow: [
                       BoxShadow(
@@ -342,12 +336,12 @@ class CalendarAgendaState extends State<CalendarAgenda>
                               : widget.dateColor.withValues(alpha: 0.5),
                         )
                       else
-                        const SizedBox(height: 5.0),
-                      const SizedBox(height: 2.0),
+                        const SizedBox(height: 5),
+                      const SizedBox(height: 2),
                       Text(
                         DateFormat('dd').format(date),
                         style: TextStyle(
-                          fontSize: 22.0,
+                          fontSize: 22,
                           color: isSelected
                               ? widget.selectedDateColor
                               : widget.headerDateColor,
@@ -363,7 +357,7 @@ class CalendarAgendaState extends State<CalendarAgenda>
                             : DateFormat.E(Locale(_locale).toString())
                                 .format(date),
                         style: TextStyle(
-                          fontSize: 12.0,
+                          fontSize: 12,
                           color: isSelected
                               ? widget.selectedDateColor
                               : widget.headerDateColor,
@@ -418,8 +412,8 @@ class CalendarAgendaState extends State<CalendarAgenda>
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
         ),
       ),
       builder: (BuildContext context) {
@@ -444,11 +438,11 @@ class CalendarAgendaState extends State<CalendarAgenda>
                 width: 60,
                 height: 6,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(3.0),
+                  borderRadius: BorderRadius.circular(3),
                   color: const Color(0xFFE0E0E0),
                 ),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 20),
               Expanded(
                 child: FullCalendar(
                   startDate: widget.firstDate,

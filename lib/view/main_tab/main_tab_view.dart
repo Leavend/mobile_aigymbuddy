@@ -13,7 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class MainTabView extends StatelessWidget {
-  const MainTabView({super.key, required this.navigationShell});
+  const MainTabView({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
@@ -112,7 +112,7 @@ class _AssistantButton extends StatelessWidget {
             shape: const CircleBorder(),
             clipBehavior: Clip.antiAlias,
             child: Ink(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(colors: TColor.primaryG),
               ),
               child: InkWell(
@@ -161,7 +161,7 @@ class _NavigationBar extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final scaler = MediaQuery.textScalerOf(context);
-        final textScale = scaler.scale(1.0);
+        final textScale = scaler.scale(1);
         final metrics = _NavigationMetrics.resolve(
           availableWidth: constraints.maxWidth,
           fabDiameter: fabDiameter,
@@ -447,9 +447,9 @@ class _NavigationMetrics {
           constraints.totalButtons + constraints.totalSpacing + 1;
       if (shrinkDenominator > 0) {
         final shrinkStep = overflow / shrinkDenominator;
-        buttonWidth = math.max(buttonWidth - shrinkStep, 28.0);
+        buttonWidth = math.max(buttonWidth - shrinkStep, 28);
         if (constraints.totalSpacing > 0) {
-          tabSpacing = math.max(tabSpacing - shrinkStep, 4.0);
+          tabSpacing = math.max(tabSpacing - shrinkStep, 4);
         }
         final minGap = constraints.fabDiameter + 4;
         centerGap = math.max(centerGap - shrinkStep, minGap);

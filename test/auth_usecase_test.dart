@@ -9,10 +9,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'helpers/test_helpers.dart';
 
 class MockAuthService extends AuthService {
-  bool _hasCredentials = false;
-  AuthUser? _currentUser;
 
   MockAuthService() : super(sessionManager: null);
+  bool _hasCredentials = false;
+  AuthUser? _currentUser;
 
   @override
   Future<bool> hasSavedCredentials() async => _hasCredentials;
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('login propagates repository exception', () async {
-      mockRepo.throwOnLogin = AuthException(
+      mockRepo.throwOnLogin = const AuthException(
         'Invalid credentials',
         AuthException.invalidCredentials,
       );

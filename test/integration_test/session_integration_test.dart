@@ -45,7 +45,7 @@ void main() {
     });
 
     test('User data save and retrieve via SharedPreferences', () async {
-      final user = AuthUser(
+      const user = AuthUser(
         id: 'user1',
         email: 'test@example.com',
         displayName: 'Test User',
@@ -61,7 +61,7 @@ void main() {
     });
 
     test('Clear session removes user data', () async {
-      final user = AuthUser(
+      const user = AuthUser(
         id: 'user2',
         email: 'clear@example.com',
         displayName: 'Clear User',

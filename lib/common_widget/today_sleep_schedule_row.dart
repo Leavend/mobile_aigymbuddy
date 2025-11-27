@@ -1,15 +1,13 @@
 // lib/common_widget/today_sleep_schedule_row.dart
 
-import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/models/sleep_schedule_entry.dart';
+import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
-
-import '../common/models/sleep_schedule_entry.dart';
 
 class TodaySleepScheduleRow extends StatefulWidget {
   const TodaySleepScheduleRow({
-    super.key,
-    required this.schedule,
+    required this.schedule, super.key,
     this.onMenuTap,
     this.onToggle,
   });
@@ -63,7 +61,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                   children: [
                     Text(
                       widget.schedule.title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: TColor.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -71,14 +69,14 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                     ),
                     Text(
                       ', ${widget.schedule.formattedTime}',
-                      style: TextStyle(color: TColor.black, fontSize: 12),
+                      style: const TextStyle(color: TColor.black, fontSize: 12),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
                   widget.schedule.formattedCountdown,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.gray,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -96,7 +94,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                 child: IconButton(
                   onPressed: widget.onMenuTap,
                   icon: Image.asset(
-                    "assets/img/More_V.png",
+                    'assets/img/More_V.png',
                     width: 20,
                     height: 20,
                   ),
@@ -109,8 +107,7 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                   child: CustomAnimatedToggleSwitch<bool>(
                     current: positive,
                     values: const [false, true],
-                    spacing: 0.0,
-                    indicatorSize: const Size.square(30.0),
+                    indicatorSize: const Size.square(30),
                     animationDuration: const Duration(milliseconds: 200),
                     animationCurve: Curves.linear,
                     onChanged: (b) {
@@ -131,17 +128,17 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                       return Stack(
                         alignment: Alignment.center,
                         children: [
-                          Positioned(
-                            left: 10.0,
-                            right: 10.0,
-                            height: 30.0,
+                          const Positioned(
+                            left: 10,
+                            right: 10,
+                            height: 30,
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: TColor.secondaryG,
                                 ),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(50.0),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(50),
                                 ),
                               ),
                             ),
@@ -153,18 +150,18 @@ class _TodaySleepScheduleRowState extends State<TodaySleepScheduleRow> {
                     foregroundIndicatorBuilder: (context, global) {
                       return SizedBox.fromSize(
                         size: const Size(10, 10),
-                        child: DecoratedBox(
+                        child: const DecoratedBox(
                           decoration: BoxDecoration(
                             color: TColor.white,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(50.0),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(50),
                             ),
-                            boxShadow: const [
+                            boxShadow: [
                               BoxShadow(
                                 color: Colors.black38,
                                 spreadRadius: 0.05,
                                 blurRadius: 1.1,
-                                offset: Offset(0.0, 0.8),
+                                offset: Offset(0, 0.8),
                               ),
                             ],
                           ),

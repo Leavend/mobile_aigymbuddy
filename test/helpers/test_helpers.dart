@@ -4,8 +4,8 @@ import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
 import 'package:aigymbuddy/auth/usecases/auth_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/single_child_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 /// Test helpers and utilities for widget and integration tests.
 ///
@@ -115,8 +115,7 @@ class WidgetTestHelper {
   /// Use this when testing widgets that use GoRouter.
   static Widget wrapWithRouting(
     Widget child, {
-    List<SingleChildWidget>? providers,
-    required Widget Function(BuildContext, Widget?) builder,
+    required Widget Function(BuildContext, Widget?) builder, List<SingleChildWidget>? providers,
   }) {
     final app = MaterialApp(
       home: Builder(builder: (context) => builder(context, child)),

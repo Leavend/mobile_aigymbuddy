@@ -20,7 +20,7 @@ class AppLanguageController extends ChangeNotifier {
 
   /// Cycles to the next available language in [AppLanguage.values].
   void cycle() {
-    final values = AppLanguage.values;
+    const values = AppLanguage.values;
     final nextIndex = (values.indexOf(_language) + 1) % values.length;
     select(values[nextIndex]);
   }
@@ -29,9 +29,7 @@ class AppLanguageController extends ChangeNotifier {
 /// Provides the [AppLanguageController] to the widget subtree.
 class AppLanguageScope extends InheritedNotifier<AppLanguageController> {
   const AppLanguageScope({
-    super.key,
-    required AppLanguageController controller,
-    required super.child,
+    required AppLanguageController controller, required super.child, super.key,
   }) : super(notifier: controller);
 
   static AppLanguageController of(BuildContext context) {

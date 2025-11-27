@@ -95,16 +95,16 @@ class ErrorHandler {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
+        title: const Row(
           children: [
             Icon(Icons.error_outline, color: TColor.secondaryColor1, size: 28),
-            const SizedBox(width: 12),
-            const Text('Oops!', style: TextStyle(fontWeight: FontWeight.w700)),
+            SizedBox(width: 12),
+            Text('Oops!', style: TextStyle(fontWeight: FontWeight.w700)),
           ],
         ),
         content: Text(
           message,
-          style: TextStyle(color: TColor.gray, fontSize: 14),
+          style: const TextStyle(color: TColor.gray, fontSize: 14),
         ),
         actions: [
           if (onRetry != null)
@@ -113,7 +113,7 @@ class ErrorHandler {
                 Navigator.of(context).pop();
                 onRetry();
               },
-              child: Text(
+              child: const Text(
                 'Coba Lagi',
                 style: TextStyle(color: TColor.primaryColor1),
               ),
@@ -166,7 +166,6 @@ class ErrorHandler {
                   onPressed: onRetry,
                 )
               : null,
-          duration: const Duration(seconds: 4),
         ),
       );
   }
@@ -193,15 +192,15 @@ class ErrorHandler {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
+        title: const Row(
           children: [
             Icon(
               Icons.check_circle_outline,
               color: TColor.primaryColor1,
               size: 28,
             ),
-            const SizedBox(width: 12),
-            const Text(
+            SizedBox(width: 12),
+            Text(
               'Berhasil!',
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
@@ -209,12 +208,12 @@ class ErrorHandler {
         ),
         content: Text(
           message,
-          style: TextStyle(color: TColor.gray, fontSize: 14),
+          style: const TextStyle(color: TColor.gray, fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK', style: TextStyle(color: TColor.primaryColor1)),
+            child: const Text('OK', style: TextStyle(color: TColor.primaryColor1)),
           ),
         ],
       ),

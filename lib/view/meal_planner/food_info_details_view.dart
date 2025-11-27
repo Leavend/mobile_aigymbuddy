@@ -4,18 +4,15 @@ import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/ingredient.dart';
 import 'package:aigymbuddy/common/models/instruction_step.dart';
 import 'package:aigymbuddy/common/models/nutrition_info.dart';
+import 'package:aigymbuddy/common_widget/food_step_detail_row.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:readmore/readmore.dart';
 
-import '../../common_widget/food_step_detail_row.dart';
-
 class FoodInfoDetailsView extends StatelessWidget {
   const FoodInfoDetailsView({
-    super.key,
-    required this.detail,
-    required this.meal,
+    required this.detail, required this.meal, super.key,
   });
 
   final Map<String, dynamic> meal;
@@ -32,8 +29,8 @@ class FoodInfoDetailsView extends StatelessWidget {
     final steps = _FoodInfoContent.steps(language);
     final description = localize(_FoodInfoStrings.description);
 
-    return Container(
-      decoration: BoxDecoration(
+    return DecoratedBox(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(colors: TColor.primaryG),
       ),
       child: NestedScrollView(
@@ -41,10 +38,10 @@ class FoodInfoDetailsView extends StatelessWidget {
           _buildTopAppBar(context),
           _buildHeroAppBar(media, language),
         ],
-        body: Container(
-          decoration: BoxDecoration(
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
             color: TColor.white,
-            borderRadius: const BorderRadius.only(
+            borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
             ),
@@ -202,7 +199,7 @@ class FoodInfoDetailsView extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -210,7 +207,7 @@ class FoodInfoDetailsView extends StatelessWidget {
                 ),
                 Text(
                   author,
-                  style: TextStyle(color: TColor.gray, fontSize: 12),
+                  style: const TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ],
             ),
@@ -240,7 +237,7 @@ class FoodInfoDetailsView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
             context.localize(_FoodInfoStrings.nutritionTitle),
-            style: TextStyle(
+            style: const TextStyle(
               color: TColor.black,
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -284,11 +281,11 @@ class FoodInfoDetailsView extends StatelessWidget {
                         children: [
                           Text(
                             nutrition.title,
-                            style: TextStyle(color: TColor.black, fontSize: 12),
+                            style: const TextStyle(color: TColor.black, fontSize: 12),
                           ),
                           Text(
                             nutrition.value,
-                            style: TextStyle(color: TColor.gray, fontSize: 10),
+                            style: const TextStyle(color: TColor.gray, fontSize: 10),
                           ),
                         ],
                       ),
@@ -314,7 +311,7 @@ class FoodInfoDetailsView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
             context.localize(_FoodInfoStrings.descriptionTitle),
-            style: TextStyle(
+            style: const TextStyle(
               color: TColor.black,
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -331,7 +328,7 @@ class FoodInfoDetailsView extends StatelessWidget {
             trimMode: TrimMode.Line,
             trimCollapsedText: ' $moreLabel',
             trimExpandedText: ' $lessLabel',
-            style: TextStyle(color: TColor.gray, fontSize: 12),
+            style: const TextStyle(color: TColor.gray, fontSize: 12),
             moreStyle: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -363,7 +360,7 @@ class FoodInfoDetailsView extends StatelessWidget {
             children: [
               Text(
                 context.localize(_FoodInfoStrings.ingredientsTitle),
-                style: TextStyle(
+                style: const TextStyle(
                   color: TColor.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -373,7 +370,7 @@ class FoodInfoDetailsView extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   totalLabel,
-                  style: TextStyle(color: TColor.gray, fontSize: 12),
+                  style: const TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ),
             ],
@@ -412,11 +409,11 @@ class FoodInfoDetailsView extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       ingredient.name,
-                      style: TextStyle(color: TColor.black, fontSize: 12),
+                      style: const TextStyle(color: TColor.black, fontSize: 12),
                     ),
                     Text(
                       ingredient.amount,
-                      style: TextStyle(color: TColor.gray, fontSize: 10),
+                      style: const TextStyle(color: TColor.gray, fontSize: 10),
                     ),
                   ],
                 ),
@@ -445,7 +442,7 @@ class FoodInfoDetailsView extends StatelessWidget {
             children: [
               Text(
                 context.localize(_FoodInfoStrings.stepsTitle),
-                style: TextStyle(
+                style: const TextStyle(
                   color: TColor.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -455,7 +452,7 @@ class FoodInfoDetailsView extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   totalLabel,
-                  style: TextStyle(color: TColor.gray, fontSize: 12),
+                  style: const TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ),
             ],
@@ -481,7 +478,6 @@ class FoodInfoDetailsView extends StatelessWidget {
 
     return SafeArea(
       child: Column(
-        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(
@@ -610,8 +606,8 @@ class _FoodInfoStrings {
   static const description = LocalizedText(
     english:
         "Pancakes are some people's favorite breakfast, who doesn't like pancakes? "
-        "Especially with the real honey splash on top of the pancakes, of course everyone loves that! "
-        "Besides being delicious, pancakes can be a quick treat for a busy morning.",
+        'Especially with the real honey splash on top of the pancakes, of course everyone loves that! '
+        'Besides being delicious, pancakes can be a quick treat for a busy morning.',
     indonesian:
         'Pancake adalah sarapan favorit banyak orang. Siapa sih yang tidak suka? '
         'Apalagi dengan siraman madu asli di atasnya, pasti semua orang suka! '

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:aigymbuddy/common/services/logging_service.dart';
+import 'package:flutter/material.dart';
 
 /// Abstract base class for stateful views that need local state management.
 ///
@@ -69,7 +69,7 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView>
   void initState() {
     super.initState();
     if (enableLifecycleLogging) {
-      _logger.debug('${T.toString()} initialized');
+      _logger.debug('$T initialized');
     }
   }
 
@@ -78,11 +78,11 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView>
     try {
       disposeResources();
       if (enableLifecycleLogging) {
-        _logger.debug('${T.toString()} disposed');
+        _logger.debug('$T disposed');
       }
     } catch (e, stackTrace) {
       _logger.error(
-        'Error disposing resources in ${T.toString()}',
+        'Error disposing resources in $T',
         error: e,
         stackTrace: stackTrace,
       );
@@ -172,7 +172,7 @@ mixin AsyncInitMixin<T extends BaseStatefulView> on BaseStatefulViewState<T> {
       }
     } catch (e, stackTrace) {
       LoggingService.instance.error(
-        'Initialization failed for ${T.toString()}',
+        'Initialization failed for $T',
         error: e,
         stackTrace: stackTrace,
       );

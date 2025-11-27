@@ -31,7 +31,7 @@ class PopularMealItem {
 }
 
 class PopularMealRow extends StatelessWidget {
-  const PopularMealRow({super.key, required this.meal, this.onTap});
+  const PopularMealRow({required this.meal, super.key, this.onTap});
 
   factory PopularMealRow.fromMap(
     Map<String, dynamic> map, {
@@ -68,7 +68,7 @@ class PopularMealRow extends StatelessWidget {
               children: [
                 Text(
                   meal.name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -76,7 +76,7 @@ class PopularMealRow extends StatelessWidget {
                 ),
                 Text(
                   '${meal.size} | ${meal.time} | ${meal.kcal}',
-                  style: TextStyle(color: TColor.gray, fontSize: 12),
+                  style: const TextStyle(color: TColor.gray, fontSize: 12),
                 ),
               ],
             ),

@@ -1,34 +1,30 @@
 // lib/database/app_db.dart
 
+import 'package:aigymbuddy/common/services/logging_service.dart';
+import 'package:aigymbuddy/database/connection/connection.dart';
+import 'package:aigymbuddy/database/type_converters.dart';
 import 'package:drift/drift.dart';
-
-import 'connection/connection.dart';
 import 'package:uuid/uuid.dart';
 
-import 'type_converters.dart';
-import 'package:aigymbuddy/common/services/logging_service.dart';
-
-part 'tables/users.dart';
-part 'tables/user_profiles.dart';
-part 'tables/exercises.dart';
+part 'app_db.g.dart';
+part 'daos/body_metrics_dao.dart';
+part 'daos/users_dao.dart';
+part 'daos/workout_plans_dao.dart';
+part 'tables/ai_chat_messages.dart';
 part 'tables/body_metrics.dart';
-part 'tables/muscles.dart';
-part 'tables/exercise_muscles.dart';
 part 'tables/equipment.dart';
 part 'tables/exercise_equipment.dart';
-part 'tables/workout_plans.dart';
-part 'tables/workout_plan_days.dart';
-part 'tables/workout_plan_exercises.dart';
-part 'tables/workout_sessions.dart';
+part 'tables/exercise_muscles.dart';
+part 'tables/exercises.dart';
+part 'tables/muscles.dart';
 part 'tables/session_exercises.dart';
 part 'tables/session_sets.dart';
-part 'tables/ai_chat_messages.dart';
-
-part 'daos/users_dao.dart';
-part 'daos/body_metrics_dao.dart';
-part 'daos/workout_plans_dao.dart';
-
-part 'app_db.g.dart';
+part 'tables/user_profiles.dart';
+part 'tables/users.dart';
+part 'tables/workout_plan_days.dart';
+part 'tables/workout_plan_exercises.dart';
+part 'tables/workout_plans.dart';
+part 'tables/workout_sessions.dart';
 
 @DriftDatabase(
   tables: [
@@ -51,23 +47,23 @@ part 'app_db.g.dart';
   daos: [UsersDao, BodyMetricsDao, WorkoutPlansDao],
 )
 class AppDatabase extends _$AppDatabase {
-  // Singleton pattern untuk testing
-  static AppDatabase? _instance;
-  bool _isClosed = false;
-
-  AppDatabase._internal() : super(openConnection()) {
-    _isClosed = false;
-  }
 
   factory AppDatabase() {
     _instance ??= AppDatabase._internal();
     return _instance!;
   }
 
+  AppDatabase._internal() : super(openConnection()) {
+    _isClosed = false;
+  }
+
   // Fix: Use super parameter
   AppDatabase.forTesting(super.connection) {
     _isClosed = false;
   }
+  // Singleton pattern untuk testing
+  static AppDatabase? _instance;
+  bool _isClosed = false;
 
   @override
   int get schemaVersion => 1;

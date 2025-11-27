@@ -9,9 +9,7 @@ import 'package:go_router/go_router.dart';
 
 class TodayTargetCard extends StatelessWidget {
   const TodayTargetCard({
-    super.key,
-    required this.title,
-    required this.buttonText,
+    required this.title, required this.buttonText, super.key,
   });
 
   final LocalizedText title;
@@ -30,12 +28,11 @@ class TodayTargetCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(UIConstants.radiusLarge),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Text(
               localize(title),
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.black,
                 fontSize: UIConstants.fontSizeBody,
                 fontWeight: FontWeight.w700,
@@ -47,7 +44,6 @@ class TodayTargetCard extends StatelessWidget {
             height: 36,
             child: RoundButton(
               title: localize(buttonText),
-              type: RoundButtonType.bgGradient,
               fontSize: UIConstants.fontSizeSmall,
               fontWeight: FontWeight.w500,
               onPressed: () => context.push(AppRoute.activityTracker),

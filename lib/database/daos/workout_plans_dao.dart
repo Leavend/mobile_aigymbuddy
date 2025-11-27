@@ -3,10 +3,10 @@
 part of '../app_db.dart';
 
 class PlanDayWithExercises {
-  final WorkoutPlanDay day;
-  final List<(WorkoutPlanExercise, Exercise)> items;
 
   PlanDayWithExercises(this.day, this.items);
+  final WorkoutPlanDay day;
+  final List<(WorkoutPlanExercise, Exercise)> items;
 }
 
 @DriftAccessor(

@@ -1,19 +1,18 @@
 // lib/view/sleep_tracker/sleep_schedule_view.dart
 
 import 'package:aigymbuddy/common/app_router.dart';
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
+import 'package:aigymbuddy/common/models/sleep_schedule_entry.dart';
+import 'package:aigymbuddy/common_widget/round_button.dart';
+import 'package:aigymbuddy/common_widget/today_sleep_schedule_row.dart';
+import 'package:aigymbuddy/view/sleep_tracker/data/mock_sleep_schedule.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
-
-import '../../common/color_extension.dart';
-import '../../common/models/sleep_schedule_entry.dart';
-import '../../common_widget/round_button.dart';
-import '../../common_widget/today_sleep_schedule_row.dart';
-import 'data/mock_sleep_schedule.dart';
 
 class SleepScheduleView extends StatefulWidget {
   const SleepScheduleView({super.key});
@@ -68,7 +67,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 ),
                 child: Text(
                   localize(_SleepScheduleStrings.yourSchedule),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -132,7 +131,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
       ),
       title: Text(
         localize(_SleepScheduleStrings.sleepScheduleTitle),
-        style: TextStyle(
+        style: const TextStyle(
           color: TColor.black,
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -189,11 +188,11 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
               const SizedBox(height: 15),
               Text(
                 localize(_SleepScheduleStrings.idealHours),
-                style: TextStyle(color: TColor.black, fontSize: 14),
+                style: const TextStyle(color: TColor.black, fontSize: 14),
               ),
               Text(
                 localize(_SleepScheduleStrings.idealHoursValue),
-                style: TextStyle(
+                style: const TextStyle(
                   color: TColor.primaryColor2,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -223,12 +222,9 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
   Widget _buildCalendar(BuildContext context, AppLanguage language) {
     return CalendarAgenda(
       controller: _calendarController,
-      appbar: false,
       selectedDayPosition: SelectedDayPosition.center,
-      weekDay: WeekDay.short,
       backgroundColor: Colors.transparent,
       fullCalendarScroll: FullCalendarScroll.horizontal,
-      fullCalendarDay: WeekDay.short,
       selectedDateColor: Colors.white,
       dateColor: Colors.black,
       locale: language.code,
@@ -276,7 +272,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
         children: [
           Text(
             localize(_SleepScheduleStrings.tonightSleepDuration),
-            style: TextStyle(color: TColor.black, fontSize: 12),
+            style: const TextStyle(color: TColor.black, fontSize: 12),
           ),
           const SizedBox(height: 15),
           Stack(
@@ -292,13 +288,11 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                 curve: Curves.fastLinearToSlowEaseIn,
                 duration: const Duration(seconds: 3),
                 borderRadius: BorderRadius.circular(7.5),
-                gradientColor: LinearGradient(
+                gradientColor: const LinearGradient(
                   colors: TColor.secondaryG,
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
                 ),
               ),
-              Text('96%', style: TextStyle(color: TColor.black, fontSize: 12)),
+              const Text('96%', style: TextStyle(color: TColor.black, fontSize: 12)),
             ],
           ),
         ],

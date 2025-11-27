@@ -1,15 +1,14 @@
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/date_time_utils.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common/models/navigation_args.dart';
+import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
-import '../../common/date_time_utils.dart';
-import '../../common_widget/round_button.dart';
 
 class WorkoutScheduleView extends StatefulWidget {
   const WorkoutScheduleView({super.key});
@@ -147,7 +146,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         ),
         title: Text(
           _appBarTitle.resolve(language),
-          style: TextStyle(
+          style: const TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -185,7 +184,6 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         children: [
           CalendarAgenda(
             controller: _calendarController,
-            appbar: false,
             selectedDayPosition: SelectedDayPosition.center,
             leading: Row(
               mainAxisSize: MainAxisSize.min,
@@ -211,10 +209,8 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 ),
               ],
             ),
-            weekDay: WeekDay.short,
             backgroundColor: Colors.transparent,
             fullCalendarScroll: FullCalendarScroll.horizontal,
-            fullCalendarDay: WeekDay.short,
             selectedDateColor: Colors.white,
             dateColor: Colors.black,
             locale: language.code,
@@ -249,7 +245,6 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       height: 40,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           SizedBox(
                             width: 80,
@@ -260,7 +255,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                     ? 'hh:mm a'
                                     : 'HH.mm',
                               ),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: TColor.black,
                                 fontSize: 12,
                               ),
@@ -286,7 +281,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                         ),
                                         alignment: Alignment.centerLeft,
                                         decoration: BoxDecoration(
-                                          gradient: LinearGradient(
+                                          gradient: const LinearGradient(
                                             colors: TColor.secondaryG,
                                           ),
                                           borderRadius: BorderRadius.circular(
@@ -297,7 +292,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                           '${event.name.resolve(language)}, ${_formatTime(event.startTime, language)}',
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: TColor.white,
                                             fontSize: 12,
                                           ),
@@ -327,7 +322,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
             width: 55,
             height: 55,
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: TColor.secondaryG),
+              gradient: const LinearGradient(colors: TColor.secondaryG),
               borderRadius: BorderRadius.circular(27.5),
               boxShadow: const [
                 BoxShadow(
@@ -338,7 +333,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
               ],
             ),
             alignment: Alignment.center,
-            child: Icon(Icons.add, size: 20, color: TColor.white),
+            child: const Icon(Icons.add, size: 20, color: TColor.white),
           ),
         ),
       ),
@@ -406,7 +401,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                     ),
                     Text(
                       _dialogTitle.resolve(language),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: TColor.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -439,7 +434,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 const SizedBox(height: 15),
                 Text(
                   event.name.resolve(language),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TColor.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -456,7 +451,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                     const SizedBox(width: 8),
                     Text(
                       '${_describeRelativeDay(event.startTime, language)} | ${_formatTime(event.startTime, language)}',
-                      style: TextStyle(color: TColor.gray, fontSize: 12),
+                      style: const TextStyle(color: TColor.gray, fontSize: 12),
                     ),
                   ],
                 ),
@@ -472,7 +467,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
       },
     );
 
-    if (result == true && mounted) {
+    if (result ?? false && mounted) {
       final language = context.appLanguage;
       final message = _markDoneSnack
           .resolve(language)

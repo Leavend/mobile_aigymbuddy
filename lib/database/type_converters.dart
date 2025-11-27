@@ -29,8 +29,8 @@ enum MuscleGroup { chest, back, shoulders, arms, legs, core, fullBody }
 // ===== TYPE CONVERTERS =====
 
 class EnumTextConverter<T extends Enum> extends TypeConverter<T, String> {
-  final List<T> values;
   const EnumTextConverter(this.values);
+  final List<T> values;
 
   @override
   T fromSql(String fromDb) {

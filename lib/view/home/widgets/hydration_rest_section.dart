@@ -8,22 +8,15 @@ import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class WaterIntakeEntry {
-  final String timeRange;
-  final String amount;
 
   const WaterIntakeEntry(this.timeRange, this.amount);
+  final String timeRange;
+  final String amount;
 }
 
 class HydrationRestSection extends StatelessWidget {
   const HydrationRestSection({
-    super.key,
-    required this.waterIntakeTitle,
-    required this.realTimeUpdatesLabel,
-    required this.waterSchedule,
-    required this.sleepTitle,
-    required this.caloriesTitle,
-    required this.caloriesLeftLabel,
-    required this.calorieProgressNotifier,
+    required this.waterIntakeTitle, required this.realTimeUpdatesLabel, required this.waterSchedule, required this.sleepTitle, required this.caloriesTitle, required this.caloriesLeftLabel, required this.calorieProgressNotifier, super.key,
   });
 
   final LocalizedText waterIntakeTitle;
@@ -44,10 +37,8 @@ class HydrationRestSection extends StatelessWidget {
     return ShaderMask(
       blendMode: BlendMode.srcIn,
       shaderCallback: (bounds) {
-        return LinearGradient(
+        return const LinearGradient(
           colors: TColor.primaryG,
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
         ).createShader(Rect.fromLTRB(0, 0, bounds.width, bounds.height));
       },
       child: Text(
@@ -95,7 +86,7 @@ class HydrationRestSection extends StatelessWidget {
                     children: [
                       Text(
                         localize(waterIntakeTitle),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: TColor.black,
                           fontSize: UIConstants.fontSizeSmall,
                           fontWeight: FontWeight.w700,
@@ -104,7 +95,7 @@ class HydrationRestSection extends StatelessWidget {
                       const SizedBox(height: UIConstants.spacingXSmall),
                       Text(
                         localize(realTimeUpdatesLabel),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: TColor.gray,
                           fontSize: UIConstants.fontSizeSmall,
                         ),
@@ -138,7 +129,7 @@ class HydrationRestSection extends StatelessWidget {
                   children: [
                     Text(
                       localize(sleepTitle),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: TColor.black,
                         fontSize: UIConstants.fontSizeSmall,
                         fontWeight: FontWeight.w700,
@@ -167,7 +158,7 @@ class HydrationRestSection extends StatelessWidget {
                   children: [
                     Text(
                       localize(caloriesTitle),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: TColor.black,
                         fontSize: UIConstants.fontSizeSmall,
                         fontWeight: FontWeight.w700,
@@ -188,7 +179,7 @@ class HydrationRestSection extends StatelessWidget {
                               height: 90,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
+                                gradient: const LinearGradient(
                                   colors: TColor.primaryG,
                                 ),
                                 borderRadius: BorderRadius.circular(45),
@@ -265,12 +256,12 @@ class _WaterRow extends StatelessWidget {
             children: [
               Text(
                 entry.timeRange,
-                style: TextStyle(color: TColor.gray, fontSize: 10),
+                style: const TextStyle(color: TColor.gray, fontSize: 10),
               ),
               const SizedBox(height: 2),
               Text(
                 entry.amount,
-                style: TextStyle(
+                style: const TextStyle(
                   color: TColor.secondaryColor1,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,

@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Calendar Agenda Demo',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
@@ -62,7 +61,7 @@ class _ExamplePageState extends State<ExamplePage> {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl =
+    const imageUrl =
         'https://www.kindpng.com/picc/m/355-3557482_flutter-logo-png-transparent-png.png';
 
     return Scaffold(
@@ -81,8 +80,6 @@ class _ExamplePageState extends State<ExamplePage> {
         fullCalendarScroll: FullCalendarScroll.horizontal,
         fullCalendarDay: WeekDay.long,
         selectedDateColor: Colors.green.shade900,
-        dateColor: Colors.white,
-        locale: 'en',
         initialDate: DateTime.now(),
         calendarEventColor: Colors.green,
         firstDate: DateTime.now().subtract(const Duration(days: 140)),
@@ -96,9 +93,9 @@ class _ExamplePageState extends State<ExamplePage> {
           setState(() => _selectedDateAppBBar = date);
         },
         // Logo header kalender (widget)
-        calendarLogo: Image.network(imageUrl, scale: 5.0),
+        calendarLogo: Image.network(imageUrl, scale: 5),
         // Logo untuk hari terpilih (ImageProvider)
-        selectedDayLogo: NetworkImage(imageUrl, scale: 15.0),
+        selectedDayLogo: const NetworkImage(imageUrl, scale: 15),
       ),
       body: Center(
         child: Column(
@@ -125,10 +122,7 @@ class _ExamplePageState extends State<ExamplePage> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              // fullCalendar: false, // default sesuai lib
-              locale: 'en',
               weekDay: WeekDay.long,
-              fullCalendarDay: WeekDay.short,
               selectedDateColor: Colors.blue.shade900,
               initialDate: DateTime.now(),
               firstDate: DateTime.now().subtract(const Duration(days: 140)),
@@ -141,7 +135,7 @@ class _ExamplePageState extends State<ExamplePage> {
               onDateSelected: (date) {
                 setState(() => _selectedDateNotAppBBar = date);
               },
-              calendarLogo: Image.network(imageUrl, scale: 5.0),
+              calendarLogo: Image.network(imageUrl, scale: 5),
             ),
             const SizedBox(height: 12),
             ElevatedButton(

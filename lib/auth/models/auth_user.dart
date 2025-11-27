@@ -14,16 +14,6 @@ class AuthUser {
     this.locationPref,
   });
 
-  final String id;
-  final String email;
-  final String displayName;
-  final Gender? gender;
-  final DateTime? dob;
-  final double? heightCm;
-  final Level? level;
-  final Goal? goal;
-  final LocationPref? locationPref;
-
   factory AuthUser.fromData({required User user, UserProfile? profile}) {
     return AuthUser(
       id: user.id,
@@ -37,4 +27,14 @@ class AuthUser {
       locationPref: profile?.locationPref,
     );
   }
+
+  final String id;
+  final String email;
+  final String displayName;
+  final Gender? gender;
+  final DateTime? dob;
+  final double? heightCm;
+  final Level? level;
+  final Goal? goal;
+  final LocationPref? locationPref;
 }

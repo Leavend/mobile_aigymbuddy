@@ -1,9 +1,8 @@
 // lib/common_widget/meal_recommend_cell.dart
 
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
-
-import '../common/color_extension.dart';
 
 @immutable
 class MealRecommendationItem {
@@ -34,9 +33,7 @@ class MealRecommendationItem {
 
 class MealRecommendCell extends StatelessWidget {
   const MealRecommendCell({
-    super.key,
-    required this.index,
-    required this.meal,
+    required this.index, required this.meal, super.key,
     this.buttonLabel,
     this.onViewPressed,
   });
@@ -97,7 +94,7 @@ class MealRecommendCell extends StatelessWidget {
               meal.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.black,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -110,7 +107,7 @@ class MealRecommendCell extends StatelessWidget {
               '${meal.size} | ${meal.time} | ${meal.kcal}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: TColor.gray, fontSize: 12),
+              style: const TextStyle(color: TColor.gray, fontSize: 12),
             ),
           ),
           const SizedBox(height: 15),

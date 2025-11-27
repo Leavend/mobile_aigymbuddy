@@ -1,9 +1,8 @@
 // lib/common_widget/what_train_row.dart
 
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
-
-import '../common/color_extension.dart';
 
 @immutable
 class TrainingOptionItem {
@@ -30,7 +29,7 @@ class TrainingOptionItem {
 }
 
 class WhatTrainRow extends StatelessWidget {
-  const WhatTrainRow({super.key, required this.option, this.onViewMore});
+  const WhatTrainRow({required this.option, super.key, this.onViewMore});
 
   factory WhatTrainRow.fromMap(
     Map<String, dynamic> map, {
@@ -72,7 +71,7 @@ class WhatTrainRow extends StatelessWidget {
                 children: [
                   Text(
                     option.title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: TColor.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -81,7 +80,7 @@ class WhatTrainRow extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '${option.exercises} | ${option.duration}',
-                    style: TextStyle(color: TColor.gray, fontSize: 12),
+                    style: const TextStyle(color: TColor.gray, fontSize: 12),
                   ),
                   const SizedBox(height: 15),
                   SizedBox(

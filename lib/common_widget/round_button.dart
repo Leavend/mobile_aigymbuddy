@@ -1,6 +1,5 @@
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:flutter/material.dart';
-
-import '../common/color_extension.dart';
 
 /// Enumerasi tipe tampilan [`RoundButton`].
 enum RoundButtonType {
@@ -17,9 +16,7 @@ enum RoundButtonType {
 /// Tombol bundar dengan opsi gradient pada latar atau teks.
 class RoundButton extends StatelessWidget {
   const RoundButton({
-    super.key,
-    required this.title,
-    required this.onPressed,
+    required this.title, required this.onPressed, super.key,
     this.type = RoundButtonType.bgGradient,
     this.fontSize = 16,
     this.elevation = 1,
@@ -59,8 +56,6 @@ class RoundButton extends StatelessWidget {
 
   static const LinearGradient _textGradient = LinearGradient(
     colors: TColor.primaryG,
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
   );
 
   Color get _textColor =>

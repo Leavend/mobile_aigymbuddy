@@ -1,12 +1,12 @@
-import 'package:aigymbuddy/database/app_db.dart';
 import 'package:aigymbuddy/common/services/logging_service.dart';
+import 'package:aigymbuddy/database/app_db.dart';
 
 /// Utility class for verifying database persistence and integrity
 class DatabaseVerifier {
-  final LoggingService _logger = LoggingService.instance;
-  final AppDatabase _db;
 
   DatabaseVerifier(this._db);
+  final LoggingService _logger = LoggingService.instance;
+  final AppDatabase _db;
 
   /// Test database persistence by writing and reading data
   Future<bool> testPersistence() async {
@@ -123,15 +123,15 @@ class DatabaseVerifier {
 
 /// Database statistics for monitoring
 class DatabaseStats {
-  final int pageCount;
-  final int pageSize;
-  final int freeListCount;
 
   DatabaseStats({
     required this.pageCount,
     required this.pageSize,
     required this.freeListCount,
   });
+  final int pageCount;
+  final int pageSize;
+  final int freeListCount;
 
   int get totalSize => pageCount * pageSize;
   int get freeSize => freeListCount * pageSize;

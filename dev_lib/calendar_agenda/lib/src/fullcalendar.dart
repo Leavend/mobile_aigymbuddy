@@ -1,20 +1,17 @@
 // dev_lib/calendar_agenda/lib/src/fullcalendar.dart
 
+import 'package:calendar_agenda/calendar_agenda.dart' show CalendarAgenda;
+import 'package:calendar_agenda/src/calendar.dart' show CalendarAgenda;
+import 'package:calendar_agenda/src/typedata.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
-import 'typedata.dart';
 
 /// Full screen calendar displayed from [CalendarAgenda].
 class FullCalendar extends StatefulWidget {
   /// Creates a [FullCalendar] widget.
   const FullCalendar({
-    Key? key,
-    required this.startDate,
-    required this.endDate,
-    required this.padding,
-    required this.onDateChange,
+    required this.startDate, required this.endDate, required this.padding, required this.onDateChange, Key? key,
     this.calendarBackground,
     this.events = const <String>[],
     this.dateColor = Colors.white,
@@ -119,7 +116,7 @@ class FullCalendarState extends State<FullCalendar> {
 
     if (months.length == 1) {
       return Padding(
-        padding: EdgeInsets.fromLTRB(widget.padding, 40.0, widget.padding, 0.0),
+        padding: EdgeInsets.fromLTRB(widget.padding, 40, widget.padding, 0),
         child: _buildMonth(months.first, width),
       );
     }
@@ -129,7 +126,7 @@ class FullCalendarState extends State<FullCalendar> {
     if (widget.calendarScroll == FullCalendarScroll.horizontal) {
       _ensureHorizontalController(initialIndex);
       return Padding(
-        padding: const EdgeInsets.fromLTRB(25, 10.0, 25, 20.0),
+        padding: const EdgeInsets.fromLTRB(25, 10, 25, 20),
         child: Stack(
           children: [
             if (widget.calendarBackground != null)
@@ -141,7 +138,6 @@ class FullCalendarState extends State<FullCalendar> {
               physics: const BouncingScrollPhysics(),
               controller: _horizontalController,
               reverse: true,
-              scrollDirection: Axis.horizontal,
               itemCount: months.length,
               itemBuilder: (BuildContext context, int index) {
                 final bool isLast = index == 0;
@@ -184,7 +180,7 @@ class FullCalendarState extends State<FullCalendar> {
     }
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(25, 10.0, 25, 20.0),
+      padding: const EdgeInsets.fromLTRB(25, 10, 25, 20),
       child: Stack(
         children: [
           if (widget.calendarBackground != null)
@@ -231,7 +227,7 @@ class FullCalendarState extends State<FullCalendar> {
 
     final int index = months.indexWhere((List<DateTime> dates) =>
         dates.first.month == selected.month &&
-        dates.first.year == selected.year);
+        dates.first.year == selected.year,);
 
     return index < 0 ? 0 : index;
   }
@@ -257,7 +253,7 @@ class FullCalendarState extends State<FullCalendar> {
 
     final List<List<DateTime>> months = grouped.values.toList()
       ..sort(
-          (List<DateTime> a, List<DateTime> b) => b.first.compareTo(a.first));
+          (List<DateTime> a, List<DateTime> b) => b.first.compareTo(a.first),);
     return months;
   }
 
@@ -266,20 +262,19 @@ class FullCalendarState extends State<FullCalendar> {
     final List<DateTime> displayDates = _padMonthDates(monthDates);
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
           DateFormat.yMMMM(Locale(widget.locale).toString()).format(monthStart),
           style: TextStyle(
-            fontSize: 18.0,
+            fontSize: 18,
             color: widget.dateColor,
             fontWeight: FontWeight.w400,
           ),
         ),
-        const SizedBox(height: 30.0),
+        const SizedBox(height: 30),
         _buildDaysOfWeek(width),
         Padding(
-          padding: const EdgeInsets.only(top: 10.0),
+          padding: const EdgeInsets.only(top: 10),
           child: SizedBox(
             height: displayDates.length > 28
                 ? (displayDates.length > 35 ? 6.2 * width / 7 : 5.2 * width / 7)
@@ -337,7 +332,7 @@ class FullCalendarState extends State<FullCalendar> {
               day,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 12.0,
+                fontSize: 12,
                 fontWeight: FontWeight.w400,
               ),
               overflow: TextOverflow.ellipsis,
@@ -375,9 +370,9 @@ class FullCalendarState extends State<FullCalendar> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 5.0),
+            const SizedBox(height: 5),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Text(
                 DateFormat('dd').format(date),
                 style: TextStyle(color: textColor),
@@ -392,7 +387,7 @@ class FullCalendarState extends State<FullCalendar> {
                     : widget.dateSelectedBg,
               )
             else
-              const SizedBox(height: 5.0),
+              const SizedBox(height: 5),
           ],
         ),
       ),

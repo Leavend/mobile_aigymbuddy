@@ -1,7 +1,6 @@
+import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:flutter/material.dart';
-
-import '../common/color_extension.dart';
-import '../common/localization/app_language.dart';
 
 class OnBoardingContent {
   const OnBoardingContent({
@@ -45,9 +44,7 @@ class OnBoardingContent {
 
 class OnBoardingPage extends StatelessWidget {
   const OnBoardingPage({
-    super.key,
-    required this.content,
-    required this.language,
+    required this.content, required this.language, super.key,
     this.onNext,
   });
 
@@ -101,8 +98,6 @@ class OnBoardingPage extends StatelessWidget {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: content.gradientOrDefault(),
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
                           ),
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
@@ -118,7 +113,7 @@ class OnBoardingPage extends StatelessWidget {
                         child: Text(
                           buttonText,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: TColor.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -141,7 +136,6 @@ class OnBoardingPage extends StatelessWidget {
       color: TColor.white,
       child: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset(

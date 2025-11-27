@@ -2,14 +2,13 @@
 // This file is only imported on native platforms
 import 'dart:io';
 
+// Import logging service
+import 'package:aigymbuddy/common/services/logging_service.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
-
-// Import logging service
-import '../../common/services/logging_service.dart';
 
 Future<DatabaseConnection> createNativeConnection() async {
   try {
@@ -33,7 +32,6 @@ Future<DatabaseConnection> createNativeConnection() async {
     // Create optimized NativeDatabase with explicit file
     final database = NativeDatabase(
       file,
-      logStatements: false, // Disable in production
     );
 
     // Verify file was created successfully

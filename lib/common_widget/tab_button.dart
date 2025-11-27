@@ -4,11 +4,7 @@ import 'package:flutter/services.dart';
 
 class TabButton extends StatelessWidget {
   const TabButton({
-    super.key,
-    required this.icon,
-    required this.selectIcon,
-    required this.isActive,
-    required this.onTap,
+    required this.icon, required this.selectIcon, required this.isActive, required this.onTap, super.key,
     this.width = 56,
     this.semanticsLabel,
     this.enableHaptics = true,
@@ -56,7 +52,7 @@ class TabButton extends StatelessWidget {
               width: 6,
               height: isActive ? 6 : 0,
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: TColor.secondaryG),
+                gradient: const LinearGradient(colors: TColor.secondaryG),
                 borderRadius: BorderRadius.circular(3),
               ),
             ),

@@ -1,17 +1,12 @@
 // lib/common_widget/find_eat_cell.dart
 
+import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 
-import '../common/color_extension.dart';
-
 class FindEatCell extends StatelessWidget {
   const FindEatCell({
-    super.key,
-    required this.index,
-    required this.title,
-    required this.subtitle,
-    required this.imageAsset,
+    required this.index, required this.title, required this.subtitle, required this.imageAsset, super.key,
     this.buttonLabel,
     this.onSelect,
   });
@@ -84,7 +79,7 @@ class FindEatCell extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: TColor.black,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -97,7 +92,7 @@ class FindEatCell extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
               subtitle,
-              style: TextStyle(color: TColor.gray, fontSize: 12),
+              style: const TextStyle(color: TColor.gray, fontSize: 12),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

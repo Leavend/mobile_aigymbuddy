@@ -93,7 +93,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
       ),
       title: Text(
         localize(_TrackerStrings.activityTracker),
-        style: TextStyle(
+        style: const TextStyle(
           color: TColor.black,
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -123,7 +123,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             children: [
               Text(
                 localize(_TrackerStrings.todayTarget),
-                style: TextStyle(
+                style: const TextStyle(
                   color: TColor.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -134,7 +134,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                 height: 30,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: TColor.primaryG),
+                    gradient: const LinearGradient(colors: TColor.primaryG),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: MaterialButton(
@@ -184,7 +184,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
       children: [
         Text(
           localize(_TrackerStrings.activityProgress),
-          style: TextStyle(
+          style: const TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -194,7 +194,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
           height: 30,
           padding: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: TColor.primaryG),
+            gradient: const LinearGradient(colors: TColor.primaryG),
             borderRadius: BorderRadius.circular(15),
           ),
           child: DropdownButtonHideUnderline(
@@ -206,7 +206,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                       value: option,
                       child: Text(
                         option.label.resolve(language),
-                        style: TextStyle(color: TColor.gray, fontSize: 14),
+                        style: const TextStyle(color: TColor.gray, fontSize: 14),
                       ),
                     ),
                   )
@@ -217,7 +217,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                 }
                 setState(() => _selectedPeriod = value);
               },
-              icon: Icon(Icons.expand_more, color: TColor.white),
+              icon: const Icon(Icons.expand_more, color: TColor.white),
               dropdownColor: Colors.white,
             ),
           ),
@@ -245,8 +245,8 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
               tooltipHorizontalAlignment: FLHorizontalAlignment.right,
               tooltipMargin: 10,
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                final labels = _TrackerStrings.weekdayFull;
-                final index = group.x.toInt();
+                const labels = _TrackerStrings.weekdayFull;
+                final index = group.x;
                 final weekDay = (index >= 0 && index < labels.length)
                     ? labels[index].resolve(language)
                     : '';
@@ -261,7 +261,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                   children: <TextSpan>[
                     TextSpan(
                       text: (rod.toY - 1).toString(),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: TColor.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -283,12 +283,11 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
             },
           ),
           titlesData: FlTitlesData(
-            show: true,
             rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
+              
             ),
             topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
+              
             ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
@@ -299,7 +298,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
               ),
             ),
             leftTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
+              
             ),
           ),
           borderData: FlBorderData(show: false),
@@ -317,7 +316,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
       children: [
         Text(
           localize(_TrackerStrings.latestWorkout),
-          style: TextStyle(
+          style: const TextStyle(
             color: TColor.black,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -327,7 +326,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
           onPressed: () {},
           child: Text(
             localize(_TrackerStrings.seeMore),
-            style: TextStyle(
+            style: const TextStyle(
               color: TColor.gray,
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -353,12 +352,12 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
   }
 
   Widget _buildBottomTitle(double value, TitleMeta meta, AppLanguage language) {
-    final style = TextStyle(
+    const style = TextStyle(
       color: TColor.gray,
       fontWeight: FontWeight.w500,
       fontSize: 12,
     );
-    final labels = _TrackerStrings.weekdayShort;
+    const labels = _TrackerStrings.weekdayShort;
     final idx = value.toInt();
     final text = (idx >= 0 && idx < labels.length)
         ? labels[idx].resolve(language)
@@ -545,10 +544,10 @@ class _TrackerStrings {
 }
 
 class _CircleIconButton extends StatelessWidget {
-  final String asset;
-  final VoidCallback? onTap;
 
   const _CircleIconButton({required this.asset, this.onTap});
+  final String asset;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
