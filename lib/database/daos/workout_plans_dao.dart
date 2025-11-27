@@ -58,8 +58,8 @@ class WorkoutPlansDao extends DatabaseAccessor<AppDatabase>
       final planExercise = row.readTable(workoutPlanExercises);
       final exercise = row.readTable(exercises);
 
-      final list = groupedData.putIfAbsent(day, () => []);
-      list.add((planExercise, exercise));
+      groupedData.putIfAbsent(day, () => [])
+        ..add((planExercise, exercise));
     }
 
     return groupedData.entries

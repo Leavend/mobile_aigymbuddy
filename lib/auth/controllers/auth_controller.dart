@@ -2,7 +2,7 @@ import 'package:aigymbuddy/auth/models/auth_user.dart';
 import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/auth/usecases/auth_usecase.dart';
 import 'package:aigymbuddy/common/exceptions/app_exceptions.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart'; // Added for unawaited
 
 class AuthController extends ChangeNotifier {
   AuthController({required AuthUseCase useCase}) : _useCase = useCase;
