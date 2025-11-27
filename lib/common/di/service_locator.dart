@@ -2,6 +2,7 @@ import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
 import 'package:aigymbuddy/auth/usecases/auth_usecase.dart';
 import 'package:aigymbuddy/common/services/logging_service.dart';
+import 'package:aigymbuddy/common/services/session_manager.dart';
 import 'package:aigymbuddy/database/app_db.dart';
 import 'package:aigymbuddy/database/database_service.dart';
 import 'package:aigymbuddy/database/repositories/auth_repository.dart';
@@ -19,6 +20,7 @@ class ServiceLocator {
   // Services
   AppDatabase? _database;
   DatabaseService? _databaseService;
+  SessionManager? _sessionManager;
 
   // Repositories
   AuthRepositoryInterface? _authRepository;
@@ -49,6 +51,9 @@ class ServiceLocator {
 
       // Initialize database service
       _databaseService = DatabaseService(_database!);
+
+      // Initialize session manager
+      _sessionManager = SessionManager();
 
       // Initialize repositories
       _authRepository = AuthRepository(_database!);
@@ -82,6 +87,10 @@ class ServiceLocator {
       // Dispose controllers first
       _authController?.dispose();
       _authController = null;
+
+      // Dispose session manager
+      _sessionManager?.dispose();
+      _sessionManager = null;
 
       // Close database connection
       if (_database != null) {
@@ -122,6 +131,16 @@ class ServiceLocator {
       );
     }
     return _databaseService!;
+  }
+
+  // Session Manager
+  SessionManager get sessionManager {
+    if (_sessionManager == null) {
+      throw StateError(
+        'SessionManager not initialized. Call initialize() first.',
+      );
+    }
+    return _sessionManager!;
   }
 
   // Repositories
