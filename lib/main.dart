@@ -1,5 +1,4 @@
 // lib/main.dart
-
 import 'dart:async';
 
 import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
@@ -126,10 +125,16 @@ class ErrorApp extends StatelessWidget {
   }
 }
 
+/// Main application widget
 class MyApp extends StatefulWidget {
+  const MyApp({
+    required this.db,
+    super.key,
+    this.initialLocation,
+  });
+
   final AppDatabase db;
-  final String initialLocation;
-  const MyApp({super.key, required this.db, required this.initialLocation});
+  final String? initialLocation;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -142,7 +147,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _router = AppRouter.createRouter(initialLocation: widget.initialLocation);
+    _router = AppRouter.createRouter(
+      initialLocation: widget.initialLocation ?? AppRoute.onboarding,
+    );
+    
+    // TODO: Add session expiry listener when app context is properly initialized
+    // This requires refactoring to avoid accessing AuthService.instance before
+    // ServiceLocator is initialized
   }
 
   @override
@@ -167,6 +178,34 @@ class _MyAppState extends State<MyApp> {
     }
 
     super.dispose();
+  }
+
+  void _handleSessionExpired() {
+    // Navigate to login
+    _router.go(AppRoute.login);
+    
+    // Show dialog if widget is still mounted
+    if (mounted) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Session Expired'),
+              content: const Text(
+                'Your session has expired. Please log in again.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      });
+    }
   }
 
   @override
