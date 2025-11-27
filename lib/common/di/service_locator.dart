@@ -194,7 +194,7 @@ class ServiceLocator {
 
   @visibleForTesting
   void registerAuthRepository(AuthRepositoryInterface repo) {
-    unawaited(_authRepository?.dispose());
+    // AuthRepositoryInterface doesn't have dispose method
     _authRepository = repo;
   }
 
@@ -212,13 +212,13 @@ class ServiceLocator {
 
   @visibleForTesting
   void registerDatabaseService(DatabaseService service) {
-    unawaited(_databaseService?.dispose());
+    // DatabaseService doesn't have dispose method
     _databaseService = service;
   }
 
   @visibleForTesting
   void registerUserProfileRepository(UserProfileRepository repo) {
-    unawaited(_userProfileRepository?.dispose());
+    // UserProfileRepository doesn't have dispose method
     _userProfileRepository = repo;
   }
 
