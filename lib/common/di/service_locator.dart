@@ -1,10 +1,11 @@
+import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
 import 'package:aigymbuddy/auth/usecases/auth_usecase.dart';
+import 'package:aigymbuddy/common/services/logging_service.dart';
 import 'package:aigymbuddy/database/app_db.dart';
 import 'package:aigymbuddy/database/database_service.dart';
 import 'package:aigymbuddy/database/repositories/auth_repository.dart';
 import 'package:aigymbuddy/database/repositories/user_profile_repository.dart';
-import 'package:aigymbuddy/common/services/logging_service.dart';
 import 'package:flutter/foundation.dart';
 
 /// Service locator for managing dependencies with proper lifecycle management
@@ -25,6 +26,9 @@ class ServiceLocator {
 
   // Use cases
   AuthUseCase? _authUseCase;
+
+  // Controllers
+  AuthController? _authController;
 
   bool _isInitialized = false;
 
@@ -53,6 +57,9 @@ class ServiceLocator {
       // Initialize use cases
       _authUseCase = AuthUseCaseImpl(repository: _authRepository!);
 
+      // Initialize controllers
+      _authController = AuthController(useCase: _authUseCase!);
+
       _isInitialized = true;
       LoggingService.instance.info('ServiceLocator initialized successfully');
     } catch (e, stackTrace) {
@@ -72,7 +79,11 @@ class ServiceLocator {
     try {
       LoggingService.instance.info('Disposing ServiceLocator...');
 
-      // Close database connection first
+      // Dispose controllers first
+      _authController?.dispose();
+      _authController = null;
+
+      // Close database connection
       if (_database != null) {
         await _database!.close();
         _database = null;
@@ -140,6 +151,16 @@ class ServiceLocator {
     return _authUseCase!;
   }
 
+  // Controllers
+  AuthController get authController {
+    if (_authController == null) {
+      throw StateError(
+        'AuthController not initialized. Call initialize() first.',
+      );
+    }
+    return _authController!;
+  }
+
   // Reset all services (useful for testing)
   void reset() {
     _database = null;
@@ -173,5 +194,10 @@ class ServiceLocator {
   @visibleForTesting
   void registerUserProfileRepository(UserProfileRepository repo) {
     _userProfileRepository = repo;
+  }
+
+  @visibleForTesting
+  void registerAuthController(AuthController controller) {
+    _authController = controller;
   }
 }

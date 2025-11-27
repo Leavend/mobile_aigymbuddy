@@ -186,9 +186,8 @@ class _MyAppState extends State<MyApp> {
             value: ServiceLocator().userProfileRepository,
           ),
           Provider<AuthUseCase>.value(value: ServiceLocator().authUseCase),
-          ChangeNotifierProvider<AuthController>(
-            create: (context) =>
-                AuthController(useCase: ServiceLocator().authUseCase),
+          ChangeNotifierProvider<AuthController>.value(
+            value: ServiceLocator().authController,
           ),
         ],
         child: MaterialApp.router(

@@ -84,6 +84,10 @@ abstract final class _SignUpTexts {
     english: 'Password must be at least 8 characters',
     indonesian: 'Kata sandi minimal 8 karakter',
   );
+  static const passwordWeak = LocalizedText(
+    english: 'Password must contain uppercase, lowercase, and numbers',
+    indonesian: 'Kata sandi harus mengandung huruf besar, kecil, dan angka',
+  );
   static const termsRequired = LocalizedText(
     english: 'Please accept the terms to continue',
     indonesian: 'Silakan setujui syarat dan ketentuan terlebih dahulu',
@@ -174,6 +178,7 @@ class _SignUpFormState extends State<_SignUpForm> {
     value: value,
     emptyMessage: _SignUpTexts.passwordRequired,
     lengthMessage: _SignUpTexts.passwordLength,
+    weakMessage: _SignUpTexts.passwordWeak,
   );
 
   @override

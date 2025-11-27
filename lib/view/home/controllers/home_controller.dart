@@ -5,6 +5,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class HomeController extends ChangeNotifier {
+  HomeController() {
+    // Initialize ValueNotifier with initial calorie progress
+    _calorieProgressNotifier = ValueNotifier<double>(_calorieProgress);
+  }
+
   // TODO: Fetch this data from repository
 
   final List<WorkoutConfig> lastWorkoutList = const [
@@ -80,10 +85,20 @@ class HomeController extends ChangeNotifier {
   ];
 
   double _calorieProgress = 50;
+  late ValueNotifier<double> _calorieProgressNotifier;
+
   double get calorieProgress => _calorieProgress;
+  ValueNotifier<double> get calorieProgressNotifier => _calorieProgressNotifier;
 
   void updateCalorieProgress(double value) {
     _calorieProgress = value;
+    _calorieProgressNotifier.value = value;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _calorieProgressNotifier.dispose();
+    super.dispose();
   }
 }

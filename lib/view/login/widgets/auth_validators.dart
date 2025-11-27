@@ -46,7 +46,9 @@ abstract final class AuthValidators {
     required String? value,
     required LocalizedText emptyMessage,
     required LocalizedText lengthMessage,
+    LocalizedText? weakMessage,
     int minLength = 8,
+    bool requireStrength = true,
   }) {
     final text = value ?? '';
     if (text.isEmpty) {
@@ -55,6 +57,58 @@ abstract final class AuthValidators {
     if (text.length < minLength) {
       return context.localize(lengthMessage);
     }
+
+    // Check password strength if required
+    if (requireStrength) {
+      final hasUppercase = text.contains(RegExp(r'[A-Z]'));
+      final hasLowercase = text.contains(RegExp(r'[a-z]'));
+      final hasDigit = text.contains(RegExp(r'[0-9]'));
+
+      if (!hasUppercase || !hasLowercase || !hasDigit) {
+        return weakMessage != null
+            ? context.localize(weakMessage)
+            : 'Password must contain uppercase, lowercase, and numbers';
+      }
+    }
+
     return null;
   }
+
+  /// Check password strength without returning error message
+  static PasswordStrength getPasswordStrength(String password) {
+    if (password.isEmpty) return PasswordStrength.empty;
+    if (password.length < 8) return PasswordStrength.tooShort;
+
+    final hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    final hasLowercase = password.contains(RegExp(r'[a-z]'));
+    final hasDigit = password.contains(RegExp(r'[0-9]'));
+    final hasSpecialChar = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+    final criteriaCount = [
+      hasUppercase,
+      hasLowercase,
+      hasDigit,
+      hasSpecialChar,
+    ].where((e) => e).length;
+
+    if (criteriaCount >= 4 && password.length >= 12) {
+      return PasswordStrength.strong;
+    } else if (criteriaCount >= 3) {
+      return PasswordStrength.medium;
+    } else if (criteriaCount >= 2) {
+      return PasswordStrength.weak;
+    } else {
+      return PasswordStrength.veryWeak;
+    }
+  }
+}
+
+/// Password strength levels
+enum PasswordStrength {
+  empty,
+  tooShort,
+  veryWeak,
+  weak,
+  medium,
+  strong,
 }

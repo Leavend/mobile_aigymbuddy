@@ -1,4 +1,5 @@
 // Basic smoke test
+import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/auth/models/auth_user.dart';
 import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
@@ -7,10 +8,10 @@ import 'package:aigymbuddy/common/di/service_locator.dart';
 import 'package:aigymbuddy/database/app_db.dart';
 import 'package:aigymbuddy/database/database_service.dart';
 import 'package:aigymbuddy/database/repositories/user_profile_repository.dart';
+import 'package:aigymbuddy/main.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:aigymbuddy/main.dart';
 
 // Simple mocks
 class MockAuthRepository implements AuthRepositoryInterface {
@@ -78,12 +79,17 @@ void main() {
       DatabaseConnection(NativeDatabase.memory()),
     );
 
+    final mockAuthUseCase = MockAuthUseCase();
     final locator = ServiceLocator();
     locator.registerDatabase(db);
     locator.registerDatabaseService(DatabaseService(db));
     locator.registerAuthRepository(MockAuthRepository());
-    locator.registerAuthUseCase(MockAuthUseCase());
+    locator.registerAuthUseCase(mockAuthUseCase);
     locator.registerUserProfileRepository(MockUserProfileRepository(db));
+    
+    // Register AuthController after AuthUseCase
+    final authController = AuthController(useCase: mockAuthUseCase);
+    locator.registerAuthController(authController);
 
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp(db: db, initialLocation: '/onboarding'));
@@ -92,6 +98,7 @@ void main() {
     expect(find.byType(MyApp), findsOneWidget);
 
     // Clean up
+    authController.dispose();
     await db.close();
   });
 }

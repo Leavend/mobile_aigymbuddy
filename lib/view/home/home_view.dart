@@ -84,9 +84,7 @@ class _HomeContent extends BaseView<HomeController> {
                     sleepTitle: _HomeStrings.sleep,
                     caloriesTitle: _HomeStrings.calories,
                     caloriesLeftLabel: _HomeStrings.caloriesLeft,
-                    calorieProgressNotifier: ValueNotifier(
-                      controller.calorieProgress,
-                    ), // TODO: Optimize this
+                    calorieProgressNotifier: controller.calorieProgressNotifier,
                   ),
                   const SizedBox(height: UIConstants.spacingLarge),
                   WorkoutProgressSection(
