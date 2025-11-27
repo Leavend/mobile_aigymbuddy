@@ -22,6 +22,9 @@ class RoundTextField extends StatelessWidget {
     this.onFieldSubmitted,
     this.enabled = true,
     this.textCapitalization = TextCapitalization.none,
+    this.maxLines = 1,
+    this.minLines,
+    this.textAlign = TextAlign.start,
   });
 
   final TextEditingController? controller;
@@ -40,6 +43,9 @@ class RoundTextField extends StatelessWidget {
   final ValueChanged<String>? onFieldSubmitted;
   final bool enabled;
   final TextCapitalization textCapitalization;
+  final int maxLines;
+  final int? minLines;
+  final TextAlign textAlign;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +58,8 @@ class RoundTextField extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(15),
+        // Added subtle border for better visual definition
+        border: Border.all(color: TColor.gray.withValues(alpha: 0.2), width: 1),
       ),
       child: TextFormField(
         controller: controller,
@@ -66,21 +74,51 @@ class RoundTextField extends StatelessWidget {
         autovalidateMode: autovalidateMode,
         onFieldSubmitted: onFieldSubmitted,
         enabled: enabled,
+        maxLines: maxLines,
+        minLines: minLines,
+        textAlign: textAlign,
+        // Added cursor color for better UX
+        cursorColor: TColor.primaryColor1,
+        // Added text selection theme
+        style: TextStyle(color: TColor.black, fontSize: 14),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 15,
             horizontal: 15,
           ),
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
+          // Improved border styling
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: TColor.gray.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: TColor.primaryColor1, width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.error,
+              width: 2,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.error,
+              width: 2,
+            ),
+          ),
           hintText: hintText,
           suffixIcon: rightIcon,
           prefixIcon: Container(
             alignment: Alignment.center,
             width: 20,
             height: 20,
+            margin: const EdgeInsets.only(left: 15),
             child: Image.asset(
               icon,
               width: 20,
@@ -94,7 +132,12 @@ class RoundTextField extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
-          hintStyle: TextStyle(color: TColor.gray, fontSize: 12),
+          hintStyle: TextStyle(
+            color: TColor.gray,
+            fontSize: 14, // Increased font size for better readability
+          ),
+          // Removed content padding conflict
+          isDense: true,
         ),
       ),
     );

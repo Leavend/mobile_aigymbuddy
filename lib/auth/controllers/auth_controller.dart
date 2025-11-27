@@ -1,30 +1,50 @@
 import 'package:aigymbuddy/auth/models/auth_user.dart';
 import 'package:aigymbuddy/auth/models/sign_up_data.dart';
-import 'package:aigymbuddy/common/services/auth_service.dart';
-import 'package:aigymbuddy/database/repositories/auth_repository.dart';
+import 'package:aigymbuddy/auth/usecases/auth_usecase.dart';
+import 'package:aigymbuddy/common/exceptions/app_exceptions.dart';
 import 'package:flutter/foundation.dart';
 
 class AuthController extends ChangeNotifier {
-  AuthController({required AuthRepository repository, AuthService? authService})
-    : _repository = repository,
-      _authService = authService ?? AuthService.instance;
+  AuthController({required AuthUseCase useCase}) : _useCase = useCase;
 
-  final AuthRepository _repository;
-  final AuthService _authService;
-
+  final AuthUseCase _useCase;
   AuthUser? _currentUser;
   bool _isLoading = false;
+  String? _errorMessage;
 
   AuthUser? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+
+  Future<void> initialize() async {
+    _runWithLoading(() async {
+      final isLoggedIn = await _useCase.isLoggedIn();
+      if (isLoggedIn) {
+        // Fetch current user details if needed
+        // This would require a new method in the use case
+      }
+      return Future.value();
+    });
+  }
 
   Future<AuthUser> register(SignUpData data) async {
     return _runWithLoading(() async {
-      final user = await _repository.register(data);
-      _currentUser = user;
-      notifyListeners();
-      await _authService.setHasCredentials(true);
-      return user;
+      try {
+        _clearError();
+        final user = await _useCase.register(data);
+        _currentUser = user;
+        notifyListeners();
+        return user;
+      } on AuthException catch (e) {
+        _setError(e.message);
+        rethrow;
+      } on ValidationException catch (e) {
+        _setError(e.message);
+        rethrow;
+      } on AppException catch (e) {
+        _setError(e.message);
+        rethrow;
+      }
     });
   }
 
@@ -33,17 +53,42 @@ class AuthController extends ChangeNotifier {
     required String password,
   }) async {
     return _runWithLoading(() async {
-      final user = await _repository.login(email: email, password: password);
-      _currentUser = user;
-      notifyListeners();
-      await _authService.setHasCredentials(true);
-      return user;
+      try {
+        _clearError();
+        final user = await _useCase.login(email: email, password: password);
+        _currentUser = user;
+        notifyListeners();
+        return user;
+      } on AuthException catch (e) {
+        _setError(e.message);
+        rethrow;
+      } on AppException catch (e) {
+        _setError(e.message);
+        rethrow;
+      }
     });
   }
 
   Future<void> logout() async {
-    _currentUser = null;
-    await _authService.clearCredentials();
+    try {
+      await _useCase.logout();
+      _currentUser = null;
+      notifyListeners();
+    } on AppException catch (e) {
+      _setError(e.message);
+      rethrow;
+    }
+  }
+
+  void _clearError() {
+    if (_errorMessage != null) {
+      _errorMessage = null;
+      notifyListeners();
+    }
+  }
+
+  void _setError(String message) {
+    _errorMessage = message;
     notifyListeners();
   }
 

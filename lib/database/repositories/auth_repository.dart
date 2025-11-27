@@ -4,11 +4,14 @@ import 'dart:math';
 
 import 'package:aigymbuddy/auth/models/auth_user.dart';
 import 'package:aigymbuddy/auth/models/sign_up_data.dart';
+import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
+import 'package:aigymbuddy/common/services/logging_service.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 import '../app_db.dart';
+import '../database_service.dart';
 import '../type_converters.dart';
 
 class EmailAlreadyUsed implements Exception {}
@@ -26,112 +29,218 @@ class IncompleteSignUpData implements Exception {
       'IncompleteSignUpData(missing: ${missingFields.join(', ')})';
 }
 
-class AuthRepository {
-  AuthRepository(this.db);
+class AuthRepository implements AuthRepositoryInterface {
+  AuthRepository(this.db) : _dbService = DatabaseService(db);
 
   final AppDatabase db;
+  final DatabaseService _dbService;
+  final LoggingService _logger = LoggingService.instance;
 
+  @override
   Future<AuthUser> register(SignUpData data) async {
-    _validateSignUpData(data);
+    _logger.info('Starting registration process for user: ${data.email}');
 
-    return db.transaction<AuthUser>(() async {
-      final email = _normalizeEmail(data.email);
-      final existing =
-          await (db.select(db.users)
-                ..where((u) => u.email.equals(email))
-                ..where((u) => u.deletedAt.isNull()))
-              .getSingleOrNull();
+    try {
+      return await _dbService.transaction<AuthUser>(() async {
+        _validateSignUpData(data);
 
-      if (existing != null) {
-        throw EmailAlreadyUsed();
-      }
+        final email = _normalizeEmail(data.email);
+        _logger.debug('Checking for existing user with email: $email');
 
-      final passwordHash = await _hashPassword(data.password);
-      final now = DateTime.now();
-      final userId = const Uuid().v4();
+        final existing = await _safeQuery(
+          () =>
+              (db.select(db.users)
+                    ..where((u) => u.email.equals(email))
+                    ..where((u) => u.deletedAt.isNull()))
+                  .getSingleOrNull(),
+        );
 
-      await db
-          .into(db.users)
-          .insert(
-            UsersCompanion.insert(
-              id: Value(userId),
-              email: email,
-              passwordHash: passwordHash,
-              role: const Value(UserRole.user),
-              createdAt: Value(now),
-              updateAt: Value(now),
-              deletedAt: const Value.absent(),
-            ),
-          );
+        if (existing != null) {
+          _logger.warning('Registration failed - email already exists: $email');
+          throw EmailAlreadyUsed();
+        }
 
-      await db
-          .into(db.userProfiles)
-          .insert(
-            UserProfilesCompanion.insert(
-              userId: userId,
-              displayName: data.displayName,
-              gender: data.gender!,
-              dob: Value(data.dob),
-              heightCm: data.heightCm!,
-              level: data.level ?? Level.beginner,
-              goal: data.goal ?? Goal.maintain,
-              locationPref: data.location ?? LocationPref.home,
-            ),
-          );
+        final passwordHash = await _hashPassword(data.password);
+        final now = DateTime.now();
+        final userId = const Uuid().v4();
 
-      if (data.weightKg != null) {
-        await db
-            .into(db.bodyMetrics)
-            .insert(
-              BodyMetricsCompanion.insert(
-                id: Value(const Uuid().v4()),
-                userId: userId,
-                loggedAt: Value(now),
-                weightKg: data.weightKg!,
-                bodyFatPct: const Value.absent(),
-                notes: const Value('initial'),
+        await _safeQuery(
+          () => db
+              .into(db.users)
+              .insert(
+                UsersCompanion.insert(
+                  id: Value(userId),
+                  email: email,
+                  passwordHash: passwordHash,
+                  role: const Value(UserRole.user),
+                  createdAt: Value(now),
+                  updateAt: Value(now),
+                  deletedAt: const Value.absent(),
+                ),
               ),
-            );
-      }
+        );
 
-      return _readAuthUser(userId);
-    });
+        await _safeQuery(
+          () => db
+              .into(db.userProfiles)
+              .insert(
+                UserProfilesCompanion.insert(
+                  userId: userId,
+                  displayName: data.displayName,
+                  gender: data.gender!,
+                  dob: Value(data.dob),
+                  heightCm: data.heightCm!,
+                  level: data.level ?? Level.beginner,
+                  goal: data.goal ?? Goal.maintain,
+                  locationPref: data.location ?? LocationPref.home,
+                ),
+              ),
+        );
+
+        if (data.weightKg != null) {
+          await _safeQuery(
+            () => db
+                .into(db.bodyMetrics)
+                .insert(
+                  BodyMetricsCompanion.insert(
+                    id: Value(const Uuid().v4()),
+                    userId: userId,
+                    loggedAt: Value(now),
+                    weightKg: data.weightKg!,
+                    bodyFatPct: const Value.absent(),
+                    notes: const Value('initial'),
+                  ),
+                ),
+          );
+        }
+
+        _logger.info('Registration successful for user: ${data.email}');
+        return _readAuthUser(userId);
+      });
+    } on Exception catch (e, stackTrace) {
+      _logger.error(
+        'Registration failed for user: ${data.email} - ${e.runtimeType}: $e',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    } catch (e, stackTrace) {
+      _logger.error(
+        'Unexpected error during registration for user: ${data.email} - ${e.runtimeType}: $e',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
   }
 
+  @override
   Future<AuthUser> login({
     required String email,
     required String password,
   }) async {
-    final normalizedEmail = _normalizeEmail(email);
-    final user =
-        await (db.select(db.users)
-              ..where((u) => u.email.equals(normalizedEmail))
-              ..where((u) => u.deletedAt.isNull()))
-            .getSingleOrNull();
+    _logger.info('Login attempt for user: $email');
 
-    if (user == null) {
-      throw InvalidCredentials();
+    try {
+      final normalizedEmail = _normalizeEmail(email);
+      final user = await _safeQuery(
+        () =>
+            (db.select(db.users)
+                  ..where((u) => u.email.equals(normalizedEmail))
+                  ..where((u) => u.deletedAt.isNull()))
+                .getSingleOrNull(),
+      );
+
+      if (user == null) {
+        _logger.warning('Login failed - user not found: $email');
+        throw InvalidCredentials();
+      }
+
+      if (!await _verifyPassword(user.passwordHash, password)) {
+        _logger.warning('Login failed - invalid password for user: $email');
+        throw InvalidCredentials();
+      }
+
+      final profile = await _safeQuery(
+        () => (db.select(
+          db.userProfiles,
+        )..where((p) => p.userId.equals(user.id))).getSingleOrNull(),
+      );
+
+      _logger.info('Login successful for user: $email');
+      return AuthUser.fromData(user: user, profile: profile);
+    } on Exception catch (e, stackTrace) {
+      // Log with more specific exception handling to avoid internal objects leaking
+      _logger.error(
+        'Login failed for user: $email - ${e.runtimeType}: $e',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    } catch (e, stackTrace) {
+      // Fallback for any other types of errors
+      _logger.error(
+        'Unexpected error during login for user: $email - ${e.runtimeType}: $e',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
+  }
 
-    if (!await _verifyPassword(user.passwordHash, password)) {
-      throw InvalidCredentials();
+  /// A wrapper method to safely execute database queries and handle WASM-specific issues
+  Future<T?> _safeQuery<T>(Future<T?> Function() query) async {
+    try {
+      return await query();
+    } catch (e) {
+      // Check if this is the specific WASM database result error
+      if (e.toString().contains('WasmDatabaseResult') &&
+          e.toString().contains('QueryExecutor')) {
+        // Log a more user-friendly error message
+        _logger.error(
+          'Database connection error: WASM database not properly initialized',
+        );
+        // Re-throw as a more generic database error
+        throw Exception(
+          'Database connection error. Please refresh the page and try again.',
+        );
+      }
+      rethrow;
     }
-
-    final profile = await (db.select(
-      db.userProfiles,
-    )..where((p) => p.userId.equals(user.id))).getSingleOrNull();
-
-    return AuthUser.fromData(user: user, profile: profile);
   }
 
   Future<AuthUser> _readAuthUser(String userId) async {
-    final user = await (db.select(
-      db.users,
-    )..where((u) => u.id.equals(userId))).getSingle();
-    final profile = await (db.select(
-      db.userProfiles,
-    )..where((p) => p.userId.equals(userId))).getSingleOrNull();
+    final user = await _safeQueryNonNullable(
+      () =>
+          (db.select(db.users)..where((u) => u.id.equals(userId))).getSingle(),
+    );
+    final profile = await _safeQuery(
+      () => (db.select(
+        db.userProfiles,
+      )..where((p) => p.userId.equals(userId))).getSingleOrNull(),
+    );
     return AuthUser.fromData(user: user, profile: profile);
+  }
+
+  /// A wrapper method to safely execute database queries that return non-nullable results
+  Future<T> _safeQueryNonNullable<T>(Future<T> Function() query) async {
+    try {
+      return await query();
+    } catch (e) {
+      // Check if this is the specific WASM database result error
+      if (e.toString().contains('WasmDatabaseResult') &&
+          e.toString().contains('QueryExecutor')) {
+        // Log a more user-friendly error message
+        _logger.error(
+          'Database connection error: WASM database not properly initialized',
+        );
+        // Re-throw as a more generic database error
+        throw Exception(
+          'Database connection error. Please refresh the page and try again.',
+        );
+      }
+      rethrow;
+    }
   }
 
   void _validateSignUpData(SignUpData data) {
@@ -200,9 +309,7 @@ class AuthRepository {
       final salt = base64Decode(saltBase64);
       final expectedHash = base64Decode(hashBase64);
       final bitsValue = decoded['bits'];
-      final bits = bitsValue is int && bitsValue > 0
-          ? bitsValue
-          : expectedHash.length * 8;
+      final bits = bitsValue is int && bitsValue > 0 ? bitsValue : _pbkdf2.bits;
 
       final algorithm = Pbkdf2(
         macAlgorithm: Hmac.sha256(),

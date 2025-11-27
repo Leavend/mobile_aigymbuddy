@@ -30,7 +30,7 @@ class AuthPageLayout extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     maxWidth: maxWidth,
-                    minHeight: constraints.maxHeight,
+                    minHeight: constraints.maxHeight - padding.vertical,
                   ),
                   child: child,
                 ),

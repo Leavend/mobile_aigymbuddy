@@ -2,12 +2,11 @@
 
 import 'package:drift/drift.dart';
 
-import 'connection/connection.dart'
-    if (dart.library.html) 'connection/web.dart'
-    if (dart.library.io) 'connection/native.dart';
+import 'connection/connection.dart';
 import 'package:uuid/uuid.dart';
 
 import 'type_converters.dart';
+import 'package:aigymbuddy/common/services/logging_service.dart';
 
 part 'tables/users.dart';
 part 'tables/user_profiles.dart';
@@ -56,8 +55,7 @@ class AppDatabase extends _$AppDatabase {
   static AppDatabase? _instance;
   bool _isClosed = false;
 
-  AppDatabase._internal()
-      : super(openConnection()) {
+  AppDatabase._internal() : super(openConnection()) {
     _isClosed = false;
   }
 
@@ -88,16 +86,24 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 
-  // Method untuk menutup database - diperlukan untuk testing
+  // Method untuk menutup database dengan enhanced error handling
   Future<void> closeDb() async {
-    if (_instance != null) {
-      await _instance!.close();
-      _instance = null;
+    if (_instance != null && !_instance!._isClosed) {
+      try {
+        await _instance!.close();
+        _instance = null;
+      } catch (e) {
+        // Log error but don't throw to prevent cascading failures
+        LoggingService.instance.error('Error closing database: $e');
+      }
     }
   }
 
   // Method untuk dispose instance - berguna untuk testing
   static void dispose() {
+    if (_instance != null && !_instance!._isClosed) {
+      _instance!._isClosed = true;
+    }
     _instance = null;
   }
 
@@ -110,6 +116,18 @@ class AppDatabase extends _$AppDatabase {
     }
 
     _isClosed = true;
-    await super.close();
+    try {
+      await super.close();
+    } catch (e) {
+      LoggingService.instance.error('Error during database close: $e');
+      rethrow;
+    }
+  }
+
+  /// Ensure the database is properly closed when the app exits
+  static Future<void> cleanup() async {
+    if (_instance != null) {
+      await _instance!.closeDb();
+    }
   }
 }

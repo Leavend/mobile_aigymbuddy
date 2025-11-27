@@ -30,6 +30,7 @@ class RoundButton extends StatelessWidget {
     this.isEnabled = true,
     this.isLoading = false,
     this.textStyle,
+    this.width, // Added width property for better control
   }) : assert(height > 0, 'height must be greater than zero'),
        assert(fontSize > 0, 'fontSize must be greater than zero'),
        assert(elevation >= 0, 'elevation cannot be negative');
@@ -41,6 +42,7 @@ class RoundButton extends StatelessWidget {
   final double elevation;
   final FontWeight fontWeight;
   final double height;
+  final double? width; // Added width property
   final EdgeInsetsGeometry padding;
   final BorderRadius borderRadius;
   final bool isEnabled;
@@ -145,7 +147,7 @@ class RoundButton extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         borderRadius: borderRadius,
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: Clip.hardEdge, // Updated to use Clip.hardEdge
         child: _wrapWithInkWell(_buildContent(style)),
       ),
     );
@@ -157,7 +159,7 @@ class RoundButton extends StatelessWidget {
       elevation: elevation,
       borderRadius: borderRadius,
       shadowColor: Colors.black26,
-      clipBehavior: Clip.antiAlias,
+      clipBehavior: Clip.hardEdge, // Updated to use Clip.hardEdge
       child: _wrapWithInkWell(_buildContent(style)),
     );
   }
@@ -177,14 +179,27 @@ class RoundButton extends StatelessWidget {
         ? _buildGradientButton(style)
         : _buildSolidButton(style);
 
+    Widget constrainedButton = _applyStateDecoration(button);
+
+    // Apply width constraint if specified
+    if (width != null) {
+      constrainedButton = SizedBox(
+        width: width,
+        height: height,
+        child: constrainedButton,
+      );
+    } else {
+      constrainedButton = ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: double.infinity),
+        child: constrainedButton,
+      );
+    }
+
     return Semantics(
       button: true,
       enabled: _effectiveEnabled,
       label: title,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: double.infinity),
-        child: _applyStateDecoration(button),
-      ),
+      child: constrainedButton,
     );
   }
 }

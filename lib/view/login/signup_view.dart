@@ -1,4 +1,3 @@
-import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
@@ -8,6 +7,9 @@ import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:aigymbuddy/view/base/base_view.dart';
+import 'package:aigymbuddy/view/login/controllers/signup_controller.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/auth_page_layout.dart';
 import 'widgets/auth_validators.dart';
@@ -88,45 +90,45 @@ abstract final class _SignUpTexts {
   );
 }
 
-class SignUpView extends StatefulWidget {
+class SignUpView extends StatelessWidget {
   const SignUpView({super.key});
+
   @override
-  State<SignUpView> createState() => _SignUpViewState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => SignupController(),
+      child: const _SignUpContent(),
+    );
+  }
 }
 
-class _SignUpViewState extends State<SignUpView> {
-  final _formKey = GlobalKey<FormState>();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _SignUpContent extends BaseView<SignupController> {
+  const _SignUpContent();
 
+  @override
+  Widget buildContent(BuildContext context, SignupController controller) {
+    return AuthPageLayout(child: _SignUpForm(controller: controller));
+  }
+}
+
+class _SignUpForm extends StatefulWidget {
+  const _SignUpForm({required this.controller});
+
+  final SignupController controller;
+
+  @override
+  State<_SignUpForm> createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<_SignUpForm> {
+  final _formKey = GlobalKey<FormState>();
   final _firstNameFocusNode = FocusNode();
   final _lastNameFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
 
-  bool _isTermsAccepted = false;
-  bool _isPasswordVisible = false;
-  bool _isRegisterEnabled = false;
-  bool _autoValidate = false;
-  bool _showTermsError = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _firstNameController.addListener(_validateForm);
-    _lastNameController.addListener(_validateForm);
-    _emailController.addListener(_validateForm);
-    _passwordController.addListener(_validateForm);
-  }
-
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
     _firstNameFocusNode.dispose();
     _lastNameFocusNode.dispose();
     _emailFocusNode.dispose();
@@ -134,37 +136,17 @@ class _SignUpViewState extends State<SignUpView> {
     super.dispose();
   }
 
-  void _validateForm() {
-    final isValid = _canSubmitForm();
-    if (isValid != _isRegisterEnabled) {
-      setState(() => _isRegisterEnabled = isValid);
-    }
-  }
-
-  bool _canSubmitForm() {
-    return _firstNameController.text.trim().isNotEmpty &&
-        _lastNameController.text.trim().isNotEmpty &&
-        AuthValidators.isValidEmail(_emailController.text) &&
-        _passwordController.text.length >= 8 &&
-        _isTermsAccepted;
-  }
-
   void _onRegisterPressed() {
     FocusScope.of(context).unfocus();
 
-    setState(() {
-      _autoValidate = true;
-      _showTermsError = !_isTermsAccepted;
-    });
-
-    if ((_formKey.currentState?.validate() ?? false) && _isTermsAccepted) {
-      final data = SignUpData(
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
-        email: _emailController.text.trim().toLowerCase(),
-        password: _passwordController.text,
-      );
-      context.push(AppRoute.completeProfile, extra: data);
+    if (_formKey.currentState?.validate() ?? false) {
+      final data = widget.controller.submit();
+      if (data != null) {
+        context.push(AppRoute.completeProfile, extra: data);
+      }
+    } else {
+      // Trigger validation UI updates in controller even if form is invalid
+      widget.controller.submit();
     }
   }
 
@@ -196,48 +178,47 @@ class _SignUpViewState extends State<SignUpView> {
 
   @override
   Widget build(BuildContext context) {
-    final autovalidateMode = _autoValidate
+    final controller = widget.controller;
+    final autovalidateMode = controller.autoValidate
         ? AutovalidateMode.onUserInteraction
         : AutovalidateMode.disabled;
 
-    return AuthPageLayout(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 28),
-          _buildForm(context, autovalidateMode),
-          const SizedBox(height: 12),
-          _buildTermsRow(context),
-          if (_showTermsError && !_isTermsAccepted) ...[
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: Text(
-                context.localize(_SignUpTexts.termsRequired),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                  fontSize: 12,
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildHeader(context),
+        const SizedBox(height: 28),
+        _buildForm(context, controller, autovalidateMode),
+        const SizedBox(height: 12),
+        _buildTermsRow(context, controller),
+        if (controller.showTermsError && !controller.isTermsAccepted) ...[
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0),
+            child: Text(
+              context.localize(_SignUpTexts.termsRequired),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+                fontSize: 12,
               ),
             ),
-          ],
-          const SizedBox(height: 24),
-          RoundButton(
-            title: context.localize(_SignUpTexts.registerButton),
-            onPressed: _onRegisterPressed,
-            isEnabled: _isRegisterEnabled,
           ),
-          const SizedBox(height: 16),
-          _buildDivider(context),
-          const SizedBox(height: 16),
-          _buildSocialRow(),
-          const SizedBox(height: 20),
-          _buildLoginPrompt(context),
-          const SizedBox(height: 24),
         ],
-      ),
+        const SizedBox(height: 24),
+        RoundButton(
+          title: context.localize(_SignUpTexts.registerButton),
+          onPressed: _onRegisterPressed,
+          isEnabled: controller.isRegisterEnabled,
+        ),
+        const SizedBox(height: 16),
+        _buildDivider(context),
+        const SizedBox(height: 16),
+        _buildSocialRow(),
+        const SizedBox(height: 20),
+        _buildLoginPrompt(context),
+        const SizedBox(height: 24),
+      ],
     );
   }
 
@@ -264,7 +245,11 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 
-  Widget _buildForm(BuildContext context, AutovalidateMode autovalidateMode) {
+  Widget _buildForm(
+    BuildContext context,
+    SignupController controller,
+    AutovalidateMode autovalidateMode,
+  ) {
     return Form(
       key: _formKey,
       autovalidateMode: autovalidateMode,
@@ -272,7 +257,7 @@ class _SignUpViewState extends State<SignUpView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           RoundTextField(
-            controller: _firstNameController,
+            controller: controller.firstNameController,
             focusNode: _firstNameFocusNode,
             hintText: context.localize(_SignUpTexts.firstNameHint),
             icon: 'assets/img/user_text.png',
@@ -283,7 +268,7 @@ class _SignUpViewState extends State<SignUpView> {
           ),
           const SizedBox(height: 16),
           RoundTextField(
-            controller: _lastNameController,
+            controller: controller.lastNameController,
             focusNode: _lastNameFocusNode,
             hintText: context.localize(_SignUpTexts.lastNameHint),
             icon: 'assets/img/user_text.png',
@@ -294,7 +279,7 @@ class _SignUpViewState extends State<SignUpView> {
           ),
           const SizedBox(height: 16),
           RoundTextField(
-            controller: _emailController,
+            controller: controller.emailController,
             focusNode: _emailFocusNode,
             hintText: context.localize(_SignUpTexts.emailHint),
             icon: 'assets/img/email.png',
@@ -305,22 +290,20 @@ class _SignUpViewState extends State<SignUpView> {
           ),
           const SizedBox(height: 16),
           RoundTextField(
-            controller: _passwordController,
+            controller: controller.passwordController,
             focusNode: _passwordFocusNode,
             hintText: context.localize(_SignUpTexts.passwordHint),
             icon: 'assets/img/lock.png',
-            obscureText: !_isPasswordVisible,
+            obscureText: !controller.isPasswordVisible,
             textInputAction: TextInputAction.done,
             validator: _validatePassword,
             onFieldSubmitted: (_) => _onRegisterPressed(),
             rightIcon: IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              onPressed: () {
-                setState(() => _isPasswordVisible = !_isPasswordVisible);
-              },
+              onPressed: controller.togglePasswordVisibility,
               icon: Image.asset(
-                _isPasswordVisible
+                controller.isPasswordVisible
                     ? 'assets/img/hide_password.png'
                     : 'assets/img/show_password.png',
                 width: 20,
@@ -334,19 +317,13 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 
-  Widget _buildTermsRow(BuildContext context) {
+  Widget _buildTermsRow(BuildContext context, SignupController controller) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Checkbox(
-          value: _isTermsAccepted,
-          onChanged: (value) {
-            setState(() {
-              _isTermsAccepted = value ?? false;
-              if (_isTermsAccepted) _showTermsError = false;
-            });
-            _validateForm();
-          },
+          value: controller.isTermsAccepted,
+          onChanged: controller.toggleTermsAccepted,
           visualDensity: VisualDensity.compact,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),

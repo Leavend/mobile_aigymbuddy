@@ -29,10 +29,7 @@ void main() {
       const passwordHash = 'hashed_password';
 
       // Act
-      await userRepository.createUser(
-        email: email,
-        passwordHash: passwordHash,
-      );
+      await userRepository.createUser(email: email, passwordHash: passwordHash);
 
       final users = await userRepository.getAllUsers();
       final user = await userRepository.getUserById(users.first.id);
@@ -51,7 +48,7 @@ void main() {
         email: 'test1@example.com',
         passwordHash: 'password1',
       );
-      
+
       expect(await userRepository.getUserCount(), 1);
 
       await userRepository.createUser(
@@ -71,7 +68,7 @@ void main() {
         DatabaseConnection(NativeDatabase.memory()),
       );
       await closedDatabase.close(); // Close it immediately
-      
+
       final errorRepository = UserRepository(closedDatabase);
 
       // Test that operations on closed database throw errors
@@ -79,7 +76,7 @@ void main() {
         () async => await errorRepository.getAllUsers(),
         throwsA(isA<StateError>()),
       );
-      
+
       expect(
         () async => await errorRepository.createUser(
           email: 'test@error.com',
@@ -96,16 +93,10 @@ void main() {
       const password2 = 'password2';
 
       // First creation should succeed
-      await userRepository.createUser(
-        email: email,
-        passwordHash: password1,
-      );
+      await userRepository.createUser(email: email, passwordHash: password1);
 
       // Second creation with same email should update, not fail
-      await userRepository.createUser(
-        email: email,
-        passwordHash: password2,
-      );
+      await userRepository.createUser(email: email, passwordHash: password2);
 
       // Should only have one user with updated password
       final users = await userRepository.getAllUsers();

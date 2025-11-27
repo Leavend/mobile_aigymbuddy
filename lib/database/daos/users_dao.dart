@@ -15,9 +15,9 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
       final existingUser = await getUserByEmail(email);
 
       if (existingUser != null) {
-        await (update(users)
-              ..where((tbl) => tbl.id.equals(existingUser.id)))
-            .write(
+        await (update(
+          users,
+        )..where((tbl) => tbl.id.equals(existingUser.id))).write(
           UsersCompanion(
             email: Value(email),
             passwordHash: Value(passwordHash),

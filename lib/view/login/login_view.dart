@@ -3,14 +3,16 @@ import 'dart:developer' as developer;
 import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/common/app_router.dart';
 import 'package:aigymbuddy/common/color_extension.dart';
+import 'package:aigymbuddy/common/exceptions/app_exceptions.dart';
 import 'package:aigymbuddy/common/localization/app_language.dart';
 import 'package:aigymbuddy/common/localization/app_language_scope.dart';
 import 'package:aigymbuddy/common_widget/round_button.dart';
 import 'package:aigymbuddy/common_widget/round_textfield.dart';
 import 'package:aigymbuddy/common_widget/social_auth_button.dart';
-import 'package:aigymbuddy/database/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:aigymbuddy/view/base/base_view.dart';
+import 'package:aigymbuddy/view/login/controllers/login_controller.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/auth_page_layout.dart';
@@ -79,66 +81,63 @@ abstract final class _LoginTexts {
   );
 }
 
-class LoginView extends StatefulWidget {
+class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => LoginController(context.read<AuthController>()),
+      child: const _LoginContent(),
+    );
+  }
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginContent extends BaseView<LoginController> {
+  const _LoginContent();
+
+  @override
+  Widget buildContent(BuildContext context, LoginController controller) {
+    return AuthPageLayout(child: _LoginForm(controller: controller));
+  }
+}
+
+class _LoginForm extends StatefulWidget {
+  const _LoginForm({required this.controller});
+
+  final LoginController controller;
+
+  @override
+  State<_LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<_LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
 
-  bool _isPasswordVisible = false;
-  bool _isLoginEnabled = false;
-  bool _autoValidate = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _emailController.addListener(_validateForm);
-    _passwordController.addListener(_validateForm);
-  }
-
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
   }
 
-  void _validateForm() {
-    final isValid = _canSubmit();
-    if (isValid != _isLoginEnabled) {
-      setState(() => _isLoginEnabled = isValid);
-    }
-  }
-
   Future<void> _onLoginPressed() async {
     FocusScope.of(context).unfocus();
-
-    setState(() => _autoValidate = true);
 
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
-    final controller = context.read<AuthController>();
-    final email = _emailController.text.trim().toLowerCase();
-    final password = _passwordController.text;
-
     try {
-      await controller.login(email: email, password: password);
+      await widget.controller.login();
       if (!mounted) return;
       context.go(AppRoute.main);
-    } on InvalidCredentials {
+    } on AuthException {
       _showErrorMessage(_LoginTexts.invalidCredentials);
+    } on AppException {
+      _showErrorMessage(_LoginTexts.loginFailed);
     } catch (error, stackTrace) {
       developer.log('Login failed', error: error, stackTrace: stackTrace);
       _showErrorMessage(_LoginTexts.loginFailed);
@@ -168,11 +167,6 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  bool _canSubmit() {
-    return AuthValidators.isValidEmail(_emailController.text) &&
-        _passwordController.text.length >= 8;
-  }
-
   void _showErrorMessage(LocalizedText text) {
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
@@ -183,11 +177,20 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return AuthPageLayout(child: _buildContent(context));
-  }
+    // Listen to controller changes for UI updates
+    final controller = widget.controller;
 
-  Widget _buildContent(BuildContext context) {
-    final autovalidateMode = _autoValidate
+    // We use Consumer in the parent BaseView, but here we are in a separate widget.
+    // However, since we pass controller, we can use it.
+    // But to rebuild on controller changes, we should use AnimatedBuilder or Consumer.
+    // BaseView uses Consumer, so buildContent is called on changes.
+    // But _LoginForm is a StatefulWidget, so it might not rebuild unless we pass data.
+    // Actually, BaseView's buildContent is called inside Consumer's builder.
+    // So when controller notifies, buildContent is called, which rebuilds _LoginForm.
+    // But _LoginForm is const, so it might not rebuild if arguments didn't change?
+    // No, if parent rebuilds, child rebuilds.
+
+    final autovalidateMode = controller.autoValidate
         ? AutovalidateMode.onUserInteraction
         : AutovalidateMode.disabled;
 
@@ -200,22 +203,17 @@ class _LoginViewState extends State<LoginView> {
         children: [
           _buildHeader(context),
           const SizedBox(height: 36),
-          _buildEmailField(context),
+          _buildEmailField(context, controller),
           const SizedBox(height: 20),
-          _buildPasswordField(context),
+          _buildPasswordField(context, controller),
           const SizedBox(height: 16),
           _buildForgotPasswordButton(context),
           const SizedBox(height: 28),
-          Consumer<AuthController>(
-            builder: (context, controller, _) {
-              final isProcessing = controller.isLoading;
-              return RoundButton(
-                title: context.localize(_LoginTexts.loginButton),
-                onPressed: () => _onLoginPressed(),
-                isEnabled: _isLoginEnabled && !isProcessing,
-                isLoading: isProcessing,
-              );
-            },
+          RoundButton(
+            title: context.localize(_LoginTexts.loginButton),
+            onPressed: () => _onLoginPressed(),
+            isEnabled: controller.isLoginEnabled && !controller.isLoading,
+            isLoading: controller.isLoading,
           ),
           const SizedBox(height: 28),
           _buildDivider(context),
@@ -251,9 +249,9 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _buildEmailField(BuildContext context) {
+  Widget _buildEmailField(BuildContext context, LoginController controller) {
     return RoundTextField(
-      controller: _emailController,
+      controller: controller.emailController,
       focusNode: _emailFocusNode,
       hintText: context.localize(_LoginTexts.emailHint),
       icon: 'assets/img/email.png',
@@ -264,24 +262,22 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _buildPasswordField(BuildContext context) {
+  Widget _buildPasswordField(BuildContext context, LoginController controller) {
     return RoundTextField(
-      controller: _passwordController,
+      controller: controller.passwordController,
       focusNode: _passwordFocusNode,
       hintText: context.localize(_LoginTexts.passwordHint),
       icon: 'assets/img/lock.png',
-      obscureText: !_isPasswordVisible,
+      obscureText: controller.isObscurePassword,
       textInputAction: TextInputAction.done,
       validator: _validatePassword,
       onFieldSubmitted: (_) => _onLoginPressed(),
       rightIcon: IconButton(
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
-        onPressed: () {
-          setState(() => _isPasswordVisible = !_isPasswordVisible);
-        },
+        onPressed: controller.togglePasswordVisibility,
         icon: Image.asset(
-          _isPasswordVisible
+          controller.isObscurePassword
               ? 'assets/img/hide_password.png'
               : 'assets/img/show_password.png',
           width: 20,

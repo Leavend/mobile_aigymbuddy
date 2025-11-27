@@ -139,35 +139,41 @@ class OnBoardingPage extends StatelessWidget {
       width: media.width,
       height: media.height,
       color: TColor.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(content.image, width: media.width, fit: BoxFit.fitWidth),
-          SizedBox(height: media.width * 0.1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              content.titleFor(language),
-              style: TextStyle(
-                color: content.titleColor ?? TColor.black,
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(
+              content.image,
+              width: media.width,
+              fit: BoxFit.fitWidth,
+            ),
+            SizedBox(height: media.width * 0.1),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                content.titleFor(language),
+                style: TextStyle(
+                  color: content.titleColor ?? TColor.black,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 15),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              content.subtitleFor(language),
-              style: TextStyle(
-                color: content.subtitleColor ?? TColor.gray,
-                fontSize: 14,
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                content.subtitleFor(language),
+                style: TextStyle(
+                  color: content.subtitleColor ?? TColor.gray,
+                  fontSize: 14,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

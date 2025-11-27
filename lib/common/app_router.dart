@@ -96,43 +96,43 @@ class AppRouter {
       navigatorKey: rootNavigatorKey,
       initialLocation: initialLocation,
       routes: [
-      _simpleRoute(
-        path: AppRoute.launch,
-        builder: (context) => const LaunchView(),
-      ),
-      _simpleRoute(
-        path: AppRoute.onboarding,
-        builder: (context) => const OnBoardingView(),
-      ),
-      _simpleRoute(
-        path: AppRoute.login,
-        builder: (context) => const LoginView(),
-      ),
-      _simpleRoute(
-        path: AppRoute.signUp,
-        builder: (context) => const SignUpView(),
-      ),
+        _simpleRoute(
+          path: AppRoute.launch,
+          builder: (context) => const LaunchView(),
+        ),
+        _simpleRoute(
+          path: AppRoute.onboarding,
+          builder: (context) => const OnBoardingView(),
+        ),
+        _simpleRoute(
+          path: AppRoute.login,
+          builder: (context) => const LoginView(),
+        ),
+        _simpleRoute(
+          path: AppRoute.signUp,
+          builder: (context) => const SignUpView(),
+        ),
 
-      // ==== ROUTE DENGAN EXTRA (SignUpData) ====
-      _extraRoute<SignUpData>(
-        path: AppRoute.completeProfile,
-        missingExtraMessage:
-            'CompleteProfileView requires SignUpData as extra.',
-        builder: (context, args) => CompleteProfileView(signUpData: args),
-      ),
-      _extraRoute<SignUpData>(
-        path: AppRoute.goal,
-        missingExtraMessage: 'WhatYourGoalView requires SignUpData as extra.',
-        builder: (context, args) => WhatYourGoalView(signUpData: args),
-      ),
+        // ==== ROUTE DENGAN EXTRA (SignUpData) ====
+        _extraRoute<SignUpData>(
+          path: AppRoute.completeProfile,
+          missingExtraMessage:
+              'CompleteProfileView requires SignUpData as extra.',
+          builder: (context, args) => CompleteProfileView(signUpData: args),
+        ),
+        _extraRoute<SignUpData>(
+          path: AppRoute.goal,
+          missingExtraMessage: 'WhatYourGoalView requires SignUpData as extra.',
+          builder: (context, args) => WhatYourGoalView(signUpData: args),
+        ),
 
-      _simpleRoute(
-        path: AppRoute.welcome,
-        builder: (context) => const WelcomeView(),
-      ),
-      _buildMainShell(),
-      ..._standaloneRoutes,
-    ],
+        _simpleRoute(
+          path: AppRoute.welcome,
+          builder: (context) => const WelcomeView(),
+        ),
+        _buildMainShell(),
+        ..._standaloneRoutes,
+      ],
     );
   }
 
