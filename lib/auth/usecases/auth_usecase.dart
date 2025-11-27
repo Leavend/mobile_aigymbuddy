@@ -30,7 +30,13 @@ class AuthUseCaseImpl implements AuthUseCase {
   Future<AuthUser> register(SignUpData data) async {
     try {
       final user = await _repository.register(data);
-      await _authService.setHasCredentials(true);
+      // Generate token for session
+      final token = 'token_${DateTime.now().millisecondsSinceEpoch}_${user.id}';
+      await _authService.startSession(
+        token: token,
+        user: user,
+        expiresIn: const Duration(days: 7),
+      );
       return user;
     } on EmailAlreadyUsed {
       throw const AuthException(
@@ -53,7 +59,13 @@ class AuthUseCaseImpl implements AuthUseCase {
   }) async {
     try {
       final user = await _repository.login(email: email, password: password);
-      await _authService.setHasCredentials(true);
+      // Generate token for session
+      final token = 'token_${DateTime.now().millisecondsSinceEpoch}_${user.id}';
+      await _authService.startSession(
+        token: token,
+        user: user,
+        expiresIn: const Duration(days: 7),
+      );
       return user;
     } on InvalidCredentials {
       throw const AuthException(
@@ -70,7 +82,7 @@ class AuthUseCaseImpl implements AuthUseCase {
   @override
   Future<void> logout() async {
     try {
-      await _authService.clearCredentials();
+      await _authService.endSession();
     } catch (e) {
       throw GenericAppException('Logout failed', e);
     }

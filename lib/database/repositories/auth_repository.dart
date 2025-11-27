@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:aigymbuddy/auth/models/auth_user.dart';
 import 'package:aigymbuddy/auth/models/sign_up_data.dart';
 import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
+import 'package:aigymbuddy/common/exceptions/database_exceptions.dart';
 import 'package:aigymbuddy/common/services/logging_service.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:drift/drift.dart';
@@ -200,8 +201,8 @@ class AuthRepository implements AuthRepositoryInterface {
         _logger.error(
           'Database connection error: WASM database not properly initialized',
         );
-        // Re-throw as a more generic database error
-        throw Exception(
+        // Throw typed exception instead of generic Exception
+        throw const WasmDatabaseException(
           'Database connection error. Please refresh the page and try again.',
         );
       }
@@ -234,8 +235,8 @@ class AuthRepository implements AuthRepositoryInterface {
         _logger.error(
           'Database connection error: WASM database not properly initialized',
         );
-        // Re-throw as a more generic database error
-        throw Exception(
+        // Throw typed exception instead of generic Exception
+        throw const WasmDatabaseException(
           'Database connection error. Please refresh the page and try again.',
         );
       }

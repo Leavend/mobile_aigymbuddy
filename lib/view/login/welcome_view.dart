@@ -76,7 +76,7 @@ class _WelcomeViewState extends State<WelcomeView> {
 
   Future<void> _goToHome() async {
     final router = GoRouter.of(context);
-    await AuthService.instance.setHasCredentials(true);
+    // Session already started during registration, just navigate
     if (!mounted) return;
     router.go(AppRoute.main);
   }
