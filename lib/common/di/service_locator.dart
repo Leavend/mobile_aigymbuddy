@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:aigymbuddy/auth/controllers/auth_controller.dart';
 import 'package:aigymbuddy/auth/repositories/auth_repository_interface.dart';
 import 'package:aigymbuddy/auth/usecases/auth_usecase.dart';
@@ -192,31 +194,38 @@ class ServiceLocator {
 
   @visibleForTesting
   void registerAuthRepository(AuthRepositoryInterface repo) {
+    unawaited(_authRepository?.dispose());
     _authRepository = repo;
   }
 
   @visibleForTesting
   void registerAuthUseCase(AuthUseCase useCase) {
+    // No disposal needed for use case
     _authUseCase = useCase;
   }
 
   @visibleForTesting
   void registerDatabase(AppDatabase db) {
+    unawaited(_database?.closeDb());
     _database = db;
   }
 
   @visibleForTesting
   void registerDatabaseService(DatabaseService service) {
+    unawaited(_databaseService?.dispose());
     _databaseService = service;
   }
 
   @visibleForTesting
   void registerUserProfileRepository(UserProfileRepository repo) {
+    unawaited(_userProfileRepository?.dispose());
     _userProfileRepository = repo;
   }
 
   @visibleForTesting
   void registerAuthController(AuthController controller) {
+    // Dispose old controller if exists
+    _authController?.dispose();
     _authController = controller;
   }
 }
